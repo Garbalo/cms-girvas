@@ -1,0 +1,19 @@
+html {
+    height: 100%;
+}
+body {
+    background-color: #F9F9F9;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', Arial, sans-serif;
+    min-height: 100%;
+}
+.container {
+    max-width: 1170px;
+    margin: 0 auto;
+}
+@media (max-width: 1169px) {
+    .container {
+        padding: 0 25px;
+    }
+}

@@ -1,0 +1,35 @@
+.footer > .container,
+.footer .footer__metalinks-list {
+  display: flex;
+}
+.footer {
+  background: linear-gradient(to bottom, #FFF, #EAEAEA);
+  font-size: 14px;
+  color: #666;
+  padding: 10px 0;
+  border-top: 2px solid #EAEAEA;
+  border-bottom: 2px solid #EAEAEA;
+}
+.footer > .container {
+  justify-content: space-between;
+}
+.footer .footer__metalinks-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.footer .footer__metalinks-list > .metalinks-list__item::after {
+  content: '|';
+  padding: 0 8px;
+}
+.footer .footer__metalinks-list > .metalinks-list__item:last-child::after {
+  content: '';
+  padding: 0;
+}
+.footer .footer__metalinks-list > .metalinks-list__item .item__link {
+  transition: 0.2s;
+  color: inherit;
+}
+.footer .footer__metalinks-list > .metalinks-list__item .item__link:hover {
+  filter: brightness(80%);
+}

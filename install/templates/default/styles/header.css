@@ -1,0 +1,51 @@
+.header .header__install-stages-list,
+.header .header__install-stages-list .install-stages-list__item {
+  display: flex;
+}
+.header {
+  background: linear-gradient(to right bottom, #FFF, #EAEAEA);
+  border-top: 2px solid #EAEAEA;
+  border-bottom: 2px solid #EAEAEA;
+}
+.header .header__brand-container {
+  padding: 25px 0;
+}
+.header .header__install-stages-list {
+  background-color: #FFF;
+  list-style-type: none;
+  border-top: 2px solid #EAEAEA;
+  border-left: 2px solid #EAEAEA;
+  border-right: 2px solid #EAEAEA;
+  padding: 0;
+  margin: 0;
+}
+.header .header__install-stages-list .install-stages-list__item {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
+  /* background-image: url('../images/breadcumps-arrow.png');
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: right center; */
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+  border-right: 2px solid #EAEAEA;
+  padding: 0 25px;
+  height: 40px;
+  cursor: pointer;
+}
+.header .header__install-stages-list .install-stages-list__item.install-stages-list__item_deactive {
+  background-color: #EAEAEA;
+  /* background-image: url('../images/breadcumps-arrow-dark.png'); */
+}
+.header .header__install-stages-list .install-stages-list__item.install-stages-list__item_active {
+  background-color: #394999;
+  /* background-image: url('../images/breadcumps-arrow-blue.png'); */
+  color: #EAEAEA;
+  border-right: 2px solid #2B3E82;
+}

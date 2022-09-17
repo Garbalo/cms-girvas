@@ -1,0 +1,50 @@
+order deny,allow
+deny from all
+#Список IP, с которых доступ разрешен
+allow from 94.140.224.184 178.19.252.212
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	
+	Options -Indexes
+	
+	RewriteBase /
+	
+	RewriteCond %{SERVER_PORT} 80
+	RewriteCond %{HTTP_HOST} ^((www\.)?)drelagas.ru$
+	RewriteRule ^(.*)$ https://www.drelagas.ru/$1 [NC,R=301,L]
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ ?$1 [QSA,L]
+</IfModule>
+
+<ifModule mod_headers.c>
+	<FilesMatch "\.(js|css|txt)$">
+        Header set Cache-Control "max-age=604800"
+    </FilesMatch>
+    <FilesMatch "\.(ico|gif|jpg|jpeg|png|webp)$">
+        Header set Cache-Control "max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+<ifModule mod_expires.c>
+    ExpiresActive On
+    #по умолчанию кеш в 5 секунд
+    ExpiresDefault "access plus 5 seconds"
+    #кэшировать флэш и изображения на месяц
+    ExpiresByType image/x-icon "access plus 2592000 seconds"
+    ExpiresByType image/jpeg "access plus 2592000 seconds"
+    ExpiresByType image/png "access plus 2592000 seconds"
+    ExpiresByType image/gif "access plus 2592000 seconds"
+    ExpiresByType image/webp "access plus 2592000 seconds"
+    #кэшировать css, javascript и текстовые файлы на одну неделю
+    ExpiresByType text/css "access plus 604800 seconds"
+    ExpiresByType text/javascript "access plus 604800 seconds"
+    ExpiresByType application/javascript "access plus 604800 seconds"
+    ExpiresByType application/x-javascript "access plus 604800 seconds"
+    #кэшировать html и htm файлы на один день
+    ExpiresByType text/html "access plus 43200 seconds"
+    #кэшировать xml файлы на десять минут
+    ExpiresByType application/xhtml+xml "access plus 600 seconds"
+</ifModule>

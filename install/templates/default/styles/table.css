@@ -1,0 +1,13 @@
+.table {
+  font-size: 14px;
+  width: 100%;
+}
+.table .table__header,
+.table .table__cell {
+  border-bottom: 1px dashed #D3D3D3;
+  padding: 10px 25px;
+}
+.table .table__header {
+  font-weight: 700;
+  text-align: left;
+}

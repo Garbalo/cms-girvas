@@ -1,0 +1,70 @@
+.main .section[data-stage-index] .section__panel,
+.main .section[data-stage-index="4"] .section__content {
+  display: flex;
+}
+.main .section[data-stage-index] > .container {
+  border-bottom: 2px solid #EAEAEA;
+  border-left: 2px solid #EAEAEA;
+  border-right: 2px solid #EAEAEA;
+  box-sizing: border-box;
+}
+.main .section[data-stage-index] .section__title {
+  background: linear-gradient(to bottom, #FFF, #EAEAEA);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #232323;
+  border-bottom: 2px solid #EAEAEA;
+  padding: 10px 25px;
+  margin: 0;
+}
+.main .section[data-stage-index] .section__content {
+  padding: 25px;
+}
+.main .section[data-stage-index="4"] .section__content > .form,
+.main .section[data-stage-index="4"] .section__content > .section__block_console-log {
+  flex-grow: 1;
+}
+.main .section[data-stage-index="4"] .section__content > .form {
+  width: calc((100% / 2) - 25px);
+  margin-right: 25px;
+}
+.main .section[data-stage-index="4"] .section__content > .section__block_console-log {
+  background-color: #0C0C0C;
+  color: #CCC;
+  box-sizing: border-box;
+  width: calc((100% / 2) - 25px);
+  height: 200px;
+}
+.main .section[data-stage-index="4"] .section__content > .section__block_console-log .content__container {
+  padding: 10px;
+  overflow-y: auto;
+} 
+.main .section[data-stage-index] .section__content .section__block_console-log .block__title {
+  background: linear-gradient(to bottom, #FFF, #EAEAEA);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #232323;
+  padding: 10px 25px;
+  margin: 0;
+}
+.main .section[data-stage-index] .section__content .section__block_console-log .block__content {
+  font-family: monospace;
+  font-size: 14px;
+}
+.main .section[data-stage-index] .section__panel {
+  justify-content: space-between;
+  border-top: 2px solid #EAEAEA;
+  padding: 25px;
+}
+.main .section[data-stage-index="1"] .section__panel {
+  justify-content: flex-end;
+}
+.main .section[data-stage-index] .section__panel .panel__item[data-stage-event="last"] {
+  order: 1;
+}
+.main .section[data-stage-index] .section__panel .panel__item[data-stage-event="next"],
+.main .section[data-stage-index] .section__panel .panel__item[data-stage-event="finish"] {
+  order: 2;
+}
