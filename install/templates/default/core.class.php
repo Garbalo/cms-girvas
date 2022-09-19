@@ -46,6 +46,27 @@ namespace install\templates\default {
           ]);
         }
 
+        if ($stage_index == 2) {
+          $stage_patterns = array_merge($stage_patterns, [
+            'CHMOD_DIR_BACKUPS' => decoct(fileperms(sprintf('%s/backups', DOCUMENT_ROOT)) & 0777),
+            'CHMOD_DIR_TEMPLATES' => decoct(fileperms(sprintf('%s/templates', DOCUMENT_ROOT)) & 0777),
+            'CHMOD_DIR_TEMPLATES_DEFAULT' => decoct(fileperms(sprintf('%s/templates/default', DOCUMENT_ROOT)) & 0777),
+            'CHMOD_DIR_UPLOADS' => decoct(fileperms(sprintf('%s/uploads', DOCUMENT_ROOT)) & 0777),
+            'CHMOD_DIR_BACKUPS_RESULT' => (is_writable(sprintf('%s/backups', DOCUMENT_ROOT)))
+              ? '<span style="color:green;">Да</span>'
+              : '<span style="color:red;">Нет</span>',
+            'CHMOD_DIR_TEMPLATES_RESULT' => (is_writable(sprintf('%s/templates', DOCUMENT_ROOT)))
+              ? '<span style="color:green;">Да</span>'
+              : '<span style="color:red;">Нет</span>',
+            'CHMOD_DIR_TEMPLATES_DEFAULT_RESULT' => (is_writable(sprintf('%s/templates/default', DOCUMENT_ROOT)))
+              ? '<span style="color:green;">Да</span>'
+              : '<span style="color:red;">Нет</span>',
+            'CHMOD_DIR_UPLOADS_RESULT' => (is_writable(sprintf('%s/uploads', DOCUMENT_ROOT)))
+              ? '<span style="color:green;">Да</span>'
+              : '<span style="color:red;">Нет</span>',
+          ]);
+        }
+
         array_push($site_sections, parent::assembly(
           file_get_contents(sprintf('%s/templates/page/stage-%d.tpl', $this->path_to_template_folder, $stage_index + 1)), $stage_patterns
         ));

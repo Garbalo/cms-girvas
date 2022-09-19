@@ -3,6 +3,18 @@
     <h1 class="section__title">Этап 4: Подключение к базе данных и ее генерация</h1>
     <div class="section__content">
       <form action="/cron/api.php?query=install&event=database-generate" class="form">
+        <label for="">Сервер PostgreSQL</label>
+        <input type="text" name="" id="">
+        <label for="">Имя БД</label>
+        <input type="text" name="" id="">
+        <label for="">Имя пользователя</label>
+        <input type="text" name="" id="">
+        <label for="">Пароль</label>
+        <input type="password" name="" id="">
+        <label for="">Префикс</label>
+        <input type="text" name="" id="" value="grvs">
+        <label for="">Кодировка для PostgreSQL</label>
+        <input type="text" name="" id="" value="grvs">
         <input type="submit" class="form__input"/>
       </form>
       <div class="section__block section__block_console-log">
