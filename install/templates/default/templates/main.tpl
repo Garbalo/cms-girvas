@@ -4,8 +4,10 @@
 </main>
 <script>
   let forms = $(document).find('form');
-  for (let form_i = 0; form_i < forms.length; form_i++) {
-    new Form(forms[form_i]);
+  for (let form in forms) {
+    if (typeof($(form).attr('data-not-handler')) !== 'undefined') {
+      new Form(form);
+    }
   }
 
   let master = new installationMaster(document.body);

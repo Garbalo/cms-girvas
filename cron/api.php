@@ -23,9 +23,25 @@ $surl = new cron\library\SimpleUrl();
 if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query') == 'install') {
 
   if ($surl->get_query('event') == 'database-generate') {
-    $database = new \cron\library\Database();
-    $database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/users.sql', DOCUMENT_ROOT)));
-    $execute = $database_query->execute();
+
+		if ($surl->get_query('stage') == 1) {
+
+			$database = new \cron\library\Database();
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/users.sql', DOCUMENT_ROOT)));
+			$execute = $database_query->execute();
+
+			$message = 'Стадия 1';
+		}
+
+		if ($surl->get_query('stage') == 2) {
+
+			$database = new \cron\library\Database();
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/roles.sql', DOCUMENT_ROOT)));
+			$execute = $database_query->execute();
+
+			$message = 'Стадия 2';
+		}
+
   }
   
 }

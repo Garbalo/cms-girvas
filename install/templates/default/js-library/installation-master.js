@@ -7,6 +7,7 @@ class installationMaster {
     this.setInstallationArea(installationArea);
     this.sectionInitialization();
     this.stagesBreadcumpsInitialization();
+    this.formDatabaseGenerateInitialization();
     this.buttonPanelInitialization();
 
     this.updateInstallationArea();
@@ -20,6 +21,39 @@ class installationMaster {
     this.installationStagesBreadcumps = $('[role="installationStages"] > li');
     this.installationStagesSections = $('[data-stage-index]');
     this.installationButtonsPanel = $('[data-stage-event]');
+    this.formDatabaseGenerate = $('[data-stage-event="4"] .form[data-not-handler]');
+  }
+  
+  formDatabaseGenerateInitialization() {
+    $('[data-stage-event="database-generate"]').click((event) => {
+      this.generateDatabase(this.formDatabaseGenerate[0], 1);
+    });
+  }
+
+  generateDatabase(form, stageID) {
+    let generateStage = stageID;
+    let formData = new FormData(form);
+
+    $.ajax({
+      method: 'POST',
+      url: `/cron/api.php?query=install&event=database-generate&stage=${stageID}`,
+      xhrFields: { 
+				withCredentials: true 
+			},
+      data: formData,
+      cache: false,
+			processData: false,
+			contentType: false,
+      enctype: 'multipart/form-data',
+      success: (data) => {
+        let dataJSON = JSON.parse(data);
+
+        console.log(dataJSON.message);
+        if (generateStage < 2) {
+          this.generateDatabase(form, generateStage + 1);
+        }
+      }
+    });
   }
 
   buttonPanelInitialization() {
