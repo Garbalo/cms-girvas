@@ -2,7 +2,11 @@
   <div class="container">
     <h1 class="section__title">Этап 6: Настройка сайта</h1>
     <div class="section__content">
-      asdasd
+      <form action="/cron/api.php?query=install&event=admin-create" class="form" data-not-handler="data-not-handler">
+        <label for="">Название сайта</label>
+        <input type="text" name="site_title" id="">
+        <input type="submit" class="form__input"/>
+      </form>
     </div>
     <div class="section__panel">
       <button class="button panel__item" data-stage-event="last">&lt; Назад</button>

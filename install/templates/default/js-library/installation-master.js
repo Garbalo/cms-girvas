@@ -48,7 +48,10 @@ class installationMaster {
       success: (data) => {
         let dataJSON = JSON.parse(data);
 
-        console.log(dataJSON.message);
+        let consoleEmulate = $('.section__block_console-log')[0];
+        let consoleEmulateContent = $(consoleEmulate).find('.content__container')[0];
+        $(consoleEmulateContent).append($('<p/>', {text: dataJSON.message}));
+
         if (generateStage < 2) {
           this.generateDatabase(form, generateStage + 1);
         }

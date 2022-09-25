@@ -20,7 +20,9 @@
       <div class="section__block section__block_console-log">
         <h2 class="block__title">Database Console Log</h2>
         <div class="block__content">
-          <div class="content__container">CMS GIRVAS. All rights reserved. 2022. [ Version {CMS_VERSION} ]</div>
+          <div class="content__container">
+            <p>GIRVAS. All rights reserved. 2022. [ Version {CMS_VERSION} ]</p>
+          </div>
         </div>
       </div>
     </div>

@@ -34,12 +34,15 @@
   color: #CCC;
   box-sizing: border-box;
   width: calc((100% / 2) - 25px);
-  height: 200px;
 }
 .main .section[data-stage-index="4"] .section__content > .section__block_console-log .content__container {
   padding: 10px;
   overflow-y: auto;
+  height: 200px;
 } 
+.main .section[data-stage-index="4"] .section__content > .section__block_console-log .content__container p {
+  margin: 0;
+}
 .main .section[data-stage-index] .section__content .section__block_console-log .block__title {
   background: linear-gradient(to bottom, #FFF, #EAEAEA);
   font-size: 16px;
