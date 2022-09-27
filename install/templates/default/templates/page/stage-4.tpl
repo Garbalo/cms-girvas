@@ -15,7 +15,6 @@
         <input type="text" name="" id="" value="grvs">
         <label for="">Кодировка для PostgreSQL</label>
         <input type="text" name="" id="" value="grvs">
-        <input type="submit" class="form__input"/>
       </form>
       <div class="section__block section__block_console-log">
         <h2 class="block__title">Database Console Log</h2>

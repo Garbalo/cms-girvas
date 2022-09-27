@@ -5,7 +5,6 @@
       <form action="/cron/api.php?query=install&event=admin-create" class="form" data-not-handler="data-not-handler">
         <label for="">Название сайта</label>
         <input type="text" name="site_title" id="">
-        <input type="submit" class="form__input"/>
       </form>
     </div>
     <div class="section__panel">

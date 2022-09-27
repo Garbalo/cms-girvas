@@ -30,7 +30,12 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/users.sql', DOCUMENT_ROOT)));
 			$execute = $database_query->execute();
 
-			$message = 'Стадия 1';
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/users.sql', DOCUMENT_ROOT)));
+			$execute = $database_query->execute();
+			
+			$message = (!$execute)
+				? '<span style="color:green;">База пользователей успешно создана.</span>'
+				: '<span style="color:red;">База пользователей не была создана.</span>';
 		}
 
 		if ($surl->get_query('stage') == 2) {
@@ -39,10 +44,45 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/roles.sql', DOCUMENT_ROOT)));
 			$execute = $database_query->execute();
 
-			$message = 'Стадия 2';
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/roles.sql', DOCUMENT_ROOT)));
+			$execute = $database_query->execute();
+
+			$message = (!$execute)
+				? '<span style="color:green;">База ролей пользователей успешно создана.</span>'
+				: '<span style="color:red;">База ролей пользователей не была создана.</span>';
+		}
+
+		if ($surl->get_query('stage') == 3) {
+
+			$database = new \cron\library\Database();
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/sessions.sql', DOCUMENT_ROOT)));
+			$execute = $database_query->execute();
+
+			$esr = 'test';
+
+			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/sessions.sql', DOCUMENT_ROOT)));
+			$database_query->bindParam(':login', $esr, PDO::PARAM_STR);
+			$database_query->bindParam(':hash', $esr, PDO::PARAM_STR);
+			$execute = $database_query->execute();
+			
+			$message = (!$execute)
+				? '<span style="color:green;">База сессий пользователей успешно создана.</span>'
+				: '<span style="color:red;">База сессий пользователей не была создана.</span>';
 		}
 
   }
+
+	if ($surl->get_query('event') == 'admin-create') {
+
+		$database = new \cron\library\Database();
+		$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-rows/users/admin.sql', DOCUMENT_ROOT)));
+		$execute = $database_query->execute();
+
+		$message = ($execute)
+			? '<span style="color:green;">Учетная запись была успешно создана.</span>'
+			: '<span style="color:red;">Учетная запись не была создана.</span>';
+
+	}
   
 }
 

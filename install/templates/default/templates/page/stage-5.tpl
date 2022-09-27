@@ -11,11 +11,11 @@
         <input type="password" name="user_password" id="">
         <label for="">Повторите пароль</label>
         <input type="password" name="user_password_repeat" id="">
-        <input type="submit" class="form__input"/>
       </form>
     </div>
     <div class="section__panel">
       <button class="button panel__item" data-stage-event="last">&lt; Назад</button>
+      <button class="button panel__item" data-stage-event="admin-create">Генерация</button>
       <button class="button panel__item" data-stage-event="next">Далее &gt;</button>
     </div>
   </div>

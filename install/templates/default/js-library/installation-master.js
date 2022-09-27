@@ -8,6 +8,7 @@ class installationMaster {
     this.sectionInitialization();
     this.stagesBreadcumpsInitialization();
     this.formDatabaseGenerateInitialization();
+    this.formAdminCreateInitialization();
     this.buttonPanelInitialization();
 
     this.updateInstallationArea();
@@ -22,11 +23,18 @@ class installationMaster {
     this.installationStagesSections = $('[data-stage-index]');
     this.installationButtonsPanel = $('[data-stage-event]');
     this.formDatabaseGenerate = $('[data-stage-event="4"] .form[data-not-handler]');
+    this.formAdminCreate = $('[data-stage-event="5"] .form[data-not-handler]');
   }
   
   formDatabaseGenerateInitialization() {
     $('[data-stage-event="database-generate"]').click((event) => {
       this.generateDatabase(this.formDatabaseGenerate[0], 1);
+    });
+  }
+  
+  formAdminCreateInitialization() {
+    $('[data-stage-event="admin-create"]').click((event) => {
+      this.generateDatabase(this.formAdminCreate[0], 1);
     });
   }
 
@@ -50,11 +58,34 @@ class installationMaster {
 
         let consoleEmulate = $('.section__block_console-log')[0];
         let consoleEmulateContent = $(consoleEmulate).find('.content__container')[0];
-        $(consoleEmulateContent).append($('<p/>', {text: dataJSON.message}));
+        $(consoleEmulateContent).append($('<p/>', {html: dataJSON.message}));
 
-        if (generateStage < 2) {
+        if (generateStage < 3) {
           this.generateDatabase(form, generateStage + 1);
         }
+      }
+    });
+  }
+
+  adminCreate(form) {
+    let generateStage = stageID;
+    let formData = new FormData(form);
+
+    $.ajax({
+      method: 'POST',
+      url: `/cron/api.php?query=install&event=admin-create`,
+      xhrFields: { 
+				withCredentials: true 
+			},
+      data: formData,
+      cache: false,
+			processData: false,
+			contentType: false,
+      enctype: 'multipart/form-data',
+      success: (data) => {
+        let dataJSON = JSON.parse(data);
+
+        // 
       }
     });
   }
