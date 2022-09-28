@@ -92,3 +92,16 @@
 .main .section[data-stage-index] .section__phar.phar-illustration_what-this {
   background-image: url('../images/actor-illustration-what-this.svg');
 }
+.main .section[data-stage-index] .section__notice {
+  background-color: #EAEAEA;
+  color: #232323;
+  padding: 20px 25px;
+}
+.main .section[data-stage-index] .section__notice.section__notice_success {
+  background-color: #D0F1CC;
+  color: #70AD6A;
+}
+.main .section[data-stage-index] .section__notice.section__notice_error {
+  background-color: #F1CCCC;
+  color: #AD6A6A;
+}

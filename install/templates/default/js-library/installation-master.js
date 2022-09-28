@@ -14,27 +14,36 @@ class installationMaster {
     this.updateInstallationArea();
   }
 
+
+
   setStageID(value) {
     this.stageID = value;
   }
 
   sectionInitialization() {
+    this.sectionStages = [];
+    for (let stageIndex = 0; stageIndex < 7; stageIndex++) {
+      let section = $(`[data-stage-index="${stageIndex + 1}"]`)[0];
+      this.sectionStages.push(section);
+    }
+
     this.installationStagesBreadcumps = $('[role="installationStages"] > li');
     this.installationStagesSections = $('[data-stage-index]');
     this.installationButtonsPanel = $('[data-stage-event]');
-    this.formDatabaseGenerate = $('[data-stage-event="4"] .form[data-not-handler]');
-    this.formAdminCreate = $('[data-stage-event="5"] .form[data-not-handler]');
+    this.formDatabaseGenerate = $(this.sectionStages[3]).find('.form[data-not-handler]')[0];
+    this.formAdminCreate = $(this.sectionStages[4]).find('.form[data-not-handler]')[0];
+    
   }
   
   formDatabaseGenerateInitialization() {
     $('[data-stage-event="database-generate"]').click((event) => {
-      this.generateDatabase(this.formDatabaseGenerate[0], 1);
+      this.generateDatabase(this.formDatabaseGenerate, 1);
     });
   }
   
   formAdminCreateInitialization() {
     $('[data-stage-event="admin-create"]').click((event) => {
-      this.generateDatabase(this.formAdminCreate[0], 1);
+      this.adminCreate(this.formAdminCreate);
     });
   }
 
@@ -67,10 +76,24 @@ class installationMaster {
     });
   }
 
-  adminCreate(form) {
-    let generateStage = stageID;
-    let formData = new FormData(form);
+  /**
+   * Get class for notice
+   * 
+   * @param {int} messageType 
+   * @returns 
+   */
+  getNoticeClass(messageType) {
+    switch (messageType) {
+      case 1: return 'section__notice section__notice_success';
+      case 2: return 'section__notice section__notice_error';
+      case 3: return 'section__notice section__notice_info';
+      case 4: return 'section__notice';
+    }
+  }
 
+  adminCreate(form) {
+    let formData = new FormData(form);
+    
     $.ajax({
       method: 'POST',
       url: `/cron/api.php?query=install&event=admin-create`,
@@ -84,8 +107,12 @@ class installationMaster {
       enctype: 'multipart/form-data',
       success: (data) => {
         let dataJSON = JSON.parse(data);
+        
+        let noticeContainer = $(this.sectionStages[4]).find('.section__notice-container')[0];
+        let notice = $('<div/>', {class: this.getNoticeClass(dataJSON.messageType), html: dataJSON.message});
+        $(noticeContainer).html(notice);
 
-        // 
+        $(noticeContainer).css('margin-bottom', '25px');
       }
     });
   }

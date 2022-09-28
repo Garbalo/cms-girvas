@@ -2,6 +2,7 @@
   <div class="container">
     <h1 class="section__title">Этап 3: Проверка прав на запись файловой системы</h1>
     <div class="section__content">
+      <div class="section__notice-container"></div>
       <p class="section__phar phar-illustration phar-illustration_what-this">
         Ой, а&nbsp;это что? А, точно... Нам еще нужно проверить, может&nbsp;ли система управления содержимым получить доступ для записи в&nbsp;собственных&nbsp;же папках. Без этих разрешений CMS не&nbsp;сможет полноценно работать. Давай проверим?
       </p>

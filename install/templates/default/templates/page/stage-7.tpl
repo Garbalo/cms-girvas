@@ -1,4 +1,4 @@
-<section class="section" data-stage-index="6">
+<section class="section" data-stage-index="7">
   <div class="container">
     <h1 class="section__title">Этап 7: Завершение</h1>
     <div class="section__content">

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS public.users (
   id SERIAL PRIMARY KEY,
   login VARCHAR(255) NOT NULL,
+  email TEXT,
   role_id INT NOT NULL,
   hash TEXT,
   token TEXT,

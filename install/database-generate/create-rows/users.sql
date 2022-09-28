@@ -1,0 +1,1 @@
+INSERT INTO public.users (login, role_id, hash, email) VALUES (:login, :role_id, :hash, :email);
