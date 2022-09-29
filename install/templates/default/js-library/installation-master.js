@@ -69,8 +69,10 @@ class installationMaster {
         let consoleEmulateContent = $(consoleEmulate).find('.content__container')[0];
         $(consoleEmulateContent).append($('<p/>', {html: dataJSON.message}));
 
-        if (generateStage < 3) {
-          this.generateDatabase(form, generateStage + 1);
+        if (generateStage < 6) {
+          if (!dataJSON.outputData['install_crush']) {
+            this.generateDatabase(form, generateStage + 1);
+          }
         }
       }
     });
@@ -113,6 +115,13 @@ class installationMaster {
         $(noticeContainer).html(notice);
 
         $(noticeContainer).css('margin-bottom', '25px');
+
+        if (dataJSON.outputData['install_stage_status'] == 1) {
+          console.log(dataJSON.outputData);
+          //if ($(this.installationStagesBreadcumps[4]).hasClass('install-stages-list__item_completed')) {
+            //$(this.installationStagesBreadcumps[4]).addClass('install-stages-list__item_completed');
+          //}
+        }
       }
     });
   }

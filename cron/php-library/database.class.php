@@ -9,14 +9,14 @@ namespace cron\library {
 	
 	class Database {
 		private string $dbserver;
-		private string $dbuser;
+		private string $dbname;
 		private string $dbusername;
 		private string $dbpassword;
 		public $connect = null;
 		
 		function __construct() {
 			if (file_exists(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT))) {
-				require_once(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT));
+				require(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT));
 			} else {
 				die('Database configuration is not created.');
 			}
@@ -27,7 +27,7 @@ namespace cron\library {
 			$this->dbpassword = $_CMS['database']['password'];
 			
 			try {
-				$this->connect = new PDO(sprintf('pgsql:host=%s;dbname=%s', $this->dbserver, $this->dbname), $this->dbuser, $this->dbpassword);
+				$this->connect = new PDO(sprintf('pgsql:host=%s;dbname=%s', $this->dbserver, $this->dbname), $this->dbusername, $this->dbpassword);
 			} catch (PDOException $e) {
 				print "Error!: " . $e->getMessage() . "<br/>";
 				die();

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.sessions (
+CREATE TABLE IF NOT EXISTS public.%s (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
   user_ip TEXT NOT NULL,

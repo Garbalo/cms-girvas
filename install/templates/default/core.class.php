@@ -28,7 +28,7 @@ namespace install\templates\default {
       parent::add_javascript(['src' => sprintf('/install/templates/%s/js-library/installation-master.js', $this->name)]);
 
       $site_sections = [];
-      for ($stage_index = 0; $stage_index < 7; $stage_index++) {
+      for ($stage_index = 0; $stage_index < 6; $stage_index++) {
         $stage_patterns = [];
 
         if ($stage_index == 1) {

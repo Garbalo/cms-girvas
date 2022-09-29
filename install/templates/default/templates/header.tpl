@@ -10,7 +10,6 @@
       <li class="install-stages-list__item">Этап 4</li>
       <li class="install-stages-list__item">Этап 5</li>
       <li class="install-stages-list__item">Этап 6</li>
-      <li class="install-stages-list__item">Этап 7</li>
     </ul>
   </div>
 </header>

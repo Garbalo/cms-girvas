@@ -20,85 +20,280 @@ foreach($libraries_list as $library_index => $library_file) {
 
 $surl = new cron\library\SimpleUrl();
 
+$output_data['install_crush'] = false;
+
 if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query') == 'install') {
 
   if ($surl->get_query('event') == 'database-generate') {
 
-		if (!file_exists(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT))) {
+		$output_data['install_stage_status'] = 0;
 
-			$form_database_server = (!empty($_POST['database_server'])) ? $_POST['database_server'] : '127.0.0.1';
-			$form_database_name = $_POST['database_name'];
-			$form_database_username = $_POST['database_username'];
-			$form_database_password = $_POST['database_password'];
-			$form_database_prefix = $_POST['database_prefix'];
+		try {
 
-			// Automatic creation of a configuration file for the database.
+			if ($surl->get_query('stage') == 1) {
 
-			$file_data = "<?php" . PHP_EOL . PHP_EOL
-			. "# ATTENTION! This file is generated automatically during the installation of the content management system \"GIRVAS\"." . PHP_EOL
-			. "# If you do not know what this file is for, then in no case do not edit it!" . PHP_EOL . PHP_EOL
-			. "\$_CMS['database'] = [" . PHP_EOL
-			. "\t# Database location address. (Leave this option blank if the database is located locally.)" . PHP_EOL
-			. "\t'server' => '$form_database_server'" . PHP_EOL
-			. "\t'name' => '$form_database_name'" . PHP_EOL
-			. "\t'username' => '$form_database_username'" . PHP_EOL
-			. "\t'password' => '$form_database_password'" . PHP_EOL
-			. "\t'prefix' => '$form_database_prefix'" . PHP_EOL
-			. "];" . PHP_EOL . PHP_EOL
-			. "?>";
+				$form_database_server = (!empty($_POST['database_server'])) ? $_POST['database_server'] : '127.0.0.1';
+				$form_database_name = $_POST['database_name'];
+				$form_database_username = $_POST['database_username'];
+				$form_database_password = $_POST['database_password'];
+				$form_database_prefix = $_POST['database_prefix'];
 
-			$fp = fopen(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT), 'w');
-			fwrite($fp, $file_data);
-			fclose($fp);
+				// Automatic creation of a configuration file for the database.
+
+				$file_data = "<?php" . PHP_EOL . PHP_EOL
+				. "# ATTENTION! This file is generated automatically during the installation of the content management system \"GIRVAS\"." . PHP_EOL
+				. "# If you do not know what this file is for, then in no case do not edit it!" . PHP_EOL . PHP_EOL
+				. "\$_CMS['database'] = [" . PHP_EOL
+				. "\t# Database location address. (Leave this option blank if the database is located locally.)" . PHP_EOL
+				. "\t'server' => '$form_database_server'," . PHP_EOL
+				. "\t'name' => '$form_database_name'," . PHP_EOL
+				. "\t'username' => '$form_database_username'," . PHP_EOL
+				. "\t'password' => '$form_database_password'," . PHP_EOL
+				. "\t'prefix' => '$form_database_prefix'" . PHP_EOL
+				. "];" . PHP_EOL . PHP_EOL
+				. "?>";
+
+				try {
+
+					$fp = fopen(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT), 'w');
+					fwrite($fp, $file_data);
+					fclose($fp);
+
+					$message = '<span style="color:green;">Конфигурация для работы с базой данных успешно создана.</span>';
+
+				} catch (Exception $exception) {
+
+					$message = '<span style="color:red;">Произошла внутренняя ошибка. Конфигурация для работы с базой данных не была создана.</span>';
+
+				}
+
+			}
+
+			if (file_exists(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT))) {
+				require(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT));
+			}
+
+			if ($surl->get_query('stage') == 2) {
+
+				$table_name = sprintf('%s_users', $_CMS['database']['prefix']);
+				$table_exists = false;
+
+				$database = new \cron\library\Database();
+
+				try {
+
+					$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM %s LIMIT 1;', $table_name));
+					$database_query->execute();
+
+					$message = sprintf('<span style="color:red;">Таблица %s уже была создана.</span>', $table_name);
+					$table_exists = true;
+				
+				} catch (PDOException $exception) {
+
+					$message = sprintf('<span style="color:red;">Таблица %s не найдена. Требуется ее создание.</span>', $table_name);
+
+				}
+
+				if (!$table_exists) {
+
+					try {
+
+						$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-tables/users.sql', DOCUMENT_ROOT)), $table_name));
+						$execute = $database_query->execute();
+
+						$message = sprintf('<span style="color:green;">Таблица %s успешно создана.</span>', $table_name);
+
+					} catch (PDOException $exception) {
+
+						$message = sprintf('<span style="color:red;">Таблица %s не была создана. Ошибка: %s</span>', $table_name, $exception->getMessage());
+
+					}
+
+				}
+
+			}
+
+			if ($surl->get_query('stage') == 3) {
+
+				$table_name = sprintf('%s_roles', $_CMS['database']['prefix']);
+				$table_exists = false;
+
+				$database = new \cron\library\Database();
+
+				try {
+
+					$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM %s LIMIT 1;', $table_name));
+					$database_query->execute();
+
+					$message = sprintf('<span style="color:red;">Таблица %s уже была создана.</span>', $table_name);
+					$table_exists = true;
+				
+				} catch (PDOException $exception) {
+
+					$message = sprintf('<span style="color:red;">Таблица %s не найдена. Требуется ее создание.</span>', $table_name);
+
+				}
+
+				if (!$table_exists) {
+
+					try {
+
+						$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-tables/roles.sql', DOCUMENT_ROOT)), $table_name));
+						$execute = $database_query->execute();
+
+						$message = sprintf('<span style="color:green;">Таблица %s успешно создана.</span>', $table_name);
+
+					} catch (PDOException $exception) {
+
+						$message = sprintf('<span style="color:red;">Таблица %s не была создана. Ошибка: %s</span>', $table_name, $exception->getMessage());
+
+					}
+
+				}
+				
+			}
+
+			if ($surl->get_query('stage') == 4) {
+
+				$table_name = sprintf('%s_sessions', $_CMS['database']['prefix']);
+				$table_exists = false;
+
+				$database = new \cron\library\Database();
+
+				try {
+
+					$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM %s LIMIT 1;', $table_name));
+					$database_query->execute();
+
+					$message = sprintf('<span style="color:red;">Таблица %s уже была создана.</span>', $table_name);
+					$table_exists = true;
+				
+				} catch (PDOException $exception) {
+
+					$message = sprintf('<span style="color:red;">Таблица %s не найдена. Требуется ее создание.</span>', $table_name);
+
+				}
+
+				if (!$table_exists) {
+
+					try {
+
+						$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-tables/sessions.sql', DOCUMENT_ROOT)), $table_name));
+						$execute = $database_query->execute();
+
+						$message = sprintf('<span style="color:green;">Таблица %s успешно создана.</span>', $table_name);
+
+					} catch (PDOException $exception) {
+
+						$message = sprintf('<span style="color:red;">Таблица %s не была создана. Ошибка: %s</span>', $table_name, $exception->getMessage());
+
+					}
+
+				}
+				
+			}
+
+			if ($surl->get_query('stage') == 5) {
+
+				$table_name = sprintf('%s_entries', $_CMS['database']['prefix']);
+				$table_exists = false;
+
+				$database = new \cron\library\Database();
+
+				try {
+
+					$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM %s LIMIT 1;', $table_name));
+					$database_query->execute();
+
+					$message = sprintf('<span style="color:red;">Таблица %s уже была создана.</span>', $table_name);
+					$table_exists = true;
+				
+				} catch (PDOException $exception) {
+
+					$message = sprintf('<span style="color:red;">Таблица %s не найдена. Требуется ее создание.</span>', $table_name);
+
+				}
+
+				if (!$table_exists) {
+
+					try {
+
+						$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-tables/entries.sql', DOCUMENT_ROOT)), $table_name));
+						$execute = $database_query->execute();
+
+						$message = sprintf('<span style="color:green;">Таблица %s успешно создана.</span>', $table_name);
+
+					} catch (PDOException $exception) {
+
+						$message = sprintf('<span style="color:red;">Таблица %s не была создана. Ошибка: %s</span>', $table_name, $exception->getMessage());
+
+					}
+
+				}
+				
+			}
+
+			if ($surl->get_query('stage') == 6) {
+
+				$table_name = sprintf('%s_settings', $_CMS['database']['prefix']);
+				$table_exists = false;
+
+				$database = new \cron\library\Database();
+
+				try {
+
+					$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM %s LIMIT 1;', $table_name));
+					$database_query->execute();
+
+					$message = sprintf('<span style="color:red;">Таблица %s уже была создана.</span>', $table_name);
+					$table_exists = true;
+				
+				} catch (PDOException $exception) {
+
+					$message = sprintf('<span style="color:red;">Таблица %s не найдена. Требуется ее создание.</span>', $table_name);
+
+				}
+
+				if (!$table_exists) {
+
+					try {
+
+						$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-tables/settings.sql', DOCUMENT_ROOT)), $table_name));
+						$execute = $database_query->execute();
+
+						$message = sprintf('<span style="color:green;">Таблица %s успешно создана.</span>', $table_name);
+
+					} catch (PDOException $exception) {
+
+						$message = sprintf('<span style="color:red;">Таблица %s не была создана. Ошибка: %s</span>', $table_name, $exception->getMessage());
+
+					}
+
+				}
+				
+			}
+
+		} catch (PDOException $exception) {
+
+			$message = sprintf('<span style="color:red;">%s</span>', $exception->getMessage());
+			$output_data['install_crush'] = true;
 
 		}
 
-		if ($surl->get_query('stage') == 1) {
-
-			$database = new \cron\library\Database();
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/users.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/users.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-			
-			$message = (!$execute)
-				? '<span style="color:green;">База пользователей успешно создана.</span>'
-				: '<span style="color:red;">База пользователей не была создана.</span>';
-		}
-
-		if ($surl->get_query('stage') == 2) {
-
-			$database = new \cron\library\Database();
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/roles.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/roles.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-
-			$message = (!$execute)
-				? '<span style="color:green;">База ролей пользователей успешно создана.</span>'
-				: '<span style="color:red;">База ролей пользователей не была создана.</span>';
-		}
-
-		if ($surl->get_query('stage') == 3) {
-
-			$database = new \cron\library\Database();
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-tables/sessions.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-
-			$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/check-exists-tables/sessions.sql', DOCUMENT_ROOT)));
-			$execute = $database_query->execute();
-			
-			$message = (!$execute)
-				? '<span style="color:green;">База сессий пользователей успешно создана.</span>'
-				: '<span style="color:red;">База сессий пользователей не была создана.</span>';
-		}
+		$output_data['install_stage'] = 4;
 
   }
 
 	if ($surl->get_query('event') == 'admin-create') {
 		
+		if (file_exists(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT))) {
+			require(sprintf('%s/cron/database.config.php', DOCUMENT_ROOT));
+		}
+
+		$table_name = sprintf('%s_users', $_CMS['database']['prefix']);
+
+		$output_data['install_stage_status'] = 0;
+
 		$form_user_login = $_POST['user_login'];
 		$form_user_email = $_POST['user_email'];
 		$form_user_password = $_POST['user_password'];
@@ -118,7 +313,7 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 
 					try {
 
-						$database_query = $database->connect->prepare('SELECT 1 FROM public.users;');
+						$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM public.%s;', $table_name));
 						$execute = $database_query->execute();
 
 						$table_exists = true;
@@ -132,7 +327,7 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 
 					if ($table_exists) {
 
-						$database_query = $database->connect->prepare('SELECT * FROM public.users;');
+						$database_query = $database->connect->prepare(sprintf('SELECT 1 FROM public.%s;', $table_name));
 						$database_query->execute();
 						$result = $database_query->fetchAll(\PDO::FETCH_ASSOC);
 						
@@ -140,7 +335,7 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 
 							$role_id = 1;
 
-							$database_query = $database->connect->prepare(file_get_contents(sprintf('%s/install/database-generate/create-rows/users.sql', DOCUMENT_ROOT)));
+							$database_query = $database->connect->prepare(sprintf(file_get_contents(sprintf('%s/install/database-generate/create-rows/users.sql', DOCUMENT_ROOT)), $table_name));
 							$database_query->bindParam(':login', $form_user_login, PDO::PARAM_STR);
 							$database_query->bindParam(':email', $form_user_email, PDO::PARAM_STR);
 							$database_query->bindParam(':role_id', $role_id, PDO::PARAM_INT);
@@ -149,6 +344,8 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 
 							$api_event_id = 1;
 							$message_type = 1;
+
+							$output_data['install_stage_status'] = 1;
 
 						} else {
 
@@ -191,6 +388,8 @@ if (file_exists(sprintf('%s/install', DOCUMENT_ROOT)) && $surl->get_query('query
 			case 6: $message = 'Невозможно создать учетную запись администратора. Таблица пользователей уже содержит записи.'; break;
 			default: $message = '{LANG:UNDEFINED_MESSAGE}'; break;
 		}
+
+		$output_data['install_stage'] = 5;
 
 	}
   
