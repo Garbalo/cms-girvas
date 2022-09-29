@@ -24,11 +24,19 @@ $surl = new cron\library\SimpleUrl();
 
 if (!file_exists(sprintf('%s/install', DOCUMENT_ROOT))) {
 
-	$template_name = 'default';
+	if ($surl->get_path(0) == 'girvas-admin') {
 
-	$template = cron\library\Template::connect_core($template_name, sprintf('%s/templates', DOCUMENT_ROOT));
-	$template->set_assembly();
-	echo $template->get_ready_assembly();
+		require(sprintf('%s/admin/admin.php', DOCUMENT_ROOT));
+
+	} else {
+
+		$template_name = 'default';
+
+		$template = cron\library\Template::connect_core($template_name, sprintf('%s/templates', DOCUMENT_ROOT));
+		$template->set_assembly();
+		echo $template->get_ready_assembly();
+
+	}
 
 } else {
 
