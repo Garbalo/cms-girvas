@@ -1,1 +1,0 @@
-INSERT INTO public.%s (login, role_id, hash, email) VALUES (:login, :role_id, :hash, :email);
