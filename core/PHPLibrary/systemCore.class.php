@@ -2,8 +2,7 @@
 
 namespace core\PHPLibrary {
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
-  use \core\PHPLibrary\SystemCore\FileConnectorRecursive as SystemCoreFileConnectorRecursive;
-
+  
   /**
    * Class SystemCore
    * @package core\PHPLibrary
@@ -32,14 +31,23 @@ namespace core\PHPLibrary {
 
       $this->init();
     }
-
+    
+    /**
+     * Инициализация ядра CMS
+     *
+     * @return void
+     */
     private function init() {
       require_once(sprintf('%s/%s/SystemCore/fileConnector.interface.php', CMS_ROOT_DIRECTORY, self::CMS_CORE_PHP_LIBRARY_PATH));
       require_once(sprintf('%s/%s/SystemCore/fileConnector.class.php', CMS_ROOT_DIRECTORY, self::CMS_CORE_PHP_LIBRARY_PATH));
 
       $file_connector = new SystemCoreFileConnector($this);
-      $file_connector->connect_files_recursive(self::CMS_CORE_PHP_LIBRARY_PATH, '/^([a-zA-Z_]+)\.interface\.php$/');
-      $file_connector->connect_files_recursive(self::CMS_CORE_PHP_LIBRARY_PATH, '/^([a-zA-Z_]+)\.class\.php$/');
+      $file_connector->set_start_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
+      $file_connector->set_current_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
+      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.interface\.php$/');
+      $file_connector->reset_current_directory();
+      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
+      $file_connector->reset_current_directory();
     }
 
     /**

@@ -2,9 +2,10 @@
 
 namespace core\PHPLibrary\SystemCore {
 
-  class FileConnector implements InterfaceFileConnector {
+  final class FileConnector implements InterfaceFileConnector {
     private mixed $system_core = null;
     private string $current_directory = '';
+    private string $start_directory = '';
         
     /**
      * __construct
@@ -14,6 +15,34 @@ namespace core\PHPLibrary\SystemCore {
      */
     public function __construct(\core\PHPLibrary\SystemCore $system_core) {
       $this->system_core = $system_core;
+    }
+    
+    /**
+     * Сбросить текущую директорию.
+     *
+     * @return void
+     */
+    public function reset_current_directory() : void {
+      $this->set_current_directory($this->get_start_directory());
+    }
+    
+    /**
+     * Назначить начальную директиву
+     *
+     * @param  mixed $directory Директория
+     * @return void
+     */
+    public function set_start_directory(string $directory) : void {
+      $this->start_directory = $directory;
+    }
+    
+    /**
+     * Получить начальную директиву
+     *
+     * @return string
+     */
+    public function get_start_directory() : string {
+      return $this->start_directory;
     }
     
     /**
@@ -32,7 +61,7 @@ namespace core\PHPLibrary\SystemCore {
      * @return string
      */
     public function get_current_directory() : string {
-      return sprintf('%s/%s', CMS_ROOT_DIRECTORY, $this->current_directory);
+      return $this->current_directory;
     }
 
     
@@ -44,7 +73,7 @@ namespace core\PHPLibrary\SystemCore {
      */
     public function connect_file(string $file_name) : bool {
       /** @var string $file_path Полный путь до подключаемого файла */
-      $file_path = sprintf('%s/%s', $this->get_current_directory(), $file_name);
+      $file_path = sprintf('%s/%s/%s', CMS_ROOT_DIRECTORY, $this->get_current_directory(), $file_name);
       if (file_exists($file_path)) {
         require_once($file_path);
         return true;
@@ -57,24 +86,31 @@ namespace core\PHPLibrary\SystemCore {
     /**
      * Рекурсивное подключение файлов
      *
-     * @param  mixed $files_path
-     * @param  mixed $file_name_pattern
+     * @param  mixed $file_name_pattern Шаблон (regex) наименования шаблона
+     * @param  int $level Уровень вложенности
      * @return bool
      */
-    public function connect_files_recursive(string $files_path, string $file_name_pattern) : void {
+    public function connect_files_recursive(string $file_name_pattern, int $level = 0) : void {
+      /** @var string $files_path Полный путь до файлов */
+      $files_path = $this->get_current_directory();
       /** @var array $files_list Массив файлов */
-      $files_list = array_diff(scandir($files_path), ['..', '.']);
+      $files_list = array_diff(scandir(sprintf($files_path)), ['..', '.']);
       foreach ($files_list as $file_name) {
+        if ($level == 0) {
+          $this->reset_current_directory();
+        }
+        
+        /** @var string $file_path Полный путь до файла */
+        $file_path = sprintf('%s/%s', $files_path, $file_name);
+        
         if (preg_match($file_name_pattern, $file_name)) {
-          /** @var string $file_path Полный путь до файла */
-          $file_path = sprintf('%s/%s', $files_path, $file_name);
-
-          if (!is_dir($file_path)) {
-            // Подключаем файл
-            $this->connect_file($file_name);
-          } else {
+          // Подключаем файл
+          $this->connect_file($file_name);
+        } else {
+          if (is_dir($file_path)) {
+            $this->set_current_directory($file_path);
             // Погружаемся во вложенную папку для последующих подключений
-            $this->connect_files_recursive($file_path, $file_name_pattern);
+            $this->connect_files_recursive($file_name_pattern, $level + 1);
           }
         }
       }
