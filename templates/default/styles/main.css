@@ -1,0 +1,6 @@
+.main {
+  background-image: url('../images/header_background_bottom.png');
+  background-repeat: repeat-x;
+  background-position: left top;
+  min-height: 640px;
+}

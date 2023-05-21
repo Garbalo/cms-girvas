@@ -1,0 +1,17 @@
+html {
+  background-image: url('../images/body_background.png');
+  font-family: 'Roboto', 'Helvetica', 'sans-serif';
+  height: 100%;
+}
+body {
+  min-height: 100%;
+}
+.container {
+  margin: 0 auto;
+  max-width: 1170px;
+}
+.list-reset {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}

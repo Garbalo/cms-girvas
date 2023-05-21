@@ -11,5 +11,6 @@ require_once(sprintf('%s/core/PHPLibrary/systemCore.class.php', CMS_ROOT_DIRECTO
 
 $system_core = new \core\PHPLibrary\SystemCore();
 $template = new \core\PHPLibrary\Template($system_core);
+echo $template->get_core_assembled();
 
 ?>
