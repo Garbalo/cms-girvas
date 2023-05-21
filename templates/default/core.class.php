@@ -34,6 +34,19 @@ namespace templates\default {
      * @return string
      */
     public function assembly_main(array $template_replaces = []) : string {
+      if ($this->template->system_core->urlp->get_path(0) == null || $this->template->system_core->urlp->get_path(0) == 'index') {
+        $this->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
+
+        /** @var string $site_page Содержимое шаблона страницы */
+        $site_page = TemplateCollector::assembly_file_content($this->template, 'templates/page/index.tpl', [
+          'PAGE_NAME' => 'index'
+        ]);
+      }
+
+      $template_replaces['SITE_PAGE_WRAPPER'] = TemplateCollector::assembly_file_content($this->template, 'templates/pageWrapper.tpl', [
+        'SITE_PAGE' => $site_page,
+      ]);
+
       return TemplateCollector::assembly_file_content($this->template, 'templates/main.tpl', $template_replaces);
     }
     
@@ -73,6 +86,7 @@ namespace templates\default {
       $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);
+      $this->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       
       $this->template->add_script(['src' => 'scripts/slider.class.js']);
       $this->template->add_script(['src' => 'scripts/main.loader.js']);

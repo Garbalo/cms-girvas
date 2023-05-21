@@ -6,7 +6,7 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
   final class Template {
-    private SystemCore $system_core;
+    public SystemCore $system_core;
     private mixed $core;
     private string $path;
     private string $name;

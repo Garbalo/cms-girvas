@@ -12,6 +12,7 @@ namespace core\PHPLibrary {
    * @property-read string CMS_CORE_JS_LIBRARY_PATH Полный путь до JavaScript-библиотеки CMS
    * @property-read string CMS_CORE_TS_LIBRARY_PATH Полный путь до TypeScript-библиотеки CMS
    * @property      array $configuration Массив с конфигурациями CMS
+   * @property      URLParser $urlp Объект класса URLParser
    */
   final class SystemCore {
     public const CMS_CORE_PATH = 'core';
@@ -19,6 +20,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_JS_LIBRARY_PATH = 'core/JSLibrary';
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     private array $configuration = [];
+    public URLParser $urlp;
     
     /**
      * __construct
@@ -48,6 +50,17 @@ namespace core\PHPLibrary {
       $file_connector->reset_current_directory();
       $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
       $file_connector->reset_current_directory();
+
+      $this->init_url_parser();
+    }
+    
+    /**
+     * Инициализация URL-парсера
+     *
+     * @return void
+     */
+    private function init_url_parser() {
+      $this->urlp = new URLParser();
     }
 
     /**

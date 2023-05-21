@@ -19,6 +19,9 @@
               <a href="#" class="navigation-item__link">Статьи</a>
             </li>
             <li class="header__navigation-list-item navigation-item">
+              <a href="#" class="navigation-item__link">О системе</a>
+            </li>
+            <li class="header__navigation-list-item navigation-item">
               <a href="#" class="navigation-item__link">Поддержать</a>
             </li>
           </ul>

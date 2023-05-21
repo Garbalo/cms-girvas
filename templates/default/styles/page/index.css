@@ -1,0 +1,26 @@
+.main__page.page.page_index .page__articles-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.main__page.page.page_index .page__articles-list-item {
+  margin-right: 20px;
+  margin-bottom: 20px;
+  flex: 0 0 calc(50% - (20px / 2));
+}
+.main__page.page.page_index .page__articles-list-item:nth-child(2n) {
+  margin-right: 0;
+}
+.main__page.page.page_index .page__articles-list-item:nth-last-child(2),
+.main__page.page.page_index .page__articles-list-item:last-child {
+  margin-bottom: 0;
+}
+.main__page.page.page_index .page__article-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.main__page.page.page_index .page__article-description-phar {
+  font-size: 16px;
+  margin: 0;
+}

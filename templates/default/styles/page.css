@@ -1,0 +1,23 @@
+.main__page-wrapper {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--main-page-wrapper-background-color);
+  padding: 20px;
+}
+.main__page {
+  flex-grow: 1;
+  margin-right: 20px;
+  min-height: 400px;
+}
+.main__aside {
+  flex: 0 0 300px;
+}
+.main__aside .sidebar__block-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.main__aside .sidebar__block-content {
+  font-size: 16px;
+}

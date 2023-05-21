@@ -27,4 +27,5 @@
   --header-topbar-button-font-color--active: var(--common-secondary-color-1);
   --header-slider-slide-title-font-color: var(--common-main-color-1);
   --header-slider-slide-content-phar-font-color: var(--common-main-color-2);
+  --main-page-wrapper-background-color: var(--common-main-color-1);
 }

@@ -1,6 +1,7 @@
 <main class="main">
-  asdasdasd<br>
-  dasdasdasdasd<br>
-  asdasdasdasd<br>
-  sdasdasdsd
+  <div class="main__wrapper">
+    <div class="container">
+      {SITE_PAGE_WRAPPER}
+    </div>
+  </div>
 </main>

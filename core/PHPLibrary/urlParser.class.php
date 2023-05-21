@@ -15,14 +15,15 @@ namespace core\PHPLibrary {
       $this->path = $this->get_parsed_path();
       $this->params = $this->get_parsed_params();
     }
-    
+        
     /**
      * Получить массив элементов пути URL
      *
+     * @param  mixed $path_index Индекс элемента массива пути
      * @return array
      */
-    public function get_path() : array {
-      return $this->path;
+    public function get_path(int $path_index) : mixed {
+      return (isset($this->path[$path_index])) ? $this->path[$path_index] : null;
     }
     
     /**
@@ -40,7 +41,7 @@ namespace core\PHPLibrary {
      * @return mixed
      */
     public function get_param(string $param_name) : mixed {
-      return $this->params[$param_name];
+      return (isset($this->params[$param_name])) ? $this->params[$param_name] : null;
     }
     
     /**
