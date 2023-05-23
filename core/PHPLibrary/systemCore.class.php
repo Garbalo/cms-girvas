@@ -1,6 +1,8 @@
 <?php
 
 namespace core\PHPLibrary {
+  use \core\PHPLibrary\SystemCore\Configurator as SystemCoreConfigurator;
+  use \core\PHPLibrary\SystemCore\DatabaseConnector as SystemCoreDatabaseConnector;
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
   
   /**
@@ -28,9 +30,6 @@ namespace core\PHPLibrary {
      * @return void
      */
     public function __construct() {
-      // Стандартные назначения конфигураций
-      $this->add_configuration('default_system_language', 'ru_RU');
-
       $this->init();
     }
     
@@ -46,10 +45,21 @@ namespace core\PHPLibrary {
       $file_connector = new SystemCoreFileConnector($this);
       $file_connector->set_start_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
       $file_connector->set_current_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
+      // Подключение файлов с перечислениями
+      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.enum\.php$/');
+      $file_connector->reset_current_directory();
+      // Подключение файлов с интерфейсами
       $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.interface\.php$/');
       $file_connector->reset_current_directory();
+      // Подключение файлов с классами
       $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
       $file_connector->reset_current_directory();
+
+      $configurator = new SystemCoreConfigurator($this);
+      $configurator->set('cms_language_default', 'ru_RU');
+
+      $database_connector = new SystemCoreDatabaseConnector($this, $configurator);
+      $database_connector->database->connect();
 
       $this->init_url_parser();
     }
@@ -61,51 +71,6 @@ namespace core\PHPLibrary {
      */
     private function init_url_parser() {
       $this->urlp = new URLParser();
-    }
-
-    /**
-     * Добавление новой конфигурации в CMS
-     *
-     * @param  mixed $configuration_name Наименование конфигурации
-     * @param  mixed $configuration_value Значение конфигурации
-     * @return void
-     */
-    private function add_configuration(string $configuration_name, mixed $configuration_value) : void {
-      array_push($this->configuration, [$configuration_name => $configuration_value]);
-    }
-    
-    /**
-     * Назначение значения конфигурации CMS
-     *
-     * @param  mixed $configuration_name Наименование конфигурации
-     * @param  mixed $configuration_value Значение конфигурации
-     * @return void
-     */
-    public function set_configuration(string $configuration_name, mixed $configuration_value) : void {
-      if (array_key_exists(array_key_exists($configuration_name, $configuration))) {
-        $this->configurations[$configuration_name] = $configuration_value;
-      }
-    }
-
-    /**
-     * Получение отдельного параметра конфигураций CMS
-     *
-     * @param  mixed $configuration_name Наименование конфигурации
-     * @return mixed
-     */
-    public function get_configuration(string $configuration_name) : mixed {
-      /** @var array Массив с кофигурациями CMS */
-      $configuration = $this->configuration();
-      return (array_key_exists($configuration_name, $configuration)) ? $configuration[$configuration_name] : null;
-    }
-    
-    /**
-     * Получение массива конфигураций CMS
-     *
-     * @return array
-     */
-    public function get_configurations_array() : array {
-      return $this->configurations;
     }
 
   }
