@@ -41,7 +41,7 @@ namespace core\PHPLibrary\Entries {
       $this->limit = $limit;
     }
 
-    public function get_data_by_category_id(string|array $columns, int $category_id, int $entries_limit = 100) : array {
+    public function get() : array {
       /** @var string $database_query SQL-запрос */
       $database_query = '';
       /** @var EnumDatabaseManagementSystem $database_management_system */
@@ -52,8 +52,7 @@ namespace core\PHPLibrary\Entries {
       }
 
       /** @var string $database_query SQL-запрос (переопределение) */
-      $database_query_select_columns = (is_string($columns)) ? $columns : implode(', ', $columns);
-      $database_query = sprintf($database_query, $database_query_select_columns, $entries_limit);
+      $database_query = sprintf($database_query, implode(', ', $this->select_columns), implode(' AND ', $this->conditions), $this->limit);
 
       $this->database->prepare($database_query);
       $this->database->bindParam(':category_id', $category_id, \PDO::PARAM_INT);
