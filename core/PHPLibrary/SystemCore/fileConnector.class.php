@@ -68,12 +68,11 @@ namespace core\PHPLibrary\SystemCore {
     /**
      * Подключение файла
      *
-     * @param  mixed $file_name
+     * @param  mixed $file_path
      * @return bool
      */
-    public function connect_file(string $file_name) : bool {
+    public function connect_file(string $file_path) : bool {
       /** @var string $file_path Полный путь до подключаемого файла */
-      $file_path = sprintf('%s/%s/%s', CMS_ROOT_DIRECTORY, $this->get_current_directory(), $file_name);
       if (file_exists($file_path)) {
         require_once($file_path);
         return true;
@@ -105,7 +104,7 @@ namespace core\PHPLibrary\SystemCore {
         
         if (preg_match($file_name_pattern, $file_name)) {
           // Подключаем файл
-          $this->connect_file($file_name);
+          $this->connect_file($file_path);
         } else {
           if (is_dir($file_path)) {
             $this->set_current_directory($file_path);

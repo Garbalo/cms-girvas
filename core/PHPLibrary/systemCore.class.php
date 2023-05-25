@@ -21,7 +21,8 @@ namespace core\PHPLibrary {
     public const CMS_CORE_PHP_LIBRARY_PATH = 'core/PHPLibrary';
     public const CMS_CORE_JS_LIBRARY_PATH = 'core/JSLibrary';
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
-    private array $configuration = [];
+    private SystemCoreConfigurator $configurator;
+    public SystemCoreDatabaseConnector $database_connector;
     public URLParser $urlp;
     
     /**
@@ -55,11 +56,11 @@ namespace core\PHPLibrary {
       $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
       $file_connector->reset_current_directory();
 
-      $configurator = new SystemCoreConfigurator($this);
-      $configurator->set('cms_language_default', 'ru_RU');
+      $this->configurator = new SystemCoreConfigurator($this);
+      $this->configurator->set('cms_language_default', 'ru_RU');
 
-      $database_connector = new SystemCoreDatabaseConnector($this, $configurator);
-      $database_connector->database->connect();
+      $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
+      $this->database_connector->database->connect();
 
       $this->init_url_parser();
     }

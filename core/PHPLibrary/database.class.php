@@ -2,14 +2,18 @@
 
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\DatabaseManagementSystem as EnumDatabaseManagementSystem;
+  use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \PDO as PDO;
 
   final class Database {
+    public const SQL_LIBRARY_PATH = 'core/SQLLibrary';
+
     private string $database_name;
     private string $database_user;
     private string $database_password;
     private string $database_host;
     private EnumDatabaseManagementSystem $database_management_system;
+    private DatabaseQueryBuilder $query_builder;
     private PDO $connection;
 
     /**
@@ -19,6 +23,7 @@ namespace core\PHPLibrary {
      */
     public function __construct(EnumDatabaseManagementSystem $database_management_system) {
       $this->set_database_management_system($database_management_system);
+      $this->query_builder = new DatabaseQueryBuilder();
     }
     
     /**
@@ -140,6 +145,15 @@ namespace core\PHPLibrary {
       } catch (PDOException $exception) {
         echo $exception->getMessage();
       }
+    }
+
+    public function get_file_sql(string $file_path) : string {
+      $file_path_full = sprintf('%s/%s/%s', CMS_ROOT_DIRECTORY, self::SQL_LIBRARY_PATH, $file_path);
+      if (file_exists($file_path_full)) {
+        return file_get_contents($file_path_full);
+      }
+
+      return '';
     }
   }
 
