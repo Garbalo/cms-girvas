@@ -21,26 +21,6 @@ namespace core\PHPLibrary\Entries {
       $this->database = $database;
     }
 
-    public function add_condition(string|array $condition) : void {
-      if (is_string($condition)) {
-        array_push($this->conditions, $condition);
-      } else {
-        $this->conditions = array_merge($this->conditions, $condition);
-      }
-    }
-
-    public function add_select_column(string|array $select_columns) : void {
-      if (is_string($condition)) {
-        array_push($this->select_columns, $select_columns);
-      } else {
-        $this->select_columns = array_merge($this->select_columns, $select_columns);
-      }
-    }
-
-    public function set_limit(int $limit) : void {
-      $this->limit = $limit;
-    }
-
     public function get() : array {
       /** @var string $database_query SQL-запрос */
       $database_query = '';

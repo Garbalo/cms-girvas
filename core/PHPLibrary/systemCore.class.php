@@ -21,7 +21,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_PHP_LIBRARY_PATH = 'core/PHPLibrary';
     public const CMS_CORE_JS_LIBRARY_PATH = 'core/JSLibrary';
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
-    private SystemCoreConfigurator $configurator;
+    public SystemCoreConfigurator $configurator;
     public SystemCoreDatabaseConnector $database_connector;
     public URLParser $urlp;
     

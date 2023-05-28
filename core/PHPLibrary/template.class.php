@@ -20,6 +20,10 @@ namespace core\PHPLibrary {
       'templates/header.tpl',
       'templates/main.tpl',
       'templates/footer.tpl',
+      'templates/page.tpl',
+      'templates/page/entry.tpl',
+      'templates/page/error.tpl',
+      'templates/page/index.tpl',
       'metadata.json'
     ];
     
@@ -177,6 +181,8 @@ namespace core\PHPLibrary {
      */
     public function get_core_assembled() : string {
       if (isset($this->core->assembled)) {
+        $site_seo_base = $this->system_core->configurator->get('seo_base');
+
         // Итоговая сборка шаблона веб-страницы
         return TemplateCollector::assembly($this->core->assembled, [
           // Стили веб-страницы в DOM-элементе HEAD
@@ -184,6 +190,9 @@ namespace core\PHPLibrary {
           // Скрипты веб-страницы в DOM-элементе HEAD
           'SITE_SCRIPTS' => TemplateCollector::assembly_scripts($this, $this->get_scripts()),
           'SITE_TEMPLATE_URL' => sprintf('/templates/%s', $this->get_name()),
+          'SITE_TITLE' => $site_seo_base['title'],
+          'SITE_DESCRIPTION' => $site_seo_base['description'],
+          'SITE_KEYWORDS' => implode(', ', $site_seo_base['keywords'])
         ]);
       }
 

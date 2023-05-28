@@ -14,7 +14,7 @@ namespace core\PHPLibrary {
     private string $database_host;
     private EnumDatabaseManagementSystem $database_management_system;
     private DatabaseQueryBuilder $query_builder;
-    private PDO $connection;
+    public PDO $connection;
 
     /**
      * __construct

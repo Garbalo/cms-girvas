@@ -1,11 +1,10 @@
 <?php
 
 namespace core\PHPLibrary {
+  use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
   final class Entries {
     private SystemCore $system_core;
-    private array $array = [];
-    public Entries\Database $database;
     
     /**
      * __construct
@@ -15,28 +14,31 @@ namespace core\PHPLibrary {
      */
     public function __construct(SystemCore $system_core) {
       $this->system_core = $system_core;
-      $this->database = new Entries\Database($this->system_core->database_connector->database, $this);
     }
+    
+    public function get_all() : array {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['id']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->assembly();
 
-    
-    
-    /**
-     * Установить значение для массива записей
-     *
-     * @param  mixed $array
-     * @return void
-     */
-    public function set_array(array $array) : void {
-      $this->array = $array;
-    }
-    
-    /**
-     * Получить список записей
-     *
-     * @return array
-     */
-    public function get_array() : array {
-      return $this->array;
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      //$this->system_core->database_connector->database->bindParam(':id', $entry_id, \PDO::PARAM_INT);
+			$database_query->execute();
+
+      $entries = [];
+      $results = $database_query->fetchAll(\PDO::FETCH_ASSOC);
+      if ($results) {
+        foreach ($results as $data) {
+          array_push($entries, new Entry($this->system_core, $data['id']));
+        }
+      }
+
+      return $entries;
     }
 
   }

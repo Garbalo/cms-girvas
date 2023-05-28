@@ -25,7 +25,7 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
      * @param  mixed $condition
      * @return void
      */
-    public function set_condition(string $condition) : void {
+    public function add_condition(string $condition) : void {
       $this->condition = $condition;
     }
     
@@ -35,11 +35,11 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
      * @return void
      */
     public function assembly() {
-      if (!empty($this->condition)) {
+      if ($this->condition != '') {
         $this->assembled = sprintf('WHERE %s', $this->condition);
+      } else {
+        $this->assembled = '';
       }
-
-      $this->assembled = '';
     }
 
   }
