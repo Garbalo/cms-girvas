@@ -10,18 +10,18 @@ namespace core\PHPLibrary {
     private mixed $core;
     private string $path;
     private string $name;
+    private string $category;
     
     private array $styles = [];
     private array $scripts = [];
 
     private array $important_files = [
       'templates/html.tpl',
-      'templates/head.tpl',
       'templates/header.tpl',
       'templates/main.tpl',
       'templates/footer.tpl',
       'templates/page.tpl',
-      'templates/page/entry.tpl',
+      //'templates/page/entry.tpl',
       'templates/page/error.tpl',
       'templates/page/index.tpl',
       'metadata.json'
@@ -32,13 +32,17 @@ namespace core\PHPLibrary {
      *
      * @param  SystemCore $system_core Объект SystemCore
      * @param  mixed $template_name Наименование шаблона
+     * @param  mixed $template_category Категория шаблона
      * @return void
      */
-    public function __construct(SystemCore $system_core, string $template_name = 'default') {
+    public function __construct(SystemCore $system_core, string $template_name = 'default', string $template_category = 'default') {
       /** @var SystemCore $this->system_core Объект класса SystemCore */
       $this->system_core = $system_core;
       $this->set_name($template_name);
-      $this->set_path(sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $template_name));
+
+      $template_path = ($template_category != 'default') ? sprintf('%s/templates/%s/%s', CMS_ROOT_DIRECTORY, $template_category, $template_name) : sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $template_name);
+      $this->set_category($template_category);
+      $this->set_path($template_path);
       
       $this->init();
     }
@@ -78,6 +82,25 @@ namespace core\PHPLibrary {
      */
     public function get_name() : string {
       return $this->name;
+    }
+    
+    /**
+     * Назначить наименование категории шаблона
+     *
+     * @param  mixed $template_name Наименование шаблона
+     * @return void
+     */
+    public function set_category(string $template_category) : void {
+      $this->category = $template_category;
+    }
+    
+    /**
+     * Получить наименование категории шаблона
+     *
+     * @return string
+     */
+    public function get_category() : string {
+      return $this->category;
     }
     
     /**
@@ -182,6 +205,7 @@ namespace core\PHPLibrary {
     public function get_core_assembled() : string {
       if (isset($this->core->assembled)) {
         $site_seo_base = $this->system_core->configurator->get('seo_base');
+        $template_category = $this->get_category();
 
         // Итоговая сборка шаблона веб-страницы
         return TemplateCollector::assembly($this->core->assembled, [
@@ -189,7 +213,7 @@ namespace core\PHPLibrary {
           'SITE_STYLES' => TemplateCollector::assembly_styles($this, $this->get_styles()),
           // Скрипты веб-страницы в DOM-элементе HEAD
           'SITE_SCRIPTS' => TemplateCollector::assembly_scripts($this, $this->get_scripts()),
-          'SITE_TEMPLATE_URL' => sprintf('/templates/%s', $this->get_name()),
+          'SITE_TEMPLATE_URL' => ($template_category != 'default') ? sprintf('/templates/%s/%s', $template_category, $this->get_name()) : sprintf('/templates/%s', $this->get_name()),
           'SITE_TITLE' => $site_seo_base['title'],
           'SITE_DESCRIPTION' => $site_seo_base['description'],
           'SITE_KEYWORDS' => implode(', ', $site_seo_base['keywords'])
@@ -207,7 +231,7 @@ namespace core\PHPLibrary {
     private function get_core_path() : string {
       /** @var string $template_name Наименование шаблона */
       $template_name = $this->get_name();
-      return sprintf('%s/templates/%s/core.class.php', CMS_ROOT_DIRECTORY, $template_name);
+      return sprintf('%s/core.class.php', $this->get_path());
     }
     
     /**
@@ -218,7 +242,8 @@ namespace core\PHPLibrary {
     private function get_core_class() : string {
       /** @var string $template_name Наименование шаблона */
       $template_name = $this->get_name();
-      return sprintf('\\templates\\%s\\Core', $template_name);
+      $template_category = $this->get_category();
+      return ($template_category != 'default') ? sprintf('\\templates\\%s\\%s\\Core', $template_category, $template_name) :  sprintf('\\templates\\%s\\Core', $template_name);
     }
     
     /**

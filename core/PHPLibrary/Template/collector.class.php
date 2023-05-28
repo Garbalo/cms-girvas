@@ -25,7 +25,7 @@ namespace core\PHPLibrary\Template {
         if (array_key_exists('href', $style) && array_key_exists('rel', $style)) {
           /** @var string $style_assembled Собранный DOM-элемент LINK для добавления стиля */
           $style_assembled = self::assembly('<link href="{STYLE_HREF}" rel="{STYLE_RELATIONSHIP}">', [
-            'STYLE_HREF' => sprintf('/templates/%s/%s', $template->get_name(), $style['href']),
+            'STYLE_HREF' => ($template->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $style['href']) : sprintf('/templates/%s/%s', $template->get_name(), $style['href']),
             'STYLE_RELATIONSHIP' => $style['rel']
           ]);
 
@@ -44,7 +44,7 @@ namespace core\PHPLibrary\Template {
         if (array_key_exists('src', $script)) {
           /** @var string $script_assembled Собранный DOM-элемент SCRIPT для добавления скрипта */
           $script_assembled = self::assembly('<script src="{SCRIPT_SOURCE}"></script>', [
-            'SCRIPT_SOURCE' => sprintf('/templates/%s/%s', $template->get_name(), $script['src'])
+            'SCRIPT_SOURCE' => ($template->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $script['src']) : sprintf('/templates/%s/%s', $template->get_name(), $script['src'])
           ]);
 
           array_push($scripts_assembled, $script_assembled);
