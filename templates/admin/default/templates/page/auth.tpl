@@ -15,7 +15,7 @@
         </svg>
       </div>
       <div class="main__form-auth-container">
-        <form action="#" class="main__form-auth" method="POST">
+        <form action="/handler/auth" class="main__form-auth" method="POST">
           <h1 class="main__form-title form-auth">Авторизация в&nbsp;панели&nbsp;управления</h1>
           <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="Логин">
           <input name="user_password" type="password" class="form-auth__input form-auth__input_password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">

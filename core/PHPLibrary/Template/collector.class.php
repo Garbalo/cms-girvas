@@ -41,10 +41,16 @@ namespace core\PHPLibrary\Template {
       $scripts_assembled = [];
 
       foreach ($scripts_array as $script) {
+        if ($template->get_category() != 'default') {
+          $script_url = (!$script['is_cms_core']) ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $script['src']) : sprintf('/core/JSLibrary/%s', $script['src']);
+        } else {
+          $script_url = (!$script['is_cms_core']) ? sprintf('/templates/%s/%s', $template->get_name(), $script['src']) : sprintf('/core/JSLibrary/%s', $script['src']);
+        }
+
         if (array_key_exists('src', $script)) {
           /** @var string $script_assembled Собранный DOM-элемент SCRIPT для добавления скрипта */
           $script_assembled = self::assembly('<script src="{SCRIPT_SOURCE}"></script>', [
-            'SCRIPT_SOURCE' => ($template->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $script['src']) : sprintf('/templates/%s/%s', $template->get_name(), $script['src'])
+            'SCRIPT_SOURCE' => $script_url
           ]);
 
           array_push($scripts_assembled, $script_assembled);

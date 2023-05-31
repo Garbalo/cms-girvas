@@ -166,7 +166,8 @@ namespace core\PHPLibrary {
      * @param  mixed $script_data
      * @return void
      */
-    public function add_script(array $script_data) : void {
+    public function add_script(array $script_data, bool $is_cms_core = false) : void {
+      $script_data['is_cms_core'] = $is_cms_core;
       array_push($this->scripts, $script_data);
     }
     

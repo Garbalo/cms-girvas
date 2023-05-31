@@ -5,8 +5,9 @@ namespace core\PHPLibrary\Database\QueryBuilder {
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseFrom as ClauseFrom;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseWhere as ClauseWhere;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseLimit as ClauseLimit;
+  use \core\PHPLibrary\Database\QueryBuilder\InterfaceStatement as InterfaceStatement;
 
-  final class StatementSelect {
+  final class StatementSelect implements InterfaceStatement {
     private QueryBuilder $query_builder;
     private array $selections = [];
     public ClauseFrom|null $clause_from = null;
@@ -54,7 +55,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
       $this->clause_where = new ClauseWhere($this);
     }
 
-    public function set_clause_order_by() {
+    public function set_clause_order_by() : void {
       $this->clause_order_by = $clause_order_by;
     }
     
@@ -69,8 +70,13 @@ namespace core\PHPLibrary\Database\QueryBuilder {
       $this->clause_limit->set_limit($limit);
       $this->clause_limit->set_offset($offset);
     }
-
-    public function assembly() {
+    
+    /**
+     * Сборка SQL-запроса
+     *
+     * @return void
+     */
+    public function assembly() : void {
       $query_array = [];
       if (!empty($this->selections)) {
         array_push($query_array, implode(', ', $this->selections));
