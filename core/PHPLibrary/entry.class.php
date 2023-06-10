@@ -231,6 +231,30 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Удаление существующей записи
+     *
+     * @return bool
+     */
+    public function delete() : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_delete();
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('id = :id');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':id', $this->id, \PDO::PARAM_INT);
+			$execute = $database_query->execute();
+
+      return ($execute) ? true : false;
+    }
+    
+    /**
      * Обновление существующей записи
      *
      * @param  array $data Массив данных
