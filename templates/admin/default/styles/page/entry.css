@@ -1,0 +1,30 @@
+.entry-editor-form {
+  display: flex;
+  flex-direction: column;
+}
+.entry-editor-form__panel {
+  display: flex;
+  justify-content: flex-end;
+}
+.entry-editor-form__panel-submit {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.entry-editor-form__panel-submit:last-child {
+  margin-right: 0;
+}
+.page__entry-editor {
+  margin-bottom: 10px;
+}
+.entry-editor-form__input {
+  margin-bottom: 10px;
+}
+.entry-editor-form__input:last-child {
+  margin-bottom: 0;
+}
+.entry-editor-form__textarea {
+  margin-bottom: 10px;
+}
+.entry-editor-form__textarea:last-child {
+  margin-bottom: 0;
+}

@@ -1,0 +1,18 @@
+.table, .table__row, .table__cell {
+  border-width: 1px;
+  border-style: solid;
+}
+.table {
+  background-color: var(--table-background-color);
+  font-size: 14px;
+  color: var(--table-font-color);
+  border-collapse: collapse;
+  width: 100%;
+}
+.table__row {
+  border-color: var(--table-cell-border-color);
+}
+.table__cell {
+  border-color: var(--table-cell-border-color);
+  padding: 10px;
+}

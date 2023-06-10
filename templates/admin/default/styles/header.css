@@ -1,0 +1,26 @@
+.header {
+  position: sticky;
+  box-sizing: border-box;
+  background-color: var(--admin-panel-header-background-color);
+  border-top: 1px solid var(--admin-panel-header-border-color);
+  border-bottom: 1px solid var(--admin-panel-header-border-color);
+  height: 64px;
+  box-shadow: 0 0 10px var(--admin-panel-header-shadow-color);
+  top: 0;
+  z-index: 1;
+}
+.header__container {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+.header__brand-container {
+  box-sizing: border-box;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 15px;
+  height: 100%;
+}
+.header__brand-image {
+  height: 100%;
+}

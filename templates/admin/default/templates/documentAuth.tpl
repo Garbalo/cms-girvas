@@ -8,9 +8,9 @@
   {SITE_STYLES}
   {SITE_SCRIPTS}
 </head>
-<body>
-  {SITE_HEADER}
-  {SITE_MAIN}
-  {SITE_FOOTER}
+<body class="body body_auth">
+  {ADMIN_PANEL_HEADER}
+  {ADMIN_PANEL_MAIN}
+  {ADMIN_PANEL_FOOTER}
 </body>
 </html>

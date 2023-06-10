@@ -2,14 +2,16 @@
 
 namespace core\PHPLibrary\Database\QueryBuilder {
   use \core\PHPLibrary\Database\QueryBuilder as QueryBuilder;
-  use \core\PHPLibrary\Database\QueryBuilder\StatementInsert\ClauseReturning as ClauseReturning;
+  use \core\PHPLibrary\Database\QueryBuilder\StatementUpdate\ClauseSet as ClauseSet;
+  use \core\PHPLibrary\Database\QueryBuilder\StatementUpdate\ClauseWhere as ClauseWhere;
   use \core\PHPLibrary\Database\QueryBuilder\InterfaceStatement as InterfaceStatement;
 
-  final class StatementInsert implements InterfaceStatement {
+  final class StatementUpdate implements InterfaceStatement {
     private QueryBuilder $query_builder;
     private array $columns = [];
+    public ClauseSet|null $clause_set = null;
+    public ClauseWhere|null $clause_where = null;
     public string $table_name = '';
-    public ClauseReturning|null $clause_returning = null;
     public string $assembled = '';
 
     /**
@@ -21,20 +23,23 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     public function __construct(QueryBuilder $query_builder) {
       $this->query_builder = $query_builder;
     }
-
-    public function set_clause_returning() : void {
-      $this->clause_returning = new ClauseReturning($this);
+    
+    /**
+     * Установить предложение SET
+     *
+     * @return void
+     */
+    public function set_clause_set() : void {
+      $this->clause_set = new ClauseSet($this);
     }
     
     /**
-     * Добавить значение столбца
+     * Установить предложение WHERE
      *
-     * @param  mixed $column_name
-     * @param  mixed $value
      * @return void
      */
-    public function add_column(string $column_name) : void {
-      array_push($this->columns, $column_name);
+    public function set_clause_where() : void {
+      $this->clause_where = new ClauseWhere($this);
     }
     
     /**
@@ -48,7 +53,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     }
     
     /**
-     * Получить наименование таблицы
+     * Получить имя таблицы
      *
      * @return string
      */
@@ -64,19 +69,17 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     public function assembly() : void {
       $query_array = [];
 
-      $columns_values = [];
-      foreach ($this->columns as $column_name) {
-        array_push($columns_values, ':' . $column_name);
+      if (!is_null($this->clause_set)) {
+        $this->clause_set->assembly();
+        array_push($query_array, $this->clause_set->assembled);
       }
 
-      array_push($query_array, sprintf('(%s) VALUES (%s)', implode(', ', $this->columns), implode(', ', $columns_values)));
-
-      if (!is_null($this->clause_returning)) {
-        $this->clause_returning->assembly();
-        array_push($query_array, $this->clause_returning->assembled);
+      if (!is_null($this->clause_where)) {
+        $this->clause_where->assembly();
+        array_push($query_array, $this->clause_where->assembled);
       }
 
-      $this->assembled = sprintf('INSERT INTO %s %s;', $this->get_table(), implode(' ', $query_array));
+      $this->assembled = sprintf('UPDATE %s %s;', $this->get_table(), implode(' ', $query_array));
     }
   }
 

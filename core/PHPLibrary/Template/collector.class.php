@@ -48,9 +48,20 @@ namespace core\PHPLibrary\Template {
         }
 
         if (array_key_exists('src', $script)) {
+          $attributes = [];
+          foreach ($script as $script_attribute_name => $script_attribute_value) {
+            if ($script_attribute_name != 'is_cms_core' && $script_attribute_name != 'src') {
+              array_push($attributes, sprintf('%s="%s"', $script_attribute_name, $script_attribute_value));
+            }
+
+            if ($script_attribute_name == 'src') {
+              array_push($attributes, sprintf('%s="%s"', $script_attribute_name, $script_url));
+            }
+          }
+
           /** @var string $script_assembled Собранный DOM-элемент SCRIPT для добавления скрипта */
-          $script_assembled = self::assembly('<script src="{SCRIPT_SOURCE}"></script>', [
-            'SCRIPT_SOURCE' => $script_url
+          $script_assembled = self::assembly('<script {SCRIPT_ATTRIBUTES}></script>', [
+            'SCRIPT_ATTRIBUTES' => implode(' ', $attributes)
           ]);
 
           array_push($scripts_assembled, $script_assembled);

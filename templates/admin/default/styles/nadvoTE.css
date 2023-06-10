@@ -1,0 +1,59 @@
+:root {
+  --nadvo-te-button-background-color: #EAEAEA;
+  --nadvo-te-button-icon-color: #232323;
+}
+.nadvo-te {
+  display: flex;
+  flex-direction: column;
+}
+.nadvo-te__toolbar-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.nadvo-te__toolbar-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--nadvo-te-button-background-color);
+  border: 0;
+  padding: 8px;
+  width: 32px;
+  height: 32px;
+}
+.nadvo-te__toolbar-button-icon {
+  fill: var(--nadvo-te-button-icon-color);
+  width: 100%;
+}
+.nadvo-te__textarea-visual {
+  display: none;
+  box-sizing: border-box;
+  font-size: 16px;
+  padding: 10px;
+  height: 400px;
+  overflow-y: scroll;
+}
+.nadvo-te__textarea-visual_is-showed {
+  display: block;
+}
+.nadvo-te__textarea {
+  display: block;
+  height: 400px;
+  resize: none;
+}
+.nadvo-te__textarea_is-hidden {
+  display: none;
+}
+.nadvo-te__textarea-visual p,
+.nadvo-te__textarea-visual h1,
+.nadvo-te__textarea-visual h2,
+.nadvo-te__textarea-visual h3,
+.nadvo-te__textarea-visual h4,
+.nadvo-te__textarea-visual h5,
+.nadvo-te__textarea-visual h6 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}

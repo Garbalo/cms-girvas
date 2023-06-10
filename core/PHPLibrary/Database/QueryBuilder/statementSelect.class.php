@@ -38,7 +38,6 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     /**
      * Установить предложение FROM
      *
-     * @param  mixed $clause_from
      * @return void
      */
     public function set_clause_from() : void {
@@ -48,7 +47,6 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     /**
      * Установить предложение WHERE
      *
-     * @param  mixed $clause_where
      * @return void
      */
     public function set_clause_where() : void {

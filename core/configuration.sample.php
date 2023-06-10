@@ -9,6 +9,8 @@
  */
 
 $configuration = [
+  'domain' => 'www.example.com',
+  'domain_cookies' => 'www.example.com',
   'database' => ['host' => '', 'user' => '', 'password' => '', 'name' => ''],
   'seo_base' => [
     // Наименование сайта
@@ -23,7 +25,9 @@ $configuration = [
   'system_salt' => '',
   // Алгоритм хеширования пароля (PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID)
   // Подробнее: https://www.php.net/manual/en/function.password-hash.php
-  'password_hashing_algorithm' => PASSWORD_DEFAULT 
+  'password_hashing_algorithm' => PASSWORD_DEFAULT,
+  'session_expires' => 86400,
+  'session_admin_expires' => 86400,
 ];
 
 ?>

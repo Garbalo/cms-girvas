@@ -3,9 +3,10 @@
 namespace core\PHPLibrary\Database {
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect as StatementSelect;
   use \core\PHPLibrary\Database\QueryBuilder\StatementInsert as StatementInsert;
+  use \core\PHPLibrary\Database\QueryBuilder\StatementUpdate as StatementUpdate;
 
   class QueryBuilder {
-    public StatementSelect|StatementInsert $statement;
+    public StatementSelect|StatementInsert|StatementUpdate $statement;
     
     /**
      * __construct
@@ -26,12 +27,21 @@ namespace core\PHPLibrary\Database {
     }
     
     /**
-     * set_statement_select
+     * set_statement_insert
      *
      * @return void
      */
     public function set_statement_insert() : void {
       $this->statement = new StatementInsert($this);
+    }
+    
+    /**
+     * set_statement_update
+     *
+     * @return void
+     */
+    public function set_statement_update() : void {
+      $this->statement = new StatementUpdate($this);
     }
   }
 

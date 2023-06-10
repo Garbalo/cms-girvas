@@ -1,0 +1,21 @@
+.footer {
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--admin-panel-footer-background-color);
+  border-top: 1px solid var(--admin-panel-footer-border-color);
+  border-bottom: 1px solid var(--admin-panel-footer-border-color);
+  height: 48px;
+  bottom: 0;
+  z-index: 1;
+}
+.footer__container {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.footer__copyright {
+  font-size: 14px;
+  color: var(--admin-panel-footer-copyright-font-color);
+}

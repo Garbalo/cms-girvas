@@ -24,25 +24,40 @@ class Form {
   initFormElement() {
     this.element.addEventListener('submit', (event) => {
       event.preventDefault();
-      this.send();
+
+      let formMethod = (event.submitter.hasAttribute('formmethod')) ? event.submitter.getAttribute('formmethod') : '';
+      this.send(event);
     });
   }
-  getFormMethod() {
+  getFormMethod(submitEvent) {
+    if (submitEvent.submitter.hasAttribute('formmethod')) {
+      if (submitEvent.submitter.getAttribute('formmethod') != '') {
+        return submitEvent.submitter.getAttribute('formmethod');
+      }
+    }
+
     return (this.element.hasAttribute('method')) ? this.element.getAttribute('method') : 'POST';
   }
   getFormAction() {
     return (this.element.hasAttribute('action')) ? this.element.getAttribute('action') : '/handler';
   }
-  send() {
+  send(submitEvent) {
     /** @type {FormData} */
     let formData = new FormData(this.element);
+    let submitterName = submitEvent.submitter.hasAttribute('name') ? submitEvent.submitter.getAttribute('name') : 'submitter';
+    formData.append(submitterName, true);
 
     // Отправка через Fetch API
     fetch(this.getFormAction(), {
-      method: this.getFormMethod(),
+      method: this.getFormMethod(submitEvent),
       body: formData
     }).then((response) => {
-      console.log(response.json());
+      try {
+        let responseJSON = response.json();
+        console.log(responseJSON);
+      } catch (error) {
+        console.error(error);
+      }
     }).catch((error) => {
       console.error(error);
     });
