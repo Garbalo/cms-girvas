@@ -8,9 +8,9 @@
       <textarea name="entry_description_rus" class="form__textarea entry-editor-form__textarea">{ENTRY_DESCRIPTION}</textarea>
       {ENTRY_EDITOR}
       <div class="entry-editor-form__panel">
-        <input type="submit" class="form__input form__input_submit form__input_submit_red entry-editor-form__panel-submit" name="entry_event_delete" formmethod="DELETE" value="Удалить">
+        <button class="form__button form__button_red entry-editor-form__panel-button" data-modal-call="entry-delete">Удалить</button>
         <input type="submit" class="form__input form__input_submit entry-editor-form__panel-submit" name="entry_event_unpublish" formmethod="PATCH" value="Снять с публикации">
-        <input type="submit" class="form__input form__input_submit form__input_submit_blue entry-editor-form__panel-submit" name="entry_event_save" formmethod="PATCH" value="Сохранить">
+        <input type="submit" class="form__input form__input_submit form__input_submit_blue entry-editor-form__panel-submit" name="entry_event_save" formmethod="{ENTRY_FORM_METHOD}" value="Сохранить">
       </div>
     </form>
   </div>

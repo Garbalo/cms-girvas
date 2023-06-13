@@ -18,11 +18,15 @@ namespace core\PHPLibrary {
     public function get_ip_address() : string {
       return $this->ip_address;
     }
+    public function get_session(int $session_type_id, array $data_init) : ClientSession {
+      $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
+      $session->init_data($data_init);
+      return $session;
+    }
     public function is_logged(int $session_type_id) : bool {
       if (ClientSession::exists_by_ip($this->system_core, $this->ip_address, $session_type_id)) {
-        $client_session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
+        $client_session = $this->get_session($session_type_id, ['updated_unix_timestamp', 'token']);
         if (!is_null($client_session)) {
-          $client_session->init_data(['updated_unix_timestamp', 'token']);
           switch ($session_type_id) {
             case 2: $client_session_cookie_token_name = '_grv_atoken'; break;
             default: $client_session_cookie_token_name = '_grv_utoken';

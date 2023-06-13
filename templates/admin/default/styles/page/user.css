@@ -1,0 +1,30 @@
+.user-editor-form {
+  display: flex;
+  flex-direction: column;
+}
+.user-editor-form__panel {
+  display: flex;
+  justify-content: flex-end;
+}
+.user-editor-form__panel-submit {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.user-editor-form__panel-submit:last-child {
+  margin-right: 0;
+}
+.page__user-editor {
+  margin-bottom: 10px;
+}
+.user-editor-form__input {
+  margin-bottom: 10px;
+}
+.user-editor-form__input:last-child {
+  margin-bottom: 0;
+}
+.user-editor-form__textarea {
+  margin-bottom: 10px;
+}
+.user-editor-form__textarea:last-child {
+  margin-bottom: 0;
+}

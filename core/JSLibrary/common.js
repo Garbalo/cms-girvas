@@ -7,4 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let form = new Form(formElement);
     form.initFormElement();
   }
+
+  let modalsElementsArray = document.body.querySelectorAll('[data-modal-call]');
+  for (let modalCallerElement of modalsElementsArray) {
+    Modal.initCallerElement(modalCallerElement);
+  }
 });

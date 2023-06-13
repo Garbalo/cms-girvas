@@ -51,12 +51,24 @@ namespace core\PHPLibrary {
       return (property_exists($this, 'login')) ? $this->login : '{ERROR:USER_DATA_IS_NOT_EXISTS=login}';
     }
 
+    public function get_email() : string {
+      return (property_exists($this, 'email')) ? $this->email : '{ERROR:USER_DATA_IS_NOT_EXISTS=email}';
+    }
+
     public function get_password_hash() : string {
       return (property_exists($this, 'password_hash')) ? $this->password_hash : '{ERROR:USER_DATA_IS_NOT_EXISTS=password_hash}';
     }
 
     public function get_security_hash() : string {
       return (property_exists($this, 'security_hash')) ? $this->security_hash : '{ERROR:USER_DATA_IS_NOT_EXISTS=security_hash}';
+    }
+
+    public function get_created_unix_timestamp() : int|string {
+      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=created_unix_timestamp}';
+    }
+
+    public function get_updated_unix_timestamp() : int|string {
+      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
     }
 
     public function hashing(string $string) {
@@ -67,13 +79,22 @@ namespace core\PHPLibrary {
       return md5($hash_source);
     }
 
-    public function password_hash(string $string) {
-      $user_id = $this->get_id();
-      $security_hash = $this->get_security_hash();
-      $system_salt = $this->system_core->configurator->get('system_salt');
-      $password_hashing_algorithm = $this->system_core->configurator->get('password_hashing_algorithm');
-      $crypt_source = sprintf('{GIRVAS:%s:%d+%s=>%s}', $security_hash, $user_id, $system_salt, $string);
+    public static function password_hash(SystemCore $system_core, string $user_security_hash, string $password) : string {
+      $system_salt = $system_core->configurator->get('system_salt');
+      $password_hashing_algorithm = $system_core->configurator->get('password_hashing_algorithm');
+      $crypt_source = sprintf('{GIRVAS:%s+%s=>%s}', $user_security_hash, $system_salt, $password);
       return password_hash($crypt_source, $password_hashing_algorithm);
+    }
+
+    public function password_verify(string $password) : bool {
+      $system_salt = $this->system_core->configurator->get('system_salt');
+      $crypt_source = sprintf('{GIRVAS:%s+%s=>%s}', $this->get_security_hash(), $system_salt, $password);
+      return password_verify($crypt_source, $this->get_password_hash());
+    }
+
+    public static function generate_security_hash(SystemCore $system_core) : string {
+      $system_salt = $system_core->configurator->get('system_salt');
+      return md5(sprintf('{GIRVAS:%s+%d}', $system_salt, time()));
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
@@ -105,7 +126,7 @@ namespace core\PHPLibrary {
      *
      * @param  mixed $system_core
      * @param  mixed $user_login
-     * @return Entry
+     * @return User
      */
     public static function get_by_login(SystemCore $system_core, string $user_login) : User|null {
       $query_builder = new DatabaseQueryBuilder();
@@ -133,10 +154,10 @@ namespace core\PHPLibrary {
      * Проверить существование пользователя по логину
      *
      * @param  mixed $system_core
-     * @param  mixed $user_login
+     * @param  string $user_login
      * @return void
      */
-    public static function exists_by_login(\core\PHPLibrary\SystemCore $system_core, string $user_login) {
+    public static function exists_by_login(\core\PHPLibrary\SystemCore $system_core, string $user_login) : bool {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -156,8 +177,60 @@ namespace core\PHPLibrary {
 
       return ($database_query->fetchColumn()) ? true : false;
     }
+    
+    /**
+     * Проверить существование пользователя по ID
+     *
+     * @param  mixed $system_core
+     * @param  int $user_id
+     * @return void
+     */
+    public static function exists_by_id(\core\PHPLibrary\SystemCore $system_core, int $user_id) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('id = :id');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
 
-    public static function create(SystemCore $system_core, array $user_data = []) : User|null {
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':id', $user_id, \PDO::PARAM_INT);
+			$database_query->execute();
+
+      return ($database_query->fetchColumn()) ? true : false;
+    }
+
+    /**
+     * Удаление существующего пользователя
+     *
+     * @return bool
+     */
+    public function delete() : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_delete();
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('id = :id');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':id', $this->id, \PDO::PARAM_INT);
+			$execute = $database_query->execute();
+
+      return ($execute) ? true : false;
+    }
+
+    public static function create(SystemCore $system_core, string $user_login, string $user_email, string $user_password) : User|null {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users');
@@ -172,13 +245,11 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_returning->add_column('id');
       $query_builder->statement->assembly();
 
-      $user_login = $user_data['login'];
-      $user_email = $user_data['email'];
-      $user_password_hash = $user_data['password_hash'];
-      $user_security_hash = $user_data['security_hash'];
+      $user_security_hash = self::generate_security_hash($system_core);
+      $user_password_hash = self::password_hash($system_core, $user_security_hash, $user_password);
       $user_created_unix_timestamp = time();
       $user_updated_unix_timestamp = $user_created_unix_timestamp;
-      $user_metadata_json = $user_data['metadata_json'];
+      $user_metadata_json = json_encode([], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
       
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
@@ -197,6 +268,57 @@ namespace core\PHPLibrary {
       }
 
       return null;
+    }
+
+    /**
+     * Обновление существующего пользователя
+     *
+     * @param  array $data Массив данных
+     * @return bool
+     */
+    public function update(array $data) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_update();
+      $query_builder->statement->set_table('users');
+      $query_builder->statement->set_clause_set();
+
+      foreach ($data as $data_name => $data_value) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+          $query_builder->statement->clause_set->add_column($data_name);
+        }
+      }
+
+      $query_builder->statement->clause_set->add_column('updated_unix_timestamp');
+      $query_builder->statement->clause_set->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('id = :id');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+
+      /** @var int $user_updated_unix_timestamp Текущее время в UNIX-формате */
+      $user_updated_unix_timestamp = time();
+
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      
+      foreach ($data as $data_name => $data_value) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+          switch (gettype($data_value)) {
+            case 'boolean': $data_value_type = \PDO::PARAM_BOOL; break;
+            case 'integer': $data_value_type = \PDO::PARAM_INT; break;
+            case 'string': $data_value_type = \PDO::PARAM_STR; break;
+            case 'null': $data_value_type = \PDO::PARAM_NULL; break;
+          }
+          
+          $database_query->bindParam(':' . $data_name, $data[$data_name], $data_value_type);
+        }
+      }
+      
+      $database_query->bindParam(':id', $this->id, \PDO::PARAM_INT);
+      $database_query->bindParam(':updated_unix_timestamp', $user_updated_unix_timestamp, \PDO::PARAM_INT);
+			$execute = $database_query->execute();
+
+      return ($execute) ? true : false;
     }
   }
 }

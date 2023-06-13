@@ -7,6 +7,7 @@ namespace templates\admin\default {
   use \core\PHPLibrary\Entries as Entries;
   use \core\PHPLibrary\Entries\Database as EntriesDatabase;
   use \core\PHPLibrary\User as User;
+  use \core\PHPLibrary\Users as Users;
   use \core\PHPLibrary\Client\Session as ClientSession;
 
   final class Core implements \core\PHPLibrary\Template\InterfaceCore {
@@ -69,11 +70,12 @@ namespace templates\admin\default {
         $site_page = TemplateCollector::assembly_file_content($this->template, 'templates/page/entry.tpl', [
           'ADMIN_PANEL_PAGE_NAME' => 'entry',
           'ENTRY_EDITOR' => TemplateCollector::assembly_file_content($this->template, 'templates/page/entry/editor.tpl', []),
-          'ENTRY_ID' => $entry->get_id(),
+          'ENTRY_ID' => (!is_null($entry)) ? $entry->get_id() : 0,
           'ENTRY_TITLE' => (!is_null($entry)) ? $entry->get_title() : '',
           'ENTRY_DESCRIPTION' => (!is_null($entry)) ? $entry->get_description() : '',
           'ENTRY_CONTENT' => (!is_null($entry)) ? $entry->get_content() : '',
-          'ENTRY_NAME' => (!is_null($entry)) ? $entry->get_name() : ''
+          'ENTRY_NAME' => (!is_null($entry)) ? $entry->get_name() : '',
+          'ENTRY_FORM_METHOD' => (!is_null($entry)) ? 'PATCH' : 'PUT'
         ]);
       } else if ($this->template->system_core->urlp->get_path(1) == 'entries') {
         http_response_code(200);
@@ -113,6 +115,66 @@ namespace templates\admin\default {
           'ADMIN_PANEL_ENTRIES_TABLE' => TemplateCollector::assembly_file_content($this->template, 'templates/page/entries/table.tpl', [
             'ADMIN_PANEL_ENTRIES_TABLE_ITEMS' => implode($entries_table_items_assembled_array)
           ])
+        ]);
+      } else if ($this->template->system_core->urlp->get_path(1) == 'users') {
+        http_response_code(200);
+
+        $this->template->add_style(['href' => 'styles/page/users.css', 'rel' => 'stylesheet']);
+        $this->template->add_script(['src' => 'admin/page/users.js'], true);
+
+        $users_table_items_assembled_array = [];
+        $users = new Users($this->template->system_core);
+        $users_array_objects = $users->get_all();
+        unset($users);
+
+        $user_number = 1;
+        foreach ($users_array_objects as $user_object) {
+          $user_object->init_data(['id', 'login', 'email', 'created_unix_timestamp', 'updated_unix_timestamp']);
+
+          $user_created_date_timestamp = date('d.m.Y H:i:s', $user_object->get_created_unix_timestamp());
+          $user_updated_date_timestamp = date('d.m.Y H:i:s', $user_object->get_updated_unix_timestamp());
+
+          array_push($users_table_items_assembled_array, TemplateCollector::assembly_file_content($this->template, 'templates/page/users/tableItem.tpl', [
+            'USER_ID' => $user_object->get_id(),
+            'USER_INDEX' => $user_number,
+            'USER_LOGIN' => $user_object->get_login(),
+            'USER_EMAIL' => $user_object->get_email(),
+            'USER_CREATED_DATE_TIMESTAMP' => $user_created_date_timestamp,
+            'USER_UPDATED_DATE_TIMESTAMP' => $user_updated_date_timestamp
+          ]));
+
+          $user_number++;
+        }
+
+        /** @var string $site_page Содержимое шаблона страницы */
+        $site_page = TemplateCollector::assembly_file_content($this->template, 'templates/page/users.tpl', [
+          'ADMIN_PANEL_PAGE_NAME' => 'users',
+          'ADMIN_PANEL_USERS_TABLE' => TemplateCollector::assembly_file_content($this->template, 'templates/page/users/table.tpl', [
+            'ADMIN_PANEL_USERS_TABLE_ITEMS' => implode($users_table_items_assembled_array)
+          ])
+        ]);
+      } else if ($this->template->system_core->urlp->get_path(1) == 'user') {
+        http_response_code(200);
+
+        $this->template->add_style(['href' => 'styles/page/user.css', 'rel' => 'stylesheet']);
+
+        $user = null;
+        if (!is_null($this->template->system_core->urlp->get_path(2))) {
+          $user_id = (is_numeric($this->template->system_core->urlp->get_path(2))) ? (int)$this->template->system_core->urlp->get_path(2) : 0;
+          $user = (User::exists_by_id($this->template->system_core, $user_id)) ? new User($this->template->system_core, $user_id) : null;
+          
+          if (!is_null($user)) {
+            $user->init_data(['id', 'login', 'email']);
+          }
+        }
+
+        /** @var string $site_page Содержимое шаблона страницы */
+        $site_page = TemplateCollector::assembly_file_content($this->template, 'templates/page/user.tpl', [
+          'ADMIN_PANEL_PAGE_NAME' => 'user',
+          'USER_ID' => (!is_null($user)) ? $user->get_id() : 0,
+          'USER_LOGIN' => (!is_null($user)) ? $user->get_login() : '',
+          'USER_EMAIL' => (!is_null($user)) ? $user->get_email() : '',
+          'USER_FORM_METHOD' => (!is_null($user)) ? 'PATCH' : 'PUT'
         ]);
       } else {
         http_response_code(404);
@@ -178,8 +240,10 @@ namespace templates\admin\default {
       $this->template->add_style(['href' => 'styles/common.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/table.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/form.css', 'rel' => 'stylesheet']);
+      $this->template->add_style(['href' => 'styles/modal.css', 'rel' => 'stylesheet']);
 
       $this->template->add_script(['src' => 'form.class.js'], true);
+      $this->template->add_script(['src' => 'modal.class.js'], true);
       $this->template->add_script(['src' => 'common.js'], true);
 
       /** @var string $user_ip IP-адрес пользователя */

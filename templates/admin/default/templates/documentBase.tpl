@@ -34,6 +34,15 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
+          <a href="/admin/users" class="admin-navigation-list__item-link" title="Пользователи">
+            <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16.933332 16.933281" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <circle cx="8.4666662" cy="6.0901923" r="6" />
+              <path d="M 8.466667,12.604044 A 8.4666364,4.3292742 0 0 0 3.3333469e-7,16.933333 H 16.933333 A 8.4666364,4.3292742 0 0 0 8.466667,12.604044 Z" />
+            </svg>
+            <div class="admin-navigation-list__item-label">Пользователи</div>
+          </a>
+        </li>
+        <li class="admin-navigation-list__item">
           <a href="#" class="admin-navigation-list__item-link" title="Модули">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect x="8.2" y="48.5" width="15.5" height="15.5"/>

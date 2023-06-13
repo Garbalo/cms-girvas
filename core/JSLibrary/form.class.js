@@ -7,6 +7,7 @@ class Form {
    * @param {HTMLFormElement} element
    */
   constructor(element) {
+    this.modalParent = null;
     this.setFormElement(element);
   }
   /**
@@ -52,11 +53,23 @@ class Form {
       method: this.getFormMethod(submitEvent),
       body: formData
     }).then((response) => {
-      try {
-        let responseJSON = response.json();
-        console.log(responseJSON);
-      } catch (error) {
-        console.error(error);
+      return response.json();
+    }).then((data) => {
+      console.log(data);
+      if (typeof(data.outputData.modalClose) != 'undefined') {
+        this.modalParent.remove();
+      }
+
+      if (typeof(data.outputData.refresh) != 'undefined') {
+        this.timeout = setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      }
+
+      if (typeof(data.outputData.href) != 'undefined') {
+        this.timeout = setTimeout(() => {
+          window.location.href = data.outputData.href;
+        }, 10);
       }
     }).catch((error) => {
       console.error(error);

@@ -15,7 +15,7 @@
         </button>
       </li>
       <li class="buttons-list__item">
-        <button class="table-entries__item-button" role="entry-remove">
+        <button class="table-entries__item-button" role="entry-remove" data-modal-call="entry-delete" data-modal-params="entryID={ENTRY_ID}">
           <svg class="table-entries__item-button-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" xml:space="preserve">
             <rect x="13.9" y="16.1" width="37.3" height="47.9"/>
             <path d="M41.4,10l1-7.3L24.7,0.3l-1,7.3L10.2,5.7l-1,7.3l44.6,6.2l1-7.3L41.4,10z M25.6,7.8l0.7-5l13.8,1.9l-0.7,5L25.6,7.8z"/>

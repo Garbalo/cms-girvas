@@ -253,7 +253,54 @@ namespace core\PHPLibrary {
 
       return ($execute) ? true : false;
     }
-    
+        
+    /**
+     * Создание новой записи
+     *
+     * @param  mixed $system_core
+     * @param  mixed $name
+     * @param  mixed $author_id
+     * @param  mixed $category_id
+     * @param  mixed $texts
+     * @return Entry
+     */
+    public static function create(SystemCore $system_core, string $name, int $author_id, int $category_id, array $texts) : Entry|null {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_insert();
+      $query_builder->statement->set_table('entries');
+      $query_builder->statement->add_column('author_id');
+      $query_builder->statement->add_column('category_id');
+      $query_builder->statement->add_column('name');
+      $query_builder->statement->add_column('texts');
+      $query_builder->statement->add_column('created_unix_timestamp');
+      $query_builder->statement->add_column('updated_unix_timestamp');
+      $query_builder->statement->set_clause_returning();
+      $query_builder->statement->clause_returning->add_column('id');
+      $query_builder->statement->assembly();
+
+      $entry_created_unix_timestamp = time();
+      $entry_updated_unix_timestamp = $entry_created_unix_timestamp;
+
+      $texts_json = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':author_id', $author_id, \PDO::PARAM_INT);
+      $database_query->bindParam(':category_id', $category_id, \PDO::PARAM_INT);
+      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+      $database_query->bindParam(':texts', $texts_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':created_unix_timestamp', $entry_created_unix_timestamp, \PDO::PARAM_INT);
+      $database_query->bindParam(':updated_unix_timestamp', $entry_updated_unix_timestamp, \PDO::PARAM_INT);
+      $execute = $database_query->execute();
+
+      if ($execute) {
+        $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+        return ($result) ? new Entry($system_core, $result['id']) : null;
+      }
+
+      return null;
+    }
+
     /**
      * Обновление существующей записи
      *
@@ -293,12 +340,14 @@ namespace core\PHPLibrary {
       error_log($query_builder->statement->assembled);
       foreach ($data as $data_name => $data_value) {
         if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts'])) {
-          $data_value_type = \PDO::PARAM_STR;
-          if (is_bool($data_value)) $data_value_type = \PDO::PARAM_BOOL;
-          if (is_numeric($data_value)) $data_value_type = \PDO::PARAM_INT;
+          switch (gettype($data_value)) {
+            case 'boolean': $data_value_type = \PDO::PARAM_BOOL; break;
+            case 'integer': $data_value_type = \PDO::PARAM_INT; break;
+            case 'string': $data_value_type = \PDO::PARAM_STR; break;
+            case 'null': $data_value_type = \PDO::PARAM_NULL; break;
+          }
 
-          $data_name_with_dotes = ':' . $data_name;
-          $database_query->bindParam($data_name_with_dotes, $data_value, $data_value_type);
+          $database_query->bindParam(':' . $data_name, $data[$data_name], $data_value_type);
         }
       }
 

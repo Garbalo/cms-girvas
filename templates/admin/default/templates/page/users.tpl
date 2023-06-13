@@ -1,11 +1,11 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Записи</h1>
+  <h1 class="page__title">Пользователи</h1>
   <div class="page__content">
     <p class="page__content-phar">
-      CMS &laquo;GIRVAS&raquo; позволяет работать с записями на Вашем сайте. 
-      Для этого можете выбрать либо существующую запись, либо <a href="./entry">создать новую</a>.
+      CMS &laquo;GIRVAS&raquo; позволяет работать с пользователями на Вашем сайте. 
+      Для этого можете выбрать либо существующего пользователя, либо <a href="./user">создать нового</a>.
     </p>
-    {ADMIN_PANEL_ENTRIES_TABLE}
+    {ADMIN_PANEL_USERS_TABLE}
   </div>
 </article>
 <aside class="main__page-aside page-aside">

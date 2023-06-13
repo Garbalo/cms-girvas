@@ -42,7 +42,7 @@
 .form__button, .form__input_submit {
   box-sizing: border-box;
   background-color: var(--form-button-background-color);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--form-button-font-color);
   text-transform: uppercase;
@@ -50,6 +50,7 @@
   outline: 0;
   padding: 10px;
   transition: background-color .2s, color .2s;
+  cursor: pointer;
 }
 .form__button:hover, .form__input_submit:hover {
   background-color: var(--form-button-background-color--hover);

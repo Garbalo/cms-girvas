@@ -47,6 +47,16 @@ namespace core\PHPLibrary\Client {
     public function get_id() : int {
       return $this->id;
     }
+    
+    /**
+     * Получить идентификатор пользователя, к которому привязана сессия
+     *
+     * @param  mixed $value
+     * @return int
+     */
+    public function get_user_id() : int {
+      return $this->user_id;
+    }
 
     public function get_created_unix_timestamp() : int|string {
       return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=created_unix_timestamp}';

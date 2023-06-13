@@ -45,7 +45,7 @@
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/entry" class="steps-list__item-link">Приступить!</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">

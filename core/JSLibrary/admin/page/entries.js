@@ -10,10 +10,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (button.getAttribute('role') == 'entry-edit') {
           window.location.href = `./entry/${entryID}`;
         }
-
-        if (button.getAttribute('role') == 'entry-remove') {
-          console.log('Вызов модального окна');
-        }
       });
     }
   }
