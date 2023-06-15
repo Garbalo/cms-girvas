@@ -22,10 +22,12 @@ namespace core\PHPLibrary {
     public const CMS_CORE_PHP_LIBRARY_PATH = 'core/PHPLibrary';
     public const CMS_CORE_JS_LIBRARY_PATH = 'core/JSLibrary';
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
+    public const CMS_MODULES_PATH = 'modules';
     public SystemCoreConfigurator $configurator;
     public SystemCoreDatabaseConnector $database_connector;
     public URLParser $urlp;
     public Client $client;
+    public array $modules = [];
     
     /**
      * __construct
@@ -57,6 +59,29 @@ namespace core\PHPLibrary {
       // Подключение файлов с классами
       $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
       $file_connector->reset_current_directory();
+
+      $modules_enabled = Modules::get_enabled();
+      if (!empty($modules_enabled)) {
+        foreach ($modules_enabled as $module_name => $module_data) {
+          $module_path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $module_name);
+          if (file_exists($module_path)) {
+            $file_connector->set_start_directory($module_path);
+            $file_connector->set_current_directory($module_path);
+
+            // Подключение файлов с перечислениями
+            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.enum\.php$/');
+            $file_connector->reset_current_directory();
+            // Подключение файлов с интерфейсами
+            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.interface\.php$/');
+            $file_connector->reset_current_directory();
+            // Подключение файлов с классами
+            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
+            $file_connector->reset_current_directory();
+
+            Module::connect_core($this, $module_name);
+          }
+        }
+      }
 
       $this->configurator = new SystemCoreConfigurator($this);
       $this->configurator->set('cms_language_default', 'ru_RU');

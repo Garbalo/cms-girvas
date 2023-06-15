@@ -207,9 +207,7 @@ namespace core\PHPLibrary {
       if (isset($this->core->assembled)) {
         $site_seo_base = $this->system_core->configurator->get('seo_base');
         $template_category = $this->get_category();
-
-        // Итоговая сборка шаблона веб-страницы
-        return TemplateCollector::assembly($this->core->assembled, [
+        $template_tags_array = [
           // Стили веб-страницы в DOM-элементе HEAD
           'SITE_STYLES' => TemplateCollector::assembly_styles($this, $this->get_styles()),
           // Скрипты веб-страницы в DOM-элементе HEAD
@@ -218,7 +216,18 @@ namespace core\PHPLibrary {
           'SITE_TITLE' => $site_seo_base['title'],
           'SITE_DESCRIPTION' => $site_seo_base['description'],
           'SITE_KEYWORDS' => implode(', ', $site_seo_base['keywords'])
-        ]);
+        ];
+
+        if (!empty($this->system_core->modules)) {
+          foreach ($this->system_core->modules as $module) {
+            if (property_exists($module, 'global_template_tags')) {
+              $template_tags_array = array_merge($template_tags_array, $module->global_template_tags);
+            }
+          }
+        }
+
+        // Итоговая сборка шаблона веб-страницы
+        return TemplateCollector::assembly($this->core->assembled, $template_tags_array);
       }
 
       return 'Template core don\'t have a assembled templates files.';

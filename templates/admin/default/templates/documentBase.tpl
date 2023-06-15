@@ -43,7 +43,7 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
-          <a href="#" class="admin-navigation-list__item-link" title="Модули">
+          <a href="/admin/modules" class="admin-navigation-list__item-link" title="Модули">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect x="8.2" y="48.5" width="15.5" height="15.5"/>
               <rect x="48.5" y="7.5" width="15.5" height="15.5"/>
@@ -57,7 +57,7 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
-          <a href="#" class="admin-navigation-list__item-link" title="Шаблоны">
+          <a href="/admin/templates" class="admin-navigation-list__item-link" title="Шаблоны">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect y="6.7" width="24" height="50.7"/>
               <rect x="9.9" y="57.3" width="4.3" height="3.1"/>
@@ -68,7 +68,7 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
-          <a href="#" class="admin-navigation-list__item-link" title="Конфигурации CMS">
+          <a href="/admin/configurations" class="admin-navigation-list__item-link" title="Конфигурации CMS">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <path d="M64,38.9V25.1h-6.9c-0.6-2.1-1.4-4.1-2.5-6l4.8-4.8l-9.8-9.8l-4.8,4.8c-1.9-1.1-3.9-1.9-6-2.5V0H25.1v6.8
                 c-2.1,0.6-4.1,1.4-6,2.5l-4.8-4.8l-9.8,9.8l4.8,4.8c-1.1,1.9-1.9,3.9-2.5,6H0v13.8h6.9c0.6,2.1,1.4,4.1,2.5,6l-4.8,4.8l9.8,9.8
