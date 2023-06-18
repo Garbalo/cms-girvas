@@ -43,8 +43,6 @@ namespace core\PHPLibrary {
       $template_path = ($template_category != 'default') ? sprintf('%s/templates/%s/%s', CMS_ROOT_DIRECTORY, $template_category, $template_name) : sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $template_name);
       $this->set_category($template_category);
       $this->set_path($template_path);
-      
-      $this->init();
     }
     
     /**
@@ -52,7 +50,7 @@ namespace core\PHPLibrary {
      *
      * @return mixed
      */
-    private function init() : mixed {
+    public function init() : mixed {
       /** @var string $core_path Путь до файла ядра шаблона */
       $core_path = $this->get_core_path();
       /** @var string $core_class Класс ядра шаблона */
