@@ -48,16 +48,21 @@ namespace core\PHPLibrary {
       return $this->template;
     }
 
-    public function get_inited_page() : mixed {
+    public function get_inited_page() : InterfacePage {
       return $this->page_dir_array[array_key_last($this->page_dir_array)];
     }
 
     public function init_page(string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
       $this->page_dir_array = explode('/', $dir);
+      
+      if ($this->page_dir_array[0] == $this->template->get_category()) {
+        $this->page_dir_array[0] = ucfirst($this->page_dir_array[0]);
+        array_push($this->page_dir_array, 'index');
+      }
+      
       for ($index_a = 0; $index_a < count($this->page_dir_array); $index_a++) {
         $current_dir_array = [];
-        
         for ($index_b = 0; $index_b < $index_a + 1; $index_b++) {
           array_push($current_dir_array, $this->page_dir_array[$index_b]);
         }
@@ -66,11 +71,14 @@ namespace core\PHPLibrary {
         $class_path = sprintf('%s/core/PHPLibrary/Page/%s.class.php', CMS_ROOT_DIRECTORY, $current_dir);
         
         if (file_exists($class_path)) {
-          $current_dir_array[array_key_last($current_dir_array)] = ucfirst($current_dir_array[array_key_last($current_dir_array)]);
+          $current_dir_array[array_key_last($current_dir_array)] = 'Page' . ucfirst($current_dir_array[array_key_last($current_dir_array)]);
           $current_dir = implode('/', $current_dir_array);
+          $current_dir = str_replace('/', '\\', $current_dir);
           
-          $class = sprintf('\\core\\PHPLibrary\\Page\\Page%s', str_replace('/', '\\', $current_dir));
+          $class = sprintf('\\core\\PHPLibrary\\Page\\%s', $current_dir);
           $page_object = new $class($this, new Page($this, $current_dir_array));
+          
+          if ($current_dir_array[0] == $this->template->get_category()) unset($current_dir_array[0]);
           $current_dir_array[array_key_last($current_dir_array)] = &$page_object;
           break;
         }
@@ -146,14 +154,16 @@ namespace core\PHPLibrary {
       $this->client = new Client($this);
       $this->init_url_parser();
 
-      switch ($this->urlp->get_path(0)) {
-        case 'install': $this->set_template(new Template($this, 'default', 'install')); break;
-        case 'admin': $this->set_template(new Template($this, 'default', 'admin')); break;
-        default: $this->set_template(new Template($this, 'official')); break;
-      }
+      if ($this->urlp->get_path(0) != 'handler') {
+        switch ($this->urlp->get_path(0)) {
+          case 'install': $this->set_template(new Template($this, 'default', 'install')); break;
+          case 'admin': $this->set_template(new Template($this, 'default', 'admin')); break;
+          default: $this->set_template(new Template($this, 'official')); break;
+        }
 
-      $template = $this->get_template();
-      $template->init();
+        $template = $this->get_template();
+        $template->init();
+      }
     }
     
     /**

@@ -17,7 +17,7 @@ namespace core\PHPLibrary\Page {
       $this->page = $page;
     }
 
-    public function assembly() : void{
+    public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
 
       /** @var Entries $entries Объект класса Entries */
