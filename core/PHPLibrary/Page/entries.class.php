@@ -1,0 +1,102 @@
+<?php
+
+namespace core\PHPLibrary\Page {
+  use \core\PHPLibrary\InterfacePage as InterfacePage;
+  use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
+  use \core\PHPLibrary\Parsedown as Parsedown;
+  use \core\PHPLibrary\Entries as Entries;
+  use \core\PHPLibrary\EntryCategory as EntryCategory;
+  use \core\PHPLibrary\Page\Entries\PageError as PageError;
+  use \core\PHPLibrary\Template\Collector as TemplateCollector;
+
+  class PageEntries implements InterfacePage {
+    public SystemCore $system_core;
+    public Page $page;
+    public string $assembled = '';
+
+    public function __construct(SystemCore $system_core, Page $page) {
+      $this->system_core = $system_core;
+      $this->page = $page;
+    }
+
+    public function assembly() : void {
+      $entries_category_name = (!is_null($this->system_core->urlp->get_path(1))) ? urldecode($this->system_core->urlp->get_path(1)) : 'all';
+      
+      if (EntryCategory::exists_by_name($this->system_core, $entries_category_name) || $entries_category_name == 'all') {
+        http_response_code(200);
+
+        $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
+        $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
+
+        $entries_count_on_page = 6;
+        $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+
+        if ($entries_category_name != 'all') {
+          $entries_category = EntryCategory::get_by_name($this->system_core, $entries_category_name);
+          $entries_category->init_data(['name', 'texts']);
+          $entries_category_id = $entries_category->get_id();
+
+          /** @var Entries $entries Объект класса Entries */
+          $entries = new Entries($this->system_core);
+          $entries_array_objects = $entries->get_by_category_id($entries_category_id, [
+            'limit' => [$entries_count_on_page, $pagination_item_current * $entries_count_on_page]
+          ]);
+          $entries_count = $entries->get_count_by_category_id($entries_category_id);
+        } else {
+          /** @var Entries $entries Объект класса Entries */
+          $entries = new Entries($this->system_core);
+          $entries_array_objects = $entries->get_all([
+            'limit' => [$entries_count_on_page, $pagination_item_current * $entries_count_on_page]
+          ]);
+          $entries_count = $entries->get_count_total();
+        }
+
+        unset($entries);
+
+        $entries_array_templates = [];
+        foreach ($entries_array_objects as $entry_object) {
+          $entry_object->init_data(['id', 'texts', 'name']);
+
+          array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/item.tpl', [
+            'ENTRY_ID' => $entry_object->get_id(),
+            'ENTRY_TITLE' => $entry_object->get_title(),
+            'ENTRY_DESCRIPTION' => $entry_object->get_description(),
+            'ENTRY_URL' => $entry_object->get_url(),
+          ]));
+
+          unset($entry_data);
+        }
+
+        unset($entries_array_objects);
+
+        $pagination = new Pagination($this->system_core, $entries_count, $entries_count_on_page, $pagination_item_current);
+        $pagination->assembly();
+
+        $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
+          'PAGE_NAME' => 'entries',
+          'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries.tpl', [
+            'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? 'Все записи' : $entries_category->get_title(),
+            'ENTRIES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/list.tpl', [
+              'ENTRIES_LIST_ITEMS' => implode($entries_array_templates)
+            ]),
+            'ENTRIES_PAGINATION' => $pagination->assembled
+          ])
+        ]);
+  
+        unset($entries_array_templates);
+      } else {
+        http_response_code(404);
+
+        $page_error = new PageError($this->system_core, $this->page, 404);
+        $page_error->assembly();
+        $this->assembled = $page_error->assembled;
+      }
+    }
+
+  }
+
+}
+
+?>

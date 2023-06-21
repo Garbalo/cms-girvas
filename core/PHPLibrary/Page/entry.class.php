@@ -21,7 +21,7 @@ namespace core\PHPLibrary\Page {
 
     public function assembly() : void {
       if (!is_null($this->system_core->urlp->get_path(1))) {
-        $entry_name = $this->system_core->urlp->get_path(1);
+        $entry_name = urldecode($this->system_core->urlp->get_path(1));
 
         if (Entry::exists_by_name($this->system_core, $entry_name)) {
           http_response_code(200);

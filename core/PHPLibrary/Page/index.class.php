@@ -22,7 +22,7 @@ namespace core\PHPLibrary\Page {
 
       /** @var Entries $entries Объект класса Entries */
       $entries = new Entries($this->system_core);
-      $entries_array_objects = $entries->get_all();
+      $entries_array_objects = $entries->get_all(['limit' => [6, 0]]);
       unset($entries);
 
       $entries_array_templates = [];

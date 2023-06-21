@@ -20,7 +20,13 @@ namespace core\PHPLibrary {
       $this->system_core = $system_core;
       $this->set_id($id);
     }
-
+    
+    /**
+     * Инициализация данных из БД
+     *
+     * @param  mixed $columns
+     * @return void
+     */
     public function init_data(array $columns = ['*']) {
       $columns_data = $this->get_database_columns_data($columns);
       foreach ($columns_data as $column_name => $column_data) {
@@ -106,11 +112,21 @@ namespace core\PHPLibrary {
 
       return '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=texts_content}';
     }
-
+    
+    /**
+     * Получить имя записи
+     *
+     * @return void
+     */
     public function get_name() {
       return (property_exists($this, 'name')) ? $this->name : '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=name}';
     }
-
+    
+    /**
+     * Получить URL до записи
+     *
+     * @return void
+     */
     public function get_url() {
       return sprintf('/entry/%s', $this->get_name());
     }
