@@ -6,7 +6,6 @@ namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\Page as Page;
   use \core\PHPLibrary\Parsedown as Parsedown;
   use \core\PHPLibrary\Entry as Entry;
-  use \core\PHPLibrary\Page\Entry\PageError as PageError;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
   class PageEntry implements InterfacePage {
@@ -14,20 +13,33 @@ namespace core\PHPLibrary\Page {
     public Page $page;
     public string $assembled = '';
 
+    /**
+     * __construct
+     *
+     * @param  SystemCore $system_core
+     * @param  Page $page
+     * @return void
+     */
     public function __construct(SystemCore $system_core, Page $page) {
       $this->system_core = $system_core;
       $this->page = $page;
     }
-
+    
+    /**
+     * Сборка шаблона страницы
+     *
+     * @return void
+     */
     public function assembly() : void {
+      $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
+
       if (!is_null($this->system_core->urlp->get_path(1))) {
         $entry_name = urldecode($this->system_core->urlp->get_path(1));
 
         if (Entry::exists_by_name($this->system_core, $entry_name)) {
           http_response_code(200);
 
-          $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
-          
           $entry = Entry::get_by_name($this->system_core, $entry_name);
           $entry->init_data(['id', 'category_id', 'texts', 'name']);
 

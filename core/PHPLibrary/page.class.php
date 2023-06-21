@@ -64,7 +64,7 @@ namespace core\PHPLibrary {
      *
      * @return void
      */
-    private function assembly() : void {
+    private function assembly() : string {
       /** @var string $template_path Путь до шаблона */
       $template_path = $this->template->get_path();
 

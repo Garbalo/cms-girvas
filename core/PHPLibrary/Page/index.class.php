@@ -12,12 +12,25 @@ namespace core\PHPLibrary\Page {
     public Page $page;
     public string $assembled = '';
 
+    /**
+     * __construct
+     *
+     * @param  SystemCore $system_core
+     * @param  Page $page
+     * @return void
+     */
     public function __construct(SystemCore $system_core, Page $page) {
       $this->system_core = $system_core;
       $this->page = $page;
     }
-
+    
+    /**
+     * Сборка шаблона страницы
+     *
+     * @return void
+     */
     public function assembly() : void {
+      $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
 
       /** @var Entries $entries Объект класса Entries */

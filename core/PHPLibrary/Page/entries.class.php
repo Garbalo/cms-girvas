@@ -8,7 +8,6 @@ namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\Parsedown as Parsedown;
   use \core\PHPLibrary\Entries as Entries;
   use \core\PHPLibrary\EntryCategory as EntryCategory;
-  use \core\PHPLibrary\Page\Entries\PageError as PageError;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
   class PageEntries implements InterfacePage {
@@ -16,19 +15,32 @@ namespace core\PHPLibrary\Page {
     public Page $page;
     public string $assembled = '';
 
+    /**
+     * __construct
+     *
+     * @param  SystemCore $system_core
+     * @param  Page $page
+     * @return void
+     */
     public function __construct(SystemCore $system_core, Page $page) {
       $this->system_core = $system_core;
       $this->page = $page;
     }
-
+    
+    /**
+     * Сборка шаблона страницы
+     *
+     * @return void
+     */
     public function assembly() : void {
+      $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
+
       $entries_category_name = (!is_null($this->system_core->urlp->get_path(1))) ? urldecode($this->system_core->urlp->get_path(1)) : 'all';
       
       if (EntryCategory::exists_by_name($this->system_core, $entries_category_name) || $entries_category_name == 'all') {
         http_response_code(200);
-
-        $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
-        $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
 
         $entries_count_on_page = 6;
         $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;

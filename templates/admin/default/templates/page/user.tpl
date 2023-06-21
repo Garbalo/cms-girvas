@@ -8,7 +8,7 @@
       <input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
       <input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
       <div class="user-editor-form__panel">
-        <button class="form__button form__button_red user-editor-form__panel-button" data-modal-call="user-delete">Удалить</button>
+        <button class="form__button form__button_red user-editor-form__panel-button" data-modal-call="admin-user-delete">Удалить</button>
         <input type="submit" class="form__input form__input_submit form__input_submit_blue user-editor-form__panel-submit" name="user_event_save" formmethod="{USER_FORM_METHOD}" value="Сохранить">
       </div>
     </form>

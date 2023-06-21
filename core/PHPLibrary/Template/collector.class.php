@@ -81,6 +81,8 @@ namespace core\PHPLibrary\Template {
     public static function assembly(string $template_string, array $template_replaces) : string {
       $template_transformed = $template_string;
 
+      $template_replaces['CMS_COPYRIGHT'] = '&copy;&nbsp;www.garbalo.com.&nbsp;2022-2023.';
+
       foreach($template_replaces as $template_name => $template_value) {
         if (preg_match(self::TEMPLATE_TAG_PATTERN, $template_transformed)) {
           $template_transformed = str_replace("{{$template_name}}", $template_value, $template_transformed);

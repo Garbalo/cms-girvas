@@ -60,7 +60,7 @@ class Form {
         this.modalParent.remove();
       }
 
-      if (typeof(data.outputData.refresh) != 'undefined') {
+      if (typeof(data.outputData.reload) != 'undefined') {
         this.timeout = setTimeout(() => {
           window.location.reload();
         }, 10);

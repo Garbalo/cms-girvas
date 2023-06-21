@@ -71,6 +71,89 @@ namespace core\PHPLibrary {
       return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
     }
 
+    public static function get_avatar_default_url(SystemCore $system_core, int $size) : string {
+      return sprintf('%s/images/avatar_default_%d.png', $system_core->template->get_url(), $size);
+    }
+    
+    /**
+     * Получить имя пользователя
+     *
+     * @return string
+     */
+    public function get_name() : string {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['name'])) {
+          return $metadata_array['name'];
+        }
+      }
+
+      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_name}';
+    }
+    
+    /**
+     * Получить фамилию пользователя
+     *
+     * @return string
+     */
+    public function get_surname() : string {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['surname'])) {
+          return $metadata_array['surname'];
+        }
+      }
+
+      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_surname}';
+    }
+    
+    /**
+     * Получить отчество пользователя
+     *
+     * @return string
+     */
+    public function get_patronymic() : string {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['patronymic'])) {
+          return $metadata_array['patronymic'];
+        }
+      }
+
+      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_patronymic}';
+    }
+    
+    /**
+     * Получить отчество пользователя
+     *
+     * @return int
+     */
+    public function get_birthdate_unix_timestamp() : int|string {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['birthdate_unix_timestamp'])) {
+          return $metadata_array['birthdate_unix_timestamp'];
+        }
+      }
+
+      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_birthdate_unix_timestamp}';
+    }
+    
+    /**
+     * Получить URL до аватарки пользователя
+     *
+     * @param  mixed $size
+     * @return string
+     */
+    public function get_avatar_url(int $size) : string {
+      $avatar_url = sprintf('%s/uploads/avatars/%d/%d.png', CMS_ROOT_DIRECTORY, $this->id, $size);
+      if (file_exists($avatar_url)) {
+        return $avatar_url;
+      }
+
+      return self::get_avatar_default_url($this->system_core, $size);
+    }
+
     public function hashing(string $string) {
       $user_id = $this->get_id();
       $security_hash = $this->get_security_hash();
@@ -136,10 +219,12 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->add_table('users');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('login = :login');
+      $query_builder->statement->clause_where->add_condition('LOWER(login) = :login');
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->set_clause_limit(1);
       $query_builder->statement->assembly();
+
+      $user_login = strtolower($user_login);
 
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
@@ -147,6 +232,7 @@ namespace core\PHPLibrary {
 			$database_query->execute();
 
       $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+      
       return ($result) ? new User($system_core, (int)$result['id']) : null;
     }
     
@@ -165,16 +251,18 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->add_table('users');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('login = :login');
+      $query_builder->statement->clause_where->add_condition('LOWER(login) = :login');
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->set_clause_limit(1);
       $query_builder->statement->assembly();
+
+      $user_login = strtolower($user_login);
 
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       $database_query->bindParam(':login', $user_login, \PDO::PARAM_STR);
 			$database_query->execute();
-
+      
       return ($database_query->fetchColumn()) ? true : false;
     }
     

@@ -9,6 +9,7 @@ namespace core\PHPLibrary {
     public SystemCore $system_core;
     private mixed $core;
     private string $path;
+    private string $url;
     private string $name;
     private string $category;
     
@@ -41,8 +42,10 @@ namespace core\PHPLibrary {
       $this->set_name($template_name);
 
       $template_path = ($template_category != 'default') ? sprintf('%s/templates/%s/%s', CMS_ROOT_DIRECTORY, $template_category, $template_name) : sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $template_name);
+      $template_url = ($template_category != 'default') ? sprintf('templates/%s/%s', $template_category, $template_name) : sprintf('templates/%s', $template_name);
       $this->set_category($template_category);
       $this->set_path($template_path);
+      $this->set_url($template_url);
     }
     
     /**
@@ -121,13 +124,32 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Получить URL до шаблона
+     *
+     * @return string
+     */
+    public function get_url() : string {
+      return $this->url;
+    }
+    
+    /**
      * Назначить путь до шаблона
      *
-     * @param  mixed $template_path Путь до шаблона
+     * @param  string $template_path Путь до шаблона
      * @return void
      */
     public function set_path(string $template_path) : void {
       $this->path = $template_path;
+    }
+    
+    /**
+     * Назначить URL до шаблона
+     *
+     * @param  string $template_url Путь до шаблона
+     * @return void
+     */
+    public function set_url(string $template_url) : void {
+      $this->url = $template_url;
     }
     
     /**
