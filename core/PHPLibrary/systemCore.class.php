@@ -61,6 +61,7 @@ namespace core\PHPLibrary {
         array_push($this->page_dir_array, 'index');
       }
       
+      $current_dir_final_array = [];
       for ($index_a = 0; $index_a < count($this->page_dir_array); $index_a++) {
         $current_dir_array = [];
         for ($index_b = 0; $index_b < $index_a + 1; $index_b++) {
@@ -80,11 +81,23 @@ namespace core\PHPLibrary {
           
           if ($current_dir_array[0] == $this->template->get_category()) unset($current_dir_array[0]);
           $current_dir_array[array_key_last($current_dir_array)] = &$page_object;
+          $current_dir_final_array = $current_dir_array;
           break;
         }
       }
 
-      $this->page_dir_array = $current_dir_array;
+      if (empty($current_dir_final_array)) {
+        $current_dir_final_array['oh_shit'] = 'karelia_forever';
+      }
+
+      if (gettype($current_dir_final_array[array_key_last($current_dir_final_array)]) == 'string') {
+        $this->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
+        
+        $class = sprintf('\\core\\PHPLibrary\\Page\\PageError', $current_dir);
+        $current_dir_final_array[array_key_last($current_dir_final_array)] = new $class($this, new Page($this, $current_dir_final_array), 404);
+      }
+
+      $this->page_dir_array = $current_dir_final_array;
 
       // $current_array_element = &$this->page_dir_array;
       // for ($index = 0; $index < count($dir_parts_array); $index++) {

@@ -2,6 +2,7 @@
 
 namespace core\PHPLibrary\Client {
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\User as User;
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
   #[\AllowDynamicProperties]
@@ -56,6 +57,19 @@ namespace core\PHPLibrary\Client {
      */
     public function get_user_id() : int {
       return $this->user_id;
+    }
+    
+    /**
+     * Получить объект пользователя, к которому привязана сессия
+     *
+     * @return User|null
+     */
+    public function get_user() : User|null {
+      if (!property_exists($this, 'created_unix_timestamp')) {
+        $this->init_data(['user_id']);
+      }
+
+      return (User::exists_by_id($this->system_core, $this->user_id)) ? new User($this->system_core, $this->user_id) : null;
     }
 
     public function get_created_unix_timestamp() : int|string {

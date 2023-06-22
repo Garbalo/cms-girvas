@@ -6,23 +6,62 @@ namespace core\PHPLibrary {
   class Client {
     private readonly SystemCore $system_core;
     private string $ip_address;
-
+    
+    /**
+     * __construct
+     *
+     * @param  mixed $system_core
+     * @return void
+     */
     public function __construct(SystemCore $system_core) {
       $this->system_core = $system_core;
 
       $this->set_ip_address($_SERVER['REMOTE_ADDR']);
-    }
+    }    
+    /**
+     * Назначить IP-адрес клиенту
+     *
+     * @param  mixed $value
+     * @return void
+     */
     private function set_ip_address(string $value) : void {
       $this->ip_address = $value;
-    }
+    }    
+    /**
+     * Получить IP-адрес клиента
+     *
+     * @return string
+     */
     public function get_ip_address() : string {
       return $this->ip_address;
-    }
+    }    
+    /**
+     * Получить объект сессии
+     *
+     * @param  int $session_type_id
+     * @param  array $data_init
+     * @return ClientSession
+     */
     public function get_session(int $session_type_id, array $data_init) : ClientSession {
       $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
       $session->init_data($data_init);
       return $session;
-    }
+    }    
+    /**
+     * Получить объект пользователя, к которому привязана сессия
+     *
+     * @return User|null
+     */
+    public function get_user(int $session_type_id) : User|null {
+      $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
+      return $session->get_user();
+    }    
+    /**
+     * Проверка статуса авторизации клиента по типу сессии
+     *
+     * @param  int $session_type_id
+     * @return bool
+     */
     public function is_logged(int $session_type_id) : bool {
       if (ClientSession::exists_by_ip($this->system_core, $this->ip_address, $session_type_id)) {
         $client_session = $this->get_session($session_type_id, ['updated_unix_timestamp', 'token']);

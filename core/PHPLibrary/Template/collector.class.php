@@ -5,6 +5,8 @@ namespace core\PHPLibrary\Template {
 
   final class Collector {
     private const TEMPLATE_TAG_PATTERN = '/\{([a-zA-Z0-9_]+)\}/';
+    private const TEMPLATE_LOGIC_IF_PATTERN = '/\{\?IF\:([a-zA-Z0-9_]+)([=<>!]+)([a-zA-Z0-9_]+)\?\}(.*)\{\?ENDIF\?\}/is';
+    private const TEMPLATE_LOGIC_IF_ELSE_PATTERN = '/\{\?IF\:([a-zA-Z0-9_]+)([=<>!]+)([a-zA-Z0-9_]+)\?\}(.*){\?ELSE\?\}(.*)\{\?ENDIF\?\}/is';
     private Template $template;
     
     /**
@@ -86,6 +88,44 @@ namespace core\PHPLibrary\Template {
       foreach($template_replaces as $template_name => $template_value) {
         if (preg_match(self::TEMPLATE_TAG_PATTERN, $template_transformed)) {
           $template_transformed = str_replace("{{$template_name}}", $template_value, $template_transformed);
+        }
+      }
+
+      return $template_transformed;
+    }
+
+    public static function assembly_logic(SystemCore $system_core, string $template_string) : string {
+      $template_transformed = $template_string;
+
+      $define_function = function(string $function_name) : mixed {
+        switch ($function_name) {
+          case 'CLIENT_IS_LOGGED': return $system_core->client->is_logged(1);
+        }
+
+        return null;
+      };
+
+      //       1  2  3     4            5
+      // {?IF:CONDITION?} ... {?ELSE?} ... {?ENDIF?}
+      if (preg_match(self::TEMPLATE_LOGIC_IF_ELSE_PATTERN, $template_transformed, $matches)) {
+        //
+      }
+
+      //       1  2  3     4
+      // {?IF:CONDITION?} ... {?ENDIF?}
+      if (preg_match(self::TEMPLATE_LOGIC_IF_PATTERN, $template_transformed, $matches)) {
+        $define_function_returned = false;
+        if ($matches[2] == '==') $define_function_returned = $define_function($matches[1]) == $matches[3];
+        if ($matches[2] == '!=') $define_function_returned = $define_function($matches[1]) != $matches[3];
+        if ($matches[2] == '>=') $define_function_returned = $define_function($matches[1]) >= $matches[3];
+        if ($matches[2] == '<=') $define_function_returned = $define_function($matches[1]) <= $matches[3];
+        if ($matches[2] == '>') $define_function_returned = $define_function($matches[1]) > $matches[3];
+        if ($matches[2] == '<') $define_function_returned = $define_function($matches[1]) < $matches[3];
+
+        if ($define_function_returned) {
+          $template_transformed = str_replace($matches[0], self::assembly_logic($matches[4]), $template_transformed);
+        } else {
+          $template_transformed = '';
         }
       }
 

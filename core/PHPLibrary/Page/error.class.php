@@ -51,6 +51,8 @@ namespace core\PHPLibrary\Page {
      * @return void
      */
     public function assembly() : void {
+      http_response_code($this->error_code);
+
       $this->system_core->template->add_style(['href' => 'styles/page/error.css', 'rel' => 'stylesheet']);
 
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
