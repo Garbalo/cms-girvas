@@ -52,7 +52,7 @@ namespace core\PHPLibrary {
       return $this->page_dir_array[array_key_last($this->page_dir_array)];
     }
 
-    public function init_page(string $dir) : bool {
+    public function - (string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
       $this->page_dir_array = explode('/', $dir);
       
