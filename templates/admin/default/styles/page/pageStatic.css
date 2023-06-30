@@ -1,0 +1,30 @@
+.page-static-editor-form {
+  display: flex;
+  flex-direction: column;
+}
+.page-static-editor-form__panel {
+  display: flex;
+  justify-content: flex-end;
+}
+.page-static-editor-form__panel-submit {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.page-static-editor-form__panel-submit:last-child {
+  margin-right: 0;
+}
+.page__page-static-editor {
+  margin-bottom: 10px;
+}
+.page-static-editor-form__input {
+  margin-bottom: 10px;
+}
+.page-static-editor-form__input:last-child {
+  margin-bottom: 0;
+}
+.page-static-editor-form__textarea {
+  margin-bottom: 10px;
+}
+.page-static-editor-form__textarea:last-child {
+  margin-bottom: 0;
+}

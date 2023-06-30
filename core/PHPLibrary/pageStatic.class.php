@@ -324,7 +324,7 @@ namespace core\PHPLibrary {
     public function update(array $data) : bool {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_update();
-      $query_builder->statement->set_table('entries');
+      $query_builder->statement->set_table('pages_static');
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
@@ -366,7 +366,7 @@ namespace core\PHPLibrary {
       }
 
       $database_query->bindParam(':id', $this->id, \PDO::PARAM_INT);
-      $database_query->bindParam(':updated_unix_timestamp', $entry_updated_unix_timestamp, \PDO::PARAM_INT);
+      $database_query->bindParam(':updated_unix_timestamp', $page_static_updated_unix_timestamp, \PDO::PARAM_INT);
 			$execute = $database_query->execute();
 
       return ($execute) ? true : false;
