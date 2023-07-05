@@ -267,6 +267,36 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Проверить существование пользователя по E-Mail
+     *
+     * @param  mixed $system_core
+     * @param  string $user_login
+     * @return void
+     */
+    public static function exists_by_email(\core\PHPLibrary\SystemCore $system_core, string $user_email) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('LOWER(email) = :email');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $user_email = strtolower($user_email);
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':email', $user_email, \PDO::PARAM_STR);
+			$database_query->execute();
+      
+      return ($database_query->fetchColumn()) ? true : false;
+    }
+    
+    /**
      * Проверить существование пользователя по ID
      *
      * @param  mixed $system_core
