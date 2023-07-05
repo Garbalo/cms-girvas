@@ -16,6 +16,12 @@
   </div>
 </article>
 <aside class="main__page-aside page-aside">
+  <article class="page-aside__block block-comments">
+    <h2 class="page-aside__block-title">Последние комментарии</h2>
+    <div class="page-aside__block-content">
+      {ENTRY_COMMENTS_LIST}
+    </div>
+  </article>
   <article class="page-aside__block">
     <h2 class="page-aside__block-title">Популярные записи</h2>
     <div class="page-aside__block-content">

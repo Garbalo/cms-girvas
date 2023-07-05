@@ -3,9 +3,9 @@
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
-  final class Entries {
+  final class EntryComments {
     private SystemCore $system_core;
-    
+
     /**
      * __construct
      *
@@ -17,7 +17,7 @@ namespace core\PHPLibrary {
     }
         
     /**
-     * Получить все объекты записей
+     * Получить все объекты комментариев
      *
      * @param  array $params_array
      * @return array
@@ -27,7 +27,7 @@ namespace core\PHPLibrary {
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
-      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
       if (array_key_exists('limit', $params_array)) {
         if (is_array($params_array['limit'])) {
@@ -43,33 +43,33 @@ namespace core\PHPLibrary {
       //$this->system_core->database_connector->database->bindParam(':id', $entry_id, \PDO::PARAM_INT);
 			$database_query->execute();
 
-      $entries = [];
+      $entries_comments = [];
       $results = $database_query->fetchAll(\PDO::FETCH_ASSOC);
       if ($results) {
         foreach ($results as $data) {
-          array_push($entries, new Entry($this->system_core, $data['id']));
+          array_push($entries_comments, new EntryComment($this->system_core, $data['id']));
         }
       }
 
-      return $entries;
+      return $entries_comments;
     }
         
     /**
-     * Получить объекты записей для определенной категории
+     * Получить объекты комментариев для определенной записи
      *
-     * @param  int $category_id
+     * @param  int $entry_id
      * @param  array $params_array
      * @return array
      */
-    public function get_by_category_id(int $category_id, array $params_array = []) : array {
+    public function get_by_entry_id(int $entry_id, array $params_array = []) : array {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
-      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('category_id = :category_id');
+      $query_builder->statement->clause_where->add_condition('entry_id = :entry_id');
       $query_builder->statement->clause_where->assembly();
       if (array_key_exists('limit', $params_array)) {
         if (is_array($params_array['limit'])) {
@@ -82,41 +82,41 @@ namespace core\PHPLibrary {
 
       $database_connection = $this->system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':category_id', $category_id, \PDO::PARAM_INT);
+      $database_query->bindParam(':entry_id', $entry_id, \PDO::PARAM_INT);
 			$database_query->execute();
 
-      $entries = [];
+      $entries_comments = [];
       $results = $database_query->fetchAll(\PDO::FETCH_ASSOC);
       if ($results) {
         foreach ($results as $data) {
-          array_push($entries, new Entry($this->system_core, $data['id']));
+          array_push($entries_comments, new EntryComment($this->system_core, $data['id']));
         }
       }
 
-      return $entries;
+      return $entries_comments;
     }
         
     /**
-     * Получить количество записей для определенной категории
+     * Получить количество комментариев для определенной записи
      *
-     * @param  int $category_id
+     * @param  int $entry_id
      * @return int
      */
-    public function get_count_by_category_id(int $category_id) : int {
+    public function get_count_by_entry_id(int $entry_id) : int {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
       $query_builder->statement->set_clause_from();
-      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('category_id = :category_id');
+      $query_builder->statement->clause_where->add_condition('entry_id = :entry_id');
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 
       $database_connection = $this->system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':category_id', $category_id, \PDO::PARAM_INT);
+      $database_query->bindParam(':entry_id', $entry_id, \PDO::PARAM_INT);
 			$database_query->execute();
 
       $result = $database_query->fetch(\PDO::FETCH_ASSOC);
@@ -124,7 +124,7 @@ namespace core\PHPLibrary {
     }
         
     /**
-     * Получить общее количество записей
+     * Получить общее количество комментариев
      *
      * @return int
      */
@@ -133,7 +133,7 @@ namespace core\PHPLibrary {
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
       $query_builder->statement->set_clause_from();
-      $query_builder->statement->clause_from->add_table('entries');
+      $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->assembly();
 
@@ -145,8 +145,8 @@ namespace core\PHPLibrary {
       return ($result) ? $result['count'] : 0;
     }
 
-  }
 
+  }
 }
 
 ?>

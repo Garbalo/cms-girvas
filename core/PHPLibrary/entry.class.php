@@ -162,6 +162,31 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Получить массив объектов комментариев
+     *
+     * @param array $params_array
+     * @return array
+     */
+    public function get_comments($params_array = []) : array {
+      if ($this->get_comments_count() > 0) {
+        $entry_comments = new EntryComments($this->system_core);
+        return $entry_comments->get_by_entry_id($this->id, $params_array);
+      }
+
+      return [];
+    }
+    
+    /**
+     * Получить количество комментариев
+     *
+     * @return int
+     */
+    public function get_comments_count() : int {
+      $entry_comments = new EntryComments($this->system_core);
+      return $entry_comments->get_count_by_entry_id($this->id);
+    }
+    
+    /**
      * Получить объект записи по его наименованию
      *
      * @param  mixed $system_core

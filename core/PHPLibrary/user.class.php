@@ -72,7 +72,7 @@ namespace core\PHPLibrary {
     }
 
     public static function get_avatar_default_url(SystemCore $system_core, int $size) : string {
-      return sprintf('%s/images/avatar_default_%d.png', $system_core->template->get_url(), $size);
+      return sprintf('/%s/images/avatar_default_%d.png', $system_core->template->get_url(), $size);
     }
     
     /**
