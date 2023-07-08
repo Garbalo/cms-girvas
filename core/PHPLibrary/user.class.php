@@ -359,6 +359,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->add_column('created_unix_timestamp');
       $query_builder->statement->add_column('updated_unix_timestamp');
       $query_builder->statement->add_column('metadata_json');
+      $query_builder->statement->add_column('email_is_submitted');
       $query_builder->statement->set_clause_returning();
       $query_builder->statement->clause_returning->add_column('id');
       $query_builder->statement->assembly();
@@ -368,7 +369,8 @@ namespace core\PHPLibrary {
       $user_created_unix_timestamp = time();
       $user_updated_unix_timestamp = $user_created_unix_timestamp;
       $user_metadata_json = json_encode([], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-      
+      $email_is_submitted = false;
+
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       $database_query->bindParam(':login', $user_login, \PDO::PARAM_STR);
@@ -378,6 +380,7 @@ namespace core\PHPLibrary {
       $database_query->bindParam(':created_unix_timestamp', $user_created_unix_timestamp, \PDO::PARAM_INT);
       $database_query->bindParam(':updated_unix_timestamp', $user_updated_unix_timestamp, \PDO::PARAM_INT);
       $database_query->bindParam(':metadata_json', $user_metadata_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':email_is_submitted', $email_is_submitted, \PDO::PARAM_BOOL);
 			$execute = $database_query->execute();
 
       if ($execute) {
@@ -422,7 +425,7 @@ namespace core\PHPLibrary {
       foreach ($data as $data_name => $data_value) {
         if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
           switch (gettype($data_value)) {
-            case 'boolean': $data_value_type = \PDO::PARAM_BOOL; break;
+            case 'boolean': $data_value_type = \PDO::PARAM_INT; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;
             case 'string': $data_value_type = \PDO::PARAM_STR; break;
             case 'null': $data_value_type = \PDO::PARAM_NULL; break;
@@ -434,6 +437,167 @@ namespace core\PHPLibrary {
       
       $database_query->bindParam(':id', $this->id, \PDO::PARAM_INT);
       $database_query->bindParam(':updated_unix_timestamp', $user_updated_unix_timestamp, \PDO::PARAM_INT);
+			$execute = $database_query->execute();
+
+      return ($execute) ? true : false;
+    }
+
+    public function create_registration_submit() : array|null {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_insert();
+      $query_builder->statement->set_table('users_registration_submits');
+      $query_builder->statement->add_column('user_id');
+      $query_builder->statement->add_column('submit_token');
+      $query_builder->statement->add_column('refusal_token');
+      $query_builder->statement->add_column('created_unix_timestamp');
+      $query_builder->statement->set_clause_returning();
+      $query_builder->statement->clause_returning->add_column('id');
+      $query_builder->statement->assembly();
+
+      $request_time = time();
+      $submit_token = md5(sprintf('[%d]%d => submit', $this->id, $request_time));
+      $refusal_token = md5(sprintf('[%d]%d => refusal', $this->id, $request_time));
+      $registration_submit_created_unix_timestamp = time();
+      
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':user_id', $this->id, \PDO::PARAM_INT);
+      $database_query->bindParam(':submit_token', $submit_token, \PDO::PARAM_STR);
+      $database_query->bindParam(':refusal_token', $refusal_token, \PDO::PARAM_STR);
+      $database_query->bindParam(':created_unix_timestamp', $registration_submit_created_unix_timestamp, \PDO::PARAM_INT);
+			$execute = $database_query->execute();
+
+      if ($execute) {
+        return [
+          'submit_token' => $submit_token,
+          'refusal_token' => $refusal_token
+        ];
+      }
+
+      return null;
+    }
+
+    public static function get_user_id_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['user_id']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('submit_token = :submit_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':submit_token', $token, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+      
+      return ($result) ? (int)$result['user_id'] : null;
+    }
+
+    public static function get_user_id_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['user_id']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('refusal_token = :refusal_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':refusal_token', $token, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+      
+      return ($result) ? (int)$result['user_id'] : null;
+    }
+
+    public static function exists_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('submit_token = :submit_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':submit_token', $token, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      return ($database_query->fetchColumn()) ? true : false;
+    }
+
+    public static function exists_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('refusal_token = :refusal_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':refusal_token', $token, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      return ($database_query->fetchColumn()) ? true : false;
+    }
+
+    public static function delete_registration_submit_by_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_delete();
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('refusal_token = :refusal_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':refusal_token', $token, \PDO::PARAM_STR);
+			$execute = $database_query->execute();
+
+      return ($execute) ? true : false;
+    }
+
+    public static function delete_registration_submit_by_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_delete();
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users_registration_submits');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('submit_token = :submit_token');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':submit_token', $token, \PDO::PARAM_STR);
 			$execute = $database_query->execute();
 
       return ($execute) ? true : false;

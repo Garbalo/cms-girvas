@@ -34,6 +34,10 @@ namespace core\PHPLibrary\Page {
           $this->error_title = 'Страница не найдена';
           $this->error_desription = sprintf('К сожалению, искомая Вами страница по адресу "%s" была удалена, либо перенесена. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.', urldecode($_SERVER['REQUEST_URI']));
           break;
+        case 500:
+          $this->error_title = 'Внутренняя ошибка сервера';
+          $this->error_desription = 'К сожалению, на стороне сервера возникла ошибка, которая не позволяет обработать Ваш запрос. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.';
+          break;
         case 503:
           $this->error_title = 'Доступ запрещен';
           $this->error_desription = 'К сожалению, доступ к данной странице ограничен. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.';

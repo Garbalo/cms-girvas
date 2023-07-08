@@ -25,6 +25,15 @@ namespace core\PHPLibrary {
     public function get_path(int $path_index) : mixed {
       return (isset($this->path[$path_index])) ? $this->path[$path_index] : null;
     }
+        
+    /**
+     * Получить путь URL в виде строки
+     *
+     * @return string
+     */
+    public function get_path_string() : string {
+      return (!empty($this->path)) ? implode('/', $this->path) : null;
+    }
     
     /**
      * Получить массив параметров URL

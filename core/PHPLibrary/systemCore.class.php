@@ -52,7 +52,7 @@ namespace core\PHPLibrary {
       return $this->page_dir_array[array_key_last($this->page_dir_array)];
     }
 
-    public function - (string $dir) : bool {
+    public function init_page(string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
       $this->page_dir_array = explode('/', $dir);
       
@@ -177,6 +177,15 @@ namespace core\PHPLibrary {
         $template = $this->get_template();
         $template->init();
       }
+    }
+    
+    /**
+     * Получить внешнюю ссылку до сайта
+     *
+     * @return string
+     */
+    public function get_site_url() : string {
+      return ($this->configurator->get('ssl_is_enabled')) ? sprintf('https://%s', $this->configurator->get('domain')) : sprintf('http://%s', $this->configurator->get('domain'));
     }
     
     /**
