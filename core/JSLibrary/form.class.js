@@ -56,6 +56,23 @@ class Form {
       return response.json();
     }).then((data) => {
       console.log(data);
+      if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
+        let notificationContainerTarget, notificationIsPopup = false;
+        if (typeof(data.outputData.notificationContainerTargetID) == 'undefined') {
+          notificationContainerTarget = document.body;
+          notificationIsPopup = true;
+        } else {
+          notificationContainerTarget = document.querySelector('#' + data.outputData.notificationContainerTargetID);
+          if (Object.is(notificationContainerTarget, null)) {
+            notificationContainerTarget = document.body;
+            notificationIsPopup = true;
+          }
+        }
+
+        let notification = new PopupNotification(data.message, notificationContainerTarget, notificationIsPopup);
+        notification.show();
+      }
+
       if (typeof(data.outputData.modalClose) != 'undefined') {
         this.modalParent.remove();
       }

@@ -32,7 +32,7 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_path_string() : string {
-      return (!empty($this->path)) ? implode('/', $this->path) : null;
+      return (!empty($this->path)) ? implode('/', $this->path) : '';
     }
     
     /**

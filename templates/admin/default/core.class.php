@@ -98,7 +98,9 @@ namespace templates\admin\default {
       $this->template->add_style(['href' => 'styles/table.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/form.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/modal.css', 'rel' => 'stylesheet']);
+      $this->template->add_style(['href' => 'styles/notification.css', 'rel' => 'stylesheet']);
 
+      $this->template->add_script(['src' => 'popupNotification.class.js'], true);
       $this->template->add_script(['src' => 'form.class.js'], true);
       $this->template->add_script(['src' => 'modal.class.js'], true);
       $this->template->add_script(['src' => 'common.js'], true);

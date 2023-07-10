@@ -8,6 +8,7 @@
   --common-main-color-4: #232323;
   --common-main-color-4--opacity-0-8: rgba(35, 35, 35, .8);
   --common-main-color-4--opacity-0-5: rgba(35, 35, 35, .5);
+  --common-main-color-4--opacity-0-4: rgba(35, 35, 35, .4);
   --common-main-color-5: #000000;
   --common-main-color-6: #C1C1C1;
   --common-secondary-color-1: #EEF7FF;
@@ -111,4 +112,8 @@
   --admin-panel-main-aside-block-content-font-color: var(--common-main-color-4);
   --admin-panel-main-aside-block-link-font-color: var(--common-main-color-4);
   --admin-panel-footer-copyright-font-color: var(--common-main-color-3);
+  --notification-static-container-background-color: var(--common-main-color-4);
+  --notification-static-container-font-color: var(--common-main-color-2);
+  --notification-popup-container-background-color: var(--common-main-color-4--opacity-0-8);
+  --notification-popup-container-font-color: var(--common-main-color-1);
 }
