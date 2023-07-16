@@ -1,6 +1,7 @@
 <?php
 
 namespace core\PHPLibrary {
+  use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \core\PHPLibrary\SystemCore\Configurator as SystemCoreConfigurator;
   use \core\PHPLibrary\SystemCore\DatabaseConnector as SystemCoreDatabaseConnector;
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
@@ -168,15 +169,84 @@ namespace core\PHPLibrary {
       $this->init_url_parser();
 
       if ($this->urlp->get_path(0) != 'handler') {
+        $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
+
         switch ($this->urlp->get_path(0)) {
           case 'install': $this->set_template(new Template($this, 'default', 'install')); break;
           case 'admin': $this->set_template(new Template($this, 'default', 'admin')); break;
-          default: $this->set_template(new Template($this, 'official')); break;
+          default: $this->set_template(new Template($this, $template_base_name)); break;
         }
 
         $template = $this->get_template();
         $template->init();
       }
+    }
+    
+    /**
+     * Получить путь до корня CMS
+     *
+     * @return string
+     */
+    public function get_cms_path() : string {
+      return $_SERVER['DOCUMENT_ROOT'];
+    }
+
+    // public function exists_setting(string $name) : bool {
+    //   $query_builder = new DatabaseQueryBuilder();
+    //   $query_builder->set_statement_select();
+    //   $query_builder->statement->add_selections(['1']);
+    //   $query_builder->statement->set_clause_from();
+    //   $query_builder->statement->clause_from->add_table('settings');
+    //   $query_builder->statement->clause_from->assembly();
+    //   $query_builder->statement->set_clause_where();
+    //   $query_builder->statement->clause_where->add_condition('name = :name');
+    //   $query_builder->statement->clause_where->assembly();
+    //   $query_builder->statement->set_clause_limit(1);
+    //   $query_builder->statement->assembly();
+
+    //   $database_connection = $system_core->database_connector->database->connection;
+    //   $database_query = $database_connection->prepare($query_builder->statement->assembled);
+    //   $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+		// 	$database_query->execute();
+
+    //   return ($database_query->fetchColumn()) ? true : false;
+    // }
+
+    // public function add_setting(string $name, string $value) : bool {
+    //   $query_builder = new DatabaseQueryBuilder();
+    //   $query_builder->set_statement_insert();
+    //   $query_builder->statement->set_table('settings');
+    //   $query_builder->statement->add_column('name');
+    //   $query_builder->statement->add_column('value');
+    // }
+
+    // public function update_setting(string $name, string $value) : bool {
+    //   $query_builder = new DatabaseQueryBuilder();
+    //   $query_builder->set_statement_update();
+    //   $query_builder->statement->set_table('settings');
+    //   $query_builder->statement->set_clause_set();
+    //   $query_builder->statement->clause_set->add_column($name);
+    //   $query_builder->statement->clause_set->assembly();
+    //   $query_builder->statement->set_clause_where();
+    //   $query_builder->statement->clause_where->add_condition('name = :name');
+    //   $query_builder->statement->clause_where->assembly();
+    //   $query_builder->statement->assembly();
+
+    //   $database_query->bindParam(':' . $name, $value, \PDO::PARAM_STR);
+    //   $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+		// 	$execute = $database_query->execute();
+
+    //   return ($execute) ? true : false;
+    // }
+    
+    /**
+     * Получить массив имен загруженных шаблонов
+     *
+     * @return array
+     */
+    public function get_array_uploaded_templates_names() : array {
+      $templates_path = sprintf('%s/templates', $this->get_cms_path());
+      return array_diff(scandir(sprintf($templates_path)), ['..', '.']);
     }
     
     /**

@@ -81,8 +81,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_name() : string {
-      if (property_exists($this, 'metadata')) {
-        $metadata_array = json_decode($this->metadata, true);
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
         if (isset($metadata_array['name'])) {
           return $metadata_array['name'];
         }
@@ -97,8 +97,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_surname() : string {
-      if (property_exists($this, 'metadata')) {
-        $metadata_array = json_decode($this->metadata, true);
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
         if (isset($metadata_array['surname'])) {
           return $metadata_array['surname'];
         }
@@ -113,8 +113,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_patronymic() : string {
-      if (property_exists($this, 'metadata')) {
-        $metadata_array = json_decode($this->metadata, true);
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
         if (isset($metadata_array['patronymic'])) {
           return $metadata_array['patronymic'];
         }
@@ -129,8 +129,8 @@ namespace core\PHPLibrary {
      * @return int
      */
     public function get_birthdate_unix_timestamp() : int|string {
-      if (property_exists($this, 'metadata')) {
-        $metadata_array = json_decode($this->metadata, true);
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
         if (isset($metadata_array['birthdate_unix_timestamp'])) {
           return $metadata_array['birthdate_unix_timestamp'];
         }

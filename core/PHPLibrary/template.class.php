@@ -84,6 +84,21 @@ namespace core\PHPLibrary {
     public function get_name() : string {
       return $this->name;
     }
+
+    public function get_title() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['title'])) ? $metadata['title'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=title}';
+    }
+
+    public function get_description() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['description'])) ? $metadata['description'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=description}';
+    }
+
+    public function get_author_name() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['authorName'])) ? $metadata['authorName'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=authorName}';
+    }
     
     /**
      * Назначить наименование категории шаблона
@@ -288,6 +303,21 @@ namespace core\PHPLibrary {
       }
 
       return null;
+    }
+
+    public function exists_file_metadata_json() : bool {
+      return file_exists($this->get_file_metadata_json_path());
+    }
+
+    public function get_file_metadata_json_path() : string {
+      return sprintf('%s/metadata.json', $this->get_path());
+    }
+
+    public function get_metadata() : array|null {
+      $file_path = $this->get_file_metadata_json_path();
+      $file_content = file_get_contents($file_path);
+
+      return json_decode($file_content, true);
     }
   }
 

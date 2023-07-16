@@ -39,7 +39,7 @@ namespace core\PHPLibrary\Page {
         $profile_user = null;
         if (User::exists_by_login($this->system_core, $profile_user_login)) {
           $profile_user = User::get_by_login($this->system_core, $profile_user_login);
-          $profile_user->init_data(['login', 'email', 'metadata']);
+          $profile_user->init_data(['login', 'email', 'metadata_json']);
         }
         
         if (!is_null($profile_user)) {

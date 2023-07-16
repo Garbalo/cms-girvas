@@ -61,6 +61,44 @@ namespace core\PHPLibrary\SystemCore {
       return ($result) ? $result['value'] : null;
     }
 
+    public function exists_database_entry_value(string $name) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('configurations');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('name = :name');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      return ($database_query->fetchColumn()) ? true : false;
+    }
+
+    public function insert_database_entry_value(string $name, string $value) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_insert();
+      $query_builder->statement->set_table('configurations');
+      $query_builder->statement->add_column('name');
+      $query_builder->statement->add_column('value');
+      $query_builder->statement->assembly();
+
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+      $database_query->bindParam(':value', $value, \PDO::PARAM_STR);
+      $execute = $database_query->execute();
+
+      return ($execute) ? true : false;
+    }
+
     public function update_database_entry_value(string $name, string|int $value) : mixed {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_update();
