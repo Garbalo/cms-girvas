@@ -13,6 +13,7 @@ class Modal {
       fetch('/handler/modal?name=' + element.getAttribute('data-modal-call') + '&' + element.getAttribute('data-modal-params'), {
         method: 'GET'
       }).then((response) => {
+        console.log(`Sended: ${element.getAttribute('data-modal-params')}`);
         return response.json();
       }).then((data) => {
         console.log(data.outputData.template);

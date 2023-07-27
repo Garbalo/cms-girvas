@@ -20,10 +20,10 @@
           <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="Логин">
           <input name="user_password" type="password" class="form-auth__input form-auth__input_password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
           <div class="form-auth__inputs-group">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;">
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
           </div>
           <input class="form-auth__input form-auth__input_submit" type="submit" value="Авторизация">
         </form>
@@ -32,3 +32,52 @@
     </section>
   </div>
 </main>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    let adminAccessCodeInputs = document.querySelectorAll('[name="admin_access-code[]"]');
+    for (let inputIndex = 0; inputIndex < adminAccessCodeInputs.length; inputIndex++) {
+      let input = adminAccessCodeInputs[inputIndex];
+      input.addEventListener('keydown', (event) => {
+        let isBreak = true;
+
+        switch (event.keyCode) {       
+          case 8: // Backspace        
+          case 13: // Enter
+          case 16: // Shift
+          case 17: // Ctrl
+          case 18: // Alt
+          case 19: // Pause/Break
+          case 20: // Caps Lock
+          case 27: // Escape
+          case 35: // End
+          case 36: // Home
+          case 37: // Left
+          case 38: // Up
+          case 39: // Right
+          case 40: // Down
+
+          // Mac CMD Key
+          case 91: // Safari, Chrome
+          case 93: // Safari, Chrome
+          case 224: // Firefox
+          break;
+          default:
+            isBreak = false;
+          break;
+        }
+
+        if (isBreak && event.keyCode == 8) {
+          if (input.value.length == 0 && inputIndex > 0) {
+            adminAccessCodeInputs[inputIndex - 1].focus();
+          }
+        }
+
+        if (!isBreak) {
+          if (input.value.length == 4 && inputIndex < 3) {
+            adminAccessCodeInputs[inputIndex + 1].focus();
+          }
+        }
+      });
+    }
+  });
+</script>

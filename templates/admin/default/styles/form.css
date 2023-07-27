@@ -1,4 +1,4 @@
-.form__input, .form__textarea {
+.form__input, .form__textarea, .form__select {
   box-sizing: border-box;
   font-size: 16px;
   border-width: 1px;
@@ -20,6 +20,22 @@
   border-color: var(--form-input-border-color--focus);
 }
 .form__input:active {
+  background-color: var(--form-input-background-color--active);
+  border-color: var(--form-input-border-color--active);
+}
+.form__select {
+  background-color: var(--form-input-background-color);
+  border-color: var(--form-input-border-color);
+}
+.form__select:hover {
+  background-color: var(--form-input-background-color--hover);
+  border-color: var(--form-input-border-color--hover);
+}
+.form__select:focus {
+  background-color: var(--form-input-background-color--focus);
+  border-color: var(--form-input-border-color--focus);
+}
+.form__select:active {
   background-color: var(--form-input-background-color--active);
   border-color: var(--form-input-border-color--active);
 }

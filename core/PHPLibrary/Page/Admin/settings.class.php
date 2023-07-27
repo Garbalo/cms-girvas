@@ -33,18 +33,18 @@ namespace core\PHPLibrary\Page\Admin {
         $settings = new $class_namespace($this->system_core);
 
         if ($settings_name == 'base') {
-          $settings->set_title('Основное');
-          $settings->set_description('Основные настройки CMS, которые позволят настроить базовый функционал и свойства CMS.');
+          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_MAIN_TITLE}');
+          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_MAIN_DESCRIPTION}');
         }
 
         if ($settings_name == 'seo') {
-          $settings->set_title('SEO');
-          $settings->set_description('Настройки поисковой оптимизации (SEO) необходимы для того, чтобы роботам поисковых систем было проще находить Ваш сайт.');
+          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SEO_TITLE}');
+          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SEO_DESCRIPTION}');
         }
 
         if ($settings_name == 'security') {
-          $settings->set_title('Безопасность');
-          $settings->set_description('Вопросы безопасности очень важны в наше время, поэтому уделите больше внимания этому фактору.');
+          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_TITLE}');
+          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_DESCRIPTION}');
         }
 
         $settings_title = $settings->get_title();

@@ -166,6 +166,23 @@ namespace core\PHPLibrary {
     public function set_url(string $template_url) : void {
       $this->url = $template_url;
     }
+
+    public function get_preview_url() : string {
+      return sprintf('/%s/preview.png', $this->get_url());
+    }
+
+    public function get_screenshots_path() : string {
+      return sprintf('%s/screenshots', $this->get_path());
+    }
+
+    public function get_screenshots_url() : string {
+      return sprintf('/%s/screenshots', $this->get_url());
+    }
+
+    public function get_screenshots_array() : array {
+      $screenshots_path = $this->get_screenshots_path();
+      return array_diff(scandir($screenshots_path), ['.', '..']);
+    }
     
     /**
      * Получить массив стилей
@@ -261,6 +278,8 @@ namespace core\PHPLibrary {
           }
         }
 
+        $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);
+
         // Итоговая сборка шаблона веб-страницы
         return TemplateCollector::assembly($this->core->assembled, $template_tags_array);
       }
@@ -277,6 +296,11 @@ namespace core\PHPLibrary {
       /** @var string $template_name Наименование шаблона */
       $template_name = $this->get_name();
       return sprintf('%s/core.class.php', $this->get_path());
+    }
+
+    public function get_core_created_unix_timestamp() : int {
+      $core_path = $this->get_core_path();
+      return filectime($core_path);
     }
     
     /**

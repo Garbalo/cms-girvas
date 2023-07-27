@@ -1,4 +1,6 @@
 /cron/database.config.php
+/repository/
+/rest.php
 /install/
 /OLD/
 /core/configuration.php

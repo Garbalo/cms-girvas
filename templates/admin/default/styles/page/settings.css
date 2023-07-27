@@ -1,23 +1,26 @@
-.table-entries__item-buttons-list {
-  display: flex;
+.form.form_settings .table_settings {
+  margin-bottom: 10px;
 }
-.buttons-list__item {
-  margin-right: 10px;
+.form.form_settings .table__cell {
+  vertical-align: top;
 }
-.buttons-list__item:last-child {
-  margin-right: 0;
+.form.form_settings .cell__title {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
-.table-entries__item-button {
-  display: flex;
-  box-sizing: border-box;
-  background: none;
-  border: 0;
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-.table-entries__item-button-icon {
-  fill: var(--admin-panel-main-page-entries-table-icon-color);
+.form.form_settings input,
+.form.form_settings select,
+.form.form_settings textarea {
+  margin-bottom: 10px;
   width: 100%;
+}
+.form.form_settings input:last-child,
+.form.form_settings select:last-child,
+.form.form_settings textarea:last-child {
+  margin-bottom: 0;
+}
+.form.form_settings .form__input[type="submit"] {
+  width: fit-content;
+  float: right;
 }

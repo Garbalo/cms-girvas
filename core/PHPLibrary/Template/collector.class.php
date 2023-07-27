@@ -1,10 +1,12 @@
 <?php
 
 namespace core\PHPLibrary\Template {
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Template as Template;
 
   final class Collector {
     private const TEMPLATE_TAG_PATTERN = '/\{([a-zA-Z0-9_]+)\}/';
+    private const TEMPLATE_TAG_LANG_PATTERN = '/\{LANG\:([a-zA-Z0-9_]+)\}/';
     private const TEMPLATE_LOGIC_IF_PATTERN = '/\{\?IF\:([a-zA-Z0-9_]+)([=<>!]+)([a-zA-Z0-9_]+)\?\}(.*)\{\?ENDIF\?\}/is';
     private const TEMPLATE_LOGIC_IF_ELSE_PATTERN = '/\{\?IF\:([a-zA-Z0-9_]+)([=<>!]+)([a-zA-Z0-9_]+)\?\}(.*){\?ELSE\?\}(.*)\{\?ENDIF\?\}/is';
     private Template $template;
@@ -71,6 +73,21 @@ namespace core\PHPLibrary\Template {
       }
 
       return implode($scripts_assembled);
+    }
+
+    public static function assembly_locale(string $template_string, SystemCoreLocale $locale) : string {
+      $template_transformed = $template_string;
+
+      $locale_data = $locale->get_data();
+      if (!empty($locale_data)) {
+        foreach ($locale_data as $string_name => $string_value) {
+          if (preg_match(self::TEMPLATE_TAG_LANG_PATTERN, $template_transformed)) {
+            $template_transformed = str_replace("{LANG:{$string_name}}", $string_value, $template_transformed);
+          }
+        }
+      }
+
+      return $template_transformed;
     }
 
     /**

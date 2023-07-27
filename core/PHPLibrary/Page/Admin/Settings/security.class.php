@@ -6,7 +6,7 @@ namespace core\PHPLibrary\Page\Admin\Settings {
   use \core\PHPLibrary\Template as Template;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
-  class SettingsBase {
+  class SettingsSecurity {
     const FORM_PATH = 'templates/page/settings';
 
     public SystemCore $system_core;
