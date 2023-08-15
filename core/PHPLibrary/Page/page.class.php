@@ -42,11 +42,16 @@ namespace core\PHPLibrary\Page {
           $page_static = PageStatic::get_by_name($this->system_core, $page_static_name);
           $page_static->init_data(['id', 'texts', 'name']);
 
+          $this->page->breadcrumbs->add('Главная', '/');
+          $this->page->breadcrumbs->add($page_static->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), $page_static->get_name());
+          $this->page->breadcrumbs->assembly();
+
           $parsedown = new Parsedown();
 
           $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
             'PAGE_NAME' => 'static',
             'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/static.tpl', [
+              'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'PAGE_TITLE' => $page_static->get_title(),
               'PAGE_CONTENT' => $parsedown->text($page_static->get_content())
             ])

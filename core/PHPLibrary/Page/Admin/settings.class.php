@@ -16,25 +16,62 @@ namespace core\PHPLibrary\Page\Admin {
       $this->page = $page;
     }
 
+    public function get_available_settings_categories_array() : array {
+      $settings = [];
+
+      $settings_classes_files_path = sprintf('%s/core/PHPLibrary/Page/Admin/Settings', $this->system_core->get_cms_path());
+      $settings_classes_files_array = array_diff(scandir($settings_classes_files_path), ['.', '..']);
+
+      foreach ($settings_classes_files_array as $setting_class_file) {
+        if (preg_match('/^([a-zA-Z_]+)\.class\.php$/', $setting_class_file, $matches)) {
+          array_push($settings, $matches[1]);
+        }
+      }
+
+      return $settings;
+    }
+
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/settings.css', 'rel' => 'stylesheet']);
       
-      $this->system_core->template->add_script(['src' => 'admin/page/settings.js'], true);
-
+      $this->system_core->template->add_script(['src' => 'admin/page/settings.js', 'type' => 'module'], true);
+      
       $settings_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'base';
-      $settings_template_form_path = sprintf('templates/page/settings/%s.tpl', $settings_name);
-      //$settings_style_form_path = sprintf('%s/styles/page/settings/%s.css', $template_path, $settings_name);
+
+      $available_settings_transformed = [];
+      $available_settings_categories_array = $this->get_available_settings_categories_array();
+      if (!empty($available_settings_categories_array)) {
+        foreach ($available_settings_categories_array as $available_setting_category) {
+          $item_class_is_active = ($settings_name == $available_setting_category) ? 'navigation-item__link_is-active' : '';
+          
+          array_push($available_settings_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+            'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_%s_TITLE}', mb_strtoupper($available_setting_category)),
+            'NAVIGATION_ITEM_URL' => sprintf('/admin/settings/%s', $available_setting_category),
+            'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => $item_class_is_active
+          ]));
+        }
+      }
+
+      if (!empty($available_settings_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($available_settings_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
 
       $settings_core_path = sprintf('%s/core/PHPLibrary/Page/Admin/Settings/%s.class.php', $this->system_core->get_cms_path(), $settings_name);
       if (file_exists($settings_core_path)) {
         http_response_code(200);
 
         $class_namespace = sprintf('\\core\\PHPLibrary\\Page\\Admin\\Settings\\Settings%s', ucfirst($settings_name));
-        $settings = new $class_namespace($this->system_core);
+        $settings = new $class_namespace($this->system_core, $settings_name);
 
         if ($settings_name == 'base') {
-          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_MAIN_TITLE}');
-          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_MAIN_DESCRIPTION}');
+          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_BASE_TITLE}');
+          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_BASE_DESCRIPTION}');
         }
 
         if ($settings_name == 'seo') {
@@ -56,6 +93,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/settings.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'SETTINGS_TITLE' => (isset($settings_title)) ? $settings_title : 'Неизвестные настройки',
         'SETTINGS_DESCRIPTION' => (isset($settings_description)) ? $settings_description : 'Настройки не найдены',
         'SETTINGS_FORM' => TemplateCollector::assembly($settings->assembled, [

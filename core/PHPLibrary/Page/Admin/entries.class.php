@@ -20,7 +20,7 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
       
-      $this->system_core->template->add_script(['src' => 'admin/page/entries.js'], true);
+      $this->system_core->template->add_script(['src' => 'admin/page/entries.js', 'type' => 'module'], true);
 
       $entries_table_items_assembled_array = [];
       $entries = new Entries($this->system_core);

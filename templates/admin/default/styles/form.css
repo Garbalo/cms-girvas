@@ -68,7 +68,7 @@
   transition: background-color .2s, color .2s;
   cursor: pointer;
 }
-.form__button:hover, .form__input_submit:hover {
+.form__button:hover, .form__input_submit:hover{
   background-color: var(--form-button-background-color--hover);
   color: var(--form-button-font-color--hover);
 }
@@ -79,4 +79,27 @@
 .form__button:active, .form__input_submit:active {
   background-color: var(--form-button-background-color--active);
   color: var(--form-button-font-color--active);
+}
+.form__checkbox-container {
+  position: relative;
+  background-color: #EAEAEA;
+  width: 64px;
+  height: 32px;
+}
+.form__checkbox-container .checkbox-container__input {
+  display: none;
+}
+.form__checkbox-container .checkbox-container__label {
+  position: absolute;
+  display: block;
+  background-color: #CCCCCC;
+  width: 32px;
+  height: 32px;
+  left: 0;
+  transition: left .2s, background-color .2s;
+  cursor: pointer;
+}
+.form__checkbox-container .checkbox-container__input:checked + .checkbox-container__label {
+  background-color: #232323;
+  left: calc(100% - 32px);
 }

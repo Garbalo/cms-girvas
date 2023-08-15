@@ -14,13 +14,17 @@
   flex: 0 0 400px;
 }
 .main__page-aside .page-aside__block {
+  box-sizing: border-box;
+  box-shadow: 0 0 10px var(--admin-panel-main-page-title-shadow-color);
+  background-color: var(--admin-panel-main-aside-block-background-color);
+  padding: 20px;
   margin-bottom: 20px;
 }
 .main__page-aside .page-aside__block:last-child {
   margin-bottom: 0;
 }
 .main__page-aside .page-aside__block-title {
-  background-color: var(--admin-panel-main-aside-block-title-background-color);
+  background-color: var(--admin-panel-main-aside-block-background-color);
   font-size: 18px;
   font-weight: 900;
   color: var(--admin-panel-main-aside-block-title-font-colorr);
@@ -35,14 +39,29 @@
   padding: 10px;
 }
 .page__title {
-  font-size: 24px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
   font-weight: 900;
   color: var(--admin-panel-main-page-title-font-color);
   text-transform: uppercase;
-  border-bottom: 2px solid var(--admin-panel-main-page-title-border-color);
-  padding-bottom: 20px;
+  margin: 0;
+}
+.page__title-container {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px var(--admin-panel-main-page-title-shadow-color);
+  background-color: var(--admin-panel-main-page-title-background-color);
+  padding: 20px;
   margin-top: 0;
   margin-bottom: 20px;
+}
+.page__content {
+  box-sizing: border-box;
+  box-shadow: 0 0 10px var(--admin-panel-main-page-content-shadow-color);
+  background-color: var(--admin-panel-main-page-content-background-color);
+  padding: 20px;
 }
 .page__content-phar {
   margin-top: 0;
@@ -50,4 +69,37 @@
 }
 .page__content-phar:last-child {
   margin-bottom: 0;
+}
+.page__navigation {
+  box-sizing: border-box;
+  box-shadow: 0 0 10px var(--admin-panel-main-page-navigation-shadow-color);
+  background-color: var(--admin-panel-main-page-navigation-background-color);
+  margin-bottom: 20px;
+}
+.page__navigation .navigation__list {
+  display: flex;
+}
+.page__navigation .navigation-item__link {
+  display: block;
+  background-color: var(--admin-panel-main-page-navigation-item-link-background-color);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--admin-panel-main-page-navigation-item-link-font-color);
+  padding: 10px;
+  transition: color .2s, background-color .2s;
+}
+.page__navigation .navigation-item__link:hover {
+  background-color: var(--admin-panel-main-page-navigation-item-link-background-color--hover);
+  color: var(--admin-panel-main-page-navigation-item-link-font-color--hover);
+}
+.page__navigation .navigation-item__link:focus {
+  background-color: var(--admin-panel-main-page-navigation-item-link-background-color--focus);
+  color: var(--admin-panel-main-page-navigation-item-link-font-color--focus);
+}
+.page__navigation .navigation-item__link_is-active,
+.page__navigation .navigation-item__link:active {
+  background-color: var(--admin-panel-main-page-navigation-item-link-background-color--active);
+  color: var(--admin-panel-main-page-navigation-item-link-font-color--active);
 }

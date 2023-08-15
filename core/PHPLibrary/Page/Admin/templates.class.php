@@ -24,7 +24,31 @@ namespace core\PHPLibrary\Page\Admin {
 
       $parsedown = new Parsedown();
 
-      if ($this->system_core->urlp->get_path(2) == 'search') {
+      $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'local';
+
+      $navigations_items_transformed = [];
+      $navigations_items = ['local', 'repository'];
+      foreach ($navigations_items as $navigation_item) {
+        $item_class_is_active = ($subpage_name == $navigation_item) ? 'navigation-item__link_is-active' : '';
+
+        array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+          'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:TEMPLATES_PAGE_%s_TITLE}', mb_strtoupper($navigation_item)),
+          'NAVIGATION_ITEM_URL' => sprintf('/admin/templates/%s', $navigation_item),
+          'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => $item_class_is_active
+        ]));
+      }
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
+
+      if ($this->system_core->urlp->get_path(2) == 'repository') {
 
         $ch = curl_init('https://repository.cms-girvas.ru/templates');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -50,7 +74,7 @@ namespace core\PHPLibrary\Page\Admin {
           $templates_list_items_transformed_array = [];
         }
 
-      } else {
+      } elseif ($this->system_core->urlp->get_path(2) == 'local' || is_null($this->system_core->urlp->get_path(2))) {
 
         $templates_list_items_transformed_array = [];
         $uploaded_templates_names = $this->system_core->get_array_uploaded_templates_names();
@@ -78,6 +102,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'templates',
         'TEMPLATES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/list.tpl', [
           'TEMPLATES_LIST_ITEMS' => implode($templates_list_items_transformed_array)

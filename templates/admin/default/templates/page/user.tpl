@@ -1,5 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Создание пользователя</h1>
+  <div class="page__title-container">
+    <h1 class="page__title">Создание пользователя</h1>
+  </div>
   <div class="page__content">
     <form class="form page__user-editor-form user-editor-form" action="/handler/user">
       <input name="user_id" type="hidden" value="{USER_ID}">

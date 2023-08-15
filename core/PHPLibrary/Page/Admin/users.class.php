@@ -21,6 +21,30 @@ namespace core\PHPLibrary\Page\Admin {
       $this->system_core->template->add_style(['href' => 'styles/page/users.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_script(['src' => 'admin/page/users.js'], true);
 
+      $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'list';
+
+      $navigations_items_transformed = [];
+      $navigations_items = ['list', 'groups'];
+      foreach ($navigations_items as $navigation_item) {
+        $item_class_is_active = ($subpage_name == $navigation_item) ? 'navigation-item__link_is-active' : '';
+
+        array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+          'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:TEMPLATES_PAGE_%s_TITLE}', mb_strtoupper($navigation_item)),
+          'NAVIGATION_ITEM_URL' => sprintf('/admin/users/%s', $navigation_item),
+          'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => $item_class_is_active
+        ]));
+      }
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
+
       $users_table_items_assembled_array = [];
       $users = new Users($this->system_core);
       $users_array_objects = $users->get_all();

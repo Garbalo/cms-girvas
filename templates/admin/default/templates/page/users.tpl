@@ -1,5 +1,8 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Пользователи</h1>
+  {PAGE_NAVIGATION}
+  <div class="page__title-container">
+    <h1 class="page__title">Пользователи</h1>
+  </div>
   <div class="page__content">
     <p class="page__content-phar">
       CMS &laquo;GIRVAS&raquo; позволяет работать с пользователями на Вашем сайте. 

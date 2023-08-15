@@ -16,6 +16,10 @@ namespace core\PHPLibrary\SystemCore {
       $this->set_core_path($locale_core_path);
       $this->set_data_path($locale_data_path);
     }
+
+    public function get_icon_url() : string {
+      return sprintf('/locales/%s/icons/16.png', $this->get_name());
+    }
   
     private function set_name(string $value) : void {
       $this->name = $value;
@@ -71,6 +75,16 @@ namespace core\PHPLibrary\SystemCore {
     public function get_author_name() : string {
       $metadata = $this->get_metadata();
       return (isset($metadata['authorName'])) ? $metadata['authorName'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=authorName}';
+    }
+
+    public function get_iso_639_1() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['iso639_1'])) ? $metadata['iso639_1'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=iso639_1}';
+    }
+
+    public function get_iso_639_2() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['iso639_2'])) ? $metadata['iso639_2'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=iso639_2}';
     }
 
     public function exists_file_data_json() : bool {

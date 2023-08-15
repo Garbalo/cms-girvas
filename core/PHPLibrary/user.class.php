@@ -124,6 +124,37 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Получить ID группы пользователя
+     *
+     * @return int
+     */
+    public function get_group_id() : int {
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
+        if (isset($metadata_array['groupID'])) {
+          return $metadata_array['groupID'];
+        }
+      }
+
+      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_group_id}';
+    }
+    
+    /**
+     * Получить объект группы пользователя
+     *
+     * @return UserGroup|null
+     */
+    public function get_group() : UserGroup|null {
+      $group_id = $this->get_group_id();
+      
+      if (UserGroup::exists_by_id($group_id)) {
+        return new UserGroup($this->system_core, $group_id);
+      }
+
+      return null;
+    }
+    
+    /**
      * Получить отчество пользователя
      *
      * @return int

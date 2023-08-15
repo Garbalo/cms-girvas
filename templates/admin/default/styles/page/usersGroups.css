@@ -1,0 +1,23 @@
+.table-users-groups__item-buttons-list {
+    display: flex;
+  }
+  .buttons-list__item {
+    margin-right: 10px;
+  }
+  .buttons-list__item:last-child {
+    margin-right: 0;
+  }
+  .table-users-groups__item-button {
+    display: flex;
+    box-sizing: border-box;
+    background: none;
+    border: 0;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  .table-users-groups__item-button-icon {
+    fill: var(--admin-panel-main-page-users-groups-table-icon-color);
+    width: 100%;
+  }

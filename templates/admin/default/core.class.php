@@ -98,11 +98,14 @@ namespace templates\admin\default {
       $this->template->add_style(['href' => 'styles/table.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/form.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/modal.css', 'rel' => 'stylesheet']);
+      $this->template->add_style(['href' => 'styles/interactive.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/notification.css', 'rel' => 'stylesheet']);
-
+      
+      $this->template->add_script(['src' => 'urlParser.class.js'], true);
       $this->template->add_script(['src' => 'popupNotification.class.js'], true);
       $this->template->add_script(['src' => 'form.class.js'], true);
       $this->template->add_script(['src' => 'modal.class.js'], true);
+      $this->template->add_script(['src' => 'interactive.class.js', 'type' => 'module'], true);
       $this->template->add_script(['src' => 'common.js'], true);
 
       /** @var string $user_ip IP-адрес пользователя */

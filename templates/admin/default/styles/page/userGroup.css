@@ -1,0 +1,30 @@
+.user-group-editor-form {
+  display: flex;
+  flex-direction: column;
+}
+.user-group-editor-form__panel {
+  display: flex;
+  justify-content: flex-end;
+}
+.user-group-editor-form__panel-submit {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.user-group-editor-form__panel-submit:last-child {
+  margin-right: 0;
+}
+.page__user-group-editor {
+  margin-bottom: 10px;
+}
+.user-group-editor-form__input {
+  margin-bottom: 10px;
+}
+.user-group-editor-form__input:last-child {
+  margin-bottom: 0;
+}
+.user-group-editor-form__textarea {
+  margin-bottom: 10px;
+}
+.user-group-editor-form__textarea:last-child {
+  margin-bottom: 0;
+}

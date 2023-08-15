@@ -4,6 +4,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
   use \core\PHPLibrary\Database\QueryBuilder as QueryBuilder;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseFrom as ClauseFrom;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseWhere as ClauseWhere;
+  use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseOrderBy as ClauseOrderBy;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect\ClauseLimit as ClauseLimit;
   use \core\PHPLibrary\Database\QueryBuilder\InterfaceStatement as InterfaceStatement;
 
@@ -12,6 +13,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     private array $selections = [];
     public ClauseFrom|null $clause_from = null;
     public ClauseWhere|null $clause_where = null;
+    public ClauseOrderBy|null $clause_order_by = null;
     public ClauseLimit|null $clause_limit = null;
     public string $assembled = '';
     
@@ -52,9 +54,14 @@ namespace core\PHPLibrary\Database\QueryBuilder {
     public function set_clause_where() : void {
       $this->clause_where = new ClauseWhere($this);
     }
-
+    
+    /**
+     * Установить предложение ORDER BY
+     *
+     * @return void
+     */
     public function set_clause_order_by() : void {
-      $this->clause_order_by = $clause_order_by;
+      $this->clause_order_by = new ClauseOrderBy($this);
     }
     
     /**
@@ -90,6 +97,11 @@ namespace core\PHPLibrary\Database\QueryBuilder {
       if (!is_null($this->clause_where)) {
         $this->clause_where->assembly();
         array_push($query_array, $this->clause_where->assembled);
+      }
+
+      if (!is_null($this->clause_order_by)) {
+        $this->clause_order_by->assembly();
+        array_push($query_array, $this->clause_order_by->assembled);
       }
 
       if (!is_null($this->clause_limit)) {

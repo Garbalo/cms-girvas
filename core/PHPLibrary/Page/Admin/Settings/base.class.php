@@ -11,11 +11,13 @@ namespace core\PHPLibrary\Page\Admin\Settings {
 
     public SystemCore $system_core;
     public string $title;
+    public string $name;
     public string $description;
     public string $assembled = '';
 
-    public function __construct(SystemCore $system_core, ) {
+    public function __construct(SystemCore $system_core, string $name) {
       $this->system_core = $system_core;
+      $this->name = $name;
     }
 
     public function set_title(string $value) : void {
@@ -35,8 +37,7 @@ namespace core\PHPLibrary\Page\Admin\Settings {
     }
 
     public function assembly(array $template_values = []) {
-      $settings_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'base';
-      $form_template_path = sprintf('%s/%s.tpl', self::FORM_PATH, $this->system_core->urlp->get_path(2));
+      $form_template_path = sprintf('%s/%s.tpl', self::FORM_PATH, $this->name);
       
       $settings_cms_templates_options = [];
       $uploaded_templates_names = $this->system_core->get_array_uploaded_templates_names();
@@ -97,7 +98,7 @@ namespace core\PHPLibrary\Page\Admin\Settings {
       }
 
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, $form_template_path, [
-        'SETTINGS_NAME' => $settings_name,
+        'SETTINGS_NAME' => $this->name,
         'SETTING_CMS_TEMPLATES_OPTIONS' => implode($settings_cms_templates_options),
         'SETTING_CMS_BASE_LOCALES_OPTIONS' => implode($settings_cms_base_locales_options),
         'SETTING_CMS_ADMIN_LOCALES_OPTIONS' => implode($settings_cms_admin_locales_options),

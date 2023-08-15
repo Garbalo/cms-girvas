@@ -1,5 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Шаблон: &laquo;{TEMPLATE_TITLE}&raquo;</h1>
+  <div class="page__title-container">
+    <h1 class="page__title">Шаблон: {TEMPLATE_TITLE}</h1>
+  </div>
   <div class="page__content">
     <div class="template">
       <div class="template__left-block">

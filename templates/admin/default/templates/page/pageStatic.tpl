@@ -1,5 +1,8 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Создание статической страницы</h1>
+  <div class="page__title-container">
+    <h1 class="page__title">Создание статической страницы</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
+  </div>
   <div class="page__content">
     <form class="form page__page-static-editor-form page-static-editor-form" action="/handler/page-static">
       <input name="page-static_id" type="hidden" value="{PAGE_STATIC_ID}">

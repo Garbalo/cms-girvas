@@ -1,5 +1,8 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 class="page__title">Записи</h1>
+  <div class="page__title-container">
+    <h1 class="page__title">Записи</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
+  </div>
   <div class="page__content">
     <p class="page__content-phar">
       CMS &laquo;GIRVAS&raquo; позволяет работать с записями на Вашем сайте. 

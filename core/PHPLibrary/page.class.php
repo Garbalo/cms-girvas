@@ -5,6 +5,7 @@ namespace core\PHPLibrary {
 
   class Page {
     private SystemCore $system_core;
+    public PageBreadcrumbs $breadcrumbs;
     private string $name;
     public string $assembled = '';
     
@@ -17,6 +18,7 @@ namespace core\PHPLibrary {
      */
     public function __construct(SystemCore $system_core, array $dir_exploded) {
       $this->set_system_core($system_core);
+      $this->breadcrumbs = new PageBreadcrumbs($system_core);
     }
 
     /**

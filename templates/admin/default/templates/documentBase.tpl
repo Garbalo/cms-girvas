@@ -43,6 +43,15 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
+          <a href="/admin/media" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
+            <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
+              <polygon points="27.9,10 17.6,20.3 17.6,64 60.9,64 60.9,10 "/>
+            </svg>
+            <div class="admin-navigation-list__item-label">Медиа-файлы</div>
+          </a>
+        </li>
+        <li class="admin-navigation-list__item">
           <a href="/admin/users" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_USERS_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16.933332 16.933281" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <circle cx="8.4666662" cy="6.0901923" r="6" />

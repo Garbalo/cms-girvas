@@ -24,3 +24,9 @@
   width: fit-content;
   float: right;
 }
+.form.form_settings .interactive__select-imitation {
+  width: 100% !important;
+}
+#TC6474389682 .interactive__select-imitation {
+  margin-bottom: 10px;
+}

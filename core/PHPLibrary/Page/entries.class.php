@@ -44,11 +44,16 @@ namespace core\PHPLibrary\Page {
 
         $entries_count_on_page = 6;
         $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+        
+        $this->page->breadcrumbs->add('Все записи', '/entries');
 
         if ($entries_category_name != 'all') {
           $entries_category = EntryCategory::get_by_name($this->system_core, $entries_category_name);
           $entries_category->init_data(['name', 'texts']);
           $entries_category_id = $entries_category->get_id();
+
+          $this->page->breadcrumbs->add($entries_category->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), sprintf('/entries/%s', $entries_category->get_name()));
+          $this->page->breadcrumbs->assembly();
 
           /** @var Entries $entries Объект класса Entries */
           $entries = new Entries($this->system_core);
@@ -57,6 +62,8 @@ namespace core\PHPLibrary\Page {
           ]);
           $entries_count = $entries->get_count_by_category_id($entries_category_id);
         } else {
+          $this->page->breadcrumbs->assembly();
+
           /** @var Entries $entries Объект класса Entries */
           $entries = new Entries($this->system_core);
           $entries_array_objects = $entries->get_all([
@@ -89,6 +96,7 @@ namespace core\PHPLibrary\Page {
         $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
           'PAGE_NAME' => 'entries',
           'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries.tpl', [
+            'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
             'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? 'Все записи' : $entries_category->get_title(),
             'ENTRIES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/list.tpl', [
               'ENTRIES_LIST_ITEMS' => implode($entries_array_templates)

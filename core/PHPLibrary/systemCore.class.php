@@ -291,7 +291,13 @@ namespace core\PHPLibrary {
           preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $block, $matches);
         }
 
-        $data_array[$matches[1]] = $matches[2];
+        if (isset($matches[2])) {
+          if (preg_match('/(.*)\[\]$/', $matches[1], $matches_name)) {
+            $data_array[$matches_name[1]][] = $matches[2];
+          } else {
+            $data_array[$matches[1]] = $matches[2];
+          }
+        }
       }   
       
       return $data_array;

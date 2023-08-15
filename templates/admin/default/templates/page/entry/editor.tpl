@@ -39,6 +39,7 @@
     nadvoTE.textarea.element.classList.add('form__textarea');
     nadvoTE.textarea.element.value = editorContent.innerHTML;
     nadvoTE.textarea.element.setAttribute('name', 'entry_content_rus');
+    nadvoTE.textarea.element.setAttribute('role', 'entryContent');
 
     editorContent.remove();
   });

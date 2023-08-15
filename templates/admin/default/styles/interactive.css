@@ -1,0 +1,112 @@
+.interactive .interactive__select-imitation {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  border: 1px solid #EAEAEA;
+  width: 150px;
+}
+.interactive .interactive__select-imitation .select-imitation__selected-item-container {
+  box-sizing: border-box;
+  flex-grow: 1;
+  height: 32px;
+}
+.interactive .interactive__select-imitation .select-imitation__selected-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  padding: 0 10px;
+  height: 100%;
+}
+.interactive .interactive__select-imitation .select-imitation__button {
+  display: flex;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+.interactive .interactive__select-imitation .select-imitation__droped-list {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: absolute;
+  border: 1px solid #EAEAEA;
+  max-height: 128px;
+  height: 0;
+  width: calc(100% + 2px);
+  left: -1px;
+  top: 31px;
+  overflow-y: auto;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.interactive .interactive__select-imitation .select-imitation__droped-list.droped-list_is-showed {
+  height: auto;
+  opacity: 1;
+}
+.interactive .interactive__select-imitation .droped-list__item {
+  display: flex;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px;
+  cursor: pointer;
+}
+.interactive .interactive__select-imitation .droped-list__item:hover {
+  background-color: #EAEAEA;
+}
+.interactive .interactive__select-imitation .select-imitation__button-icon {
+  width: 16px;
+  transition: transform .2s;
+}
+.interactive .interactive__select-imitation .select-imitation__droped-list:not(.droped-list_is-showed) + .select-imitation__button .select-imitation__button-icon  {
+  transform: rotateZ(0deg);
+}
+.interactive .interactive__select-imitation .select-imitation__droped-list.droped-list_is-showed + .select-imitation__button .select-imitation__button-icon  {
+  transform: rotateZ(180deg);
+}
+.interactive .interactive__select-imitation .droped-list__item img,
+.interactive .interactive__select-imitation .select-imitation__selected-item img {
+  margin-right: 10px;
+}
+.interactive .interactive__button {
+  display: flex;
+  background-color: var(--interactive-button-background-color);
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  border: 0;
+  padding: 10px;
+  transition: background-color .2s, color .2s;
+  cursor: pointer;
+}
+.interactive .interactive__button:hover {
+  background-color: var(--interactive-button-background-color--hover);
+}
+.interactive .interactive__button:focus {
+  background-color: var(--interactive-button-background-color--focus);
+}
+.interactive .interactive__button:active {
+  background-color: var(--interactive-button-background-color--active);
+}
+.interactive .interactive__button-icon {
+  margin-right: 10px;
+  width: 16px;
+}
+.interactive .interactive__button-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--interactive-button-font-color);
+}
+.interactive .interactive__button:hover .interactive__button-label {
+  color: var(--interactive-button-font-color--hover);
+}
+.interactive .interactive__button:focus .interactive__button-label {
+  color: var(--interactive-button-font-color--focus);
+}
+.interactive .interactive__button:active .interactive__button-label {
+  color: var(--interactive-button-font-color--active);
+}

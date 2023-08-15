@@ -1,6 +1,18 @@
 'use strict';
 
+import {Interactive} from "../../interactive.class.js";
+
 document.addEventListener('DOMContentLoaded', (event) => {
+  let interactiveButton = new Interactive('button');
+  interactiveButton.target.setLabel('Новая запись');
+  interactiveButton.target.setCallback(() => {
+    window.location.href = `./entry`;
+  });
+  interactiveButton.target.assembly();
+
+  let interactiveContainerElement = document.querySelector('#E8548530785');
+  interactiveContainerElement.append(interactiveButton.target.assembled)
+
   let tableItemsEntries = document.querySelectorAll('.table-entries__item');
   for (let tableItemEntry of tableItemsEntries) {
     let entryID = tableItemEntry.getAttribute('data-entry-id');

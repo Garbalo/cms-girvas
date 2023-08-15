@@ -20,6 +20,8 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/nadvoTE.css', 'rel' => 'stylesheet']);
+      
+      $this->system_core->template->add_script(['src' => 'admin/page/entry.js', 'type' => 'module'], true);
 
       $entry = null;
       if (!is_null($this->system_core->urlp->get_path(2))) {
@@ -31,6 +33,27 @@ namespace core\PHPLibrary\Page\Admin {
         }
       }
 
+      $media_files_path = sprintf('%s/uploads/media', $this->system_core->get_cms_path());
+      $media_files = array_diff(scandir($media_files_path), ['.', '..']);
+      $media_files = array_slice($media_files, 0, 6);
+
+      $media_files_transformed = [];
+      foreach ($media_files as $media_file) {
+        $media_file_url = sprintf('/uploads/media/%s', $media_file);
+        array_push($media_files_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/mediaManager/listItem.tpl', [
+          'MEDIA_FILE_URL' => $media_file_url,
+          'MEDIA_FILE_FULLNAME' => $media_file
+        ]));
+      }
+
+      if (!empty($media_files_transformed)) {
+        $media_manager_list = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/mediaManager/list.tpl', [
+          'MEDIA_LIST_ITEMS' => implode($media_files_transformed)
+        ]);
+      } else {
+        $media_manager_list = 'Медиа-файлы отсутствуют.';
+      }
+
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
         'ADMIN_PANEL_PAGE_NAME' => 'entry',
@@ -40,7 +63,10 @@ namespace core\PHPLibrary\Page\Admin {
         'ENTRY_DESCRIPTION' => (!is_null($entry)) ? $entry->get_description() : '',
         'ENTRY_CONTENT' => (!is_null($entry)) ? $entry->get_content() : '',
         'ENTRY_NAME' => (!is_null($entry)) ? $entry->get_name() : '',
-        'ENTRY_FORM_METHOD' => (!is_null($entry)) ? 'PATCH' : 'PUT'
+        'ENTRY_FORM_METHOD' => (!is_null($entry)) ? 'PATCH' : 'PUT',
+        'ENTRY_MEDIA_MANAGER' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/mediaManager.tpl', [
+          'MEDIA_LIST' => $media_manager_list
+        ])
       ]);
     }
 

@@ -54,12 +54,46 @@ namespace core\PHPLibrary {
       return $this->id;
     }
 
+    public function get_category_id() : int {
+      return $this->category_id;
+    }
+
     public function get_created_unix_timestamp() : int|string {
-      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=created_unix_timestamp}';
+      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '';
     }
 
     public function get_updated_unix_timestamp() : int|string {
-      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
+      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '';
+    }
+
+    public function get_author_id() : int|string {
+      return (property_exists($this, 'author_id')) ? $this->author_id : 0;
+    }
+
+    public function get_category(array $init_data = ['*']) : EntryCategory|null {
+      $entry_category_id = $this->get_category_id();
+
+      if (EntryCategory::exists_by_id($this->system_core, $entry_category_id)) {
+        $entry_category = new EntryCategory($this->system_core, $entry_category_id);
+        $entry_category->init_data($init_data);
+
+        return $entry_category;
+      }
+
+      return null;
+    }
+
+    public function get_author(array $init_data = ['*']) : User|null {
+      $entry_author_id = $this->get_author_id();
+
+      if (User::exists_by_id($this->system_core, $entry_author_id)) {
+        $entry_user = new User($this->system_core, $entry_author_id);
+        $entry_user->init_data($init_data);
+
+        return $entry_user;
+      }
+
+      return null;
     }
     
     /**
@@ -76,7 +110,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=texts_title}';
+      return '';
     }
 
     /**
@@ -93,7 +127,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=texts_description}';
+      return '';
     }
 
     /**
@@ -110,7 +144,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=texts_content}';
+      return '';
     }
     
     /**
@@ -119,7 +153,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public function get_name() {
-      return (property_exists($this, 'name')) ? $this->name : '{ERROR:ENTRY_DATA_IS_NOT_EXISTS=name}';
+      return (property_exists($this, 'name')) ? $this->name : '';
     }
     
     /**
@@ -362,7 +396,7 @@ namespace core\PHPLibrary {
 
       if (array_key_exists('texts', $data)) {
         foreach ($data['texts'] as $lang_name => $data_texts) {
-          $query_builder->statement->clause_set->add_column('texts', sprintf('texts || \'{"%s": %s}\'::jsonb', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+          $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 
