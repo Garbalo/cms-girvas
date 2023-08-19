@@ -39,69 +39,17 @@ namespace core\PHPLibrary\Page\Admin\Settings {
     public function assembly(array $template_values = []) {
       $form_template_path = sprintf('%s/%s.tpl', self::FORM_PATH, $this->name);
       
-      $settings_cms_templates_options = [];
-      $uploaded_templates_names = $this->system_core->get_array_uploaded_templates_names();
-      if (count($uploaded_templates_names) > 0) {
-        foreach ($uploaded_templates_names as $setting_cms_template_name) {
-          $template = new Template($this->system_core, $setting_cms_template_name);
-          
-          if ($template->exists_file_metadata_json()) {
-            array_push($settings_cms_templates_options, TemplateCollector::assembly('<option value="{TEMPLATE_NAME}">{TEMPLATE_TITLE}</option>', [
-              'TEMPLATE_NAME' => $template->get_name(),
-              'TEMPLATE_TITLE' => $template->get_title()
-            ]));
-          }
-
-          unset($template);
-        }
-      }
-
-      $settings_cms_base_locales_options = [];
-      $settings_cms_admin_locales_options = [];
-      $cms_locales_names = $this->system_core->get_array_locales_names();
-      if (count($cms_locales_names) > 0) {
-        foreach ($cms_locales_names as $index => $cms_locale_name) {
-          $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_name);
-
-          if ($cms_locale->exists_file_metadata_json()) {
-            if ($cms_locale_name == $this->system_core->configurator->get_database_entry_value('base_locale')) {
-              array_unshift($settings_cms_base_locales_options, TemplateCollector::assembly('<option value="{LOCALE_NAME}">{LOCALE_TITLE}</option>', [
-                'LOCALE_NAME' => $cms_locale->get_name(),
-                'LOCALE_TITLE' => $cms_locale->get_title()
-              ]));
-            } else {
-              array_push($settings_cms_base_locales_options, TemplateCollector::assembly('<option value="{LOCALE_NAME}">{LOCALE_TITLE}</option>', [
-                'LOCALE_NAME' => $cms_locale->get_name(),
-                'LOCALE_TITLE' => $cms_locale->get_title()
-              ]));
-            }
-          }
-        }
-
-        foreach ($cms_locales_names as $index => $cms_locale_name) {
-          $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_name);
-
-          if ($cms_locale->exists_file_metadata_json()) {
-            if ($cms_locale_name == $this->system_core->configurator->get_database_entry_value('base_admin_locale')) {
-              array_unshift($settings_cms_admin_locales_options, TemplateCollector::assembly('<option value="{LOCALE_NAME}">{LOCALE_TITLE}</option>', [
-                'LOCALE_NAME' => $cms_locale->get_name(),
-                'LOCALE_TITLE' => $cms_locale->get_title()
-              ]));
-            } else {
-              array_push($settings_cms_admin_locales_options, TemplateCollector::assembly('<option value="{LOCALE_NAME}">{LOCALE_TITLE}</option>', [
-                'LOCALE_NAME' => $cms_locale->get_name(),
-                'LOCALE_TITLE' => $cms_locale->get_title()
-              ]));
-            }
-          }
-        }
-      }
+      $setting_allowed_emails_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_emails_status') : '';
+      $setting_allowed_ip_admin_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip_status') : '';
 
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, $form_template_path, [
         'SETTINGS_NAME' => $this->name,
-        'SETTING_CMS_TEMPLATES_OPTIONS' => implode($settings_cms_templates_options),
-        'SETTING_CMS_BASE_LOCALES_OPTIONS' => implode($settings_cms_base_locales_options),
-        'SETTING_CMS_ADMIN_LOCALES_OPTIONS' => implode($settings_cms_admin_locales_options),
+        'SETTING_ALLOWED_EMAILS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('security_allowed_emails'), true)) : '',
+        'SETTING_ALLOWED_EMAILS_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_emails_status') : 'off',
+        'SETTING_ALLOWED_EMAILS_CHECKED_VALUE' => ($setting_allowed_emails_status_value == 'on') ? 'checked' : '',
+        'SETTING_ALLOWED_IP_ADMIN_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip'), true)) : '',
+        'SETTING_ALLOWED_IP_ADMIN_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip_status') : 'off',
+        'SETTING_ALLOWED_IP_ADMIN_CHECKED_VALUE' => ($setting_allowed_ip_admin_status_value == 'on') ? 'checked' : '',
       ]);
     }
 

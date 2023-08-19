@@ -3,135 +3,230 @@
 import {Interactive} from "../../interactive.class.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  let interactiveChoicesSettingsTimezone = new Interactive('choices');
+  let urlp = new URLParser();
 
-  let timezoneElement = document.createElement('span');
-  timezoneElement.innerText = 'GMT+3 (Москва)';
-  let timezoneElementTemplate = document.createElement('template');
-  timezoneElementTemplate.innerHTML += timezoneElement.outerHTML;
+  if (urlp.getPathPart(3) == 'security') {
+    let logicBlocks = document.querySelectorAll('[data-logic-block]');
+    logicBlocks.forEach((element, elementIndex) => {
+      let logicBlock = element.getAttribute('data-logic-block');
+      let logicBlockTargetElement = document.getElementById(logicBlock);
+      if (!element.checked) {
+        logicBlockTargetElement.setAttribute('disabled', 'disabled');
+      }
 
-  interactiveChoicesSettingsTimezone.target.addItem(timezoneElementTemplate.innerHTML, 'gmt+3');
-  interactiveChoicesSettingsTimezone.target.setName('setting_base_timezone');
-  interactiveChoicesSettingsTimezone.assembly();
+      let statusBlock = element.getAttribute('data-status-block');
+      let statusBlockTargetElement = document.getElementById(statusBlock);
+      element.addEventListener('change', (event) => {
+        if (!element.checked) {
+          statusBlockTargetElement.value = 'off';
+        } else {
+          statusBlockTargetElement.value = 'on';
+        }
 
-  document.querySelector('#TC6474389679').prepend(interactiveChoicesSettingsTimezone.target.assembled);
+        if (logicBlockTargetElement.hasAttribute('disabled')) {
+          logicBlockTargetElement.removeAttribute('disabled');
+        } else {
+          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        }
+      });
+    });
+  }
 
-  let interactiveChoicesSettingsEngineeringWorks = new Interactive('choices');
+  if (urlp.getPathPart(3) == null || urlp.getPathPart(3) == 'base') {
+    let logicBlocks = document.querySelectorAll('[data-logic-block]');
+    logicBlocks.forEach((element, elementIndex) => {
+      let logicBlock = element.getAttribute('data-logic-block');
+      let logicBlockTargetElement = document.getElementById(logicBlock);
+      if (!element.checked) {
+        logicBlockTargetElement.setAttribute('disabled', 'disabled');
+      }
 
-  let engineeringWorksElementOn = document.createElement('span');
-  engineeringWorksElementOn.innerText = 'Включено';
-  let engineeringWorksElementOnTemplate = document.createElement('template');
-  engineeringWorksElementOnTemplate.innerHTML += engineeringWorksElementOn.outerHTML;
+      let statusBlock = element.getAttribute('data-status-block');
+      let statusBlockTargetElement = document.getElementById(statusBlock);
+      element.addEventListener('change', (event) => {
+        if (!element.checked) {
+          statusBlockTargetElement.value = 'off';
+        } else {
+          statusBlockTargetElement.value = 'on';
+        }
 
-  let engineeringWorksElementOff = document.createElement('span');
-  engineeringWorksElementOff.innerText = 'Отключено';
-  let engineeringWorksElementOffTemplate = document.createElement('template');
-  engineeringWorksElementOffTemplate.innerHTML += engineeringWorksElementOn.outerHTML;
+        if (logicBlockTargetElement.hasAttribute('disabled')) {
+          logicBlockTargetElement.removeAttribute('disabled');
+        } else {
+          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        }
+      });
+    });
 
-  interactiveChoicesSettingsEngineeringWorks.target.addItem(engineeringWorksElementOn.innerHTML, 'on');
-  interactiveChoicesSettingsEngineeringWorks.target.addItem(engineeringWorksElementOff.innerHTML, 'off');
-  interactiveChoicesSettingsEngineeringWorks.target.setName('setting_base_engineering_works');
-  interactiveChoicesSettingsEngineeringWorks.assembly();
-
-  document.querySelector('#TC6474389682').prepend(interactiveChoicesSettingsEngineeringWorks.target.assembled);
-
-  fetch('/handler/locales', {
-    method: 'GET'
-  }).then((response) => {
-    return response.json();
-  }).then((data) => {
-    fetch('/handler/locale/base', {
+    fetch('/handler/timezones', {
       method: 'GET'
     }).then((response) => {
       return response.json();
-    }).then((data1) => {
-      let locales = data.outputData.locales;
-      let localeSelected = data1.outputData.locale;
-      let interactiveChoicesSettingsBaseLocale = new Interactive('choices');
+    }).then((data) => {
+      fetch('/handler/timezone', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data1) => {
+        let timezones = data.outputData.timezones;
+        let timezoneSelected = data1.outputData.timezone;
 
-      // locales.sort((a, b) => {
-      //   return a.name === localeSelected.name ? -1 : b.name === localeSelected.name ? 1 : 0;
-      // });
+        let interactiveChoicesSettingsTimezone = new Interactive('choices');
+        timezones.forEach((timezone, timezoneIndex) => {
+          let timezoneElement = document.createElement('span');
+          timezoneElement.innerText = `${timezone.name} (${timezone.utc})`;
+          let timezoneElementTemplate = document.createElement('template');
+          timezoneElementTemplate.innerHTML += timezoneElement.outerHTML;
 
-      console.log(locales);
+          interactiveChoicesSettingsTimezone.target.addItem(timezoneElementTemplate.innerHTML, timezone.name);
+        });
 
-      locales.forEach((locale, localeIndex) => {
-        let localeTitle = locale.title;
-        let localeIconURL = locale.iconURL;
-        let localeName = locale.name;
-        let localeISO639_2 = locale.iso639_2;
+        timezones.forEach((timezone, timezoneIndex) => {
+          if (timezone.name === timezoneSelected.name) {
+            interactiveChoicesSettingsTimezone.target.setItemSelectedIndex(timezoneIndex);
+          }
+        });
 
-        let localeIconImageElement = document.createElement('img');
-        localeIconImageElement.setAttribute('src', localeIconURL);
-        localeIconImageElement.setAttribute('alt', localeTitle);
+        interactiveChoicesSettingsTimezone.target.setName('setting_base_timezone');
+        interactiveChoicesSettingsTimezone.assembly();
 
-        let localeLabelElement = document.createElement('span');
-        localeLabelElement.innerText = localeTitle;
+        document.querySelector('#TC6474389679').prepend(interactiveChoicesSettingsTimezone.target.assembled);
+      });
+    });
 
-        let localeTemplate = document.createElement('template');
-        localeTemplate.innerHTML += localeIconImageElement.outerHTML;
-        localeTemplate.innerHTML += localeLabelElement.outerHTML;
+    fetch('/handler/charsets', {
+      method: 'GET'
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      fetch('/handler/charset', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data1) => {
+        let charsets = data.outputData.charsets;
+        let charsetSelected = data1.outputData.charset;
+        let interactiveChoicesSettingsCharset = new Interactive('choices');
 
-        interactiveChoicesSettingsBaseLocale.target.addItem(localeTemplate.innerHTML, localeName);
+        charsets.forEach((charset, charsetIndex) => {
+          interactiveChoicesSettingsCharset.target.addItem(charset, charset);
+        });
+
+        charsets.forEach((charset, charsetIndex) => {
+          if (charset === charsetSelected) {
+            interactiveChoicesSettingsCharset.target.setItemSelectedIndex(charsetIndex);
+          }
+        });
+
+        interactiveChoicesSettingsCharset.target.setName('setting_base_site_charset');
+        interactiveChoicesSettingsCharset.assembly();
+
+        document.querySelector('#TC6474389682').append(interactiveChoicesSettingsCharset.target.assembled);
+      });
+    });
+
+    fetch('/handler/ew-status', {
+      method: 'GET'
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      let engineeringWorksStatus = data.outputData.status;
+      let engineeringWorksHiddenInput = document.getElementById('I1474308110');
+      engineeringWorksHiddenInput.value = engineeringWorksStatus;
+    });
+
+    fetch('/handler/locales', {
+      method: 'GET'
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      fetch('/handler/locale/base', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data1) => {
+        let locales = data.outputData.locales;
+        let localeSelected = data1.outputData.locale;
+        let interactiveChoicesSettingsBaseLocale = new Interactive('choices');
+
+        locales.forEach((locale, localeIndex) => {
+          let localeTitle = locale.title;
+          let localeIconURL = locale.iconURL;
+          let localeName = locale.name;
+          let localeISO639_2 = locale.iso639_2;
+
+          let localeIconImageElement = document.createElement('img');
+          localeIconImageElement.setAttribute('src', localeIconURL);
+          localeIconImageElement.setAttribute('alt', localeTitle);
+
+          let localeLabelElement = document.createElement('span');
+          localeLabelElement.innerText = localeTitle;
+
+          let localeTemplate = document.createElement('template');
+          localeTemplate.innerHTML += localeIconImageElement.outerHTML;
+          localeTemplate.innerHTML += localeLabelElement.outerHTML;
+
+          interactiveChoicesSettingsBaseLocale.target.addItem(localeTemplate.innerHTML, localeName);
+        });
+
+        locales.forEach((locale, localeIndex) => {
+          if (locale.name === localeSelected.name) {
+            interactiveChoicesSettingsBaseLocale.target.setItemSelectedIndex(localeIndex);
+          }
+        });
+
         interactiveChoicesSettingsBaseLocale.target.setName('setting_base_locale')
+        interactiveChoicesSettingsBaseLocale.assembly();
+
+        document.querySelector('#TC6474389680').append(interactiveChoicesSettingsBaseLocale.target.assembled);
       });
 
-      locales.forEach((locale, localeIndex) => {
-        if (locale.name === localeSelected.name) {
-          interactiveChoicesSettingsBaseLocale.target.setItemSelectedIndex(localeIndex);
-        }
-      });
+      fetch('/handler/locale/admin', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data1) => {
+        let locales = data.outputData.locales;
+        let localeSelected = data1.outputData.locale;
+        let interactiveChoicesSettingsAdminLocale = new Interactive('choices');
 
-      interactiveChoicesSettingsBaseLocale.assembly();
+        // locales.sort((a, b) => {
+        //   return a.name === localeSelected.name ? -1 : b.name === localeSelected.name ? 1 : 0;
+        // });
 
-      document.querySelector('#TC6474389680').append(interactiveChoicesSettingsBaseLocale.target.assembled);
-    });
+        console.log(locales);
 
-    fetch('/handler/locale/admin', {
-      method: 'GET'
-    }).then((response) => {
-      return response.json();
-    }).then((data1) => {
-      let locales = data.outputData.locales;
-      let localeSelected = data1.outputData.locale;
-      let interactiveChoicesSettingsAdminLocale = new Interactive('choices');
+        locales.forEach((locale, localeIndex) => {
+          let localeTitle = locale.title;
+          let localeIconURL = locale.iconURL;
+          let localeName = locale.name;
+          let localeISO639_2 = locale.iso639_2;
 
-      // locales.sort((a, b) => {
-      //   return a.name === localeSelected.name ? -1 : b.name === localeSelected.name ? 1 : 0;
-      // });
+          let localeIconImageElement = document.createElement('img');
+          localeIconImageElement.setAttribute('src', localeIconURL);
+          localeIconImageElement.setAttribute('alt', localeTitle);
 
-      console.log(locales);
+          let localeLabelElement = document.createElement('span');
+          localeLabelElement.innerText = localeTitle;
 
-      locales.forEach((locale, localeIndex) => {
-        let localeTitle = locale.title;
-        let localeIconURL = locale.iconURL;
-        let localeName = locale.name;
-        let localeISO639_2 = locale.iso639_2;
+          let localeTemplate = document.createElement('template');
+          localeTemplate.innerHTML += localeIconImageElement.outerHTML;
+          localeTemplate.innerHTML += localeLabelElement.outerHTML;
 
-        let localeIconImageElement = document.createElement('img');
-        localeIconImageElement.setAttribute('src', localeIconURL);
-        localeIconImageElement.setAttribute('alt', localeTitle);
+          interactiveChoicesSettingsAdminLocale.target.addItem(localeTemplate.innerHTML, localeName);
+        });
 
-        let localeLabelElement = document.createElement('span');
-        localeLabelElement.innerText = localeTitle;
+        locales.forEach((locale, localeIndex) => {
+          if (locale.name === localeSelected.name) {
+            interactiveChoicesSettingsAdminLocale.target.setItemSelectedIndex(localeIndex);
+          }
+        });
 
-        let localeTemplate = document.createElement('template');
-        localeTemplate.innerHTML += localeIconImageElement.outerHTML;
-        localeTemplate.innerHTML += localeLabelElement.outerHTML;
-
-        interactiveChoicesSettingsAdminLocale.target.addItem(localeTemplate.innerHTML, localeName);
         interactiveChoicesSettingsAdminLocale.target.setName('setting_base_admin_locale');
+        interactiveChoicesSettingsAdminLocale.assembly();
+
+        document.querySelector('#TC6474389681').append(interactiveChoicesSettingsAdminLocale.target.assembled);
       });
-
-      locales.forEach((locale, localeIndex) => {
-        if (locale.name === localeSelected.name) {
-          interactiveChoicesSettingsAdminLocale.target.setItemSelectedIndex(localeIndex);
-        }
-      });
-
-      interactiveChoicesSettingsAdminLocale.assembly();
-
-      document.querySelector('#TC6474389681').append(interactiveChoicesSettingsAdminLocale.target.assembled);
     });
-  });
+  }
 });

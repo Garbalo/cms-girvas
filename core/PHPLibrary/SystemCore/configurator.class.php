@@ -7,6 +7,9 @@ namespace core\PHPLibrary\SystemCore {
   final class Configurator {
     const FILE_PATH = 'core/configuration.php';
 
+    public string $meta_title = '';
+    public string $meta_description = '';
+    public array $meta_keywords = [];
     private array $data = [];
     private SystemCore $system_core;
     
@@ -24,6 +27,58 @@ namespace core\PHPLibrary\SystemCore {
       } else {
         die('Configurations CMS file is not exists!');
       }
+    }
+
+    public function set_meta_title(string $value) : void {
+      $this->meta_title = $value;
+    }
+
+    public function set_meta_description(string $value) : void {
+      $this->meta_description = $value;
+    }
+
+    public function set_meta_keywrords(array $values) : void {
+      $this->meta_keywords = $values;
+    }
+
+    public function add_meta_keywrord(mixed $value) : void {
+      array_push($this->meta_keywords, $value);
+    }
+
+    public function get_meta_title() : string {
+      return $this->meta_title;
+    }
+
+    public function get_meta_description() : string {
+      return $this->meta_description;
+    }
+
+    public function get_meta_keywords() : array {
+      return $this->meta_keywords;
+    }
+
+    public function get_meta_keywords_imploded() : string {
+      return implode(', ', $this->meta_keywords);
+    }
+
+    public function get_meta_keywords_json() : string {
+      return json_encode($this->meta_keywords);
+    }
+
+    public function get_site_title() : string {
+      return ($this->exists_database_entry_value('base_site_title')) ? $this->get_database_entry_value('base_site_title') : $this->system_core->get_cms_title();
+    }
+
+    public function get_site_description() : string {
+      return ($this->exists_database_entry_value('seo_site_description')) ? $this->get_database_entry_value('seo_site_description') : sprintf('%s %s developed by www.garbalo.com', $this->system_core->get_cms_title(), $this->system_core->get_cms_version());
+    }
+
+    public function get_site_keywords() : string {
+      return ($this->exists_database_entry_value('seo_site_keywords')) ? implode(', ', json_decode($this->get_database_entry_value('seo_site_keywords'), true)) : implode(', ', ['cms girvas', 'garbalo', 'empty site']);
+    }
+
+    public function get_site_charset() : string {
+      return ($this->exists_database_entry_value('base_site_charset')) ? $this->get_database_entry_value('base_site_charset') : 'UTF-8';
     }
     
     /**

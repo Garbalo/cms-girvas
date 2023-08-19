@@ -3,6 +3,7 @@
 namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Page as Page;
   use \core\PHPLibrary\Pagination as Pagination;
   use \core\PHPLibrary\Parsedown as Parsedown;
@@ -45,12 +46,21 @@ namespace core\PHPLibrary\Page {
         $entries_count_on_page = 6;
         $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
         
+        $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
+        $cms_base_locale_name = (!is_null($this->system_core->urlp->get_param('locale'))) ? $this->system_core->urlp->get_param('locale') : $cms_base_locale_setted_name;
+        $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_name);
+        if (!$cms_base_locale->exists_file_data_json()) {
+          $cms_base_locale_name = $cms_base_locale_setted_name;
+        }
+
         $this->page->breadcrumbs->add('Все записи', '/entries');
 
         if ($entries_category_name != 'all') {
           $entries_category = EntryCategory::get_by_name($this->system_core, $entries_category_name);
           $entries_category->init_data(['name', 'texts']);
           $entries_category_id = $entries_category->get_id();
+
+          $this->system_core->configurator->set_meta_title(sprintf('%s | %s', $entries_category->get_title($cms_base_locale_name), $this->system_core->configurator->get_site_title()));
 
           $this->page->breadcrumbs->add($entries_category->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), sprintf('/entries/%s', $entries_category->get_name()));
           $this->page->breadcrumbs->assembly();
@@ -63,6 +73,8 @@ namespace core\PHPLibrary\Page {
           $entries_count = $entries->get_count_by_category_id($entries_category_id);
         } else {
           $this->page->breadcrumbs->assembly();
+
+          $this->system_core->configurator->set_meta_title(sprintf('Все записи | %s', $this->system_core->configurator->get_site_title()));
 
           /** @var Entries $entries Объект класса Entries */
           $entries = new Entries($this->system_core);

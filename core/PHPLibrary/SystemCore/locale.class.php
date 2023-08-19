@@ -9,6 +9,7 @@ namespace core\PHPLibrary\SystemCore {
     private string $data_path;
 
     public function __construct(SystemCore $system_core, string $name, string $dir = 'base') {
+      $this->system_core = $system_core;
       $this->set_name($name);
 
       $locale_core_path = sprintf('%s/locales/%s', $system_core->get_cms_path(), $name);

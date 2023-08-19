@@ -53,6 +53,9 @@ namespace core\PHPLibrary\Page {
           $entry_category = $entry->get_category();
           $entry_category_title = $entry_category->get_title($cms_base_locale_name);
 
+          $this->system_core->configurator->set_meta_title($entry->get_title($cms_base_locale_name));
+          $this->system_core->configurator->set_meta_description($entry->get_description($cms_base_locale_name));
+
           $this->page->breadcrumbs->add('Все записи', '/entries');
           $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
           $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));

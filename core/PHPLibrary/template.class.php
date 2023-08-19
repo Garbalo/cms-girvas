@@ -257,7 +257,6 @@ namespace core\PHPLibrary {
      */
     public function get_core_assembled() : string {
       if (isset($this->core->assembled)) {
-        $site_seo_base = $this->system_core->configurator->get('seo_base');
         $template_category = $this->get_category();
         $template_tags_array = [
           // Стили веб-страницы в DOM-элементе HEAD
@@ -265,9 +264,10 @@ namespace core\PHPLibrary {
           // Скрипты веб-страницы в DOM-элементе HEAD
           'SITE_SCRIPTS' => TemplateCollector::assembly_scripts($this, $this->get_scripts()),
           'SITE_TEMPLATE_URL' => ($template_category != 'default') ? sprintf('/templates/%s/%s', $template_category, $this->get_name()) : sprintf('/templates/%s', $this->get_name()),
-          'SITE_TITLE' => $site_seo_base['title'],
-          'SITE_DESCRIPTION' => $site_seo_base['description'],
-          'SITE_KEYWORDS' => implode(', ', $site_seo_base['keywords'])
+          'SITE_TITLE' => (empty($this->system_core->configurator->get_meta_title())) ? $this->system_core->configurator->get_site_title() : $this->system_core->configurator->get_meta_title(),
+          'SITE_DESCRIPTION' => (empty($this->system_core->configurator->get_meta_description())) ? $this->system_core->configurator->get_site_description() : $this->system_core->configurator->get_meta_description(),
+          'SITE_KEYWORDS' => (empty($this->system_core->configurator->get_meta_keywords())) ? $this->system_core->configurator->get_site_keywords() : $this->system_core->configurator->get_meta_keywords_imploded(),
+          'SITE_CHARSET' => $this->system_core->configurator->get_site_charset(),
         ];
 
         if (!empty($this->system_core->modules)) {

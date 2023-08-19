@@ -103,3 +103,16 @@
   background-color: var(--admin-panel-main-page-navigation-item-link-background-color--active);
   color: var(--admin-panel-main-page-navigation-item-link-font-color--active);
 }
+.page__phar {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.page__phar:last-child {
+  margin-bottom: 0px;
+}
+.page__phar-block {
+  margin-bottom: 10px;
+}
+.page__phar-block:last-child {
+  margin-bottom: 0px;
+}

@@ -20,6 +20,9 @@
 .form.form_settings textarea:last-child {
   margin-bottom: 0;
 }
+.form.form_settings textarea {
+  resize: vertical;
+}
 .form.form_settings .form__input[type="submit"] {
   width: fit-content;
   float: right;

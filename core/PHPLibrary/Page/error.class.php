@@ -59,6 +59,8 @@ namespace core\PHPLibrary\Page {
 
       $this->system_core->template->add_style(['href' => 'styles/page/error.css', 'rel' => 'stylesheet']);
 
+      $this->system_core->configurator->set_meta_title($this->error_title);
+
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
         'PAGE_NAME' => sprintf('error error_%d', $this->error_code),
         'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/error.tpl', [

@@ -6,7 +6,7 @@ namespace core\PHPLibrary\Page\Admin\Settings {
   use \core\PHPLibrary\Template as Template;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
-  class SettingsBase {
+  class SettingsSeo {
     const FORM_PATH = 'templates/page/settings';
 
     public SystemCore $system_core;
@@ -39,14 +39,10 @@ namespace core\PHPLibrary\Page\Admin\Settings {
     public function assembly(array $template_values = []) {
       $form_template_path = sprintf('%s/%s.tpl', self::FORM_PATH, $this->name);
       
-      $setting_engineering_works_status_value = ($this->system_core->configurator->exists_database_entry_value('base_engineering_works_status')) ? $this->system_core->configurator->get_database_entry_value('base_engineering_works_status') : '';
-
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, $form_template_path, [
         'SETTINGS_NAME' => $this->name,
-        'SETTING_SITE_TITLE_VALUE' => ($this->system_core->configurator->exists_database_entry_value('base_site_title')) ? $this->system_core->configurator->get_database_entry_value('base_site_title') : '',
-        'SETTING_ENGINEERING_WORKS_TEXT_VALUE' => ($this->system_core->configurator->exists_database_entry_value('base_engineering_works_text')) ? $this->system_core->configurator->get_database_entry_value('base_engineering_works_text') : '',
-        'SETTING_ENGINEERING_WORKS_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('base_engineering_works_status')) ? $this->system_core->configurator->get_database_entry_value('base_engineering_works_status') : 'off',
-        'SETTING_ENGINEERING_WORKS_CHECKED_VALUE' => ($setting_engineering_works_status_value == 'on') ? 'checked' : '',
+        'SETTING_SITE_DESCRIPTION_VALUE' => ($this->system_core->configurator->exists_database_entry_value('seo_site_description')) ? $this->system_core->configurator->get_database_entry_value('seo_site_description') : '',
+        'SETTING_SITE_KEYWORDS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('seo_site_keywords')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('seo_site_keywords'), true)) : '',
       ]);
     }
 

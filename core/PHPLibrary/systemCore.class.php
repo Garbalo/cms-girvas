@@ -25,6 +25,8 @@ namespace core\PHPLibrary {
     public const CMS_CORE_JS_LIBRARY_PATH = 'core/JSLibrary';
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
+    public const CMS_TITLE = 'CMS GIRVAS';
+    public const CMS_VERSION = '0.0.39 Pre-alpha';
     public SystemCoreConfigurator $configurator;
     public SystemCoreDatabaseConnector $database_connector;
     public SystemCoreLocale $locale;
@@ -41,6 +43,14 @@ namespace core\PHPLibrary {
      */
     public function __construct() {
       $this->init();
+    }
+
+    public function get_cms_title() : string {
+      return self::CMS_TITLE;
+    }
+
+    public function get_cms_version() : string {
+      return self::CMS_VERSION;
     }
 
     public function set_template(Template $template) : void {
@@ -101,17 +111,6 @@ namespace core\PHPLibrary {
       }
 
       $this->page_dir_array = $current_dir_final_array;
-
-      // $current_array_element = &$this->page_dir_array;
-      // for ($index = 0; $index < count($dir_parts_array); $index++) {
-      //   $dir_part = $dir_parts_array[$index];
-      //   $current_array_element[$dir_part] = (empty($current_array_element[$dir_part])) ? [] : $current_array_element[$dir_part];
-      //   $current_array_element = &$current_array_element[$dir_part];
-
-      //   if ($index == (count($dir_parts_array) - 1)) {
-      //     $current_array_element = $page_object;
-      //   }
-      // }
 
       return true;
     }
