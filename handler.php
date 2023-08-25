@@ -110,6 +110,174 @@ if (defined('IS_NOT_HACKED')) {
     }
   }
 
+  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'entries') {
+    if ($system_core->urlp->get_path(2) == 'categories' && is_null($system_core->urlp->get_path(3))) {
+      $entries_categories_object = new \core\PHPLibrary\EntriesCategories($system_core);
+      $entries_categories_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
+
+      $handler_output_data['entriesCategories'] = [];
+      foreach ($entries_categories_object->get_all() as $entry_category) {
+        $entry_category->init_data(['name', 'parent_id', 'texts']);
+        array_push($handler_output_data['entriesCategories'], [
+          'id' => $entry_category->get_id(),
+          'parent_id' => $entry_category->get_parent_id(),
+          'name' => $entry_category->get_name(),
+          'title' => $entry_category->get_title($entries_categories_locale),
+          'description' => $entry_category->get_description($entries_categories_locale),
+        ]);
+      }
+    }
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'webChannel' && is_numeric($system_core->urlp->get_path(2))) {
+    $web_channel_id = (int)$system_core->urlp->get_path(2);
+
+    if (\core\PHPLibrary\WebChannel::exists_by_id($system_core, $web_channel_id)) {
+      $web_channel = new \core\PHPLibrary\WebChannel($system_core, $web_channel_id);
+      $web_channel->init_data(['name', 'type_id', 'entries_category_id', 'texts', 'created_unix_timestamp', 'updated_unix_timestamp']);
+      $web_channel_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
+
+      $handler_output_data['webChannel'] = [];
+      $handler_output_data['webChannel']['id'] = $web_channel->get_id();
+      $handler_output_data['webChannel']['name'] = $web_channel->get_name();
+      $handler_output_data['webChannel']['title'] = $web_channel->get_title($web_channel_locale);
+      $handler_output_data['webChannel']['description'] = $web_channel->get_description($web_channel_locale);
+      $handler_output_data['webChannel']['typeID'] = $web_channel->get_type_id();
+      $handler_output_data['webChannel']['entriesCategoryID'] = $web_channel->get_entries_category_id();
+      $handler_output_data['webChannel']['createdUnixTimestamp'] = $web_channel->get_created_unix_timestamp();
+      $handler_output_data['webChannel']['updatedUnixTimestamp'] = $web_channel->get_updated_unix_timestamp();
+
+      $handler_message = 'Данные по веб-каналу успешно получены.';
+      $handler_status_code = 1;
+    } else {
+      $handler_message = 'Данные по веб-каналу не были получены, так как его не существует.';
+      $handler_status_code = 0;
+    }
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'PATCH' && $system_core->urlp->get_path(1) == 'webChannel' && is_null($system_core->urlp->get_path(2))) {
+    if (isset($_PATCH['web_channel_event_save']) && $system_core->client->is_logged(2)) {
+      if (isset($_PATCH['web_channel_id'])) {
+        $web_channel_id = (is_numeric($_PATCH['web_channel_id'])) ? (int)$_PATCH['web_channel_id'] : 0;
+
+        if (\core\PHPLibrary\WebChannel::exists_by_id($system_core, $web_channel_id)) {
+          $web_channel = new \core\PHPLibrary\WebChannel($system_core, $web_channel_id);
+          
+          $web_channel_data = [];
+
+          if (array_key_exists('web_channel_title_rus', $_PATCH) || array_key_exists('web_channel_description_rus', $_PATCH)) {
+            if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
+            if (!array_key_exists('ru_RU', $web_channel_data['texts'])) $web_channel_data['texts']['ru_RU'] = [];
+
+            if (array_key_exists('web_channel_title_rus', $_PATCH)) $web_channel_data['texts']['ru_RU']['title'] = $_PATCH['web_channel_title_rus'];
+            if (array_key_exists('web_channel_description_rus', $_PATCH)) $web_channel_data['texts']['ru_RU']['description'] = $_PATCH['web_channel_description_rus'];
+          }
+
+          if (array_key_exists('web_channel_title_eng', $_PATCH) || array_key_exists('web_channel_description_eng', $_PATCH)) {
+            if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
+            if (!array_key_exists('en_US', $web_channel_data['texts'])) $web_channel_data['texts']['en_US'] = [];
+
+            if (array_key_exists('web_channel_title_eng', $_PATCH)) $web_channel_data['texts']['en_US']['title'] = $_PATCH['web_channel_title_eng'];
+            if (array_key_exists('web_channel_description_eng', $_PATCH)) $web_channel_data['texts']['en_US']['description'] = $_PATCH['web_channel_description_eng'];
+          }
+
+          if (isset($_PATCH['web_channel_name'])) $web_channel_data['name'] = $_PATCH['web_channel_name'];
+          if (isset($_PATCH['web_channel_type_id'])) $web_channel_data['type_id'] = $_PATCH['web_channel_type_id'];
+          if (isset($_PATCH['web_channel_entries_category_id'])) $web_channel_data['entries_category_id'] = $_PATCH['web_channel_entries_category_id'];
+
+          $web_channel_is_updated = $web_channel->update($web_channel_data);
+
+          if ($web_channel_is_updated) {
+            $handler_message = 'Веб-канал успешно сохранен.';
+            $handler_status_code = 1;
+          } else {
+            $handler_message = 'Веб-канал не был сохранен, поскольку произошел неизвестный сбой.';
+            $handler_status_code = 0;
+          }
+        } else {
+          $handler_message = 'Веб-канал не обновлен, поскольку его не существует.';
+          $handler_status_code = 0;
+        }
+      }
+    }
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'webChannel' && is_null($system_core->urlp->get_path(2))) {
+    if (isset($_PUT['web_channel_event_save']) && $system_core->client->is_logged(2)) {
+      $web_channel_name = isset($_PUT['web_channel_name']) ? $_PUT['web_channel_name'] : '';
+      $web_channel_entries_category_id = isset($_PUT['web_channel_entries_category_id']) ? (int)$_PUT['web_channel_entries_category_id'] : '';
+      $web_channel_type_id = isset($_PUT['web_channel_type_id']) ? (int)$_PUT['web_channel_type_id'] : '';
+
+      $texts = [];
+
+      $cms_locales_names = $system_core->get_array_locales_names();
+      if (count($cms_locales_names) > 0) {
+        foreach ($cms_locales_names as $index => $cms_locale_name) {
+          $cms_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_locale_name);
+
+          $title_input_name = sprintf('web_channel_title_%s', $cms_locale->get_iso_639_2());
+          $description_textarea_name = sprintf('web_channel_description_%s', $cms_locale->get_iso_639_2());
+
+          if (array_key_exists($title_input_name, $_PUT) || array_key_exists($description_textarea_name, $_PUT)) {
+            if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
+
+            if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$title_input_name];
+            if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = $_PUT[$description_textarea_name];
+          }
+        }
+      }
+
+      //$client_session = $system_core->client->get_session(2, ['user_id']);
+      $web_channel = \core\PHPLibrary\WebChannel::create($system_core, $web_channel_name, $web_channel_entries_category_id, $web_channel_type_id, $texts);
+      if (!is_null($web_channel)) {
+        $handler_message = 'Веб-канал успешно создан.';
+        $handler_status_code = 1;
+
+        $handler_output_data['href'] = sprintf('/admin/webChannel/%d', $web_channel->get_id());
+      } else {
+        $handler_message = 'Произошла внутренняя ошибка. Веб-канал не был создан.';
+        $handler_status_code = 0;
+      }
+    }
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'webChannel' && is_null($system_core->urlp->get_path(2))) {
+    if (isset($_DELETE['web_channel_event_delete']) && $system_core->client->is_logged(2)) {
+      if (isset($_DELETE['web_channel_id'])) {
+        $web_channel_id = (is_numeric($_DELETE['web_channel_id'])) ? (int)$_DELETE['web_channel_id'] : 0;
+
+        if (\core\PHPLibrary\WebChannel::exists_by_id($system_core, $web_channel_id)) {
+          $web_channel = new \core\PHPLibrary\WebChannel($system_core, $web_channel_id);
+
+          $web_channel_is_deleted = $web_channel->delete();
+          if ($web_channel_is_deleted) {
+            $handler_message = 'Веб-канал успешно удален.';
+            $handler_status_code = 1;
+          } else {
+            $handler_message = 'Веб-канал не была удален, поскольку произошел неизвестный сбой.';
+            $handler_status_code = 0;
+          }
+        } else {
+          $handler_message = 'Веб-канал не удален, поскольку его не существует.';
+          $handler_status_code = 0;
+        }
+
+        $handler_output_data['modalClose'] = true;
+        $handler_output_data['reload'] = true;
+      }
+    }
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'webChannels') {
+    if ($system_core->urlp->get_path(2) == 'types') {
+      $handler_output_data['webChannelsTypes'] = [
+        ['id' => 1, 'name' => 'rss1-0', 'title' => 'RSS 1.0'],
+        ['id' => 2, 'name' => 'rss2-0', 'title' => 'RSS 2.0'],
+        ['id' => 3, 'name' => 'atom', 'title' => 'Atom']
+      ];
+    }
+  }
+
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'media' && $system_core->urlp->get_path(2) == 'totalPages') {
     if ($system_core->client->is_logged(2)) {
       $media_files_path = sprintf('%s/uploads/media', $system_core->get_cms_path());
@@ -428,6 +596,9 @@ if (defined('IS_NOT_HACKED')) {
       ]); http_response_code(200); break;
       case 'admin-user-delete': $template = \core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/modal/userDelete.tpl', [
         'USER_ID' => $system_core->urlp->get_param('userID')
+      ]); http_response_code(200); break;
+      case 'admin-web-channel-delete': $template = \core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/modal/webChannelDelete.tpl', [
+        'WEB_CHANNEL_ID' => $system_core->urlp->get_param('webChannelID')
       ]); http_response_code(200); break;
       case 'admin-user-group-delete': $template = \core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/modal/userGroupDelete.tpl', [
         'USER_GROUP_ID' => $system_core->urlp->get_param('userGroupID')

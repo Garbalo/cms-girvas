@@ -26,7 +26,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.40 Pre-alpha';
+    public const CMS_VERSION = '0.0.41 Pre-alpha';
     public SystemCoreConfigurator $configurator;
     public SystemCoreDatabaseConnector $database_connector;
     public SystemCoreLocale $locale;
@@ -128,13 +128,13 @@ namespace core\PHPLibrary {
       $file_connector->set_start_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
       $file_connector->set_current_directory(self::CMS_CORE_PHP_LIBRARY_PATH);
       // Подключение файлов с перечислениями
-      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.enum\.php$/');
+      $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.enum\.php$/');
       $file_connector->reset_current_directory();
       // Подключение файлов с интерфейсами
-      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.interface\.php$/');
+      $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.interface\.php$/');
       $file_connector->reset_current_directory();
       // Подключение файлов с классами
-      $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
+      $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
       $file_connector->reset_current_directory();
 
       $modules_enabled = Modules::get_enabled();
@@ -146,13 +146,13 @@ namespace core\PHPLibrary {
             $file_connector->set_current_directory($module_path);
 
             // Подключение файлов с перечислениями
-            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.enum\.php$/');
+            $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.enum\.php$/');
             $file_connector->reset_current_directory();
             // Подключение файлов с интерфейсами
-            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.interface\.php$/');
+            $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.interface\.php$/');
             $file_connector->reset_current_directory();
             // Подключение файлов с классами
-            $file_connector->connect_files_recursive('/^([a-zA-Z_]+)\.class\.php$/');
+            $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
             $file_connector->reset_current_directory();
 
             Module::connect_core($this, $module_name);

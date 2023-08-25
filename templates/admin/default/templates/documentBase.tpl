@@ -61,6 +61,17 @@
           </a>
         </li>
         <li class="admin-navigation-list__item">
+          <a href="/admin/webChannels" class="admin-navigation-list__item-link" title="Веб-каналы">
+            <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <path d="M9.3,64H0C0,31.7,31.7,2,64,2v9.3C36.9,11.3,9.3,36.9,9.3,64z"/>
+              <path d="M24.9,64h-9.3c0-21.4,22.8-46.6,48.3-46.6v9.3C42.8,26.7,24.9,48.8,24.9,64z"/>
+              <path d="M42.5,64h-9.3c0-17.5,14.4-30.9,30.8-30.9v9.3C51.7,42.4,42.5,52.8,42.5,64z"/>
+              <circle cx="57.4" cy="57.4" r="6.6"/>
+            </svg>
+            <div class="admin-navigation-list__item-label">Веб-каналы</div>
+          </a>
+        </li>
+        <li class="admin-navigation-list__item">
           <a href="/admin/modules" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_MODULES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect x="8.2" y="48.5" width="15.5" height="15.5"/>

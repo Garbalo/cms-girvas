@@ -12,7 +12,7 @@ if (defined('IS_NOT_HACKED')) {
   foreach ($entries->get_all() as $entry) {
     $entry->init_data(['name', 'updated_unix_timestamp']);
     $sitemap_builder->add_url(
-      sprintf('/entry/%s', $entry->get_name()),
+      sprintf('https://%s/entry/%s', $system_core->configurator->get('domain'), $entry->get_name()),
       $entry->get_updated_unix_timestamp(),
       'weekly',
       0.8
@@ -23,7 +23,7 @@ if (defined('IS_NOT_HACKED')) {
   foreach ($pages_static->get_all() as $page_static) {
     $page_static->init_data(['name', 'updated_unix_timestamp']);
     $sitemap_builder->add_url(
-      sprintf('/page/%s', $page_static->get_name()),
+      sprintf('https://%s/page/%s', $system_core->configurator->get('domain'), $page_static->get_name()),
       $page_static->get_updated_unix_timestamp(),
       'monthly',
       0.5

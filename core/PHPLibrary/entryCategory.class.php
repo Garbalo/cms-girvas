@@ -71,6 +71,15 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Получить ID родительской категории
+     *
+     * @return int
+     */
+    public function get_parent_id() : int {
+      return (property_exists($this, 'parent_id')) ? $this->parent_id : 0;
+    }
+    
+    /**
      * Получить заголовок записи
      *
      * @param  mixed $locale_name Наименование локализации
