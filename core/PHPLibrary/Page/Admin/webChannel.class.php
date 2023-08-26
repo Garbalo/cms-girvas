@@ -4,7 +4,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
   use \core\PHPLibrary\WebChannel as WebChannel;
-  use \core\PHPLibrary\WebChannelBuilder as WebChannelBuilder;
+  use \core\PHPLibrary\WebChannel\Builder as WebChannelBuilder;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
 

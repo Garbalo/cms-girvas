@@ -2,7 +2,6 @@
 
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
-  use \core\PHPLibrary\WebChannelBuilder as WebChannelBuilder;
 
   #[\AllowDynamicProperties]
   class WebChannel {

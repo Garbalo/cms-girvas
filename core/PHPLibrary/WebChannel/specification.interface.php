@@ -1,10 +1,10 @@
 <?php
 
-namespace core\PHPLibrary\WebChannelBuilder {
+namespace core\PHPLibrary\WebChannel {
   use \core\PHPLibrary\SystemCore as SystemCore;
-  use \core\PHPLibrary\WebChannelBuilder as WebChannelBuilder;
+  use \core\PHPLibrary\WebChannel\Builder as WebChannelBuilder;
 
-  interface InterfaceWebChannel {
+  interface InterfaceSpecification {
     public function __construct(SystemCore $system_core, WebChannelBuilder $web_channel_builder);
     public function set_title(string $value) : void;
     public function set_description(string $value) : void;

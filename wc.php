@@ -13,7 +13,7 @@ if (defined('IS_NOT_HACKED')) {
       $web_channel = \core\PHPLibrary\WebChannel::get_by_name($system_core, $system_core->urlp->get_path(1));
       $web_channel->init_data(['name', 'texts', 'type_id', 'entries_category_id']);
       
-      $web_channel_builder = new \core\PHPLibrary\WebChannelBuilder($system_core, \core\PHPLibrary\WebChannelBuilder::get_type_enum($web_channel->get_type_id()));
+      $web_channel_builder = new \core\PHPLibrary\WebChannel\Builder($system_core, \core\PHPLibrary\WebChannel\Builder::get_type_enum($web_channel->get_type_id()));
       $cms_base_locale_setted_name = $system_core->configurator->get_database_entry_value('base_locale');
       $cms_base_locale_name = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $cms_base_locale_setted_name;
       $cms_base_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_base_locale_name);

@@ -1,12 +1,12 @@
 <?php
 
-namespace core\PHPLibrary\WebChannelBuilder\WebChannel {
+namespace core\PHPLibrary\WebChannel\Specification {
   use \DOMElement as DOMElement;
   use \core\PHPLibrary\SystemCore as SystemCore;
-  use \core\PHPLibrary\WebChannelBuilder as WebChannelBuilder;
-  use \core\PHPLibrary\WebChannelBuilder\InterfaceWebChannel as InterfaceWebChannel;
+  use \core\PHPLibrary\WebChannel\Builder as WebChannelBuilder;
+  use \core\PHPLibrary\WebChannel\InterfaceSpecification as InterfaceSpecification;
 
-  class Atom implements InterfaceWebChannel {
+  class Atom implements InterfaceSpecification {
     const TYPE_NAME = 'atom';
     const TYPE_TITLE = 'Atom';
 

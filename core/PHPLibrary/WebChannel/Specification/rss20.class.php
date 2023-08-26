@@ -1,12 +1,12 @@
 <?php
 
-namespace core\PHPLibrary\WebChannelBuilder\WebChannel {
+namespace core\PHPLibrary\WebChannel\Specification {
   use \DOMElement as DOMElement;
   use \core\PHPLibrary\SystemCore as SystemCore;
-  use \core\PHPLibrary\WebChannelBuilder as WebChannelBuilder;
-  use \core\PHPLibrary\WebChannelBuilder\InterfaceWebChannel as InterfaceWebChannel;
+  use \core\PHPLibrary\WebChannel\Builder as WebChannelBuilder;
+  use \core\PHPLibrary\WebChannel\InterfaceSpecification as InterfaceSpecification;
 
-  class RSS2_0 implements InterfaceWebChannel {
+  class RSS2_0 implements InterfaceSpecification {
     const TYPE_NAME = 'rss2-0';
     const TYPE_TITLE = 'RSS 2.0';
 
