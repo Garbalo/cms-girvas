@@ -140,13 +140,13 @@
   <article class="page-aside__block">
     <h2 class="page-aside__block-title">Последние новости</h2>
     <div class="page-aside__block-content">
-      Тут колонка новостей
+      {WEB_CHANNEL_LATEST_NEWS_LIST}
     </div>
   </article>
   <article class="page-aside__block">
     <h2 class="page-aside__block-title">Последние релизы</h2>
     <div class="page-aside__block-content">
-      Тут колонка релизов
+      {WEB_CHANNEL_LATEST_RELEASES_LIST}
     </div>
   </article>
 </aside>
