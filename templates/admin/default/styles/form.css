@@ -23,6 +23,11 @@
   background-color: var(--form-input-background-color--active);
   border-color: var(--form-input-border-color--active);
 }
+.form__input:invalid,
+.form__textarea:invalid {
+  background-color: var(--common-secondary-color-5);
+  border-color: var(--common-secondary-color-6);
+}
 .form__select {
   background-color: var(--form-input-background-color);
   border-color: var(--form-input-border-color);

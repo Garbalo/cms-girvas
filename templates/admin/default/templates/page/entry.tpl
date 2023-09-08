@@ -19,11 +19,9 @@
   </div>
 </article>
 <aside class="main__page-aside page-aside">
-  <article class="page-aside__block block-media-manager">
-    <h2 class="page-aside__block-title">Медиа-файлы</h2>
-    <div class="page-aside__block-content">
-      {ENTRY_MEDIA_MANAGER}
-    </div>
+  <article class="page-aside__block" id="SYSTEM_E3754926184">
+    <h2 class="page-aside__block-title">Обложка</h2>
+    <div class="page-aside__block-content"></div>
   </article>
   <article class="page-aside__block block-comments">
     <h2 class="page-aside__block-title">Последние комментарии</h2>

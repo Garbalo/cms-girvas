@@ -1,3 +1,3 @@
-<ul class="list-modules list-reset">
-  {ADMIN_PANEL_MODULES_LIST_ITEMS}
+<ul class="modules-list list list-reset">
+  {MODULES_LIST_ITEMS}
 </ul>

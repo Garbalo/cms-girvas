@@ -3,6 +3,8 @@
 import {Interactive} from "../../interactive.class.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
+  let searchParams = new URLParser();
+
   fetch('/handler/locales', {
     method: 'GET'
   }).then((response) => {
@@ -79,86 +81,94 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
   });
 
-  let mediaItemButtonURLInit = (element, mediaFile) => {
-    element.addEventListener('click', (event) => {
-      if (element.getAttribute('role') == 'media-copy-url') {
-        navigator.clipboard.writeText(`/uploads/media/${mediaFile}`);
+  if (searchParams.getPathPart(3) != null) {
+    let entryPreviewBlockElement = document.querySelector('#SYSTEM_E3754926184');
+    let entryPreviewBlockContentContainerElement = entryPreviewBlockElement.querySelector('.page-aside__block-content');
+    
+    let entryPreviewFormElement = document.createElement('form');
+    entryPreviewFormElement.setAttribute('formmethod', 'PATCH');
+    entryPreviewFormElement.classList.add('form');
+    entryPreviewFormElement.classList.add('form-entry-preview');
 
-        let notification = new PopupNotification('Относительная ссылка на файл скопирована.', document.body, true);
-        notification.show();
+    let entryPreviewFormInputFileElement = document.createElement('input');
+    entryPreviewFormInputFileElement.setAttribute('type', 'file');
+    entryPreviewFormInputFileElement.setAttribute('name', 'entry_preview');
+    entryPreviewFormInputFileElement.style.display = 'none';
+
+    let interactiveButtonPreviewUpload = new Interactive('button');
+    interactiveButtonPreviewUpload.target.setLabel('Загрузить');
+    interactiveButtonPreviewUpload.target.setCallback((event) => {
+      event.preventDefault();
+      entryPreviewFormInputFileElement.click();
+    });
+    interactiveButtonPreviewUpload.target.assembly();
+
+    let entryPreviewImageContainerElement = document.createElement('div');
+    entryPreviewImageContainerElement.classList.add('form-entry-preview__container-image');
+
+    fetch('/handler/entry/' + searchParams.getPathPart(3), {
+      method: 'GET'
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      if (data.statusCode == 1) {
+        if (data.outputData.entry.previewURL != '') {
+          let imageElement = document.createElement('img');
+          imageElement.setAttribute('src', data.outputData.entry.previewURL);
+          imageElement.style.width = '100%';
+          entryPreviewImageContainerElement.innerHTML = '';
+          entryPreviewImageContainerElement.appendChild(imageElement);
+        }
       }
     });
-  };
 
-  let mediaListElement = document.body.querySelector('.media-list');
-  let mediaFilesListElements = mediaListElement.querySelectorAll('.media-list__item');
-  for (let mediaFileElement of mediaFilesListElements) {
-    let mediaFile = mediaFileElement.getAttribute('data-media-file');
-    let buttons = mediaFileElement.querySelectorAll('button[role]');
-    for (let button of buttons) {
-      mediaItemButtonURLInit(button, mediaFile);
-    }
-  }
-
-  let mediaManagerPagesTotal = 1;
-  let mediaManagerSelectedPageNumber = 0;
-  let mediaManagerContainerElement = document.body.querySelector('.media-manager');
-  let mediaManagerListElement = document.body.querySelector('.media-manager__media-list');
-  let mediaManagerControllersButtonsElements = mediaManagerContainerElement.querySelectorAll('.media-manager__controller-button');
-
-  fetch('/handler/media/totalPages', {
-    method: 'GET'
-  }).then((response) => {
-    return response.json();
-  }).then((data) => {
-    mediaManagerPagesTotal = data.outputData.count;
-  });
-
-  let page_is_changed = false;
-
-  for (let mediaManagerControllerButtonElement of mediaManagerControllersButtonsElements) {
-    mediaManagerControllerButtonElement.addEventListener('click', (event) => {
-      page_is_changed = false;
-
-      if (mediaManagerControllerButtonElement.classList.contains('media-manager__controller-button_prev')) {
-        if (mediaManagerSelectedPageNumber > 0) {
-          mediaManagerSelectedPageNumber--;
-          page_is_changed = true;
-        }
-      }
+    entryPreviewFormInputFileElement.addEventListener('change', (event) => {
+      event.preventDefault();
       
-      if (mediaManagerControllerButtonElement.classList.contains('media-manager__controller-button_next')) {
-        if (mediaManagerSelectedPageNumber < mediaManagerPagesTotal - 1) {
-          mediaManagerSelectedPageNumber++;
-          page_is_changed = true;
-        }
+      let file = event.target.files[0];
+      let fileReader = new FileReader();
+
+      if (!fileReader) {
+        console.error('FileReader не поддерживается, невозможно отобразить загружаемое изображение.');
+        return;
       }
 
-      console.log(mediaManagerPagesTotal, mediaManagerSelectedPageNumber);
+      if (event.target.files.length == 0) {
+        console.error('Изображения не были загружены.');
+        return;
+      }
 
-      if (page_is_changed) {
-        fetch('/handler/media/list?page=' + mediaManagerSelectedPageNumber, {
-          method: 'GET'
+      fileReader.onload = (event) => {
+        let imageElement = document.createElement('img');
+        imageElement.setAttribute('src', fileReader.result);
+        imageElement.style.width = '100%';
+        entryPreviewImageContainerElement.innerHTML = '';
+        entryPreviewImageContainerElement.appendChild(imageElement);
+
+        let formData = new FormData();
+        formData.append('entry_event_save', true);
+        formData.append('entry_id', searchParams.getPathPart(3));
+        formData.append('entry_preview', fileReader.result);
+
+        fetch('/handler/entry', {
+          method: 'PATCH',
+          body: formData
         }).then((response) => {
           return response.json();
         }).then((data) => {
-          mediaManagerListElement.innerHTML = '';
-
-          for (let listItem of data.outputData.dom.listItems) {
-            let listItemContainerElement = document.createElement('div');
-            listItemContainerElement.innerHTML = listItem;
-
-            let listItemElement = listItemContainerElement.firstChild;
-            let mediaFile = listItemElement.getAttribute('data-media-file');
-            let buttons = listItemElement.querySelectorAll('button[role]');
-            for (let button of buttons) {
-              mediaItemButtonURLInit(button, mediaFile);
-            }
-
-            mediaManagerListElement.append(listItemElement);
-          }
+          let notification = new PopupNotification(data.message, document.body, true);
+          notification.show();
         });
-      }
+      };
+      fileReader.onerror = (event) => {
+        console.error(fileReader.result);
+      };
+      fileReader.readAsDataURL(file);
     });
+
+    entryPreviewFormElement.appendChild(entryPreviewFormInputFileElement);
+    entryPreviewFormElement.appendChild(interactiveButtonPreviewUpload.target.assembled);
+    entryPreviewBlockContentContainerElement.appendChild(entryPreviewImageContainerElement);
+    entryPreviewBlockContentContainerElement.appendChild(entryPreviewFormElement);
   }
 });

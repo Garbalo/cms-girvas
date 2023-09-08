@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
+
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
@@ -20,7 +29,7 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/templates.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'admin/page/templates.js'], true);
+      $this->system_core->template->add_script(['src' => 'admin/page/templates.js', 'type' => 'module'], true);
 
       $parsedown = new Parsedown();
 
@@ -60,13 +69,18 @@ namespace core\PHPLibrary\Page\Admin {
 
           if (count($curl_exucute_result['outputData']) > 0) {
             foreach ($curl_exucute_result['outputData'] as $template_name => $template_data) {
-              array_push($templates_list_items_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/search/listItem.tpl', [
+              $template = new Template($this->system_core, $template_name);
+              $template_installed_status = ($template->exists_file_metadata_json()) ? 'installed' : 'not-installed';
+
+              array_push($templates_list_items_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/listItem.tpl', [
                 'TEMPLATE_NAME' => $template_name,
                 'TEMPLATE_TITLE' => $template_data['metadata']['title'],
                 'TEMPLATE_DESCRIPTION' => $parsedown->text($template_data['metadata']['description']),
                 'TEMPLATE_CREATED_TIMESTAMP' => date('d.m.Y', $template_data['metadata']['createdUnixTimestamp']),
                 'TEMPLATE_AUTHOR' => $template_data['metadata']['authorName'],
-                'TEMPLATE_PREVIEW_URL' => $template_data['previews'][0]
+                'TEMPLATE_PREVIEW_URL' => $template_data['previews'][0],
+                'TEMPLATE_INSTALLED_STATUS' => $template_installed_status,
+                'TEMPLATE_CATEGORY_NAME' => (isset($template_data['metadata']['categoryName'])) ? $template_data['metadata']['categoryName'] : 'default'
               ]));
             }
           }
@@ -81,6 +95,7 @@ namespace core\PHPLibrary\Page\Admin {
         if (count($uploaded_templates_names) > 0) {
           foreach ($uploaded_templates_names as $template_name) {
             $template = new Template($this->system_core, $template_name);
+            $template_installed_status = ($template->exists_file_metadata_json()) ? 'installed' : 'not-installed';
             
             if ($template->exists_file_metadata_json()) {
               array_push($templates_list_items_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/listItem.tpl', [
@@ -90,7 +105,9 @@ namespace core\PHPLibrary\Page\Admin {
                 'TEMPLATE_CREATED_TIMESTAMP' => date('d.m.Y', $template->get_core_created_unix_timestamp()),
                 'TEMPLATE_AUTHOR' => $template->get_author_name(),
                 'TEMPLATE_PREVIEW_URL' => $template->get_preview_url(),
-                'TEMPLATE_PAGE_URL' => sprintf('/admin/template/%s', $template->get_name())
+                'TEMPLATE_PAGE_URL' => sprintf('/admin/template/%s', $template->get_name()),
+                'TEMPLATE_INSTALLED_STATUS' => $template_installed_status,
+                'TEMPLATE_CATEGORY_NAME' => $template->get_category_name(),
               ]));
             }
 

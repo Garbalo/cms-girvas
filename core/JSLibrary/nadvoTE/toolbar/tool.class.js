@@ -36,12 +36,20 @@ export class Tool {
         'Content-Type': 'image/svg+xml'
       }
     }).then((response) => {
-      if (response.status == 200) {
-        response.text().then((text) => {
-          this.element.innerHTML = text;
-        });
-      } else {
-        this.element.innerHTML = this.name;
+      if (this.type == 'button') {
+        let button = this.element.querySelector('button');
+        button.style.padding = 0;
+        if (response.status == 200) {
+          response.text().then((text) => {
+            button.innerHTML = text;
+
+            let buttonIcon = button.querySelector('svg');
+            buttonIcon.classList.add('interactive__button-icon');
+            buttonIcon.style.marginRight = 0;
+          });
+        } else {
+          button.innerHTML = this.name;
+        }
       }
     }).catch((error) => {
       console.error(error);

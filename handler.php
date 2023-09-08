@@ -1,8 +1,21 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 if (!defined('IS_NOT_HACKED')) {
   http_response_code(503);
   die('An attempted hacker attack has been detected.');
+}
+
+if (!isset($system_core)) {
+  http_response_code(500);
+  die('CMS system core not initialized.');
 }
 
 if (defined('IS_NOT_HACKED')) {
@@ -19,6 +32,12 @@ if (defined('IS_NOT_HACKED')) {
   /** ===================================================
    * Обработчик CMS GIRVAS
    * ==================================================== */
+
+  if ($system_core->urlp->get_path(1) == 'module') {
+    $api_file_path = sprintf('%s/api/module.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'charset') {
     $charset = ($system_core->configurator->exists_database_entry_value('base_site_charset')) ? $system_core->configurator->get_database_entry_value('base_site_charset') : 'UTF-8';
     $handler_output_data['charset'] = $charset;
@@ -289,30 +308,50 @@ if (defined('IS_NOT_HACKED')) {
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'media' && $system_core->urlp->get_path(2) == 'list') {
     if ($system_core->client->is_logged(2)) {
-      if (!is_null($system_core->urlp->get_param('page'))) {
-        $handler_output_data['dom'] = [];
+      $handler_output_data['dom'] = [];
 
-        $media_files_path = sprintf('%s/uploads/media', $system_core->get_cms_path());
-        $media_files = array_diff(scandir($media_files_path), ['.', '..']);
+      $media_files_path = sprintf('%s/uploads/media', $system_core->get_cms_path());
+      $media_files = array_diff(scandir($media_files_path), ['.', '..']);
+      
+      $files = [];
+      foreach ($media_files as $file) {
+        $file_path = sprintf('%s/%s', $media_files_path, $file);
+        $file_url = $file;
+        
+        array_push($files, [
+          'file_url' => $file_url,
+          'created_unix_timestamp' => filemtime($file_path)
+        ]);
+      }
 
-        $page_current = (int)$system_core->urlp->get_param('page');
-        $pages_total = ceil(count($media_files) / 6);
-
-        $media_files_slice = array_slice($media_files, $page_current * 6, 6);
-        $media_files_transformed = [];
-
-        $template = new \core\PHPLibrary\Template($system_core, 'default', 'admin');
-
-        foreach ($media_files_slice as $media_file) {
-          $media_file_url = sprintf('/uploads/media/%s', $media_file);
-          array_push($media_files_transformed, \core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/page/entry/mediaManager/listItem.tpl', [
-            'MEDIA_FILE_URL' => $media_file_url,
-            'MEDIA_FILE_FULLNAME' => $media_file
-          ]));
+      usort($files, function($a, $b) {
+        if ($a['created_unix_timestamp'] == $b['created_unix_timestamp']) {
+          return 0;
         }
 
-        $handler_output_data['dom']['listItems'] = $media_files_transformed;
+        return ($a['created_unix_timestamp'] < $b['created_unix_timestamp']) ? -1 : 1;
+      });
+
+      $media_files = [];
+      foreach ($files as $file) {
+        array_push($media_files, $file['file_url']);
       }
+
+      $page_current = (int)$system_core->urlp->get_param('page');
+      $pages_total = ceil(count($media_files) / 6);
+      
+      if (!is_null($system_core->urlp->get_param('page'))) {
+        $media_files = array_slice($media_files, $page_current * 6, 6);
+      }
+
+      $media_files_transformed = [];
+      $template = new \core\PHPLibrary\Template($system_core, 'default', 'admin');
+
+      foreach ($media_files as $media_file) {
+        array_push($media_files_transformed, sprintf('/uploads/media/%s', $media_file));
+      }
+
+      $handler_output_data['items'] = $media_files_transformed;
     }
   }
 
@@ -362,80 +401,18 @@ if (defined('IS_NOT_HACKED')) {
         if (file_exists($uploaded_dir_path)) {
           
           if (in_array($uploaded_file_extention, $file_extention_allowed)) {
-            $system_salt = $system_core->configurator->get('system_salt');
-            $uploaded_file_name = md5(sprintf('{GIRVAS:UPLOADER:%s:%d}', $system_salt, time()));
-            $uploaded_file_fullname = sprintf('%s.%s', $uploaded_file_name, $uploaded_file_extention);
-            $uploaded_file_path = sprintf('%s/%s', $uploaded_dir_path, $uploaded_file_fullname);
-            $uploaded_file_url = sprintf('/uploads/media/%s', $uploaded_file_fullname);
+            $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);
+           
+            $file_converter = new \core\PHPLibrary\SystemCore\FileConverter($system_core);
+            $file_converted = $file_converter->convert($_FILES['mediaFile'], $file_uploaded_folder_path, \core\PHPLibrary\SystemCore\FileConverter\EnumFileFormat::WEBP, true);
 
-            if (@move_uploaded_file($_FILES['mediaFile']['tmp_name'], $uploaded_file_path)) {
-              
-              if ($uploaded_file_extention == 'jpg' || $uploaded_file_extention == 'jpeg') {
-                $image_converted_name = sprintf('%s.webp', $uploaded_file_name);
-                $image_converted_path = sprintf('%s/%s', $uploaded_dir_path, $image_converted_name);
-                
-                $image_source = imagecreatefromjpeg($uploaded_file_path);
-                $image_source_width = imagesx($image_source);
-                $image_source_height = imagesy($image_source);
+            if (is_array($file_converted)) {
+              $handler_output_data['file'] = [];
+              $handler_output_data['file']['url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
+              $handler_output_data['file']['fullname'] = $file_converted['file_name'];
 
-                $image_converted = imagecreatetruecolor($image_source_width, $image_source_height);
-                imagecopy($image_converted, $image_source, 0, 0, 0, 0, $image_source_width, $image_source_height);
-                imagewebp($image_converted, $image_converted_path, 100);
-
-                imagedestroy($image_source);
-                imagedestroy($image_converted);
-
-                unlink($uploaded_file_path);
-
-                $uploaded_file_fullname = $image_converted_name;
-                $uploaded_file_url = sprintf('/uploads/media/%s', $image_converted_name);
-                $handler_output_data['uploaded_file_url'] = sprintf('/uploads/media/%s', $image_converted_name);
-                $handler_message = 'Файл успешно загружен и преобразован.';
-                $handler_status_code = 1;
-              } elseif ($uploaded_file_extention == 'png') {
-                $image_converted_name = sprintf('%s.webp', $uploaded_file_name);
-                $image_converted_path = sprintf('%s/%s', $uploaded_dir_path, $image_converted_name);
-
-                $image_source = imagecreatefrompng($uploaded_file_path);
-                $image_source_width = imagesx($image_source);
-                $image_source_height = imagesy($image_source);
-
-                $image_converted = imagecreatetruecolor($image_source_width, $image_source_height);
-                imageAlphaBlending($image_converted, false);
-                imageSaveAlpha($image_converted, true);
-
-                $image_transparent = imagecolorallocatealpha($image_converted, 0, 0, 0, 127);
-                imagefilledrectangle($image_converted, 0, 0, $image_source_width - 1, $image_source_height - 1, $image_transparent);
-
-                imagecopy($image_converted, $image_source, 0, 0, 0, 0, $image_source_width, $image_source_height);
-                imagewebp($image_converted, $image_converted_path, 100);
-
-                imagedestroy($image_source);
-                imagedestroy($image_converted);
-
-                unlink($uploaded_file_path);
-
-                $uploaded_file_fullname = $image_converted_name;
-                $uploaded_file_url = sprintf('/uploads/media/%s', $image_converted_name);
-                $handler_output_data['uploaded_file_url'] = sprintf('/uploads/media/%s', $image_converted_name);
-                $handler_message = 'Файл успешно загружен и преобразован.';
-                $handler_status_code = 1;
-              } else {
-                $handler_output_data['uploaded_file_url'] = sprintf('/uploads/media/%s', $uploaded_file_fullname);
-                $handler_message = 'Файл успешно загружен.';
-                $handler_status_code = 1;
-              }
-
-              if ($handler_status_code == 1) {
-                $template = new \core\PHPLibrary\Template($system_core, 'default', 'admin');
-
-                $handler_output_data['dom'] = [];
-                $handler_output_data['dom']['listItem'] = \core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/page/media/listItem.tpl', [
-                  'MEDIA_FILE_URL' => $uploaded_file_url,
-                  'MEDIA_FILE_FULLNAME' => $uploaded_file_fullname
-                ]);
-              }
-
+              $handler_message = 'Файл успешно загружен на сервер.';
+              $handler_status_code = 1;
             } else {
               $handler_message = 'Файл не был загружен из-за внутренней ошибки.';
               $handler_status_code = 0;
@@ -452,21 +429,27 @@ if (defined('IS_NOT_HACKED')) {
     }
   }
 
-  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'template' && is_null($system_core->urlp->get_path(2))) {
-    $handler_output_data['modalClose'] = true;
-    
+  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'template') {
     if ($system_core->client->is_logged(2)) {
-      $template_path = sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $_DELETE['template_name']);
-      if (file_exists($template_path)) {
-        $system_core::recursive_files_remove($template_path);
+      $template_name = $_DELETE['template_name'];
+      $template_category = $_DELETE['template_category'];
+      $template = new \core\PHPLibrary\Template($system_core, $template_name, $template_category);
 
-        $handler_output_data['reload'] = true;
-
+      if ($template->exists_core_file()) {
+        $system_core::recursive_files_remove($template->get_path());
+        
         $handler_message = 'Шаблон успешно удален.';
         $handler_status_code = 1;
       } else {
-        $handler_message = sprintf('Шаблон не был удален, так как его не существует: %s.', $template_path);
-        $handler_status_code = 0;
+        if (file_exists($template->get_path())) {
+          $system_core::recursive_files_remove($template->get_path());
+
+          $handler_message = 'Ядро шаблона не было обнаружено, но осталась его папка, которая только что была удалена.';
+          $handler_status_code = 1;
+        } else {
+          $handler_message = 'Невозможно удалить шаблон, так как его не существует.';
+          $handler_status_code = 0;
+        }
       }
     } else {
       $handler_message = 'Шаблон не был удален, так как произошла ошибка авторизации.';
@@ -865,7 +848,7 @@ if (defined('IS_NOT_HACKED')) {
 
     if (\core\PHPLibrary\Entry::exists_by_id($system_core, $entry_id)) {
       $entry = new \core\PHPLibrary\Entry($system_core, $entry_id);
-      $entry->init_data(['name', 'author_id', 'category_id', 'texts', 'created_unix_timestamp', 'updated_unix_timestamp']);
+      $entry->init_data(['name', 'author_id', 'category_id', 'texts', 'metadata', 'created_unix_timestamp', 'updated_unix_timestamp']);
       $entry_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
 
       $handler_output_data['entry'] = [];
@@ -876,6 +859,7 @@ if (defined('IS_NOT_HACKED')) {
       $handler_output_data['entry']['content'] = $entry->get_content($entry_locale);
       $handler_output_data['entry']['authorID'] = $entry->get_author_id();
       $handler_output_data['entry']['categoryID'] = $entry->get_category_id();
+      $handler_output_data['entry']['previewURL'] = $entry->get_preview_url();
       $handler_output_data['entry']['createdUnixTimestamp'] = $entry->get_created_unix_timestamp();
       $handler_output_data['entry']['updatedUnixTimestamp'] = $entry->get_updated_unix_timestamp();
 
@@ -984,6 +968,16 @@ if (defined('IS_NOT_HACKED')) {
           }
 
           if (isset($_PATCH['entry_name'])) $entry_data['name'] = $_PATCH['entry_name'];
+          if (isset($_PATCH['entry_preview'])) {
+            $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);
+            $file_converter = new \core\PHPLibrary\SystemCore\FileConverter($system_core);
+            $file_converted = $file_converter->convert($_PATCH['entry_preview'], $file_uploaded_folder_path, \core\PHPLibrary\SystemCore\FileConverter\EnumFileFormat::WEBP, true);
+            
+            if (is_array($file_converted)) {
+              if (!array_key_exists('metadata', $entry_data)) $entry_data['metadata'] = [];
+              $entry_data['metadata']['preview_url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
+            }
+          }
 
           $entry_is_updated = $entry->update($entry_data);
 

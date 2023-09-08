@@ -17,13 +17,13 @@
       <div class="main__form-auth-container">
         <form action="/handler/admin/auth" class="main__form-auth" method="POST">
           <h1 class="main__form-title form-auth">Авторизация в&nbsp;панели&nbsp;управления</h1>
-          <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="Логин">
-          <input name="user_password" type="password" class="form-auth__input form-auth__input_password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+          <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="Логин" required>
+          <input name="user_password" type="password" class="form-auth__input form-auth__input_password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required>
           <div class="form-auth__inputs-group">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
-            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4">
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
+            <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
           </div>
           <input class="form-auth__input form-auth__input_submit" type="submit" value="Авторизация">
         </form>

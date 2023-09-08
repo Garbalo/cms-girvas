@@ -40,7 +40,7 @@ export class Button {
 
     let buttonLabelElement = document.createElement('span');
     buttonLabelElement.classList.add('interactive__button-label');
-    buttonLabelElement.innerText = (this.label != null) ? this.label : 'Button';
+    buttonLabelElement.innerHTML = (this.label != null) ? this.label : 'Button';
     buttonElement.append(buttonLabelElement);
 
     element.append(buttonElement);

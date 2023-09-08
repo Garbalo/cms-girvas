@@ -1,6 +1,9 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   <h1 style="display: none;">CMS GIRVAS</h1>
-  <h2 class="page__title">Добро&nbsp;пожаловать в&nbsp;CMS&nbsp;&laquo;GIRVAS&raquo;!</h1>
+  <div class="page__title-container">
+    <h2 class="page__title">Добро&nbsp;пожаловать в&nbsp;CMS&nbsp;&laquo;GIRVAS&raquo;!</h2>
+    <div id="E8548530785" class="page__interactive-container"></div>
+  </div>
   <div class="page__content">
     <p class="page__content-phar">
       Спасибо за то, что выбрали нашу систему. Мы позаботились над простотой использования нашей 
@@ -28,7 +31,7 @@
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/settings" class="steps-list__item-link">Приступить!</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -64,7 +67,7 @@
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/templates" class="steps-list__item-link">Приступить!</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -86,7 +89,7 @@
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/modules" class="steps-list__item-link">Приступить!</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">

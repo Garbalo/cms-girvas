@@ -146,6 +146,26 @@ namespace core\PHPLibrary {
 
       return '';
     }
+
+    /**
+     * Получить URL изображения предпросмотра
+     *
+     * @return string
+     */
+    public function get_preview_url() : string {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['preview_url'])) {
+          return $metadata_array['preview_url'];
+        }
+      }
+
+      return '';
+    }
+
+    public static function get_preview_default_url(SystemCore $system_core, int $size) : string {
+      return sprintf('/%s/images/entry/default_%d.png', $system_core->template->get_url(), $size);
+    }
     
     /**
      * Получить имя записи
@@ -339,7 +359,7 @@ namespace core\PHPLibrary {
      * @param  mixed $texts
      * @return Entry
      */
-    public static function create(SystemCore $system_core, string $name, int $author_id, int $category_id, array $texts) : Entry|null {
+    public static function create(SystemCore $system_core, string $name, int $author_id, int $category_id, array $texts, array $metadata = []) : Entry|null {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('entries');
@@ -347,6 +367,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->add_column('category_id');
       $query_builder->statement->add_column('name');
       $query_builder->statement->add_column('texts');
+      $query_builder->statement->add_column('metadata');
       $query_builder->statement->add_column('created_unix_timestamp');
       $query_builder->statement->add_column('updated_unix_timestamp');
       $query_builder->statement->set_clause_returning();
@@ -357,6 +378,7 @@ namespace core\PHPLibrary {
       $entry_updated_unix_timestamp = $entry_created_unix_timestamp;
 
       $texts_json = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+      $metadata_json = json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
@@ -364,6 +386,7 @@ namespace core\PHPLibrary {
       $database_query->bindParam(':category_id', $category_id, \PDO::PARAM_INT);
       $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
       $database_query->bindParam(':texts', $texts_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':metadata', $metadata_json, \PDO::PARAM_STR);
       $database_query->bindParam(':created_unix_timestamp', $entry_created_unix_timestamp, \PDO::PARAM_INT);
       $database_query->bindParam(':updated_unix_timestamp', $entry_updated_unix_timestamp, \PDO::PARAM_INT);
       $execute = $database_query->execute();
@@ -389,7 +412,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts', 'metadata'])) {
           $query_builder->statement->clause_set->add_column($data_name);
         }
       }
@@ -397,6 +420,12 @@ namespace core\PHPLibrary {
       if (array_key_exists('texts', $data)) {
         foreach ($data['texts'] as $lang_name => $data_texts) {
           $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        }
+      }
+
+      if (array_key_exists('metadata', $data)) {
+        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 
@@ -412,9 +441,9 @@ namespace core\PHPLibrary {
 
       $database_connection = $this->system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      error_log($query_builder->statement->assembled);
+      
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts', 'metadata'])) {
           switch (gettype($data_value)) {
             case 'boolean': $data_value_type = \PDO::PARAM_BOOL; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;

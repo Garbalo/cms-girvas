@@ -116,3 +116,13 @@
 .page__phar-block:last-child {
   margin-bottom: 0px;
 }
+.page__interactive-container {
+  display: flex;
+}
+.page__interactive-container > .interactive {
+  margin-right: 10px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}

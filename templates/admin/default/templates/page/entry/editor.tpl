@@ -9,30 +9,20 @@
     let nadvoTE = new NadvoTE(document.querySelector('#E3473967486'), {
       'handler': '/handler/parsedown',
       'toolbar': [
-        {
-          'name': 'bold',
-          'type': 'button'
-        },
-        {
-          'name': 'italic',
-          'type': 'button'
-        },
-        {
-          'name': 'underline',
-          'type': 'button'
-        },
-        // {
-        //   'name': 'header',
-        //   'type': 'select'
-        // },
-        {
-          'name': 'preview',
-          'type': 'button'
-        },
-        {
-          'name': 'source',
-          'type': 'button'
-        }
+        {'name': 'bold', 'type': 'button'},
+        {'name': 'italic', 'type': 'button'},
+        {'name': 'underline', 'type': 'button'},
+        {'name': 'header1', 'type': 'button'},
+        {'name': 'header2', 'type': 'button'},
+        {'name': 'header3', 'type': 'button'},
+        {'name': 'header4', 'type': 'button'},
+        {'name': 'header5', 'type': 'button'},
+        {'name': 'header6', 'type': 'button'},
+        {'name': 'quote', 'type': 'button'},
+        {'name': 'link', 'type': 'button'},
+        {'name': 'image', 'type': 'button'},
+        {'name': 'preview', 'type': 'button'},
+        {'name': 'source', 'type': 'button'},
       ]
     });
     nadvoTE.init();

@@ -1,10 +1,10 @@
-<li class="list-modules__item module-preview">
-  <div class="module-preview__icon-container"></div>
-  <div class="module-preview__data-container">
-    <h2 class="module-preview__title">{MODULE_TITLE}</h2>
-    <div class="module-preview__description-container">
-      {MODULE_DESCRIPTION}
-    </div>
-    <button class="module-preview__button">Включить</button>
+<li class="list__item item" data-module-name="{MODULE_NAME}" data-module-installed-status="{MODULE_INSTALLED_STATUS}" data-module-enabled-status="{MODULE_ENABLED_STATUS}">
+  <div class="item__icon-container"></div>
+  <div class="item__body-container">
+    <h2 class="item__title">
+      <a href="{MODULE_LINK}" class="item__title-link">{MODULE_TITLE}</a>
+    </h2>
+    <div class="item__description">{MODULE_DESCRIPTION}</div>
   </div>
+  <div class="item__footer-container" role="item-footer-panel"></div>
 </li>

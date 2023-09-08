@@ -26,13 +26,13 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.43 Pre-alpha';
-    public SystemCoreConfigurator $configurator;
-    public SystemCoreDatabaseConnector $database_connector;
-    public SystemCoreLocale $locale;
-    public URLParser $urlp;
-    public Client $client;
-    public Template $template;
+    public const CMS_VERSION = '0.0.44 Pre-alpha';
+    public SystemCoreConfigurator|null $configurator = null;
+    public SystemCoreDatabaseConnector|null $database_connector = null;
+    public SystemCoreLocale|null $locale = null;
+    public URLParser|null $urlp = null;
+    public Client|null $client = null;
+    public Template|null $template = null;
     public array $modules = [];
     public array $page_dir_array = [];
     
@@ -137,11 +137,25 @@ namespace core\PHPLibrary {
       $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
       $file_connector->reset_current_directory();
 
-      $modules_enabled = Modules::get_enabled();
-      if (!empty($modules_enabled)) {
-        foreach ($modules_enabled as $module_name => $module_data) {
-          $module_path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $module_name);
-          if (file_exists($module_path)) {
+      $this->configurator = new SystemCoreConfigurator($this);
+      $this->configurator->set('cms_language_default', 'ru_RU');
+
+      $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
+      $this->database_connector->database->connect();
+
+      $this->client = new Client($this);
+      $this->init_url_parser();
+
+      if ($this->urlp->get_path(0) == 'install') {
+        $install_locale = (!is_null($this->urlp->get_param('locale'))) ? $this->urlp->get_param('locale') : 'en_US';
+      }
+
+      $modules_installed = Modules::get_installed_modules_array();
+      if (!empty($modules_installed)) {
+        foreach ($modules_installed as $index => $folder_name) {
+          $module_path = sprintf('%s/%s', Modules::get_absolute_modules_path(), $folder_name);
+          $module = new Module($this, $folder_name);
+          if ($module->is_enabled()) {
             $file_connector->set_start_directory($module_path);
             $file_connector->set_current_directory($module_path);
 
@@ -155,22 +169,23 @@ namespace core\PHPLibrary {
             $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
             $file_connector->reset_current_directory();
 
-            Module::connect_core($this, $module_name);
+            Module::connect_core($this, $folder_name);
           }
+
+          unset($module);
         }
       }
 
-      $this->configurator = new SystemCoreConfigurator($this);
-      $this->configurator->set('cms_language_default', 'ru_RU');
+      $modules_installed = Modules::get_installed_modules_array();
+      if (!empty($this->modules)) {
+        foreach ($this->modules as $name => $module_core) {
+          $module = new Module($this, $name);
+          if ($module->is_installed() && $module->is_enabled()) {
+            $module_core->preparation();
+          }
 
-      $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
-      $this->database_connector->database->connect();
-
-      $this->client = new Client($this);
-      $this->init_url_parser();
-
-      if ($this->urlp->get_path(0) == 'install') {
-        $install_locale = (!is_null($this->urlp->get_param('locale'))) ? $this->urlp->get_param('locale') : 'en_US';
+          unset($module);
+        }
       }
 
       if ($this->urlp->get_path(0) != 'handler') {
@@ -187,6 +202,20 @@ namespace core\PHPLibrary {
 
         $template = $this->get_template();
         $template->init();
+
+        $template->core->assembled = $template->get_core_assembled();
+      }
+      
+      $modules_installed = Modules::get_installed_modules_array();
+      if (!empty($this->modules)) {
+        foreach ($this->modules as $name => $module_core) {
+          $module = new Module($this, $name);
+          if ($module->is_installed() && $module->is_enabled()) {
+            $module_core->init();
+          }
+
+          unset($module);
+        }
       }
     }
     
@@ -205,8 +234,18 @@ namespace core\PHPLibrary {
      * @return array
      */
     public function get_array_uploaded_templates_names() : array {
-      $templates_path = sprintf('%s/templates', $this->get_cms_path());
-      return array_diff(scandir(sprintf($templates_path)), ['..', '.']);
+      $path = sprintf('%s/templates', $this->get_cms_path());
+      return array_diff(scandir(sprintf($path)), ['..', '.']);
+    }
+    
+    /**
+     * Получить массив имен загруженных модулей
+     *
+     * @return array
+     */
+    public function get_array_uploaded_modules_names() : array {
+      $path = sprintf('%s/modules', $this->get_cms_path());
+      return array_diff(scandir(sprintf($path)), ['..', '.']);
     }
     
     /**

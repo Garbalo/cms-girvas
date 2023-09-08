@@ -12,6 +12,11 @@ body {
   background-position: center center;
   min-height: 100%;
 }
+code {
+  background-color: var(--common-main-color-2);
+  color: var(--common-main-color-4);
+  padding: 0 5px;
+}
 .container {
   margin: 0 auto;
 }

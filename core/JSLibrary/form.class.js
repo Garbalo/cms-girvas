@@ -48,6 +48,9 @@ class Form {
     let submitterName = submitEvent.submitter.hasAttribute('name') ? submitEvent.submitter.getAttribute('name') : 'submitter';
     formData.append(submitterName, true);
 
+    let notificationLoading = new PopupNotification('Обработка запроса...', document.body, true);
+    notificationLoading.show();
+
     // Отправка через Fetch API
     fetch(this.getFormAction(), {
       method: this.getFormMethod(submitEvent),
@@ -55,7 +58,7 @@ class Form {
     }).then((response) => {
       return response.json();
     }).then((data) => {
-      console.log(data);
+      console.debug('Response by form: ' + data);
       if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
         let notificationContainerTarget, notificationIsPopup = false;
         if (typeof(data.outputData.notificationContainerTargetID) == 'undefined') {
@@ -68,6 +71,8 @@ class Form {
             notificationIsPopup = true;
           }
         }
+
+        notificationLoading.hide();
 
         let notification = new PopupNotification(data.message, notificationContainerTarget, notificationIsPopup);
         notification.show();

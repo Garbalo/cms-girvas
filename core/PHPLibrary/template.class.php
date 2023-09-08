@@ -7,7 +7,7 @@ namespace core\PHPLibrary {
 
   final class Template {
     public SystemCore $system_core;
-    private mixed $core;
+    public mixed $core;
     private string $path;
     private string $url;
     private string $name;
@@ -27,6 +27,8 @@ namespace core\PHPLibrary {
       'templates/page/index.tpl',
       'metadata.json'
     ];
+
+    private array $global_variables = [];
     
     /**
      * __construct
@@ -87,17 +89,22 @@ namespace core\PHPLibrary {
 
     public function get_title() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['title'])) ? $metadata['title'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=title}';
+      return (isset($metadata['title'])) ? $metadata['title'] : '';
     }
 
     public function get_description() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['description'])) ? $metadata['description'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=description}';
+      return (isset($metadata['description'])) ? $metadata['description'] : '';
     }
 
     public function get_author_name() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['authorName'])) ? $metadata['authorName'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=authorName}';
+      return (isset($metadata['authorName'])) ? $metadata['authorName'] : '';
+    }
+
+    public function get_category_name() : string {
+      $metadata = $this->get_metadata();
+      return (isset($metadata['categoryName'])) ? $metadata['categoryName'] : 'default';
     }
     
     /**
@@ -249,6 +256,23 @@ namespace core\PHPLibrary {
 
       return true;
     }
+    
+    /**
+     * Добавить глобальную переменную
+     *
+     * @param  string $name
+     * @param  string|int $value
+     * @return void
+     */
+    public function add_global_variable(string $name, string|int $value) : void {
+      $this->global_variables[$name] = $value;
+    }
+
+    public function assembly_global_variables() : void {
+      if (!empty($this->global_variables)) {
+        $this->core->assembled = TemplateCollector::assembly($this->core->assembled, $this->global_variables);
+      }
+    }
 
     /**
      * Получить сборку шаблона ядра
@@ -270,14 +294,6 @@ namespace core\PHPLibrary {
           'SITE_CHARSET' => $this->system_core->configurator->get_site_charset(),
         ];
 
-        if (!empty($this->system_core->modules)) {
-          foreach ($this->system_core->modules as $module) {
-            if (property_exists($module, 'global_template_tags')) {
-              $template_tags_array = array_merge($template_tags_array, $module->global_template_tags);
-            }
-          }
-        }
-
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);
 
         // Итоговая сборка шаблона веб-страницы
@@ -293,14 +309,12 @@ namespace core\PHPLibrary {
      * @return string
      */
     private function get_core_path() : string {
-      /** @var string $template_name Наименование шаблона */
-      $template_name = $this->get_name();
       return sprintf('%s/core.class.php', $this->get_path());
     }
 
     public function get_core_created_unix_timestamp() : int {
-      $core_path = $this->get_core_path();
-      return filectime($core_path);
+      $path = $this->get_core_path();
+      return filectime($path);
     }
     
     /**
@@ -327,6 +341,16 @@ namespace core\PHPLibrary {
       }
 
       return null;
+    }
+    
+    /**
+     * Проверка наличия файла ядра шаблона
+     *
+     * @return bool
+     */
+    public function exists_core_file() : bool {
+      $file_path = ($this->get_category() == 'default') ? sprintf('%s/core.class.php', $this->get_path()) : sprintf('%s/%s/core.class.php', $this->get_path(), $this->get_category());
+      return file_exists($file_path);
     }
 
     public function exists_file_metadata_json() : bool {
