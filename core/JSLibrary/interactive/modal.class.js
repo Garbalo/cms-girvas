@@ -10,6 +10,7 @@ export class Modal {
     this.opacity = 0;
     this.assembled = null;
     this.buttons = [];
+    this.onCloseCallbackFunction = () => {};
   }
 
   show() {
@@ -24,6 +25,10 @@ export class Modal {
     }, 1);
   }
 
+  onClose(callback) {
+    this.onCloseCallbackFunction = callback;
+  }
+
   close() {
     let elementWrapper = this.assembled.querySelector('.interactive__modal-wrapper');
     let interval = setInterval(() => {
@@ -33,6 +38,8 @@ export class Modal {
       } else {
         clearInterval(interval);
         this.assembled.remove();
+
+        this.onCloseCallbackFunction();
       }
     }, 1);
   }

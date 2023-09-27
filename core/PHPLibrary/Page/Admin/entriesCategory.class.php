@@ -12,11 +12,11 @@
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
-  use \core\PHPLibrary\User as User;
+  use \core\PHPLibrary\EntryCategory as EntryCategory;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
 
-  class PageUser implements InterfacePage {
+  class PageEntriesCategory implements InterfacePage {
     public SystemCore $system_core;
     public Page $page;
     public string $assembled = '';
@@ -27,12 +27,13 @@ namespace core\PHPLibrary\Page\Admin {
     }
 
     public function assembly() : void {
-      $this->system_core->template->add_style(['href' => 'styles/page/user.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_style(['href' => 'styles/page/entriesCategory.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_script(['src' => 'admin/page/entriesCategory.js', 'type' => 'module'], true);
 
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
         'NAVIGATION_ITEM_TITLE' => '< Назад',
-        'NAVIGATION_ITEM_URL' => '/admin/users',
+        'NAVIGATION_ITEM_URL' => '/admin/entriesCategories',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
 
@@ -46,24 +47,25 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
-      $user = null;
+      $entries_category = null;
       if (!is_null($this->system_core->urlp->get_path(2))) {
-        $user_id = (is_numeric($this->system_core->urlp->get_path(2))) ? (int)$this->system_core->urlp->get_path(2) : 0;
-        $user = (User::exists_by_id($this->system_core, $user_id)) ? new User($this->system_core, $user_id) : null;
+        $entries_category_id = (is_numeric($this->system_core->urlp->get_path(2))) ? (int)$this->system_core->urlp->get_path(2) : 0;
+        $entries_category = (EntryCategory::exists_by_id($this->system_core, $entries_category_id)) ? new EntryCategory($this->system_core, $entries_category_id) : null;
         
-        if (!is_null($user)) {
-          $user->init_data(['id', 'login', 'email']);
+        if (!is_null($entries_category)) {
+          $entries_category->init_data(['id', 'texts', 'name', 'parent_id']);
         }
       }
-
+      
       /** @var string $site_page Содержимое шаблона страницы */
-      $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/user.tpl', [
+      $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategory.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
-        'ADMIN_PANEL_PAGE_NAME' => 'user',
-        'USER_ID' => (!is_null($user)) ? $user->get_id() : 0,
-        'USER_LOGIN' => (!is_null($user)) ? $user->get_login() : '',
-        'USER_EMAIL' => (!is_null($user)) ? $user->get_email() : '',
-        'USER_FORM_METHOD' => (!is_null($user)) ? 'PATCH' : 'PUT'
+        'ADMIN_PANEL_PAGE_NAME' => 'entries-category',
+        'ENTRIES_CATEGORY_ID' => (!is_null($entries_category)) ? $entries_category->get_id() : 0,
+        'ENTRIES_CATEGORY_TITLE' => (!is_null($entries_category)) ? $entries_category->get_title() : '',
+        'ENTRIES_CATEGORY_DESCRIPTION' => (!is_null($entries_category)) ? $entries_category->get_description() : '',
+        'ENTRIES_CATEGORY_NAME' => (!is_null($entries_category)) ? $entries_category->get_name() : '',
+        'ENTRIES_CATEGORY_FORM_METHOD' => (!is_null($entries_category)) ? 'PATCH' : 'PUT',
       ]);
     }
 

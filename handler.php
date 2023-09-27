@@ -38,6 +38,16 @@ if (defined('IS_NOT_HACKED')) {
     include_once($api_file_path);
   }
 
+  if ($system_core->urlp->get_path(1) == 'entry') {
+    $api_file_path = sprintf('%s/api/entry.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  if ($system_core->urlp->get_path(1) == 'pageStatic') {
+    $api_file_path = sprintf('%s/api/pageStatic.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'charset') {
     $charset = ($system_core->configurator->exists_database_entry_value('base_site_charset')) ? $system_core->configurator->get_database_entry_value('base_site_charset') : 'UTF-8';
     $handler_output_data['charset'] = $charset;
@@ -329,23 +339,16 @@ if (defined('IS_NOT_HACKED')) {
           return 0;
         }
 
-        return ($a['created_unix_timestamp'] < $b['created_unix_timestamp']) ? -1 : 1;
+        return ($a['created_unix_timestamp'] > $b['created_unix_timestamp']) ? -1 : 1;
       });
 
       $media_files = [];
       foreach ($files as $file) {
+        error_log(date('Y-m-d H:i:s', $file['created_unix_timestamp']));
         array_push($media_files, $file['file_url']);
       }
 
-      $page_current = (int)$system_core->urlp->get_param('page');
-      $pages_total = ceil(count($media_files) / 6);
-      
-      if (!is_null($system_core->urlp->get_param('page'))) {
-        $media_files = array_slice($media_files, $page_current * 6, 6);
-      }
-
       $media_files_transformed = [];
-      $template = new \core\PHPLibrary\Template($system_core, 'default', 'admin');
 
       foreach ($media_files as $media_file) {
         array_push($media_files_transformed, sprintf('/uploads/media/%s', $media_file));
@@ -729,270 +732,6 @@ if (defined('IS_NOT_HACKED')) {
     } else {
       $handler_message = 'Невозможно отправить комментарий, так как не были отправлены обязательные данные.';
       $handler_status_code = 0;
-    }
-  }
-
-  // Манипуляция со статическими страницами
-  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'page-static' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_DELETE['page-static_event_delete']) && $system_core->client->is_logged(2)) {
-      if (isset($_DELETE['page-static_id'])) {
-        $page_static_id = (is_numeric($_DELETE['page-static_id'])) ? (int)$_DELETE['page-static_id'] : 0;
-
-        if (\core\PHPLibrary\PageStatic::exists_by_id($system_core, $page_static_id)) {
-          $page_static = new \core\PHPLibrary\PageStatic($system_core, $page_static_id);
-
-          $page_static_is_deleted = $page_static->delete();
-          if ($page_static_is_deleted) {
-            $handler_message = 'Страница успешно удалена.';
-            $handler_status_code = 1;
-          } else {
-            $handler_message = 'Страница не была удалена, поскольку произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Страница не удалена, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
-
-        $handler_output_data['modalClose'] = true;
-        $handler_output_data['reload'] = true;
-      }
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'page-static' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PUT['page-static_event_save']) && $system_core->client->is_logged(2)) {
-      $page_static_name = isset($_PUT['page-static_name']) ? $_PUT['page-static_name'] : '';
-
-      $texts = [];
-      if (array_key_exists('page-static_title_rus', $_PUT) || array_key_exists('page-static_description_rus', $_PUT) || array_key_exists('page-static_content_rus', $_PUT)) {
-        if (!array_key_exists('ru_RU', $texts)) $texts['ru_RU'] = [];
-
-        if (array_key_exists('page-static_title_rus', $_PUT)) $texts['ru_RU']['title'] = $_PUT['page-static_title_rus'];
-        if (array_key_exists('page-static_description_rus', $_PUT)) $texts['ru_RU']['description'] = $_PUT['page-static_description_rus'];
-        if (array_key_exists('page-static_content_rus', $_PUT)) $texts['ru_RU']['content'] = $_PUT['page-static_content_rus'];
-      }
-
-      if (array_key_exists('page-static_title_eng', $_PUT) || array_key_exists('page-static_description_eng', $_PUT) || array_key_exists('page-static_content_eng', $_PUT)) {
-        if (!array_key_exists('en_US', $texts)) $texts['en_US'] = [];
-
-        if (array_key_exists('page-static_title_eng', $_PUT)) $texts['en_US']['title'] = $_PUT['page-static_title_eng'];
-        if (array_key_exists('page-static_description_eng', $_PUT)) $texts['en_US']['description'] = $_PUT['page-static_description_eng'];
-        if (array_key_exists('page-static_content_eng', $_PUT)) $texts['en_US']['content'] = $_PUT['page-static_content_eng'];
-      }
-
-      $client_session = $system_core->client->get_session(2, ['user_id']);
-      $page_static = \core\PHPLibrary\PageStatic::create($system_core, $page_static_name, $client_session->get_user_id(), $texts);
-      if (!is_null($page_static)) {
-        $handler_message = 'Страница успешно создана.';
-        $handler_status_code = 1;
-
-        $handler_output_data['href'] = sprintf('/admin/page/%d', $page_static->get_id());
-      } else {
-        $handler_message = 'Произошла внутренняя ошибка. Страница не была создана.';
-        $handler_status_code = 0;
-      }
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'PATCH' && $system_core->urlp->get_path(1) == 'page-static' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PATCH['page-static_event_save']) && $system_core->client->is_logged(2)) {
-      if (isset($_PATCH['page-static_id'])) {
-        $page_static_id = (is_numeric($_PATCH['page-static_id'])) ? (int)$_PATCH['page-static_id'] : 0;
-
-        if (\core\PHPLibrary\PageStatic::exists_by_id($system_core, $page_static_id)) {
-          $page_static = new \core\PHPLibrary\PageStatic($system_core, $page_static_id);
-          
-          $page_static_data = [];
-
-          if (array_key_exists('page-static_title_rus', $_PATCH) || array_key_exists('page-static_description_rus', $_PATCH) || array_key_exists('page-static_content_rus', $_PATCH)) {
-            if (!array_key_exists('texts', $page_static_data)) $page_static_data['texts'] = [];
-            if (!array_key_exists('ru_RU', $page_static_data['texts'])) $page_static_data['texts']['ru_RU'] = [];
-
-            if (array_key_exists('page-static_title_rus', $_PATCH)) $page_static_data['texts']['ru_RU']['title'] = $_PATCH['page-static_title_rus'];
-            if (array_key_exists('page-static_description_rus', $_PATCH)) $page_static_data['texts']['ru_RU']['description'] = $_PATCH['page-static_description_rus'];
-            if (array_key_exists('page-static_content_rus', $_PATCH)) $page_static_data['texts']['ru_RU']['content'] = $_PATCH['page-static_content_rus'];
-          }
-
-          if (array_key_exists('page-static_title_eng', $_PATCH) || array_key_exists('page-static_description_eng', $_PATCH) || array_key_exists('page-static_content_eng', $_PATCH)) {
-            if (!array_key_exists('texts', $page_static_data)) $page_static_data['texts'] = [];
-            if (!array_key_exists('en_US', $page_static_data['texts'])) $page_static_data['texts']['en_US'] = [];
-
-            if (array_key_exists('page-static_title_eng', $_PATCH)) $page_static_data['texts']['en_US']['title'] = $_PATCH['page-static_title_eng'];
-            if (array_key_exists('page-static_description_eng', $_PATCH)) $page_static_data['texts']['en_US']['description'] = $_PATCH['page-static_description_eng'];
-            if (array_key_exists('page-static_content_eng', $_PATCH)) $page_static_data['texts']['en_US']['content'] = $_PATCH['page-static_content_eng'];
-          }
-
-          if (isset($_PATCH['page-static_name'])) $page_static_data['name'] = $_PATCH['page-static_name'];
-
-          $page_static_is_updated = $page_static->update($page_static_data);
-
-          if ($page_static_is_updated) {
-            $handler_message = 'Страница успешно сохранена.';
-            $handler_status_code = 1;
-          } else {
-            $handler_message = 'Страница не была сохранена, поскольку произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Страница не обновлена, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
-      }
-    }
-  }
-
-  // Манипуляция с записями
-  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'entry' && is_numeric($system_core->urlp->get_path(2))) {
-    $entry_id = (int)$system_core->urlp->get_path(2);
-
-    if (\core\PHPLibrary\Entry::exists_by_id($system_core, $entry_id)) {
-      $entry = new \core\PHPLibrary\Entry($system_core, $entry_id);
-      $entry->init_data(['name', 'author_id', 'category_id', 'texts', 'metadata', 'created_unix_timestamp', 'updated_unix_timestamp']);
-      $entry_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
-
-      $handler_output_data['entry'] = [];
-      $handler_output_data['entry']['id'] = $entry->get_id();
-      $handler_output_data['entry']['name'] = $entry->get_name();
-      $handler_output_data['entry']['title'] = $entry->get_title($entry_locale);
-      $handler_output_data['entry']['description'] = $entry->get_description($entry_locale);
-      $handler_output_data['entry']['content'] = $entry->get_content($entry_locale);
-      $handler_output_data['entry']['authorID'] = $entry->get_author_id();
-      $handler_output_data['entry']['categoryID'] = $entry->get_category_id();
-      $handler_output_data['entry']['previewURL'] = $entry->get_preview_url();
-      $handler_output_data['entry']['createdUnixTimestamp'] = $entry->get_created_unix_timestamp();
-      $handler_output_data['entry']['updatedUnixTimestamp'] = $entry->get_updated_unix_timestamp();
-
-      $handler_message = 'Данные по записи успешно получены.';
-      $handler_status_code = 1;
-    } else {
-      $handler_message = 'Данные по записи не были получены, так как ее не существует.';
-      $handler_status_code = 0;
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'entry' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_DELETE['entry_event_delete']) && $system_core->client->is_logged(2)) {
-      if (isset($_DELETE['entry_id'])) {
-        $entry_id = (is_numeric($_DELETE['entry_id'])) ? (int)$_DELETE['entry_id'] : 0;
-
-        if (\core\PHPLibrary\Entry::exists_by_id($system_core, $entry_id)) {
-          $entry = new \core\PHPLibrary\Entry($system_core, $entry_id);
-
-          $entry_is_deleted = $entry->delete();
-          if ($entry_is_deleted) {
-            $handler_message = 'Запись успешно удалена.';
-            $handler_status_code = 1;
-          } else {
-            $handler_message = 'Запись не была удалена, поскольку произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Запись не удалена, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
-
-        $handler_output_data['modalClose'] = true;
-        $handler_output_data['reload'] = true;
-      }
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'entry' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PUT['entry_event_save']) && $system_core->client->is_logged(2)) {
-      $entry_name = isset($_PUT['entry_name']) ? $_PUT['entry_name'] : '';
-
-      $texts = [];
-
-      $cms_locales_names = $system_core->get_array_locales_names();
-      if (count($cms_locales_names) > 0) {
-        foreach ($cms_locales_names as $index => $cms_locale_name) {
-          $cms_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_locale_name);
-
-          $entry_title_input_name = sprintf('entry_title_%s', $cms_locale->get_iso_639_2());
-          $entry_description_textarea_name = sprintf('entry_description_%s', $cms_locale->get_iso_639_2());
-          $entry_content_textarea_name = sprintf('entry_description_%s', $cms_locale->get_iso_639_2());
-
-          if (array_key_exists($entry_title_input_name, $_PUT) || array_key_exists($entry_description_textarea_name, $_PUT) || array_key_exists($entry_content_textarea_name, $_PUT)) {
-            if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
-
-            if (array_key_exists($entry_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$entry_title_input_name];
-            if (array_key_exists($entry_description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = $_PUT[$entry_description_textarea_name];
-            if (array_key_exists($entry_content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = $_PUT[$entry_content_textarea_name];
-          }
-        }
-      }
-
-      $client_session = $system_core->client->get_session(2, ['user_id']);
-      $entry = \core\PHPLibrary\Entry::create($system_core, $entry_name, $client_session->get_user_id(), 1, $texts);
-      if (!is_null($entry)) {
-        $handler_message = 'Запись успешно создана.';
-        $handler_status_code = 1;
-
-        $handler_output_data['href'] = sprintf('/admin/entry/%d', $entry->get_id());
-      } else {
-        $handler_message = 'Произошла внутренняя ошибка. Запись не была создана.';
-        $handler_status_code = 0;
-      }
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'PATCH' && $system_core->urlp->get_path(1) == 'entry' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PATCH['entry_event_save']) && $system_core->client->is_logged(2)) {
-      if (isset($_PATCH['entry_id'])) {
-        $entry_id = (is_numeric($_PATCH['entry_id'])) ? (int)$_PATCH['entry_id'] : 0;
-
-        if (\core\PHPLibrary\Entry::exists_by_id($system_core, $entry_id)) {
-          $entry = new \core\PHPLibrary\Entry($system_core, $entry_id);
-          
-          $entry_data = [];
-
-          $cms_locales_names = $system_core->get_array_locales_names();
-          if (count($cms_locales_names) > 0) {
-            foreach ($cms_locales_names as $index => $cms_locale_name) {
-              $cms_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_locale_name);
-
-              $entry_title_input_name = sprintf('entry_title_%s', $cms_locale->get_iso_639_2());
-              $entry_description_textarea_name = sprintf('entry_description_%s', $cms_locale->get_iso_639_2());
-              $entry_content_textarea_name = sprintf('entry_content_%s', $cms_locale->get_iso_639_2());
-
-              if (array_key_exists($entry_title_input_name, $_PATCH) || array_key_exists($entry_description_textarea_name, $_PATCH) || array_key_exists($entry_content_textarea_name, $_PATCH)) {
-                if (!array_key_exists('texts', $entry_data)) $entry_data['texts'] = [];
-                if (!array_key_exists($cms_locale->get_name(), $entry_data['texts'])) $entry_data['texts'][$cms_locale->get_name()] = [];
-
-                if (array_key_exists($entry_title_input_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['title'] = $_PATCH[$entry_title_input_name];
-                if (array_key_exists($entry_description_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['description'] = $_PATCH[$entry_description_textarea_name];
-                if (array_key_exists($entry_content_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['content'] = $_PATCH[$entry_content_textarea_name];
-              }
-            }
-          }
-
-          if (isset($_PATCH['entry_name'])) $entry_data['name'] = $_PATCH['entry_name'];
-          if (isset($_PATCH['entry_preview'])) {
-            $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);
-            $file_converter = new \core\PHPLibrary\SystemCore\FileConverter($system_core);
-            $file_converted = $file_converter->convert($_PATCH['entry_preview'], $file_uploaded_folder_path, \core\PHPLibrary\SystemCore\FileConverter\EnumFileFormat::WEBP, true);
-            
-            if (is_array($file_converted)) {
-              if (!array_key_exists('metadata', $entry_data)) $entry_data['metadata'] = [];
-              $entry_data['metadata']['preview_url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
-            }
-          }
-
-          $entry_is_updated = $entry->update($entry_data);
-
-          if ($entry_is_updated) {
-            $handler_message = 'Запись успешно сохранена.';
-            $handler_status_code = 1;
-          } else {
-            $handler_message = 'Запись не была сохранена, поскольку произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Запись не обновлена, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
-      }
     }
   }
 

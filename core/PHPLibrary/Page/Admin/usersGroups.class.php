@@ -30,6 +30,33 @@ namespace core\PHPLibrary\Page\Admin {
       $this->system_core->template->add_style(['href' => 'styles/page/usersGroups.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_script(['src' => 'admin/page/usersGroups.js'], true);
 
+      $navigations_items_transformed = [];
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_URL' => '/admin',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Пользователи',
+        'NAVIGATION_ITEM_URL' => '/admin/users',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Группы',
+        'NAVIGATION_ITEM_URL' => '/admin/usersGroups',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
+      ]));
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
+
       $users_groups_table_items_assembled_array = [];
       $users_groups = new UsersGroups($this->system_core);
       $users_groups_array_objects = $users_groups->get_all();
@@ -57,6 +84,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/usersGroups.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'users-groups',
         'ADMIN_PANEL_USERS_GROUPS_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/usersGroups/table.tpl', [
           'ADMIN_PANEL_USERS_GROUPS_TABLE_ITEMS' => implode($users_groups_table_items_assembled_array)

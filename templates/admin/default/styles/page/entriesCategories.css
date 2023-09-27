@@ -1,5 +1,5 @@
-.table-users__item-buttons-list {
-    display: flex;
+.table-entries-categories__item-buttons-list {
+  display: flex;
 }
 .buttons-list__item {
   margin-right: 10px;
@@ -7,7 +7,7 @@
 .buttons-list__item:last-child {
   margin-right: 0;
 }
-.table-users__item-button {
+.table-entries-categories__item-button {
   display: flex;
   box-sizing: border-box;
   background: none;
@@ -17,7 +17,7 @@
   height: 16px;
   cursor: pointer;
 }
-.table-users__item-button-icon {
-  fill: var(--admin-panel-main-page-users-table-icon-color);
+.table-entries-categories__item-button-icon {
+  fill: var(--admin-panel-main-page-entries-table-icon-color);
   width: 100%;
 }

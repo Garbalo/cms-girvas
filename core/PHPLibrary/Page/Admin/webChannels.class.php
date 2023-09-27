@@ -31,6 +31,28 @@ namespace core\PHPLibrary\Page\Admin {
       $this->system_core->template->add_style(['href' => 'styles/page/webChannels.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_script(['src' => 'admin/page/webChannels.js'], true);
 
+      $navigations_items_transformed = [];
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_URL' => '/admin',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Веб-каналы',
+        'NAVIGATION_ITEM_URL' => '/admin/webChannels',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
+      ]));
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
+
       $web_channels_table_items_assembled_array = [];
       $web_channels = new WebChannels($this->system_core);
       $web_channels_array_objects = $web_channels->get_all();
@@ -55,6 +77,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/webChannels.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'web-channels',
         'ADMIN_PANEL_WEB_CHANNELS_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/webChannels/table.tpl', [
           'ADMIN_PANEL_WEB_CHANNELS_TABLE_ITEMS' => implode($web_channels_table_items_assembled_array)

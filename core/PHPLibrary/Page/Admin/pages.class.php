@@ -31,6 +31,28 @@ namespace core\PHPLibrary\Page\Admin {
       
       $this->system_core->template->add_script(['src' => 'admin/page/pages.js'], true);
 
+      $navigations_items_transformed = [];
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_URL' => '/admin',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Страницы',
+        'NAVIGATION_ITEM_URL' => '/admin/pages',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
+      ]));
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
+
       $pages_static_table_items_assembled_array = [];
       $pages_static = new Pages($this->system_core);
       $pages_static_array_objects = $pages_static->get_all();
@@ -58,6 +80,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'page_static',
         'ADMIN_PANEL_PAGES_STATIC_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages/table.tpl', [
           'ADMIN_PANEL_PAGES_STATIC_TABLE_ITEMS' => implode($pages_static_table_items_assembled_array)

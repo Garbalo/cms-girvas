@@ -12,13 +12,12 @@
 .form.form_settings input,
 .form.form_settings select,
 .form.form_settings textarea {
-  margin-bottom: 10px;
   width: 100%;
 }
-.form.form_settings input:last-child,
-.form.form_settings select:last-child,
-.form.form_settings textarea:last-child {
-  margin-bottom: 0;
+.form.form_settings input:not(:nth-last-child()),
+.form.form_settings select:not(:nth-last-child()),
+.form.form_settings textarea:not(:nth-last-child()) {
+  margin-bottom: 10px;
 }
 .form.form_settings textarea {
   resize: vertical;

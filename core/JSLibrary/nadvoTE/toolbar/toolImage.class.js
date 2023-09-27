@@ -27,8 +27,9 @@ export class ToolImage extends Tool {
     });
   }
 
-  addImageItem(fileURL) {
+  addImageItem(fileURL, end = true) {
     let targetElement = document.querySelector('#SYSTEM_MODAL_6438654856');
+    let imagesListElement = targetElement.querySelector('ul');
     let imagesListItemsElements = targetElement.querySelectorAll('li');
 
     let mediaListItemElement = document.createElement('li');
@@ -49,7 +50,11 @@ export class ToolImage extends Tool {
       this.modal.target.close();
     });
 
-    imagesListItemsElements[0].after(mediaListItemElement);
+    if (end) {
+      imagesListElement.appendChild(mediaListItemElement);
+    } else {
+      imagesListItemsElements[0].after(mediaListItemElement);
+    }
   }
 
   clearImagesList() {
@@ -74,11 +79,11 @@ export class ToolImage extends Tool {
       return response.json();
     }).then((data) => {
       if (data.statusCode == 1) {
-        if (fileIndex < (input.files.length - 1)) {
+        if (fileIndex < input.files.length) {
           this.imageUpload(input, fileIndex + 1);
         }
 
-        this.addImageItem(data.outputData.file.url);
+        this.addImageItem(data.outputData.file.url, false);
 
         let targetElement = document.querySelector('#SYSTEM_MODAL_6438654856');
         let imagesListItemsElements = targetElement.querySelectorAll('li');
@@ -130,6 +135,11 @@ export class ToolImage extends Tool {
       modalBodyContent.appendChild(inputsGroupContainer);
 
       this.modal = new Interactive('modal', {title: "Вставить изображение", content: modalBodyContent.outerHTML, width: 'calc(100% - 400px)'});
+      
+      let self = this;
+      this.modal.target.onClose(() => {
+        self.imagesListGroup = 0;
+      });
       this.modal.target.addButton('Вставить', () => {
         let inputImageLabelElement = this.modal.target.assembled.querySelector('[name="image_label"]');
         let inputImageLinkElement = this.modal.target.assembled.querySelector('[name="image_link"]');
@@ -144,7 +154,6 @@ export class ToolImage extends Tool {
         this.modal.target.close();
       });
       this.modal.target.addButton('Отмена', () => {
-        this.imagesListGroup = 0;
         this.modal.target.close();
       });
       this.modal.target.assembly();

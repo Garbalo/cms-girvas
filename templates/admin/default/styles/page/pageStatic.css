@@ -1,30 +1,52 @@
-.page-static-editor-form {
-  display: flex;
-  flex-direction: column;
+.form.form_page-static > .table {
+  margin-bottom: 10px;
 }
-.page-static-editor-form__panel {
+.form.form_page-static .table__cell {
+  vertical-align: top;
+}
+.form.form_page-static .table__cell:last-child {
+  width: 400px;
+}
+.form.form_page-static .cell__title {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.form.form_page-static input,
+.form.form_page-static select,
+.form.form_page-static textarea {
+  width: 100%;
+}
+.form.form_page-static input:not(:nth-last-child()),
+.form.form_page-static select:not(:nth-last-child()),
+.form.form_page-static textarea:not(:nth-last-child()) {
+  margin-bottom: 10px;
+}
+.form.form_page-static textarea {
+  resize: vertical;
+}
+.form.form_page-static .form__input[type="submit"] {
+  width: fit-content;
+  float: right;
+}
+.form.form_page-static .interactive__select-imitation {
+  width: 100% !important;
+}
+.form.form_page-static .form__bottom-panel {
   display: flex;
   justify-content: flex-end;
 }
-.page-static-editor-form__panel-submit {
-  margin-right: 10px;
-  cursor: pointer;
+.form.form_page-static .form__bottom-panel > * {
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
 }
-.page-static-editor-form__panel-submit:last-child {
-  margin-right: 0;
-}
-.page__page-static-editor {
+.main__page-aside .form-page-static-preview__container-image {
+  display: flex;
+  border: 1px solid var(--common-main-color-2);
   margin-bottom: 10px;
 }
-.page-static-editor-form__input {
-  margin-bottom: 10px;
-}
-.page-static-editor-form__input:last-child {
-  margin-bottom: 0;
-}
-.page-static-editor-form__textarea {
-  margin-bottom: 10px;
-}
-.page-static-editor-form__textarea:last-child {
-  margin-bottom: 0;
+.main__page-aside .form-page-static-preview {
+  display: flex;
+  justify-content: center;
 }

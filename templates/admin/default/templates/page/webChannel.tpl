@@ -1,4 +1,5 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
+  {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">Создание веб-канала</h1>
     <div id="E8548530785" class="page__interactive-container"></div>

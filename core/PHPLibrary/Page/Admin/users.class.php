@@ -33,16 +33,21 @@ namespace core\PHPLibrary\Page\Admin {
       $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'list';
 
       $navigations_items_transformed = [];
-      $navigations_items = ['list', 'groups'];
-      foreach ($navigations_items as $navigation_item) {
-        $item_class_is_active = ($subpage_name == $navigation_item) ? 'navigation-item__link_is-active' : '';
-
-        array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-          'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:TEMPLATES_PAGE_%s_TITLE}', mb_strtoupper($navigation_item)),
-          'NAVIGATION_ITEM_URL' => sprintf('/admin/users/%s', $navigation_item),
-          'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => $item_class_is_active
-        ]));
-      }
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_URL' => '/admin',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Пользователи',
+        'NAVIGATION_ITEM_URL' => '/admin/users',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
+      ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Группы',
+        'NAVIGATION_ITEM_URL' => '/admin/usersGroups',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
 
       if (!empty($navigations_items_transformed)) {
         $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
@@ -80,6 +85,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/users.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'users',
         'ADMIN_PANEL_USERS_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/users/table.tpl', [
           'ADMIN_PANEL_USERS_TABLE_ITEMS' => implode($users_table_items_assembled_array)

@@ -9,13 +9,14 @@
  */
 
 namespace core\PHPLibrary\Page\Admin {
+  use \DOMDocument as DOMDocument;
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
-  use \core\PHPLibrary\Entries as Entries;
+  use \core\PHPLibrary\EntriesCategories as EntriesCategories;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
 
-  class PageEntries implements InterfacePage {
+  class PageEntriesCategories implements InterfacePage {
     public SystemCore $system_core;
     public Page $page;
     public string $assembled = '';
@@ -26,8 +27,8 @@ namespace core\PHPLibrary\Page\Admin {
     }
 
     public function assembly() : void {
-      $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'admin/page/entries.js', 'type' => 'module'], true);
+      $this->system_core->template->add_style(['href' => 'styles/page/entriesCategories.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_script(['src' => 'admin/page/entriesCategories.js', 'type' => 'module'], true);
 
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
@@ -38,12 +39,12 @@ namespace core\PHPLibrary\Page\Admin {
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
         'NAVIGATION_ITEM_TITLE' => 'Записи',
         'NAVIGATION_ITEM_URL' => '/admin/entries',
-        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
         'NAVIGATION_ITEM_TITLE' => 'Категории',
         'NAVIGATION_ITEM_URL' => '/admin/entriesCategories',
-        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
       ]));
 
       if (!empty($navigations_items_transformed)) {
@@ -56,37 +57,33 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
-      $entries_table_items_assembled_array = [];
-      $entries = new Entries($this->system_core);
-      $entries_array_objects = $entries->get_all();
-      unset($entries);
+      $entries_categories_table_items_assembled = [];
+      $entries_categories = new EntriesCategories($this->system_core);
+      $entries_categories_array_objects = $entries_categories->get_all();
+      unset($entries_categories);
 
-      $entry_number = 1;
-      foreach ($entries_array_objects as $entry_object) {
-        $entry_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp']);
+      foreach ($entries_categories_array_objects as $entries_category_index => $entries_category_object) {
+        $entries_category_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'parent_id']);
 
-        $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_created_unix_timestamp());
-        $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_updated_unix_timestamp());
+        $created_date_timestamp = date('d.m.Y H:i:s', $entries_category_object->get_created_unix_timestamp());
+        $updated_date_timestamp = date('d.m.Y H:i:s', $entries_category_object->get_updated_unix_timestamp());
 
-        array_push($entries_table_items_assembled_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/tableItem.tpl', [
-          'ENTRY_ID' => $entry_object->get_id(),
-          'ENTRY_INDEX' => $entry_number,
-          'ENTRY_TITLE' => $entry_object->get_title(),
-          'ENTRY_DESCRIPTION' => $entry_object->get_description(),
-          'ENTRY_URL' => $entry_object->get_url(),
-          'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
-          'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp
+        array_push($entries_categories_table_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories/tableItem.tpl', [
+          'ENTRIES_CATEGORY_ID' => $entries_category_object->get_id(),
+          'ENTRIES_CATEGORY_INDEX' => $entries_category_index + 1,
+          'ENTRIES_CATEGORY_TITLE' => $entries_category_object->get_title(),
+          'ENTRIES_CATEGORY_URL' => $entries_category_object->get_url(),
+          'ENTRIES_CATEGORY_CREATED_DATE_TIMESTAMP' => $created_date_timestamp,
+          'ENTRIES_CATEGORY_UPDATED_DATE_TIMESTAMP' => $updated_date_timestamp
         ]));
-
-        $entry_number++;
       }
 
       /** @var string $site_page Содержимое шаблона страницы */
-      $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries.tpl', [
+      $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
-        'ADMIN_PANEL_PAGE_NAME' => 'entries',
-        'ADMIN_PANEL_ENTRIES_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/table.tpl', [
-          'ADMIN_PANEL_ENTRIES_TABLE_ITEMS' => implode($entries_table_items_assembled_array)
+        'ADMIN_PANEL_PAGE_NAME' => 'entries-categories',
+        'ADMIN_PANEL_ENTRIES_CATEGORIES_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories/table.tpl', [
+          'ADMIN_PANEL_ENTRIES_CATEGORIES_TABLE_ITEMS' => implode($entries_categories_table_items_assembled)
         ])
       ]);
     }

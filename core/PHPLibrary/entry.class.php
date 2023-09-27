@@ -146,6 +146,23 @@ namespace core\PHPLibrary {
 
       return '';
     }
+    
+    /**
+     * Получить ключевые слова
+     *
+     * @param  mixed $locale_name Наименование локализации
+     * @return array
+     */
+    public function get_keywords($locale_name = 'ru_RU') : array {
+      if (property_exists($this, 'texts')) {
+        $texts_array = json_decode($this->texts, true);
+        if (isset($texts_array[$locale_name]['keywords'])) {
+          return $texts_array[$locale_name]['keywords'];
+        }
+      }
+
+      return [];
+    }
 
     /**
      * Получить URL изображения предпросмотра
@@ -161,6 +178,22 @@ namespace core\PHPLibrary {
       }
 
       return '';
+    }
+
+    /**
+     * Получить статус публикации записи
+     *
+     * @return bool
+     */
+    public function is_published() : bool {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['is_published'])) {
+          return (bool)$metadata_array['is_published'];
+        }
+      }
+
+      return false;
     }
 
     public static function get_preview_default_url(SystemCore $system_core, int $size) : string {
@@ -376,6 +409,9 @@ namespace core\PHPLibrary {
 
       $entry_created_unix_timestamp = time();
       $entry_updated_unix_timestamp = $entry_created_unix_timestamp;
+
+      $metadata['preview_url'] = '';
+      $metadata['is_publish'] = false;
 
       $texts_json = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
       $metadata_json = json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

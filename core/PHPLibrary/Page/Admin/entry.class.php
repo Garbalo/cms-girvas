@@ -29,8 +29,24 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/nadvoTE.css', 'rel' => 'stylesheet']);
-      
       $this->system_core->template->add_script(['src' => 'admin/page/entry.js', 'type' => 'module'], true);
+
+      $navigations_items_transformed = [];
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => '< Назад',
+        'NAVIGATION_ITEM_URL' => '/admin/entries',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+
+      if (!empty($navigations_items_transformed)) {
+        $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [
+          'NAVIGATION_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/list.tpl', [
+            'NAVIGATION_ITEMS' => implode($navigations_items_transformed)
+          ])
+        ]);
+      } else {
+        $page_navigation_transformed = '';
+      }
 
       $entry = null;
       if (!is_null($this->system_core->urlp->get_path(2))) {
@@ -65,17 +81,16 @@ namespace core\PHPLibrary\Page\Admin {
 
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
+        'PAGE_NAVIGATION' => $page_navigation_transformed,
         'ADMIN_PANEL_PAGE_NAME' => 'entry',
         'ENTRY_EDITOR' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/editor.tpl', []),
         'ENTRY_ID' => (!is_null($entry)) ? $entry->get_id() : 0,
         'ENTRY_TITLE' => (!is_null($entry)) ? $entry->get_title() : '',
         'ENTRY_DESCRIPTION' => (!is_null($entry)) ? $entry->get_description() : '',
         'ENTRY_CONTENT' => (!is_null($entry)) ? $entry->get_content() : '',
+        'ENTRY_KEYWORDS' => (!is_null($entry)) ? implode(', ', $entry->get_keywords()) : '',
         'ENTRY_NAME' => (!is_null($entry)) ? $entry->get_name() : '',
-        'ENTRY_FORM_METHOD' => (!is_null($entry)) ? 'PATCH' : 'PUT',
-        'ENTRY_MEDIA_MANAGER' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/mediaManager.tpl', [
-          'MEDIA_LIST' => $media_manager_list
-        ])
+        'ENTRY_FORM_METHOD' => (!is_null($entry)) ? 'PATCH' : 'PUT'
       ]);
     }
 

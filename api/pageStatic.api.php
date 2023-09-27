@@ -13,7 +13,7 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
-define('API_HANDLERS_ABSOLUTE_PATH', sprintf('%s/api/module', CMS_ROOT_DIRECTORY));
+define('API_HANDLERS_ABSOLUTE_PATH', sprintf('%s/api/pageStatic', CMS_ROOT_DIRECTORY));
 
 if (isset($system_core)) {
   // Определение абсолютного пути до обработчика текущего API

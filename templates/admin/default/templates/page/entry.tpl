@@ -1,20 +1,85 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
+  {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">Создание записи</h1>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <form class="form page__entry-editor-form entry-editor-form" action="/handler/entry">
+    <form id="SYSTEM_F0648538658" class="form form_entry entry-form" action="/handler/entry">
       <input name="entry_id" type="hidden" value="{ENTRY_ID}">
-      <input name="entry_title_rus" type="text" class="form__input entry-editor-form__input" role="entryTitle" value="{ENTRY_TITLE}" placeholder="Заголовок записи">
-      <input name="entry_name" type="text" class="form__input entry-editor-form__input" value="{ENTRY_NAME}" placeholder="Наименование записи для URL">
-      <textarea name="entry_description_rus" class="form__textarea entry-editor-form__textarea" role="entryDescription" placeholder="Описание записи">{ENTRY_DESCRIPTION}</textarea>
-      {ENTRY_EDITOR}
-      <div class="entry-editor-form__panel">
-        <button class="form__button form__button_red entry-editor-form__panel-button" data-modal-call="admin-entry-delete">Удалить</button>
-        <input type="submit" class="form__input form__input_submit entry-editor-form__panel-submit" name="entry_event_unpublish" formmethod="PATCH" value="Снять с публикации">
-        <input type="submit" class="form__input form__input_submit form__input_submit_blue entry-editor-form__panel-submit" name="entry_event_save" formmethod="{ENTRY_FORM_METHOD}" value="Сохранить">
-      </div>
+      <table class="table">
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Техническое наименование</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Это техническое наименование записи, которое будет использоваться в URL.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block">
+              <input name="entry_name" typde="text" class="form__input entry-form__input" value="{ENTRY_NAME}" placeholder="my-first-entry">
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Заголовок</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Заголовок записи должен отображать суть ее содержимого.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block">
+              <input name="entry_title_rus" type="text" class="form__input entry-form__input" role="entryTitle" value="{ENTRY_TITLE}" placeholder="Заголовок записи">
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Описание</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Описание записи должно отображать суть ее содержимого. При составлении описания старайтесь описать содержимое кратко и точно, используя ключевые слова, чтобы это положительно отразилось на поисковой оптимизации.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block">
+              <textarea name="entry_description_rus" class="form__textarea entry-form__textarea" role="entryDescription" placeholder="Описание записи">{ENTRY_DESCRIPTION}</textarea>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Ключевые слова и фразы</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Ключевые слова и фразы могут помогать в поиске контента в сети Интернет поисковым роботам. Рекомендуем включать их в описание, заголовок и содержимое записи.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block">
+              <textarea name="entry_keywords_rus" class="form__textarea entry-form__textarea" role="entryKeywords" placeholder="Вулкан Гирвас, Республика Карелия, Ловля рыбы в поселке Надвоицы">{ENTRY_KEYWORDS}</textarea>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Категория</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Выберите соответствующую категорию, или оставьте поле пустым.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block" id="TC6474389611"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell" colspan="2">
+            <div class="page__phar-block">
+              {ENTRY_EDITOR}
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
     </form>
   </div>
 </article>

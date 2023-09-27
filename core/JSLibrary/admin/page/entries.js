@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   interactiveButton.target.assembly();
 
   let interactiveContainerElement = document.querySelector('#E8548530785');
-  interactiveContainerElement.append(interactiveButton.target.assembled)
+  interactiveContainerElement.append(interactiveButton.target.assembled);
 
   let tableItemsEntries = document.querySelectorAll('.table-entries__item');
   for (let tableItemEntry of tableItemsEntries) {

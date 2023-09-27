@@ -7,19 +7,38 @@
  */
 
 namespace modules\helloWorld {
-  use \core\PHPLibrary\SystemCore as SystemCore;
   use \core\PHPLibrary\Module as Module;
+  use \core\PHPLibrary\SystemCore as SystemCore;
   
   /**
    * Ядро модуля
    */
-  class Core extends Module {
-    public array $global_template_tags = [];
+  class Core {
+    public Module $module;
+    public SystemCore $system_core;
+    public string $name = '';
 
-    public function __construct(SystemCore $system_core, string $name) {
-      parent::__construct($system_core, $name);
+    public function __construct(SystemCore $system_core, Module $module) {
+      $this->system_core = $system_core;
+      $this->module = $module;
+    }
 
-      $this->global_template_tags['HELLO_WORLD'] = 'Hello, world!';
+    public function preparation() : void {
+      
+    }
+
+    public function init() : void {
+      if (!is_null($this->system_core->template)) {
+        $this->system_core->template->add_global_variable('F4E267_HELLO_WORLD', 'Привет, мир!');
+      }
+    }
+
+    public function install() : bool {
+      return $this->module->install();
+    }
+
+    public function enable() : bool {
+      return $this->module->enable();
     }
   }
 }
