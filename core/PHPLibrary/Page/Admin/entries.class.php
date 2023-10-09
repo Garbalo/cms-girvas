@@ -45,6 +45,11 @@ namespace core\PHPLibrary\Page\Admin {
         'NAVIGATION_ITEM_URL' => '/admin/entriesCategories',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => 'Комментарии',
+        'NAVIGATION_ITEM_URL' => '/admin/entriesComments',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
 
       if (!empty($navigations_items_transformed)) {
         $page_navigation_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal.tpl', [

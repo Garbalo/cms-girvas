@@ -92,6 +92,7 @@ if ($system_core->client->is_logged(2)) {
         }
 
         if (isset($_PATCH['entry_name'])) $entry_data['name'] = $_PATCH['entry_name'];
+        if (isset($_PATCH['entry_category_id'])) $entry_data['category_id'] = $_PATCH['entry_category_id'];
         if (isset($_PATCH['entry_preview'])) {
           $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);
           $file_converter = new FileConverter($system_core);

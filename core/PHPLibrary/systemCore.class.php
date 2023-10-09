@@ -26,7 +26,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.44 Pre-alpha';
+    public const CMS_VERSION = '0.0.45 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;

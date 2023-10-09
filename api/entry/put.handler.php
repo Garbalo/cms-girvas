@@ -53,6 +53,7 @@ if ($system_core->client->is_logged(2)) {
     }
   } else {
     $entry_name = isset($_PUT['entry_name']) ? $_PUT['entry_name'] : '';
+    $entry_category_id = isset($_PUT['entry_category_id']) ? $_PUT['entry_category_id'] : 1;
     $texts = [];
 
     $cms_locales_names = $system_core->get_array_locales_names();

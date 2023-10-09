@@ -114,6 +114,38 @@ namespace core\PHPLibrary {
     public function get_updated_unix_timestamp() : int|string {
       return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:ENTRY_COMMENT_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
     }
+
+    /**
+     * Получить статус отображения
+     *
+     * @return bool
+     */
+    public function is_hidden() : bool {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['is_hidden'])) {
+          return (bool)$metadata_array['is_hidden'];
+        }
+      }
+
+      return false;
+    }
+
+    /**
+     * Получить причину скрытия комментария
+     *
+     * @return bool
+     */
+    public function is_hidden_reason() : bool {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['is_hidden_reason'])) {
+          return (bool)$metadata_array['is_hidden_reason'];
+        }
+      }
+
+      return false;
+    }
     
     /**
      * Получить данные колонок комментария в базе данных
@@ -143,6 +175,34 @@ namespace core\PHPLibrary {
 
       $result = $database_query->fetch(\PDO::FETCH_ASSOC);
       return ($result) ? $result : null;
+    }
+
+    /**
+     * Проверка наличия комментария по идентификационному номеру
+     *
+     * @param  SystemCore $system_core
+     * @param  int $comment_id
+     * @return bool
+     */
+    public static function exists_by_id(SystemCore $system_core, int $comment_id) : bool {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['1']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('entries_comments');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('id = :id');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':id', $comment_id, \PDO::PARAM_INT);
+			$database_query->execute();
+
+      return ($database_query->fetchColumn()) ? true : false;
     }
     
     /**

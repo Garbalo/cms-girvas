@@ -33,16 +33,25 @@ if (defined('IS_NOT_HACKED')) {
    * Обработчик CMS GIRVAS
    * ==================================================== */
 
+  // Modules API
   if ($system_core->urlp->get_path(1) == 'module') {
     $api_file_path = sprintf('%s/api/module.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
 
-  if ($system_core->urlp->get_path(1) == 'entry') {
+  // Entries API
+  if ($system_core->urlp->get_path(1) == 'entry' && is_null($system_core->urlp->get_path(2))) {
     $api_file_path = sprintf('%s/api/entry.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
+  
+  // Entries comments API
+  if ($system_core->urlp->get_path(1) == 'entry' && $system_core->urlp->get_path(2) == 'comment') {
+    $api_file_path = sprintf('%s/api/entry/comment.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
 
+  // Pages static API
   if ($system_core->urlp->get_path(1) == 'pageStatic') {
     $api_file_path = sprintf('%s/api/pageStatic.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
@@ -624,7 +633,7 @@ if (defined('IS_NOT_HACKED')) {
                   $allowed_emails = [];
                   if ($system_core->configurator->exists_database_entry_value('security_allowed_emails')) {
                     $allowed_emails = $system_core->configurator->get_database_entry_value('security_allowed_emails');
-                    $allowed_emails = explode(',', $allowed_emails);
+                    $allowed_emails = json_decode($allowed_emails, true);
                   }
 
                   if ($system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) {
@@ -635,7 +644,7 @@ if (defined('IS_NOT_HACKED')) {
                   
                   $user_email_exploded = explode('@', $user_email);
 
-                  if (empty($allowed_emails) || in_array($user_email_exploded[1], $allowed_emails) || $allowed_emails_status == 'pff') {
+                  if (empty($allowed_emails) || in_array($user_email_exploded[1], $allowed_emails) || $allowed_emails_status == 'off') {
                     $user = \core\PHPLibrary\User::create($system_core, $user_login, $user_email, $user_password);
                     
                     if (!is_null($user)) {
@@ -660,7 +669,7 @@ if (defined('IS_NOT_HACKED')) {
 
                         $email_sender->send();
 
-                        $handler_message = 'Регистрация успешно завершена.';
+                        $handler_message = 'Регистрация успешно завершена. На Ваш почтовый адрес выслано уведомление со ссылкой на страницу с активацией аккаунта.';
                         $handler_status_code = 1;
                       } else {
                         $handler_message = 'Регистрация не завершена из-за ошибки: Процесс подтверждения регистрации не был зарегистрирован в БД.';
@@ -698,40 +707,6 @@ if (defined('IS_NOT_HACKED')) {
         $handler_message = 'Регистрация не завершена из-за ошибки: Логин не соответствует формату.';
         $handler_status_code = 0;
       }
-    }
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'entry' && $system_core->urlp->get_path(2) == 'comment' && is_null($system_core->urlp->get_path(3))) {
-    if (isset($_PUT['comment_entry_id']) && isset($_PUT['comment_content'])) {
-      if (is_numeric($_PUT['comment_entry_id']) && !empty($_PUT['comment_content'])) {
-        $comment_entry_id = (int)$_PUT['comment_entry_id'];
-        $comment_content = $_PUT['comment_content'];
-        if (\core\PHPLibrary\Entry::exists_by_id($system_core, $comment_entry_id)) {
-          $comment_entry = new \core\PHPLibrary\Entry($system_core, $comment_entry_id);
-
-          $client_session = $system_core->client->get_session(2, ['user_id']);
-          $comment = \core\PHPLibrary\EntryComment::create($system_core, $comment_entry_id, $client_session->get_user_id(), $comment_content);
-
-          if (!is_null($comment)) {
-            $handler_message = 'Комментарий успешно отправлен.';
-            $handler_status_code = 1;
-
-            $handler_output_data['reload'] = true;
-          } else {
-            $handler_message = 'Комментарий не был отправлен, так как произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Невозможно отправить комментарий, записи не существует.';
-          $handler_status_code = 0;
-        }
-      } else {
-        $handler_message = 'Невозможно отправить комментарий, так как данные некорректны.';
-        $handler_status_code = 0;
-      }
-    } else {
-      $handler_message = 'Невозможно отправить комментарий, так как не были отправлены обязательные данные.';
-      $handler_status_code = 0;
     }
   }
 
