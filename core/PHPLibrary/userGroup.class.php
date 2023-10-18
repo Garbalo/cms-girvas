@@ -7,8 +7,8 @@ namespace core\PHPLibrary {
   class UserGroup {
     // Административные права
     public const PERMISSION_ADMIN_PANEL_AUTH                    = 1 << 0;
-    public const PERMISSION_ADMIN_USERS_EDIT                    = 1 << 1;
-    public const PERMISSION_ADMIN_USERS_GROUPS_EDIT             = 1 << 2;
+    public const PERMISSION_ADMIN_USERS_MANAGEMENT              = 1 << 1;
+    public const PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT       = 1 << 2;
     public const PERMISSION_ADMIN_MODULES_MANAGEMENT            = 1 << 3;
     public const PERMISSION_ADMIN_TEMPLATES_MANAGEMENT          = 1 << 4;
     public const PERMISSION_ADMIN_SETTINGS_MANAGEMENT           = 1 << 5;
@@ -22,6 +22,10 @@ namespace core\PHPLibrary {
     public const PERMISSION_EDITOR_ENTRIES_EDIT                 = 1 << 11;
     public const PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT      = 1 << 12;
     public const PERMISSION_EDITOR_PAGES_STATIC_EDIT            = 1 << 13;
+
+    public const PERMISSION_BASE_ENTRY_COMMENT_CREATE           = 1 << 14;
+    public const PERMISSION_BASE_ENTRY_COMMENT_CHANGE           = 1 << 15;
+    public const PERMISSION_BASE_ENTRY_COMMENT_RATE             = 1 << 16;
 
     private readonly SystemCore $system_core;
     private int $id;
@@ -70,7 +74,7 @@ namespace core\PHPLibrary {
     }
 
     public function get_permissions() : int {
-      return (property_exists($this, 'permissions')) ? $this->permissions : '{ERROR:USER_GROUP_DATA_IS_NOT_EXISTS=permissions}';
+      return (property_exists($this, 'permissions')) ? $this->permissions : 0;
     }
 
     public function get_users() : array {

@@ -30,5 +30,9 @@
   "SETTINGS_PAGE_SETTING_BASE_TEMPLATE_DESCRIPTION": "Выберите шаблон, который будет использоваться как внешний вид Вашего сайта. Обратите внимание, что шаблоны идентифицируются в папке ./templates.",
   "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_TITLE": "Технические работы",
   "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_DESCRIPTION": "Если Вам необходимо провести технические работы на сайте, то включите их, после чего вместо сайта будет выведена специальная заглушка.",
-  "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_PLACEHOLDER": "Причина технических работ"
+  "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_PLACEHOLDER": "Причина технических работ",
+  "COMMENT_DETECTED_FROM_PREMODERATION_FILTER": "Комментарий направлен на проверку",
+  "COMMENT_PREMODERATION_BANNED_WORDS_DETECTED": "Наличие стоп-слов или стоп-фраз",
+  "COMMENT_PREMODERATION_EXTERNAL_LINKS_DETECTED": "Наличие ссылок на внешние ресурсы",
+  "COMMENT_PREMODERATION_MANDATORY_PREMODERATION": "Обязательная премодерация"
 }

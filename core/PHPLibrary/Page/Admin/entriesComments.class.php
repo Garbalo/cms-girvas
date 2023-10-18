@@ -72,7 +72,7 @@ namespace core\PHPLibrary\Page\Admin {
           $entry_comments = $entry->get_comments();
           if (!empty($entry_comments)) {
             foreach ($entry_comments as $comment) {
-              $comment->init_data(['content', 'created_unix_timestamp', 'updated_unix_timestamp']);
+              $comment->init_data(['content', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
               array_push($entries_comments_array, $comment);
             }
           }
@@ -100,6 +100,8 @@ namespace core\PHPLibrary\Page\Admin {
 
           array_push($comments_table_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesComments/tableItem.tpl', [
             'COMMENT_ID' => $comment->get_id(),
+            'COMMENT_IS_HIDDEN_STATUS' => ($comment->is_hidden()) ? 'true' : 'false',
+            'COMMENT_HIDDEN_REASON' => $comment->get_hidden_reason(),
             'COMMENT_INDEX' => $comment_index + 1,
             'COMMENT_CONTENT' => $comment->get_content(),
             'COMMENT_CREATED_DATE_TIMESTAMP' => $created_date_timestamp,

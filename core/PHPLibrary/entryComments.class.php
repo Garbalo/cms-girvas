@@ -78,6 +78,16 @@ namespace core\PHPLibrary {
           $query_builder->statement->set_clause_limit($limit, $offset);
         }
       }
+
+      if (array_key_exists('orderBy', $params_array)) {
+        if (isset($params_array['orderBy']['column']) && isset($params_array['orderBy']['sort'])) {
+          $query_builder->statement->set_clause_order_by();
+          $query_builder->statement->clause_order_by->set_column('created_unix_timestamp');
+          $query_builder->statement->clause_order_by->set_sort_type('DESC');
+          $query_builder->statement->clause_order_by->assembly();
+        }
+      }
+
       $query_builder->statement->assembly();
 
       $database_connection = $this->system_core->database_connector->database->connection;

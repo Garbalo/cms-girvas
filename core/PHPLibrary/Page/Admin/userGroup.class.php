@@ -55,8 +55,8 @@ namespace core\PHPLibrary\Page\Admin {
         'USER_GROUP_NAME' => (!is_null($user_group)) ? $user_group->get_name() : '',
         'USER_GROUP_FORM_METHOD' => (!is_null($user_group)) ? 'PATCH' : 'PUT',
         'USER_GROUP_PERMISSION_ADMIN_PANEL_AUTH_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_PANEL_AUTH)) ? 'checked' : ''),
-        'USER_GROUP_PERMISSION_ADMIN_USERS_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_EDIT)) ? 'checked' : ''),
-        'USER_GROUP_PERMISSION_ADMIN_USERS_GROUPS_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_EDIT)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_ADMIN_USERS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_MODULES_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_TEMPLATES_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_SETTINGS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT)) ? 'checked' : ''),
@@ -68,6 +68,7 @@ namespace core\PHPLibrary\Page\Admin {
         'USER_GROUP_PERMISSION_EDITOR_ENTRIES_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_EDITOR_PAGES_STATIC_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_RATE_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE)) ? 'checked' : ''),
       ]);
     }
 

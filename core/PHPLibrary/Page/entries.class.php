@@ -38,6 +38,7 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
 
       $entries_category_name = (!is_null($this->system_core->urlp->get_path(1))) ? urldecode($this->system_core->urlp->get_path(1)) : 'all';
       

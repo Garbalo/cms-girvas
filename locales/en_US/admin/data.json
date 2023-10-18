@@ -30,5 +30,9 @@
   "SETTINGS_PAGE_SETTING_BASE_TEMPLATE_DESCRIPTION": "Choose a template that will be used as the look of your site. Note that templates are identified in the ./templates folder.",
   "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_TITLE": "Engineering works",
   "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_DESCRIPTION": "If you need to carry out technical work on the site, then enable them, after which a special stub will be displayed instead of the site.",
-  "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_PLACEHOLDER": "Reason for technical work"
+  "SETTINGS_PAGE_SETTING_BASE_ENGINEERING_WORK_PLACEHOLDER": "Reason for technical work",
+  "COMMENT_DETECTED_FROM_PREMODERATION_FILTER": "Комментарий направлен на проверку",
+  "COMMENT_PREMODERATION_BANNED_WORDS_DETECTED": "Наличие стоп-слов или стоп-фраз",
+  "COMMENT_PREMODERATION_EXTERNAL_LINKS_DETECTED": "Наличие ссылок на внешние ресурсы",
+  "COMMENT_PREMODERATION_MANDATORY_PREMODERATION": "Обязательная премодерация"
 }

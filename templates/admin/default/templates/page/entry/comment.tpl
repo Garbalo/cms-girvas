@@ -1,4 +1,4 @@
-<li id="#comment{COMMENT_INDEX}" class="comments-list__item comment">
+<li id="#comment{COMMENT_INDEX}" class="comments-list__item comment" data-comment-id="{COMMENT_ID}">
   <ul class="comment__metadata-list metadata-list list-reset">
     <li class="metadata-list__item">#{COMMENT_INDEX}</li>
     <li class="metadata-list__item">Дата публикации: {COMMENT_CREATED_DATE_TIMESTAMP}</li>
@@ -10,4 +10,5 @@
     <div class="comment__author-login-container">{COMMENT_AUTHOR_LOGIN}</div>
     <div class="comment__content-container">{COMMENT_CONTENT}</div>
   </div>
+  <div id="E7453975856" class="comment__panel-interactive"></div>
 </li>

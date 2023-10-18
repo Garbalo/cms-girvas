@@ -34,6 +34,7 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
 
       if (!is_null($this->system_core->urlp->get_path(1))) {
         $entry_name = urldecode($this->system_core->urlp->get_path(1));
@@ -61,19 +62,35 @@ namespace core\PHPLibrary\Page {
           $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
           $this->page->breadcrumbs->assembly();
 
-          $entry_comments_array = $entry->get_comments();
+          $entry_comments_array = $entry->get_comments(['limit' => [2, 0]]);
+          foreach ($entry_comments_array as $entry_comment) {
+            $entry_comment->init_data(['created_unix_timestamp']);
+          }
+
+          usort($entry_comments_array, function ($a, $b) {
+            $a_cut = $a->get_created_unix_timestamp();
+            $b_cut = $b->get_created_unix_timestamp();
+
+            if ($a_cut != $b_cut) {
+              return ($a_cut > $b_cut) ? -1 : 1;
+            }
+
+            return 0;
+          });
+
           $entry_comments_transformed_array = [];
           $entry_comment_index = 1;
           foreach ($entry_comments_array as $entry_comment) {
-            $entry_comment->init_data(['entry_id', 'author_id', 'content', 'created_unix_timestamp']);
+            $entry_comment->init_data(['entry_id', 'author_id', 'content', 'metadata']);
             $entry_comment_author = $entry_comment->get_author();
             $entry_comment_author->init_data(['login']);
             array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
+              'COMMENT_ID' => $entry_comment->get_id(),
               'COMMENT_INDEX' => $entry_comment_index,
               'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
               'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
               'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
-              'COMMENT_CONTENT' => $entry_comment->get_content()
+              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('Комментарий скрыт модерацией сайта по следующей причине: %s', $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
             ]));
 
             $entry_comment_index++;
@@ -90,6 +107,7 @@ namespace core\PHPLibrary\Page {
           $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
             'PAGE_NAME' => 'entry',
             'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
+              'ENTRY_ID' => $entry->get_id(),
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'ENTRY_TITLE' => $entry->get_title($cms_base_locale_name),
               'ENTRY_CONTENT' => $parsedown->text($entry->get_content($cms_base_locale_name)),

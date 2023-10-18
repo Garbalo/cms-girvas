@@ -1,17 +1,22 @@
 'use strict';
 
 import {Interactive} from "../../interactive.class.js";
+import {URLParser} from "../../urlParser.class.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
   let urlp = new URLParser();
 
   if (urlp.getPathPart(3) == 'security') {
-    let logicBlocks = document.querySelectorAll('[data-logic-block]');
+    let logicBlocks = document.querySelectorAll('[type="checkbox"]');
     logicBlocks.forEach((element, elementIndex) => {
-      let logicBlock = element.getAttribute('data-logic-block');
-      let logicBlockTargetElement = document.getElementById(logicBlock);
-      if (!element.checked) {
-        logicBlockTargetElement.setAttribute('disabled', 'disabled');
+      let logicBlockTargetElement;
+
+      if (element.hasAttribute('data-logic-block')) {
+        let logicBlock = element.getAttribute('data-logic-block');
+        logicBlockTargetElement = document.getElementById(logicBlock);
+        if (!element.checked) {
+          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        }
       }
 
       let statusBlock = element.getAttribute('data-status-block');
@@ -23,22 +28,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
           statusBlockTargetElement.value = 'on';
         }
 
-        if (logicBlockTargetElement.hasAttribute('disabled')) {
-          logicBlockTargetElement.removeAttribute('disabled');
-        } else {
-          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        if (element.hasAttribute('data-logic-block')) {
+          if (logicBlockTargetElement.hasAttribute('disabled')) {
+            logicBlockTargetElement.removeAttribute('disabled');
+          } else {
+            logicBlockTargetElement.setAttribute('disabled', 'disabled');
+          }
         }
       });
     });
   }
 
   if (urlp.getPathPart(3) == null || urlp.getPathPart(3) == 'base') {
-    let logicBlocks = document.querySelectorAll('[data-logic-block]');
+    let logicBlocks = document.querySelectorAll('[type="checkbox"]');
     logicBlocks.forEach((element, elementIndex) => {
-      let logicBlock = element.getAttribute('data-logic-block');
-      let logicBlockTargetElement = document.getElementById(logicBlock);
-      if (!element.checked) {
-        logicBlockTargetElement.setAttribute('disabled', 'disabled');
+      let logicBlockTargetElement;
+
+      if (element.hasAttribute('data-logic-block')) {
+        let logicBlock = element.getAttribute('data-logic-block');
+        logicBlockTargetElement = document.getElementById(logicBlock);
+        if (!element.checked) {
+          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        }
       }
 
       let statusBlock = element.getAttribute('data-status-block');
@@ -50,10 +61,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
           statusBlockTargetElement.value = 'on';
         }
 
-        if (logicBlockTargetElement.hasAttribute('disabled')) {
-          logicBlockTargetElement.removeAttribute('disabled');
-        } else {
-          logicBlockTargetElement.setAttribute('disabled', 'disabled');
+        if (element.hasAttribute('data-logic-block')) {
+          if (logicBlockTargetElement.hasAttribute('disabled')) {
+            logicBlockTargetElement.removeAttribute('disabled');
+          } else {
+            logicBlockTargetElement.setAttribute('disabled', 'disabled');
+          }
         }
       });
     });

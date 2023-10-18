@@ -1,6 +1,7 @@
 'use strict';
 
 import {Interactive} from "../../interactive.class.js";
+import {URLParser} from "../../urlParser.class.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
   let searchParams = new URLParser();

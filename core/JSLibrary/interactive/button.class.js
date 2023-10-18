@@ -11,6 +11,14 @@ export class Button {
     this.assembled = null;
   }
 
+  show() {
+    this.assembled.style.display = 'block';
+  }
+
+  hide() {
+    this.assembled.style.display = 'none';
+  }
+
   setCallback(callbackFunction) {
     this.callback = callbackFunction;
   }

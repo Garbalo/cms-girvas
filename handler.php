@@ -39,21 +39,27 @@ if (defined('IS_NOT_HACKED')) {
     include_once($api_file_path);
   }
 
-  // Entries API
-  if ($system_core->urlp->get_path(1) == 'entry' && is_null($system_core->urlp->get_path(2))) {
-    $api_file_path = sprintf('%s/api/entry.api.php', CMS_ROOT_DIRECTORY);
+  // Users API
+  if ($system_core->urlp->get_path(1) == 'user' && !is_null($system_core->urlp->get_path(2))) {
+    $api_file_path = sprintf('%s/api/user.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
-  
-  // Entries comments API
-  if ($system_core->urlp->get_path(1) == 'entry' && $system_core->urlp->get_path(2) == 'comment') {
-    $api_file_path = sprintf('%s/api/entry/comment.api.php', CMS_ROOT_DIRECTORY);
+
+  // Entries API
+  if ($system_core->urlp->get_path(1) == 'entry') {
+    $api_file_path = sprintf('%s/api/entry.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
 
   // Pages static API
   if ($system_core->urlp->get_path(1) == 'pageStatic') {
     $api_file_path = sprintf('%s/api/pageStatic.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  // Templates API
+  if ($system_core->urlp->get_path(1) == 'template') {
+    $api_file_path = sprintf('%s/api/template.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
 
@@ -531,6 +537,7 @@ if (defined('IS_NOT_HACKED')) {
               case 'security_allowed_admin_ip': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
               case 'security_allowed_emails': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
               case 'seo_site_keywords': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
+              case 'security_premoderation_words_filter_list': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
             }
 
             if ($system_core->configurator->exists_database_entry_value($setting_name)) {
@@ -905,8 +912,8 @@ if (defined('IS_NOT_HACKED')) {
             foreach ($user_group_permissions_array as $user_group_permission) {
               switch ($user_group_permission) {
                 case 'admin_panel_auth': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
-                case 'admin_users_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_EDIT; break;
-                case 'admin_users_groups_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_GROUPS_EDIT; break;
+                case 'admin_users_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT; break;
+                case 'admin_users_groups_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT; break;
                 case 'admin_modules_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT; break;
                 case 'admin_templates_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT; break;
                 case 'admin_settings_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT; break;
@@ -918,6 +925,7 @@ if (defined('IS_NOT_HACKED')) {
                 case 'editor_entries_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
                 case 'editor_entries_categories_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
                 case 'editor_pages_static_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
+                case 'base_entry_comment_rate': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
               }
             }
           }

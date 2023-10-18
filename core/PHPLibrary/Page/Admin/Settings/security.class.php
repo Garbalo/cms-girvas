@@ -50,6 +50,9 @@ namespace core\PHPLibrary\Page\Admin\Settings {
       
       $setting_allowed_emails_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_emails_status') : '';
       $setting_allowed_ip_admin_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip_status') : '';
+      $setting_premoderation_create_status_value = ($this->system_core->configurator->exists_database_entry_value('security_premoderation_create_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_create_status') : '';
+      $setting_premoderation_links_filter_status_value = ($this->system_core->configurator->exists_database_entry_value('security_premoderation_links_filter_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_links_filter_status') : '';
+      $setting_premoderation_words_filter_status_value = ($this->system_core->configurator->exists_database_entry_value('security_premoderation_words_filter_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_words_filter_status') : '';
 
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, $form_template_path, [
         'SETTINGS_NAME' => $this->name,
@@ -59,6 +62,14 @@ namespace core\PHPLibrary\Page\Admin\Settings {
         'SETTING_ALLOWED_IP_ADMIN_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip'), true)) : '',
         'SETTING_ALLOWED_IP_ADMIN_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip_status') : 'off',
         'SETTING_ALLOWED_IP_ADMIN_CHECKED_VALUE' => ($setting_allowed_ip_admin_status_value == 'on') ? 'checked' : '',
+        'SETTING_PREMODERATION_CREATE_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_premoderation_create_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_create_status') : 'off',
+        'SETTING_PREMODERATION_CREATE_CHECKED_VALUE' => ($setting_premoderation_create_status_value == 'on') ? 'checked' : '',
+        'SETTING_NEGATIVE_EVALUATION_THRESHOLD_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_negative_evaluation_threshold')) ? $this->system_core->configurator->get_database_entry_value('security_negative_evaluation_threshold') : 0,
+        'SETTING_PREMODERATION_LINKS_FILTER_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_premoderation_links_filter_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_links_filter_status') : 'off',
+        'SETTING_PREMODERATION_LINKS_FILTER_CHECKED_VALUE' => ($setting_premoderation_links_filter_status_value == 'on') ? 'checked' : '',
+        'SETTING_PREMODERATION_WORDS_FILTER_LIST_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_premoderation_words_filter_list')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('security_premoderation_words_filter_list'), true)) : '',
+        'SETTING_PREMODERATION_WORDS_FILTER_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_premoderation_words_filter_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_words_filter_status') : 'off',
+        'SETTING_PREMODERATION_WORDS_FILTER_CHECKED_VALUE' => ($setting_premoderation_words_filter_status_value == 'on') ? 'checked' : '',
       ]);
     }
 

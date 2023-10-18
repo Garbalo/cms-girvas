@@ -81,8 +81,8 @@ export class Modal {
   }
 
   assemblyBody(modalContent = 'Modal body content') {
-    let elementBody = document.createElement('div', modalContent);
-    elementBody.innerHTML = modalContent;
+    let elementBody = document.createElement('div');
+    elementBody.append(modalContent);
     elementBody.classList.add('modal__body-container');
 
     return elementBody;

@@ -131,12 +131,12 @@ namespace core\PHPLibrary {
     public function get_group_id() : int {
       if (property_exists($this, 'metadata_json')) {
         $metadata_array = json_decode($this->metadata_json, true);
-        if (isset($metadata_array['groupID'])) {
-          return $metadata_array['groupID'];
+        if (isset($metadata_array['group_id'])) {
+          return $metadata_array['group_id'];
         }
       }
 
-      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_group_id}';
+      return 0;
     }
     
     /**
@@ -147,7 +147,7 @@ namespace core\PHPLibrary {
     public function get_group() : UserGroup|null {
       $group_id = $this->get_group_id();
       
-      if (UserGroup::exists_by_id($group_id)) {
+      if (UserGroup::exists_by_id($this->system_core, $group_id)) {
         return new UserGroup($this->system_core, $group_id);
       }
 

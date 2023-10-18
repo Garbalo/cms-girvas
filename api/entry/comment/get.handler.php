@@ -28,7 +28,9 @@ if ($system_core->client->is_logged(1)) {
     $handler_output_data['comment']['content'] = $comment->get_content();
     $handler_output_data['comment']['authorID'] = $comment->get_author_id();
     $handler_output_data['comment']['isHidden'] = $comment->is_hidden();
-    $handler_output_data['comment']['isHiddenReason'] = $comment->is_hidden_reason();
+    $handler_output_data['comment']['hiddenReason'] = $comment->get_hidden_reason();
+    $handler_output_data['comment']['rating'] = $comment->get_rating();
+    $handler_output_data['comment']['ratingVoters'] = $comment->get_rating_voters();
     $handler_output_data['comment']['createdUnixTimestamp'] = $comment->get_created_unix_timestamp();
     $handler_output_data['comment']['updatedUnixTimestamp'] = $comment->get_updated_unix_timestamp();
 

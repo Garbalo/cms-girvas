@@ -123,8 +123,8 @@ namespace core\PHPLibrary {
     public function is_hidden() : bool {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
-        if (isset($metadata_array['is_hidden'])) {
-          return (bool)$metadata_array['is_hidden'];
+        if (isset($metadata_array['isHidden'])) {
+          return (bool)$metadata_array['isHidden'];
         }
       }
 
@@ -134,14 +134,60 @@ namespace core\PHPLibrary {
     /**
      * Получить причину скрытия комментария
      *
-     * @return bool
+     * @return string
      */
-    public function is_hidden_reason() : bool {
+    public function get_hidden_reason() : string {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
-        if (isset($metadata_array['is_hidden_reason'])) {
-          return (bool)$metadata_array['is_hidden_reason'];
+        if (isset($metadata_array['hiddenReason'])) {
+          return $metadata_array['hiddenReason'];
         }
+      }
+
+      return '';
+    }
+
+    /**
+     * Получить рейтинг комментария
+     *
+     * @return int
+     */
+    public function get_rating() : int {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['rating'])) {
+          return $metadata_array['rating'];
+        }
+      }
+
+      return 0;
+    }
+
+    /**
+     * Получить массив ID голосовавших пользователей за рейтинг комментария
+     *
+     * @return string
+     */
+    public function get_rating_voters() : array {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['ratingVoters'])) {
+          return $metadata_array['ratingVoters'];
+        }
+      }
+
+      return [];
+    }
+
+    /**
+     * Проверить наличие голоса от конкретного пользователя по его ID
+     *
+     * @return bool
+     */
+    public function user_is_voted(int $user_id) : bool {
+      if (property_exists($this, 'metadata')) {
+        $voters = $this->get_rating_voters();
+        return in_array($user_id, $voters);
       }
 
       return false;
@@ -247,9 +293,17 @@ namespace core\PHPLibrary {
       $query_builder->statement->add_column('content');
       $query_builder->statement->add_column('created_unix_timestamp');
       $query_builder->statement->add_column('updated_unix_timestamp');
+      $query_builder->statement->add_column('metadata');
       $query_builder->statement->set_clause_returning();
       $query_builder->statement->clause_returning->add_column('id');
       $query_builder->statement->assembly();
+
+      $metadata = [];
+      $metadata['rating'] = 0;
+      $metadata['ratingVoters'] = json_decode('{}');
+      $metadata['isHidden'] = false;
+      $metadata['hiddenReason'] = false;
+      $metadata = json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
       $entry_comment_created_unix_timestamp = time();
       $entry_comment_updated_unix_timestamp = $entry_comment_created_unix_timestamp;
@@ -261,6 +315,7 @@ namespace core\PHPLibrary {
       $database_query->bindParam(':content', $content, \PDO::PARAM_STR);
       $database_query->bindParam(':created_unix_timestamp', $entry_comment_created_unix_timestamp, \PDO::PARAM_INT);
       $database_query->bindParam(':updated_unix_timestamp', $entry_comment_updated_unix_timestamp, \PDO::PARAM_INT);
+      $database_query->bindParam(':metadata', $metadata, \PDO::PARAM_STR);
       $execute = $database_query->execute();
 
       if ($execute) {
@@ -284,8 +339,45 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata'])) {
           $query_builder->statement->clause_set->add_column($data_name);
+        }
+      }
+
+      if (array_key_exists('metadata', $data)) {
+        if (!empty($data['metadata'])) {
+          $metadata_assignments = [];
+          
+          foreach ($data['metadata'] as $metadata_name => $metadata_value) {
+            if ($metadata_name == 'rating_vote' && $metadata_value['vote'] == 'up') {
+              $comment_rating_voters = $this->get_rating_voters();
+
+              array_push($metadata_assignments, sprintf('jsonb_set(metadata::jsonb, \'{ratingVoters}\', (metadata::jsonb->>\'ratingVoters\')::jsonb || \'{"%d": "%s"}\')', $metadata_value['voter_id'], $metadata_value['vote']));
+
+              if (!isset($comment_rating_voters[$metadata_value['voter_id']])) {
+                array_push($metadata_assignments, 'jsonb_build_object(\'rating\', (metadata::jsonb->\'rating\')::int + 1)');
+              } else {
+                if ($comment_rating_voters[$metadata_value['voter_id']] != $metadata_value['vote']) {
+                  array_push($metadata_assignments, 'jsonb_build_object(\'rating\', (metadata::jsonb->\'rating\')::int + 2)');
+                }
+              }
+            } else if ($metadata_name == 'rating_vote' && $metadata_value['vote'] == 'down') {
+              $comment_rating_voters = $this->get_rating_voters();
+
+              array_push($metadata_assignments, sprintf('jsonb_set(metadata::jsonb, \'{ratingVoters}\', (metadata::jsonb->>\'ratingVoters\')::jsonb || \'{"%d": "%s"}\')', $metadata_value['voter_id'], $metadata_value['vote']));
+              if (!isset($comment_rating_voters[$metadata_value['voter_id']])) {
+                array_push($metadata_assignments, 'jsonb_build_object(\'rating\', (metadata::jsonb->\'rating\')::int - 1)');
+              } else {
+                if ($comment_rating_voters[$metadata_value['voter_id']] != $metadata_value['vote']) {
+                  array_push($metadata_assignments, 'jsonb_build_object(\'rating\', (metadata::jsonb->\'rating\')::int - 2)');
+                }
+              }
+            } else {
+              array_push($metadata_assignments, sprintf('jsonb_build_object(\'%s\', \'%s\'::jsonb)', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+            }
+          }
+
+          $query_builder->statement->clause_set->add_column('metadata', implode(' || ', $metadata_assignments));
         }
       }
 
@@ -303,7 +395,7 @@ namespace core\PHPLibrary {
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       error_log($query_builder->statement->assembled);
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata'])) {
           switch (gettype($data_value)) {
             case 'boolean': $data_value_type = \PDO::PARAM_BOOL; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;
