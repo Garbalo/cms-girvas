@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   interactiveButton.target.setCallback(() => {
     window.location.href = `./entry`;
   });
-  interactiveButton.target.assembly();
+  interactiveButton.assembly();
 
   let interactiveContainerElement = document.querySelector('#E8548530785');
-  interactiveContainerElement.append(interactiveButton.target.assembled);
+  interactiveContainerElement.append(interactiveButton.target.element);
 
   let tableItemsEntries = document.querySelectorAll('.table-entries__item');
   for (let tableItemEntry of tableItemsEntries) {

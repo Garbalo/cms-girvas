@@ -17,6 +17,7 @@ use \core\PHPLibrary\Entry as Entry;
 use \core\PHPLibrary\EntryComment as EntryComment;
 
 if ($system_core->client->is_logged(1)) {
+  $comment_parent_id = isset($_PUT['comment_parent_id']) ? (int)$_PUT['comment_parent_id'] : 0;
   $comment_entry_id = isset($_PUT['comment_entry_id']) ? (int)$_PUT['comment_entry_id'] : 0;
   $comment_content = isset($_PUT['comment_content']) ? $_PUT['comment_content'] : '';
 
@@ -75,10 +76,17 @@ if ($system_core->client->is_logged(1)) {
             array_push($comment_risk_factors_detected, $comment_risk_factors[2]);
           }
 
+          $comment_data['metadata']['parent_id'] = $comment_parent_id;
+
           if (!empty($comment_risk_factors_detected)) {
-            $comment_data['metadata']['isHidden'] = true;
-            $comment_data['metadata']['hiddenReason'] = sprintf('{LANG:COMMENT_DETECTED_FROM_PREMODERATION_FILTER} (%s).', implode(', ', $comment_risk_factors_detected));
-            $comment->update($comment_data);
+            $comment_data['metadata']['is_hidden'] = true;
+            $comment_data['metadata']['hidden_reason'] = sprintf('{LANG:COMMENT_DETECTED_FROM_PREMODERATION_FILTER} (%s).', implode(', ', $comment_risk_factors_detected));
+          }
+
+          if (isset($comment_data['metadata'])) {
+            if (count($comment_data['metadata']) > 0) {
+              $comment->update($comment_data);
+            }
           }
 
           $handler_message = 'Комментарий успешно создан.';
@@ -86,8 +94,6 @@ if ($system_core->client->is_logged(1)) {
 
           $handler_output_data['comment'] = [];
           $handler_output_data['comment']['id'] = $comment->get_id();
-
-          $handler_output_data['reload'] = true;
         } else {
           $handler_message = 'Произошла внутренняя ошибка. Комментарий не был создан.';
           $handler_status_code = 0;

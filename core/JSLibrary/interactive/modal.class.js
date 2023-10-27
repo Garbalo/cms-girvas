@@ -8,13 +8,13 @@ export class Modal {
     this.content = modalContent;
     this.width = modalWidth;
     this.opacity = 0;
-    this.assembled = null;
+    this.element = null;
     this.buttons = [];
     this.onCloseCallbackFunction = () => {};
   }
 
   show() {
-    let elementWrapper = this.assembled.querySelector('.interactive__modal-wrapper');
+    let elementWrapper = this.element.querySelector('.interactive__modal-wrapper');
     let interval = setInterval(() => {
       if (this.opacity < 1) {
         this.opacity += 0.01;
@@ -30,14 +30,14 @@ export class Modal {
   }
 
   close() {
-    let elementWrapper = this.assembled.querySelector('.interactive__modal-wrapper');
+    let elementWrapper = this.element.querySelector('.interactive__modal-wrapper');
     let interval = setInterval(() => {
       if (this.opacity > 0) {
         this.opacity -= 0.01;
         elementWrapper.style.opacity = this.opacity;
       } else {
         clearInterval(interval);
-        this.assembled.remove();
+        this.element.remove();
 
         this.onCloseCallbackFunction();
       }
@@ -48,9 +48,9 @@ export class Modal {
     let interactiveButton = new Interactive('button');
     interactiveButton.target.setLabel(buttonLabel);
     interactiveButton.target.setCallback(callbackFunction);
-    interactiveButton.target.assembly();
+    interactiveButton.assembly();
 
-    let elementButton = interactiveButton.target.assembled.querySelector('.interactive__button');
+    let elementButton = interactiveButton.target.element.querySelector('.interactive__button');
     elementButton.classList.add('modal__footer-button');
 
     this.buttons.push(interactiveButton);
@@ -69,13 +69,13 @@ export class Modal {
     interactiveButtonClose.target.setCallback(() => {
       this.close();
     });
-    interactiveButtonClose.target.assembly();
+    interactiveButtonClose.assembly();
 
-    let elementButtonClose = interactiveButtonClose.target.assembled.querySelector('.interactive__button');
+    let elementButtonClose = interactiveButtonClose.target.element.querySelector('.interactive__button');
     elementButtonClose.classList.add('modal__header-button');
 
     elementHeader.append(elementHeaderLabel);
-    elementHeader.append(interactiveButtonClose.target.assembled);
+    elementHeader.append(interactiveButtonClose.target.element);
 
     return elementHeader;
   }
@@ -93,7 +93,7 @@ export class Modal {
     elementFooter.classList.add('modal__footer-container');
 
     this.buttons.forEach((button, buttonIndex) => {
-      elementFooter.appendChild(button.target.assembled);
+      elementFooter.appendChild(button.target.element);
     });
 
     return elementFooter;
@@ -112,9 +112,7 @@ export class Modal {
     let elementBody = this.assemblyBody(this.content);
     let elementFooter = this.assemblyFooter();
     let elementWrapper = this.assemblyWrapper();
-
-    let elementInteractive = document.createElement('div');
-    elementInteractive.classList.add('interactive');
+    let element = document.createElement('div');
 
     let elementModal = document.createElement('div');
     elementModal.classList.add('interactive__modal');
@@ -124,8 +122,8 @@ export class Modal {
     elementModal.appendChild(elementBody);
     elementModal.appendChild(elementFooter);
     elementWrapper.appendChild(elementModal);
-    elementInteractive.appendChild(elementWrapper);
+    element.appendChild(elementWrapper);
 
-    this.assembled = elementInteractive;
+    this.element = element;
   }
 }

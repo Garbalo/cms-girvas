@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification.show();
       });
     });
-    buttons.save.target.assembly();
+    buttons.save.assembly();
 
     buttons.delete = new Interactive('button');
     buttons.delete.target.setLabel('Удалить');
@@ -66,11 +66,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveModal.target.close();
       });
 
-      interactiveModal.target.assembly();
-      document.body.appendChild(interactiveModal.target.assembled);
+      interactiveModal.assembly();
+      document.body.appendChild(interactiveModal.target.element);
       interactiveModal.target.show();
     });
-    buttons.delete.target.assembly();
+    buttons.delete.assembly();
 
     buttons.publish = new Interactive('button');
     buttons.publish.target.setLabel('Опубликовать');
@@ -88,15 +88,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data1) => {
         if (data1.statusCode == 1) {
-          buttons.unpublish.target.assembled.style.display = 'flex';
-          buttons.publish.target.assembled.style.display = 'none';
+          buttons.unpublish.target.element.style.display = 'flex';
+          buttons.publish.target.element.style.display = 'none';
         }
 
         let notification = new PopupNotification(data1.message, document.body, true);
         notification.show();
       });
     });
-    buttons.publish.target.assembly();
+    buttons.publish.assembly();
 
     buttons.unpublish = new Interactive('button');
     buttons.unpublish.target.setLabel('Снять с публикации');
@@ -114,34 +114,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data1) => {
         if (data1.statusCode == 1) {
-          buttons.unpublish.target.assembled.style.display = 'none';
-          buttons.publish.target.assembled.style.display = 'flex';
+          buttons.unpublish.target.element.style.display = 'none';
+          buttons.publish.target.element.style.display = 'flex';
         }
 
         let notification = new PopupNotification(data1.message, document.body, true);
         notification.show();
       });
     });
-    buttons.unpublish.target.assembly();
+    buttons.unpublish.assembly();
     
     let pageData = data.outputData.pageStatic;
     if (searchParams.getPathPart(3) == null) {
-      buttons.unpublish.target.assembled.style.display = 'none';
-      buttons.publish.target.assembled.style.display = 'none';
-      buttons.delete.target.assembled.style.display = 'none';
-      buttons.save.target.assembled.style.display = 'flex';
+      buttons.unpublish.target.element.style.display = 'none';
+      buttons.publish.target.element.style.display = 'none';
+      buttons.delete.target.element.style.display = 'none';
+      buttons.save.target.element.style.display = 'flex';
     } else {
-      buttons.unpublish.target.assembled.style.display = (pageData.isPublished) ? 'flex' : 'none';
-      buttons.publish.target.assembled.style.display = (pageData.isPublished) ? 'none' : 'flex';
-      buttons.delete.target.assembled.style.display = 'flex';
-      buttons.save.target.assembled.style.display = 'flex';
+      buttons.unpublish.target.element.style.display = (pageData.isPublished) ? 'flex' : 'none';
+      buttons.publish.target.element.style.display = (pageData.isPublished) ? 'none' : 'flex';
+      buttons.delete.target.element.style.display = 'flex';
+      buttons.save.target.element.style.display = 'flex';
     }
 
     let interactiveContainer = document.querySelector('#SYSTEM_E3724126170');
-    interactiveContainer.append(buttons.delete.target.assembled);
-    interactiveContainer.append(buttons.unpublish.target.assembled);
-    interactiveContainer.append(buttons.publish.target.assembled);
-    interactiveContainer.append(buttons.save.target.assembled);
+    interactiveContainer.append(buttons.delete.target.element);
+    interactiveContainer.append(buttons.unpublish.target.element);
+    interactiveContainer.append(buttons.publish.target.element);
+    interactiveContainer.append(buttons.save.target.element);
   });
 
   fetch('/handler/locales', {
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoices.assembly();
 
         let interactiveContainerElement = document.querySelector('#E8548530785');
-        interactiveContainerElement.append(interactiveChoices.target.assembled)
+        interactiveContainerElement.append(interactiveChoices.target.element)
 
         let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
         interactiveChoicesSelectElement.addEventListener('change', (event) => {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       event.preventDefault();
       previewFormInputFileElement.click();
     });
-    interactiveButtonPreviewUpload.target.assembly();
+    interactiveButtonPreviewUpload.assembly();
 
     let previewImageContainerElement = document.createElement('div');
     previewImageContainerElement.classList.add('form-page-static-preview__container-image');
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     previewFormElement.appendChild(previewFormInputFileElement);
-    previewFormElement.appendChild(interactiveButtonPreviewUpload.target.assembled);
+    previewFormElement.appendChild(interactiveButtonPreviewUpload.target.element);
     previewBlockContentContainerElement.appendChild(previewImageContainerElement);
     previewBlockContentContainerElement.appendChild(previewFormElement);
   }

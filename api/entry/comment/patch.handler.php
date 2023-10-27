@@ -30,11 +30,15 @@ if ($system_core->client->is_logged(1)) {
       if (!array_key_exists('metadata', $comment_data)) $comment_data['metadata'] = [];
       
       if (isset($_PATCH['comment_is_hidden'])) {
-        $comment_data['metadata']['isHidden'] = ($_PATCH['comment_is_hidden'] == 'on') ? true : false;
+        $comment_data['metadata']['is_hidden'] = ($_PATCH['comment_is_hidden'] == 'on') ? true : false;
       }
 
       if (isset($_PATCH['comment_hidden_reason'])) {
-        $comment_data['metadata']['hiddenReason'] = $_PATCH['comment_hidden_reason'];
+        $comment_data['metadata']['hidden_reason'] = $_PATCH['comment_hidden_reason'];
+      }
+
+      if (isset($_PATCH['comment_parent_id'])) {
+        $comment_data['metadata']['parentID'] = $_PATCH['comment_parent_id'];
       }
 
       if (isset($_PATCH['comment_rating_vote'])) {
@@ -55,6 +59,17 @@ if ($system_core->client->is_logged(1)) {
       $comment_is_updated = (!empty($comment_data)) ? $comment->update($comment_data) : false;
 
       if ($comment_is_updated) {
+        $comment = new EntryComment($system_core, $comment_id);
+
+        $comment_init_data = ['metadata'];
+        
+        if (isset($_PATCH['comment_content'])) array_push($comment_init_data, 'content');
+
+        $comment->init_data($comment_init_data);
+        $handler_output_data['comment']['id'] = $comment->get_id();
+        $handler_output_data['comment']['rating'] = $comment->get_rating();
+        if (isset($_PATCH['comment_content'])) $handler_output_data['comment']['content'] = $comment->get_content();
+
         $handler_message = 'Комментарий успешно сохранен.';
         $handler_status_code = 1;
       } else {

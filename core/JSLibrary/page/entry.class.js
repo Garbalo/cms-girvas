@@ -1,328 +1,213 @@
 'use strict';
 
 import {Interactive} from "../interactive.class.js";
+import { ElementButton } from "../interactive/form/elementButton.class.js";
+import { ElementTextarea } from "../interactive/form/elementTextarea.class.js";
+import {EntryComment} from "./entry/comment.class.js";
 
 export class PageEntry {
   constructor(params = {}) {
     this.commentsLimit = 0;
     this.commentsData = [];
+    this.commentForm = null;
   }
 
   init() {
     let elementEntry = document.querySelector('[role="entry"]');
-    let elementEntryCommentForm = document.querySelector('[role="entry"]');
     let entryCommentsListElement = elementEntry.querySelector('[role="entry-comments-list"]');
     let entryID = elementEntry.getAttribute('data-entry-id');
-    let userPermissions = {};
-    let clientUserData = [];
+    this.clientUserPermissions = {};
+    this.clientUserData = {};
 
     this.commentsLimit = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length;
-    console.log(this.commentsLimit);
     this.commentsOffset = 0;
+    this.postLoadComments = [];
+    this.comments = [];
 
     fetch('/handler/user/@me/permissions', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      userPermissions = data.outputData.user.permissions;
-      
-      return fetch(`/handler/entry/${entryID}/comments`, {method: 'GET'});
+      if (typeof data.outputData.user != 'undefined') {
+        this.clientUserPermissions = data.outputData.user.permissions;
+
+        /** @type {Interactive} */
+        let commentForm = new Interactive('form');
+        commentForm.target.init({
+          id: 'E7429674077',
+          method: 'PUT',
+          action: `/handler/entry/comment`,
+          role: 'entry-comment-form'
+        });
+
+        commentForm.target.successCallback = (data) => {
+          if (commentForm.target.element.firstChild.getAttribute('method') == 'PUT') {
+            let commentID = data.outputData.comment.id;
+            let commentData = {}, authorData = {};
+
+            fetch(`/handler/entry/comment/${commentID}`, {method: 'GET'}).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((commentCreatedData) => {
+              commentData = commentCreatedData.outputData.comment;
+              return fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'});
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((authorCommentCreatedData) => {
+              authorData = authorCommentCreatedData.outputData.user;
+
+              let newEntryComment = new EntryComment(this, commentData);
+              newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                entryCommentsListElement.prepend(commentElement);
+                newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+              });
+            });
+          }
+
+          if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
+            let commentID = data.outputData.comment.id;
+            let commentContent = data.outputData.comment.content;
+            let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
+            if (commentElement != null) {
+              let commentContentElement = commentElement.querySelector('[role="entry-comment-content"]');
+              commentContentElement.innerHTML = commentContent;
+            }
+          }
+        };
+        
+        /** @type {ElementInput} */
+        let formInputEntryID = commentForm.target.createElementInput();
+        formInputEntryID.init({
+          name: 'comment_entry_id',
+          type: 'hidden'
+        });
+
+        formInputEntryID.element.value = entryID;
+        
+        /** @type {ElementInput} */
+        let formInputParentID = commentForm.target.createElementInput();
+        formInputParentID.init({
+          name: 'comment_parent_id',
+          type: 'hidden'
+        });
+        
+        /** @type {ElementTextarea} */
+        let formTextarea = commentForm.target.createElementTextarea();
+        formTextarea.init({
+          name: 'comment_content',
+          placeholder: 'Как хотите это прокомментировать?',
+          rows: 6
+        });
+
+        /** @type {ElementButton} */
+        let formButton = commentForm.target.createElementButton();
+        formButton.setStringLabel('Отправить');
+        formButton.setClickEvent((event) => {
+          event.preventDefault();
+          commentForm.target.send();
+          formTextarea.element.value = '';
+
+          let formInputCommentID = commentForm.target.element.querySelector('[name="comment_id"]');
+          if (formInputCommentID != null) {
+            let commentTargetElement = elementEntry.querySelector(`[data-comment-id="${formInputCommentID.value}"]`);
+            commentTargetElement.scrollIntoView({block: "center", behavior: "smooth"});
+            formInputCommentID.remove();
+          }
+
+          let formButtonRest = commentForm.target.element.querySelector('[role="comment-form-button-reset"]');
+          if (formButtonRest != null) formButtonRest.remove();
+        });
+        formButton.init({
+          role: 'comment-form-button-send'
+        });
+
+        // Assembly form
+        commentForm.target.element.setAttribute('id', 'E7443753064');
+        commentForm.target.element.firstChild.append(formInputParentID.element);
+        commentForm.target.element.firstChild.append(formInputEntryID.element);
+        commentForm.target.element.firstChild.append(formTextarea.element);
+        commentForm.target.element.firstChild.append(formButton.element);
+        commentForm.assembly();
+
+        this.commentForm = commentForm;
+
+        // Append form to container
+        let commentFormContainerElement = document.querySelector('[role="entry-comment-form-container"]');
+        commentFormContainerElement.append(this.commentForm.target.element);
+      }
+
+      return fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      this.commentsData = data.outputData.comments;
-
+      this.postLoadComments = data.outputData.comments;
+      
       let entryCommentsContainerElement = elementEntry.querySelector('[role="entry-comments-container"]');
       let interactiveButtonCommentsLoad = new Interactive('button');
       interactiveButtonCommentsLoad.target.setLabel('Загрузить еще комментарии');
       interactiveButtonCommentsLoad.target.setCallback((event) => {
-        this.commentsOffset += this.commentsLimit;
-
-        fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc`, {method: 'GET'}).then((response) => {
+        fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'}).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((loadedData) => {
-          let commentsLoadedData = loadedData.outputData.comments;
-          let commentsLoadedDataIndex = 0;
-
-          let getCommentAssembled = (comment) => {
-            fetch(`/handler/user/${comment.authorID}`, {method: 'GET'}).then((response) => {
+        }).then((commentsLoadedData) => {
+          let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
+          let appendComment = (commentData) => {
+            fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'}).then((response) => {
               return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((loadedData2) => {
-              let userLoadedData = loadedData2.outputData.user;
-              let entryCommentsCount = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length;
-              let commentContent = (!comment.isHidden) ? comment.content : comment.hiddenReason;
-  
-              let requestData = {
-                templateCategory: 'default',
-                templateFilePath: 'templates/page/entry/comment.tpl',
-                patternNames: ['COMMENT_ID', 'COMMENT_INDEX', 'COMMENT_CONTENT', 'COMMENT_AUTHOR_LOGIN', 'COMMENT_AUTHOR_AVATAR_URL'],
-                patternValues: [
-                  comment.id,
-                  entryCommentsCount + 1,
-                  commentContent.replaceAll(",", "{DELIM}"),
-                  userLoadedData.login,
-                  userLoadedData.avatarURL
-                ]
-              };
-  
-              let urlSearchParams = new URLSearchParams(requestData);
-  
-              return fetch('/handler/template/assembly?' + urlSearchParams.toString(), {method: 'GET'});
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((loadedData2) => {
-              let templateAssembled = loadedData2.outputData.templateAssembled;
-              let htmlElement = document.createElement('div');
-              htmlElement.innerHTML = templateAssembled;
+            }).then((authorLoadedData) => {
+              let authorData = authorLoadedData.outputData.user;
+              
+              commentData.index = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length + 1;
+              commentData.entryID = entryID;
+              commentData.answersLoadingLimit = 4;
 
-              if (comment.isHidden) {
-                htmlElement.firstChild.classList.add('comment_is-hidden');
-              }
-
-              entryCommentsListElement.append(htmlElement.firstChild);
-
-              commentsLoadedDataIndex++;
-              if (commentsLoadedDataIndex < this.commentsLimit) {
-                getCommentAssembled(commentsLoadedData[commentsLoadedDataIndex]);
-              }
+              let entryComment = new EntryComment(this, commentData);
+              entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                commentLoadedIndex++;
+                this.commentsOffset++;
+                entryCommentsListElement.append(commentElement);
+                entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                if (commentLoadedIndex < comments.length) {
+                  appendComment(comments[commentLoadedIndex]);
+                }
+                
+                if (commentData.answersCount > 0) {
+                  entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
+                }
+              });
             });
           };
 
-          if (commentsLoadedData.length > 0) {
-            getCommentAssembled(commentsLoadedData[0]);
+          if (comments.length > 0) {
+            appendComment(comments[0]);
           }
         });
       });
 
-      interactiveButtonCommentsLoad.target.assembly();
-      entryCommentsContainerElement.append(interactiveButtonCommentsLoad.target.assembled);
+      interactiveButtonCommentsLoad.assembly();
+      entryCommentsContainerElement.append(interactiveButtonCommentsLoad.target.element);
       
       return fetch(`/handler/user/@me`, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      clientUserData = data.outputData.user;
+      this.clientUserData = data.outputData.user;
 
-      let comments = document.querySelectorAll('[role="entry-comment"]');
-      
-      comments.forEach((comment, commentIndex) => {
-        let commentPanel = comment.querySelector('[id^=E7453975856\_]');
-        let commentID = comment.getAttribute('data-comment-id');
-        let commentData = {};
+      let commentsElements = entryCommentsListElement.querySelectorAll('[role="entry-comment"]');
+      commentsElements.forEach((comment, commentIndex) => {
+        this.postLoadComments[commentIndex].entryID = entryID;
+        let entryComment = new EntryComment(this, this.postLoadComments[commentIndex]);
+        entryComment.elementAssembled = comment;
+        entryComment.answersLoadingLimit = 4;
+        entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
         
-        this.commentsData.forEach((element) => {
-          if (element.id == commentID) {
-            commentData = element;
-            return;
-          }
-        });
-
-        if (clientUserData.id == commentData.authorID) {
-          let interactiveButtonEdit = new Interactive('button');
-          interactiveButtonEdit.target.setLabel('Редактировать');
-          interactiveButtonEdit.target.assembly();
-          commentPanel.append(interactiveButtonEdit.target.assembled);
+        if (entryComment.answersCount > 0) {
+          entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
         }
-
-        if (userPermissions.moder_entries_comments_management) {
-          let interactiveButtonHide = new Interactive('button');
-          interactiveButtonHide.target.setLabel('Скрыть');
-          interactiveButtonHide.target.setCallback((event) => {
-            let elementForm = document.createElement('form');
-            elementForm.classList.add('form');
-            let elementTextarea = document.createElement('textarea');
-            elementTextarea.classList.add('form__textarea');
-            elementTextarea.style.width = '300px';
-            elementTextarea.setAttribute('name', 'comment_hidden_reason');
-            elementTextarea.setAttribute('placeholder', 'Укажите причину...');
-            elementForm.append(elementTextarea);
-            
-            let interactiveModal = new Interactive('modal', {title: "Скрытие комментария", content: elementForm});
-            interactiveModal.target.addButton('Подтвердить', () => {
-              let formData = new FormData();
-              formData.append('comment_id', commentID);
-              formData.append('comment_is_hidden', 'on');
-              formData.append('comment_hidden_reason', elementTextarea.value);
-
-              fetch('/handler/entry/comment', {
-                method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                interactiveModal.target.close();
-      
-                if (data.statusCode == 1) {
-                  window.location.reload();
-                }
-      
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
-              });
-            });
-
-            interactiveModal.target.addButton('Отмена', () => {
-              interactiveModal.target.close();
-            });
-
-            interactiveModal.target.assembly();
-            document.body.appendChild(interactiveModal.target.assembled);
-            interactiveModal.target.show();
-          });
-
-          interactiveButtonHide.target.assembly();
-          commentPanel.append(interactiveButtonHide.target.assembled);
-
-          if (commentData.isHidden) {
-            interactiveButtonHide.target.assembled.style.display = 'none';
-          }
-        }
-
-        if (userPermissions.moder_entries_comments_management) {
-          let interactiveButtonPublish = new Interactive('button');
-          interactiveButtonPublish.target.setLabel('Опубликовать');
-          interactiveButtonPublish.target.setCallback((event) => {
-            event.preventDefault();
-
-            let interactiveModal = new Interactive('modal', {title: "Снять запрет на показ", content: 'Вы действительно хотите вновь показывать этот комментарий?'});
-            interactiveModal.target.addButton('Да', () => {
-              let formData = new FormData();
-              formData.append('comment_id', commentID);
-              formData.append('comment_is_hidden', 'off');
-              formData.append('comment_hidden_reason', '');
-
-              fetch('/handler/entry/comment', {
-                method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                interactiveModal.target.close();
-      
-                if (data.statusCode == 1) {
-                  window.location.reload();
-                }
-      
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
-              });
-            });
-
-            interactiveModal.target.addButton('Нет', () => {
-              interactiveModal.target.close();
-            });
-
-            interactiveModal.target.assembly();
-            document.body.appendChild(interactiveModal.target.assembled);
-            interactiveModal.target.show();
-          });
-          interactiveButtonPublish.target.assembly();
-          commentPanel.append(interactiveButtonPublish.target.assembled);
-
-          if (!commentData.isHidden) {
-            interactiveButtonPublish.target.assembled.style.display = 'none';
-          }
-        }
-
-        if (userPermissions.moder_entries_comments_management) {
-          let interactiveButtonDelete = new Interactive('button');
-          interactiveButtonDelete.target.setLabel('Удалить');
-          interactiveButtonDelete.target.setCallback((event) => {
-            let formData = new FormData();
-            formData.append('comment_id', commentID);
-
-            fetch('/handler/entry/comment', {
-              method: 'DELETE',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
-              interactiveModal.target.close();
-    
-              if (data.statusCode == 1) {
-                tableItem.remove();
-                window.location.reload();
-              }
-    
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
-            });
-          });
-          interactiveButtonDelete.target.assembly();
-          commentPanel.append(interactiveButtonDelete.target.assembled);
-        }
-
-        if (!commentData.isHidden) {
-          let interactiveButtonAnswer = new Interactive('button');
-          interactiveButtonAnswer.target.setLabel('Ответить');
-          interactiveButtonAnswer.target.assembly();
-          commentPanel.append(interactiveButtonAnswer.target.assembled);
-            
-          let commentRatePanel = comment.querySelector('[role="entry-comment-rate"]');
-          
-          if (userPermissions.base_entry_comment_rate) {
-            let interactiveButtonRateUp = new Interactive('button');
-            interactiveButtonRateUp.target.setLabel('🡅');
-            interactiveButtonRateUp.target.setCallback((event) => {
-              let formData = new FormData();
-              formData.append('comment_id', commentID);
-              formData.append('comment_rating_vote', 'up');
-
-              fetch('/handler/entry/comment', {
-                method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
-              });
-            });
-            interactiveButtonRateUp.target.assembly();
-
-            let interactiveButtonElement = interactiveButtonRateUp.target.assembled.querySelector('button');
-            interactiveButtonElement.classList.add('interactive__button_green');
-
-            commentRatePanel.append(interactiveButtonRateUp.target.assembled);
-          }
-
-          let rateCountElement = document.createElement('div');
-          rateCountElement.classList.add('comment__rating-count');
-          rateCountElement.append(commentData.rating);
-          commentRatePanel.append(rateCountElement);
-
-          if (userPermissions.base_entry_comment_rate) {
-            let interactiveButtonRateDown = new Interactive('button');
-            interactiveButtonRateDown.target.setLabel('🡇');
-            interactiveButtonRateDown.target.setCallback((event) => {
-              let formData = new FormData();
-              formData.append('comment_id', commentID);
-              formData.append('comment_rating_vote', 'down');
-
-              fetch('/handler/entry/comment', {
-                method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
-              });
-            });
-            interactiveButtonRateDown.target.assembly();
-
-            let interactiveButtonElement = interactiveButtonRateDown.target.assembled.querySelector('button');
-            interactiveButtonElement.classList.add('interactive__button_red');
-
-            commentRatePanel.append(interactiveButtonRateDown.target.assembled);
-          }
-        }
-
-        if (commentData.isHidden) {
+        
+        if (entryComment.isHidden) {
           comment.classList.add('comment_is-hidden');
         }
+
+        this.commentsOffset++;
       });
     });
   }
-
-  
 }

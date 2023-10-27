@@ -6,7 +6,7 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
 
   final class ClauseWhere implements InterfaceClause {
     private StatementSelect $statement;
-    public string $condition = '';
+    public array $conditions = [];
     public string $assembled = '';
     
     /**
@@ -25,8 +25,8 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
      * @param  mixed $condition
      * @return void
      */
-    public function add_condition(string $condition) : void {
-      $this->condition = $condition;
+    public function add_condition(string $condition, string $conjunction = '') : void {
+      array_push($this->conditions, (!empty($conjunction)) ? sprintf('%s %s', $conjunction, $condition) : $condition);
     }
     
     /**
@@ -35,8 +35,8 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
      * @return void
      */
     public function assembly() {
-      if ($this->condition != '') {
-        $this->assembled = sprintf('WHERE %s', $this->condition);
+      if (!empty($this->conditions)) {
+        $this->assembled = sprintf('WHERE %s', implode(' ', $this->conditions));
       } else {
         $this->assembled = '';
       }

@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoicesSettingsTimezone.target.setName('setting_base_timezone');
         interactiveChoicesSettingsTimezone.assembly();
 
-        document.querySelector('#TC6474389679').prepend(interactiveChoicesSettingsTimezone.target.assembled);
+        document.querySelector('#TC6474389679').prepend(interactiveChoicesSettingsTimezone.target.element);
       });
     });
 
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoicesSettingsCharset.target.setName('setting_base_site_charset');
         interactiveChoicesSettingsCharset.assembly();
 
-        document.querySelector('#TC6474389682').append(interactiveChoicesSettingsCharset.target.assembled);
+        document.querySelector('#TC6474389682').append(interactiveChoicesSettingsCharset.target.element);
       });
     });
 
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoicesSettingsBaseLocale.target.setName('setting_base_locale')
         interactiveChoicesSettingsBaseLocale.assembly();
 
-        document.querySelector('#TC6474389680').append(interactiveChoicesSettingsBaseLocale.target.assembled);
+        document.querySelector('#TC6474389680').append(interactiveChoicesSettingsBaseLocale.target.element);
       });
 
       fetch('/handler/locale/admin', {
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoicesSettingsAdminLocale.target.setName('setting_base_admin_locale');
         interactiveChoicesSettingsAdminLocale.assembly();
 
-        document.querySelector('#TC6474389681').append(interactiveChoicesSettingsAdminLocale.target.assembled);
+        document.querySelector('#TC6474389681').append(interactiveChoicesSettingsAdminLocale.target.element);
       });
     });
   }

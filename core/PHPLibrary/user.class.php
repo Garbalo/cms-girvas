@@ -48,27 +48,27 @@ namespace core\PHPLibrary {
     }
 
     public function get_login() : string {
-      return (property_exists($this, 'login')) ? $this->login : '{ERROR:USER_DATA_IS_NOT_EXISTS=login}';
+      return (property_exists($this, 'login')) ? $this->login : '';
     }
 
     public function get_email() : string {
-      return (property_exists($this, 'email')) ? $this->email : '{ERROR:USER_DATA_IS_NOT_EXISTS=email}';
+      return (property_exists($this, 'email')) ? $this->email : '';
     }
 
     public function get_password_hash() : string {
-      return (property_exists($this, 'password_hash')) ? $this->password_hash : '{ERROR:USER_DATA_IS_NOT_EXISTS=password_hash}';
+      return (property_exists($this, 'password_hash')) ? $this->password_hash : '';
     }
 
     public function get_security_hash() : string {
-      return (property_exists($this, 'security_hash')) ? $this->security_hash : '{ERROR:USER_DATA_IS_NOT_EXISTS=security_hash}';
+      return (property_exists($this, 'security_hash')) ? $this->security_hash : '';
     }
 
-    public function get_created_unix_timestamp() : int|string {
-      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=created_unix_timestamp}';
+    public function get_created_unix_timestamp() : int {
+      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : 0;
     }
 
-    public function get_updated_unix_timestamp() : int|string {
-      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
+    public function get_updated_unix_timestamp() : int {
+      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : 0;
     }
 
     public static function get_avatar_default_url(SystemCore $system_core, int $size) : string {
@@ -88,7 +88,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_name}';
+      return '';
     }
     
     /**
@@ -104,7 +104,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_surname}';
+      return '';
     }
     
     /**
@@ -120,7 +120,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_patronymic}';
+      return '';
     }
     
     /**
@@ -159,7 +159,7 @@ namespace core\PHPLibrary {
      *
      * @return int
      */
-    public function get_birthdate_unix_timestamp() : int|string {
+    public function get_birthdate_unix_timestamp() : int {
       if (property_exists($this, 'metadata_json')) {
         $metadata_array = json_decode($this->metadata_json, true);
         if (isset($metadata_array['birthdate_unix_timestamp'])) {
@@ -167,7 +167,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      return '{ERROR:USER_DATA_IS_NOT_EXISTS=metadata_birthdate_unix_timestamp}';
+      return 0;
     }
     
     /**

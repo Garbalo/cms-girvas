@@ -27,6 +27,8 @@ if ($system_core->client->is_logged(1)) {
     $handler_output_data['comment']['id'] = $comment->get_id();
     $handler_output_data['comment']['content'] = $comment->get_content();
     $handler_output_data['comment']['authorID'] = $comment->get_author_id();
+    $handler_output_data['comment']['parentID'] = $comment->get_parent_id();
+    $handler_output_data['comment']['answersCount'] = $comment->get_answers_count();
     $handler_output_data['comment']['isHidden'] = $comment->is_hidden();
     $handler_output_data['comment']['hiddenReason'] = $comment->get_hidden_reason();
     $handler_output_data['comment']['rating'] = $comment->get_rating();

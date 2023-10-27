@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             interactiveModal.target.close();
           });
 
-          interactiveModal.target.assembly();
-          document.body.appendChild(interactiveModal.target.assembled);
+          interactiveModal.assembly();
+          document.body.appendChild(interactiveModal.target.element);
           interactiveModal.target.show();
         }
 
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             interactiveModal.target.close();
           });
 
-          interactiveModal.target.assembly();
-          document.body.appendChild(interactiveModal.target.assembled);
+          interactiveModal.assembly();
+          document.body.appendChild(interactiveModal.target.element);
           interactiveModal.target.show();
         }
 
@@ -124,8 +124,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             interactiveModal.target.close();
           });
 
-          interactiveModal.target.assembly();
-          document.body.appendChild(interactiveModal.target.assembled);
+          interactiveModal.assembly();
+          document.body.appendChild(interactiveModal.target.element);
           interactiveModal.target.show();
         }
       });

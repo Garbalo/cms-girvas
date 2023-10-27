@@ -988,67 +988,34 @@ if (defined('IS_NOT_HACKED')) {
           /** @var string $user_token */
           $user_token = \core\PHPLibrary\Client\Session::generate_token();
 
-          // Если сессия не была найдена, то создаем новую.
-          if (!\core\PHPLibrary\Client\Session::exists_by_ip($system_core, $user_ip, 1)) {
-            
-            /** @var \core\PHPLibrary\Client\Session|null $user_session */
-            $user_session = \core\PHPLibrary\Client\Session::create($system_core, [
-              'user_id' => $user->get_id(),
-              'token' => $user_token,
-              'user_ip' => $user_ip,
-              'type_id' => 1
+          /** @var \core\PHPLibrary\Client\Session|null $user_session */
+          $user_session = \core\PHPLibrary\Client\Session::create($system_core, [
+            'user_id' => $user->get_id(),
+            'token' => $user_token,
+            'user_ip' => $user_ip,
+            'type_id' => 1
+          ]);
+
+          if (!is_null($user_session)) {
+            $user_session->init_data(['updated_unix_timestamp', 'token']);
+            $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
+
+            setcookie('_grv_utoken', $user_session->get_token(), [
+              'expires' => $user_session_expires,
+              'path' => '/',
+              'domain' => $system_core->configurator->get('domain_cookies'),
+              'secure' => true,
+              'httponly' => true
             ]);
 
-            if (!is_null($user_session)) {
-              $user_session->init_data(['updated_unix_timestamp', 'token']);
-              $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
+            $handler_output_data['reload'] = true;
 
-              setcookie('_grv_utoken', $user_session->get_token(), [
-                'expires' => $user_session_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain_cookies'),
-                'secure' => true,
-                'httponly' => true
-              ]);
-
-              $handler_output_data['reload'] = true;
-
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация прошла успешно. Создана новая сессия.';
-              $handler_status_code = 1;
-            } else {
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация не была пройдена, так как сессия не была создана.';
-            }
-          
-          // Если сессия была найдена, то восстанавливаем или обновляем старую.
+            /** @var string $handler_message Сообщение обработчика */
+            $handler_message = 'Авторизация прошла успешно.';
+            $handler_status_code = 1;
           } else {
-
-            /** @var \core\PHPLibrary\Session|null $user_session Объект сессии пользователя */
-            $user_session = \core\PHPLibrary\Client\Session::get_by_ip($system_core, $user_ip, 1);
-            
-            if (!is_null($user_session)) {
-              $user_session->reset_expire();
-              $user_session->init_data(['updated_unix_timestamp', 'token']);
-              $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
-
-              setcookie('_grv_utoken', $user_session->get_token(), [
-                'expires' => $user_session_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain_cookies'),
-                'secure' => true,
-                'httponly' => true
-              ]);
-
-              $handler_output_data['reload'] = true;
-
-              $handler_message = 'Авторизация успешно завершена. Сессия обновлена.';
-              $handler_status_code = 1;
-            } else {
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация не была пройдена, так как сессия не была восстановлена.';
-            }
-
+            /** @var string $handler_message Сообщение обработчика */
+            $handler_message = 'Авторизация не была пройдена, так как сессия не была создана.';
           }
 
         } else {

@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data) => {
         if (data.statusCode == 1) {
-          buttons.enable.target.assembled.style.display = 'none';
-          buttons.disable.target.assembled.style.display = 'flex';
+          buttons.enable.target.element.style.display = 'none';
+          buttons.disable.target.element.style.display = 'flex';
 
           moduleBlock.setAttribute('data-module-enabled-status', 'enabled');
         }
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification.show();
       });
     });
-    buttons.enable.target.assembly();
+    buttons.enable.assembly();
 
     buttons.disable = new Interactive('button');
     buttons.disable.target.setLabel('Выключить');
@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data) => {
         if (data.statusCode == 1) {
-          buttons.enable.target.assembled.style.display = 'flex';
-          buttons.disable.target.assembled.style.display = 'none';
+          buttons.enable.target.element.style.display = 'flex';
+          buttons.disable.target.element.style.display = 'none';
 
           moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
         }
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification.show();
       });
     });
-    buttons.disable.target.assembly();
+    buttons.disable.assembly();
 
     buttons.install = new Interactive('button');
     buttons.install.target.setLabel('Установить');
@@ -80,10 +80,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data) => {
         if (data.statusCode == 1) {
-          buttons.install.target.assembled.style.display = 'none';
-          buttons.delete.target.assembled.style.display = 'flex';
-          buttons.enable.target.assembled.style.display = 'flex';
-          buttons.disable.target.assembled.style.display = 'none';
+          buttons.install.target.element.style.display = 'none';
+          buttons.delete.target.element.style.display = 'flex';
+          buttons.enable.target.element.style.display = 'flex';
+          buttons.disable.target.element.style.display = 'none';
 
           moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
           moduleBlock.setAttribute('data-module-installed-status', 'installed');
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification.show();
       });
     });
-    buttons.install.target.assembly();
+    buttons.install.assembly();
 
     buttons.delete = new Interactive('button');
     buttons.delete.target.setLabel('Удалить');
@@ -108,10 +108,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         return response.json();
       }).then((data) => {
         if (data.statusCode == 1) {
-          buttons.install.target.assembled.style.display = 'flex';
-          buttons.delete.target.assembled.style.display = 'none';
-          buttons.enable.target.assembled.style.display = 'none';
-          buttons.disable.target.assembled.style.display = 'none';
+          buttons.install.target.element.style.display = 'flex';
+          buttons.delete.target.element.style.display = 'none';
+          buttons.enable.target.element.style.display = 'none';
+          buttons.disable.target.element.style.display = 'none';
 
           moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
           moduleBlock.setAttribute('data-module-installed-status', 'not-installed');
@@ -121,31 +121,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification.show();
       });
     });
-    buttons.delete.target.assembly();
+    buttons.delete.assembly();
 
     if (moduleInstalledStatus == 'installed') {
       if (moduleEnabledStatus == 'enabled') {
-        buttons.enable.target.assembled.style.display = 'none';
-        buttons.disable.target.assembled.style.display = 'flex';
+        buttons.enable.target.element.style.display = 'none';
+        buttons.disable.target.element.style.display = 'flex';
       }
 
       if (moduleEnabledStatus == 'disabled') {
-        buttons.enable.target.assembled.style.display = 'flex';
-        buttons.disable.target.assembled.style.display = 'none';
+        buttons.enable.target.element.style.display = 'flex';
+        buttons.disable.target.element.style.display = 'none';
       }
 
-      buttons.install.target.assembled.style.display = 'none';
-      buttons.delete.target.assembled.style.display = 'flex';
+      buttons.install.target.element.style.display = 'none';
+      buttons.delete.target.element.style.display = 'flex';
     } else {
-      buttons.install.target.assembled.style.display = 'flex';
-      buttons.delete.target.assembled.style.display = 'none';
-      buttons.enable.target.assembled.style.display = 'none';
-      buttons.disable.target.assembled.style.display = 'none';
+      buttons.install.target.element.style.display = 'flex';
+      buttons.delete.target.element.style.display = 'none';
+      buttons.enable.target.element.style.display = 'none';
+      buttons.disable.target.element.style.display = 'none';
     }
 
-    interactiveContainerElement.append(buttons.enable.target.assembled);
-    interactiveContainerElement.append(buttons.disable.target.assembled);
-    interactiveContainerElement.append(buttons.install.target.assembled);
-    interactiveContainerElement.append(buttons.delete.target.assembled);
+    interactiveContainerElement.append(buttons.enable.target.element);
+    interactiveContainerElement.append(buttons.disable.target.element);
+    interactiveContainerElement.append(buttons.install.target.element);
+    interactiveContainerElement.append(buttons.delete.target.element);
   }
 });

@@ -69,7 +69,13 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
+
       $query_builder->statement->clause_where->add_condition('entry_id = :entry_id');
+      if (array_key_exists('parent_id', $params_array)) {
+        error_log(print_r($params_array, true));
+        $query_builder->statement->clause_where->add_condition(sprintf('(metadata::jsonb->\'parentID\')::int = %d', $params_array['parent_id']), 'AND');
+      }
+
       $query_builder->statement->clause_where->assembly();
       if (array_key_exists('limit', $params_array)) {
         if (is_array($params_array['limit'])) {
@@ -79,11 +85,11 @@ namespace core\PHPLibrary {
         }
       }
 
-      if (array_key_exists('orderBy', $params_array)) {
-        if (isset($params_array['orderBy']['column']) && isset($params_array['orderBy']['sort'])) {
+      if (array_key_exists('order_by', $params_array)) {
+        if (isset($params_array['order_by']['column']) && isset($params_array['order_by']['sort'])) {
           $query_builder->statement->set_clause_order_by();
-          $query_builder->statement->clause_order_by->set_column('created_unix_timestamp');
-          $query_builder->statement->clause_order_by->set_sort_type('DESC');
+          $query_builder->statement->clause_order_by->set_column($params_array['order_by']['column']);
+          $query_builder->statement->clause_order_by->set_sort_type($params_array['order_by']['sort']);
           $query_builder->statement->clause_order_by->assembly();
         }
       }

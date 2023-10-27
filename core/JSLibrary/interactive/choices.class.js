@@ -161,10 +161,9 @@ export class Choices {
     }
     
     let element = document.createElement('div');
-    element.classList.add('interactive');
     element.append(this.elementSelect);
     element.append(this.elementInteractive);
 
-    this.assembled = element;
+    this.element = element;
   }
 }

@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   interactiveButton.target.setCallback(() => {
     window.location.href = `https://galior-market.ru/users/Drelagas#templates`;
   });
-  interactiveButton.target.assembly();
+  interactiveButton.assembly();
 
   let interactiveContainerElement = document.querySelector('#E8548530785');
-  interactiveContainerElement.append(interactiveButton.target.assembled)
+  interactiveContainerElement.append(interactiveButton.target.element)
 
   let searchParams = new URLParser();
   let listItems = document.querySelectorAll('.templates-list .list__item');
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     interactiveButtonMore.target.setCallback(() => {
       window.location.href = (searchParams.getPathPart(3) == null) ? `./template/${templateName}` : `../template/${templateName}`;
     });
-    interactiveButtonMore.target.assembly();
-    itemFooterContainer.appendChild(interactiveButtonMore.target.assembled)
+    interactiveButtonMore.assembly();
+    itemFooterContainer.appendChild(interactiveButtonMore.target.element)
 
     let buttons = {delete: null, install: null};
 
@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (searchParams.getPathPart(3) != 'repository') {
               listItem.remove();
             } else {
-              buttons.install.target.assembled.style.display = 'flex';
-              buttons.delete.target.assembled.style.display = 'none';
+              buttons.install.target.element.style.display = 'flex';
+              buttons.delete.target.element.style.display = 'none';
             }
           }
 
@@ -65,12 +65,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
           notification.show();
         });
       });
-      interactiveModal.target.assembly();
-      document.body.appendChild(interactiveModal.target.assembled);
+      interactiveModal.assembly();
+      document.body.appendChild(interactiveModal.target.element);
       interactiveModal.target.show();
     });
-    buttons.delete.target.assembly();
-    itemFooterContainer.appendChild(buttons.delete.target.assembled);
+    buttons.delete.assembly();
+    itemFooterContainer.appendChild(buttons.delete.target.element);
 
     // Кнопка "Установить"
     buttons.install = new Interactive('button');
@@ -92,18 +92,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         notification_start.hide();
 
         if (data.statusCode == 1) {
-          buttons.install.target.assembled.style.display = 'none';
-          buttons.delete.target.assembled.style.display = 'flex';
+          buttons.install.target.element.style.display = 'none';
+          buttons.delete.target.element.style.display = 'flex';
         }
 
         let notification = new PopupNotification(data.message, document.body, true);
         notification.show();
       });
     });
-    buttons.install.target.assembly();
-    itemFooterContainer.appendChild(buttons.install.target.assembled);
+    buttons.install.assembly();
+    itemFooterContainer.appendChild(buttons.install.target.element);
 
-    buttons.install.target.assembled.style.display = (templateInstalledStatus == 'installed') ? 'none' : 'flex';
-    buttons.delete.target.assembled.style.display = (templateInstalledStatus == 'installed') ? 'flex' : 'none';
+    buttons.install.target.element.style.display = (templateInstalledStatus == 'installed') ? 'none' : 'flex';
+    buttons.delete.target.element.style.display = (templateInstalledStatus == 'installed') ? 'flex' : 'none';
   }
 });

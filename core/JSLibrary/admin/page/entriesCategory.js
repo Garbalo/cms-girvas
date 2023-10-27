@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
                 let interactiveContainer = document.querySelector('#TC6474389602');
                 interactiveContainer.innerHTML = '';
-                interactiveContainer.append(interactiveChoicesParents.target.assembled);
+                interactiveContainer.append(interactiveChoicesParents.target.element);
               });
             });
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoices.assembly();
 
         let interactiveContainerElement = document.querySelector('#E8548530785');
-        interactiveContainerElement.append(interactiveChoices.target.assembled);
+        interactiveContainerElement.append(interactiveChoices.target.element);
         
         let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
         interactiveChoicesSelectElement.addEventListener('change', (event) => {

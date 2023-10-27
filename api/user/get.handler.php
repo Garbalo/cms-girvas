@@ -16,67 +16,65 @@ if (!defined('IS_NOT_HACKED')) {
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
 
-if ($system_core->client->is_logged(1)) {
-  if ($system_core->urlp->get_path(3) == 'permissions') {
-    $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
+if ($system_core->urlp->get_path(3) == 'permissions') {
+  $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
 
-    if (!is_null($user)) {
-      $user->init_data(['metadata_json']);
+  if (!is_null($user)) {
+    $user->init_data(['metadata_json']);
 
-      $user_group = $user->get_group();
-      
-      if (!is_null($user_group)) {
-        $user_group->init_data(['permissions']);
-
-        $handler_output_data['user'] = [];
-        $handler_output_data['user']['permissions'] = [];
-        $handler_output_data['user']['permissions']['admin_panel_auth'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_PANEL_AUTH);
-        $handler_output_data['user']['permissions']['admin_users_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT);
-        $handler_output_data['user']['permissions']['admin_users_groups_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT);
-        $handler_output_data['user']['permissions']['admin_modules_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT);
-        $handler_output_data['user']['permissions']['admin_templates_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT);
-        $handler_output_data['user']['permissions']['admin_settings_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT);
-        $handler_output_data['user']['permissions']['admin_viewing_logs'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_VIEWING_LOGS);
-        $handler_output_data['user']['permissions']['moder_users_ban'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_USERS_BAN);
-        $handler_output_data['user']['permissions']['moder_entries_comments_management'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT);
-        $handler_output_data['user']['permissions']['moder_users_warns'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_USERS_WARNS);
-        $handler_output_data['user']['permissions']['editor_media_files_management'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT);
-        $handler_output_data['user']['permissions']['editor_entries_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT);
-        $handler_output_data['user']['permissions']['editor_entries_categories_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT);
-        $handler_output_data['user']['permissions']['editor_pages_static_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT);
-        $handler_output_data['user']['permissions']['base_entry_comment_rate'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE);
-
-        $handler_message = 'Данные по права пользователя успешно получены.';
-        $handler_status_code = 1;
-      } else {
-        $handler_message = 'Данные не были получены, так как группы пользователя не существует.';
-        $handler_status_code = 0;
-      }
-    } else {
-      $handler_message = 'Данные не были получены, так как пользователя не существует.';
-      $handler_status_code = 0;
-    }
-  } else if (is_null($system_core->urlp->get_path(3))) {
-    $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
-
-    if (!is_null($user)) {
-      $user->init_data(['login','metadata_json']);
-      
-      $template_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
-      $template = new \core\PHPLibrary\Template($system_core, $template_name);
-      $system_core->set_template($template);
+    $user_group = $user->get_group();
+    
+    if (!is_null($user_group)) {
+      $user_group->init_data(['permissions']);
 
       $handler_output_data['user'] = [];
-      $handler_output_data['user']['id'] = $user->get_id();
-      $handler_output_data['user']['login'] = $user->get_login();
-      $handler_output_data['user']['avatarURL'] = $user->get_avatar_url(64);
+      $handler_output_data['user']['permissions'] = [];
+      $handler_output_data['user']['permissions']['admin_panel_auth'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_PANEL_AUTH);
+      $handler_output_data['user']['permissions']['admin_users_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT);
+      $handler_output_data['user']['permissions']['admin_users_groups_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT);
+      $handler_output_data['user']['permissions']['admin_modules_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT);
+      $handler_output_data['user']['permissions']['admin_templates_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT);
+      $handler_output_data['user']['permissions']['admin_settings_management'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT);
+      $handler_output_data['user']['permissions']['admin_viewing_logs'] = $user_group->permission_check(UserGroup::PERMISSION_ADMIN_VIEWING_LOGS);
+      $handler_output_data['user']['permissions']['moder_users_ban'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_USERS_BAN);
+      $handler_output_data['user']['permissions']['moder_entries_comments_management'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT);
+      $handler_output_data['user']['permissions']['moder_users_warns'] = $user_group->permission_check(UserGroup::PERMISSION_MODER_USERS_WARNS);
+      $handler_output_data['user']['permissions']['editor_media_files_management'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT);
+      $handler_output_data['user']['permissions']['editor_entries_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT);
+      $handler_output_data['user']['permissions']['editor_entries_categories_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT);
+      $handler_output_data['user']['permissions']['editor_pages_static_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT);
+      $handler_output_data['user']['permissions']['base_entry_comment_rate'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE);
 
-      $handler_message = 'Данные о пользователе успешно получены.';
+      $handler_message = 'Данные по права пользователя успешно получены.';
       $handler_status_code = 1;
     } else {
-      $handler_message = 'Данные не были получены, так как пользователя не существует.';
+      $handler_message = 'Данные не были получены, так как группы пользователя не существует.';
       $handler_status_code = 0;
     }
+  } else {
+    $handler_message = 'Данные не были получены, так как пользователя не существует.';
+    $handler_status_code = 0;
+  }
+} else if (is_null($system_core->urlp->get_path(3))) {
+  $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
+
+  if (!is_null($user)) {
+    $user->init_data(['login','metadata_json']);
+    
+    $template_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
+    $template = new \core\PHPLibrary\Template($system_core, $template_name);
+    $system_core->set_template($template);
+
+    $handler_output_data['user'] = [];
+    $handler_output_data['user']['id'] = $user->get_id();
+    $handler_output_data['user']['login'] = $user->get_login();
+    $handler_output_data['user']['avatarURL'] = $user->get_avatar_url(64);
+
+    $handler_message = 'Данные о пользователе успешно получены.';
+    $handler_status_code = 1;
+  } else {
+    $handler_message = 'Данные не были получены, так как пользователя не существует.';
+    $handler_status_code = 0;
   }
 }
 

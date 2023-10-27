@@ -33,7 +33,6 @@ export class Button {
 
   assembly() {
     let element = document.createElement('div');
-    element.classList.add('interactive');
 
     let buttonElement = document.createElement('button');
     buttonElement.classList.add('interactive__button');
@@ -53,6 +52,6 @@ export class Button {
 
     element.append(buttonElement);
 
-    this.assembled = element;
+    this.element = element;
   }
 }

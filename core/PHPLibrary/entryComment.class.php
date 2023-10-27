@@ -148,6 +148,97 @@ namespace core\PHPLibrary {
     }
 
     /**
+     * Получить количество ответов к комментарию
+     * 
+     * @return int
+     */
+    public function get_answers_count() : int {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['count(id)']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('entries_comments');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('(metadata::jsonb->\'parentID\')::int = :parentID::int');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+      
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':parentID', $this->id, \PDO::PARAM_INT);
+			$database_query->execute();
+
+      $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+      return ($result) ? $result['count'] : 0;
+    }
+
+    /**
+     * Получить массив объектов ответов к комментарию
+     * 
+     * @return array
+     */
+    public function get_answers() : array {
+      $query_builder = new DatabaseQueryBuilder();
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['id']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('entries_comments');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('(metadata::jsonb->\'parentID\')::int = :parentID::int');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->assembly();
+      
+      $database_connection = $this->system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':parentID', $this->id, \PDO::PARAM_INT);
+			$database_query->execute();
+
+      $objects = [];
+      $results = $database_query->fetchAll(\PDO::FETCH_ASSOC);
+      if ($results) {
+        foreach ($results as $data) {
+          array_push($objects, new EntryComment($this->system_core, $data['id']));
+        }
+      }
+
+      return $objects;
+    }
+
+    /**
+     * Получить ID комментария-родителя
+     *
+     * @return string
+     */
+    public function get_parent_id() : int {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['parentID'])) {
+          return (int)$metadata_array['parentID'];
+        }
+      }
+
+      return 0;
+    }
+
+    /**
+     * Получить объект комментария-родителя
+     *
+     * @return string
+     */
+    public function get_parent() : EntryComment|null {
+      if (property_exists($this, 'metadata')) {
+        $parent_id = $this->get_parent_id();
+        if ($parent_id > 0) {
+          return new EntryComment($this->system_core, $parent_id);
+        }
+      }
+
+      return null;
+    }
+
+    /**
      * Получить рейтинг комментария
      *
      * @return int
@@ -372,12 +463,16 @@ namespace core\PHPLibrary {
                   array_push($metadata_assignments, 'jsonb_build_object(\'rating\', (metadata::jsonb->\'rating\')::int - 2)');
                 }
               }
-            } else {
-              array_push($metadata_assignments, sprintf('jsonb_build_object(\'%s\', \'%s\'::jsonb)', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+            } else if ($metadata_name == 'is_hidden') {
+              array_push($metadata_assignments, sprintf('jsonb_build_object(\'isHidden\', %d::int::bool)', $metadata_value));
+            } else if ($metadata_name == 'hidden_reason') {
+              array_push($metadata_assignments, sprintf('jsonb_build_object(\'hiddenReason\', \'%s\'::text)', $metadata_value));
+            } else if ($metadata_name == 'parent_id') {
+              array_push($metadata_assignments, sprintf('jsonb_build_object(\'parentID\', %d::int)', $metadata_value));
             }
           }
 
-          $query_builder->statement->clause_set->add_column('metadata', implode(' || ', $metadata_assignments));
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('metadata::jsonb || %s', implode(' || ', $metadata_assignments)));
         }
       }
 

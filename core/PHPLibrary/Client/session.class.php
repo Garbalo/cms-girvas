@@ -72,16 +72,24 @@ namespace core\PHPLibrary\Client {
       return (User::exists_by_id($this->system_core, $this->user_id)) ? new User($this->system_core, $this->user_id) : null;
     }
 
-    public function get_created_unix_timestamp() : int|string {
-      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=created_unix_timestamp}';
+    public function get_created_unix_timestamp() : int {
+      return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : 0;
     }
 
-    public function get_updated_unix_timestamp() : int|string {
-      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '{ERROR:USER_DATA_IS_NOT_EXISTS=updated_unix_timestamp}';
+    public function get_updated_unix_timestamp() : int {
+      return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : 0;
     }
 
     public function get_token() : string {
-      return (property_exists($this, 'token')) ? $this->token : '{ERROR:USER_DATA_IS_NOT_EXISTS=token}';
+      return (property_exists($this, 'token')) ? $this->token : '';
+    }
+
+    public function is_alive(int $expire) : bool {
+      if (property_exists($this, 'updated_unix_timestamp')) {
+        return ($this->get_updated_unix_timestamp() + $expire > time()) ? true : false;
+      }
+
+      return false;
     }
 
     public function reset_expire() : bool {

@@ -54,7 +54,7 @@ namespace core\PHPLibrary {
      */
     public function get_user(int $session_type_id) : User|null {
       $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
-      return $session->get_user();
+      return (!is_null($session)) ? $session->get_user() : null;
     }    
     /**
      * Проверка статуса авторизации клиента по типу сессии
@@ -74,7 +74,7 @@ namespace core\PHPLibrary {
           $client_session_token = (isset($_COOKIE[$client_session_cookie_token_name])) ? $_COOKIE[$client_session_cookie_token_name] : '';
           if (isset($_COOKIE[$client_session_cookie_token_name])) {
             if ($client_session_token == $client_session->get_token()) {
-              if ($client_session->get_updated_unix_timestamp() + $this->system_core->configurator->get('session_expires') > time()) {
+              if ($client_session->is_alive($this->system_core->configurator->get('session_expires'))) {
                 return true;
               }
             }

@@ -25,6 +25,9 @@ export class Page {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  let searchParams = new URLParser();
-  let page = new Page('default', 'entry');
+  let searchParams = new URLParser(), page = null;
+
+  if (searchParams.getPathPart(0) == 'entry') {
+    page = new Page('default', 'entry');
+  }
 });

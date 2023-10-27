@@ -61,8 +61,15 @@ namespace core\PHPLibrary\Page {
           $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
           $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
           $this->page->breadcrumbs->assembly();
-
-          $entry_comments_array = $entry->get_comments(['limit' => [2, 0]]);
+          //sortColumn=created_unix_timestamp&sortType=desc
+          $entry_comments_array = $entry->get_comments([
+            'limit' => [2, 0],
+            'order_by' => [
+              'column' => 'created_unix_timestamp',
+              'sort' => 'desc'
+            ],
+            'parent_id' => 0
+          ]);
           foreach ($entry_comments_array as $entry_comment) {
             $entry_comment->init_data(['created_unix_timestamp']);
           }
@@ -90,7 +97,7 @@ namespace core\PHPLibrary\Page {
               'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
               'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
               'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
-              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('Комментарий скрыт модерацией сайта по следующей причине: %s', $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
+              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('Комментарий скрыт: %s', $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
             ]));
 
             $entry_comment_index++;
@@ -111,9 +118,6 @@ namespace core\PHPLibrary\Page {
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'ENTRY_TITLE' => $entry->get_title($cms_base_locale_name),
               'ENTRY_CONTENT' => $parsedown->text($entry->get_content($cms_base_locale_name)),
-              'ENTRY_COMMENT_FORM' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/commentForm.tpl', [
-                'ENTRY_ID' => $entry->get_id(),
-              ]),
               'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : 'К этой записи нет комментариев.'
             ])
           ]);

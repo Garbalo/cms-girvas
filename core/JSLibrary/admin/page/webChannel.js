@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoices.assembly();
 
         let interactiveContainerElement = document.querySelector('#E8548530785');
-        interactiveContainerElement.append(interactiveChoices.target.assembled)
+        interactiveContainerElement.append(interactiveChoices.target.element)
 
         let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
         interactiveChoicesSelectElement.addEventListener('change', (event) => {
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         interactiveChoicesWebChannelsTypes.target.setName('web_channel_type_id');
         interactiveChoicesWebChannelsTypes.assembly();
 
-        document.querySelector('#TC6474387201').append(interactiveChoicesWebChannelsTypes.target.assembled);
+        document.querySelector('#TC6474387201').append(interactiveChoicesWebChannelsTypes.target.element);
       });
     });
     
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           interactiveChoicesEntriesCategories.target.setName('web_channel_entries_category_id');
           interactiveChoicesEntriesCategories.assembly();
 
-          document.querySelector('#TC6474387200').append(interactiveChoicesEntriesCategories.target.assembled);
+          document.querySelector('#TC6474387200').append(interactiveChoicesEntriesCategories.target.element);
         });
       });
     });
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       interactiveChoicesWebChannelsTypes.target.setName('web_channel_type_id');
       interactiveChoicesWebChannelsTypes.assembly();
 
-      document.querySelector('#TC6474387201').append(interactiveChoicesWebChannelsTypes.target.assembled);
+      document.querySelector('#TC6474387201').append(interactiveChoicesWebChannelsTypes.target.element);
     });
 
     fetch('/handler/entries/categories', {
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       interactiveChoicesEntriesCategories.target.setName('web_channel_entries_category_id');
       interactiveChoicesEntriesCategories.assembly();
 
-      document.querySelector('#TC6474387200').append(interactiveChoicesEntriesCategories.target.assembled);
+      document.querySelector('#TC6474387200').append(interactiveChoicesEntriesCategories.target.element);
     });
   }
 });

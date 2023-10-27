@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   interactiveButton.target.setCallback(() => {
     window.location.href = `./entriesCategory`;
   });
-  interactiveButton.target.assembly();
+  interactiveButton.assembly();
 
   let interactiveContainerElement = document.querySelector('#E8548530785');
-  interactiveContainerElement.append(interactiveButton.target.assembled);
+  interactiveContainerElement.append(interactiveButton.target.element);
 
   let tableItems = document.querySelectorAll('.table-entries-categories__item');
   for (let tableItem of tableItems) {
@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             interactiveModal.target.close();
           });
 
-          interactiveModal.target.assembly();
-          document.body.appendChild(interactiveModal.target.assembled);
+          interactiveModal.assembly();
+          document.body.appendChild(interactiveModal.target.element);
           interactiveModal.target.show();
         }
       });
