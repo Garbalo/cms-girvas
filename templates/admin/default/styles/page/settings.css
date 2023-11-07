@@ -32,3 +32,12 @@
 #TC6474389682 .interactive__select-imitation {
   margin-bottom: 10px;
 }
+.form.form_settings .cell_additional-fields-title-container > .cell__title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+.form.form_settings .cell_additional-fields-title-container .cell__title-value {
+  display: flex;
+  align-items: center;
+}

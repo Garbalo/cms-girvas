@@ -1,30 +1,37 @@
-.user-editor-form {
-  display: flex;
-  flex-direction: column;
-}
-.user-editor-form__panel {
-  display: flex;
-  justify-content: flex-end;
-}
-.user-editor-form__panel-submit {
-  margin-right: 10px;
-  cursor: pointer;
-}
-.user-editor-form__panel-submit:last-child {
-  margin-right: 0;
-}
-.page__user-editor {
+.form.form_user .table_user {
   margin-bottom: 10px;
 }
-.user-editor-form__input {
+.form.form_user .table__cell {
+  vertical-align: top;
+}
+.form.form_user .cell__title {
+  font-weight: 700;
+  text-transform: uppercase;
   margin-bottom: 10px;
 }
-.user-editor-form__input:last-child {
+.form.form_user input,
+.form.form_user select,
+.form.form_user textarea {
+  width: 100%;
+}
+.form.form_user input:not(:nth-last-child()),
+.form.form_user select:not(:nth-last-child()),
+.form.form_user textarea:not(:nth-last-child()) {
+  margin-bottom: 10px;
+}
+.form.form_user textarea {
+  resize: vertical;
+}
+.form.form_user .form__input[type="submit"] {
+  width: fit-content;
+  float: right;
+}
+.form.form_user .cell_additional-fields-title-container > .cell__title {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 0;
 }
-.user-editor-form__textarea {
-  margin-bottom: 10px;
-}
-.user-editor-form__textarea:last-child {
-  margin-bottom: 0;
+.form.form_user .cell_additional-fields-title-container .cell__title-value {
+  display: flex;
+  align-items: center;
 }

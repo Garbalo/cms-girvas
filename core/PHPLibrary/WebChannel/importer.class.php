@@ -14,7 +14,7 @@ namespace core\PHPLibrary\WebChannel {
 
     public function get() : SimpleXMLElement|bool {
       $web_channel_link = $this->get_web_channel_link();
-      return simplexml_load_file($web_channel_link);
+      return @simplexml_load_file($web_channel_link);
     }
 
     private function set_web_channel_link(string $link) : void {

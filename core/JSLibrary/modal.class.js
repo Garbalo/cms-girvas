@@ -27,7 +27,7 @@ class Modal {
   init(modalContent) {
     this.element = this.createElementDiv();
     this.element.classList.add('modal');
-    this.element.innerHTML = modalContent;
+    this.element.append(modalContent);
 
     this.wrapperElement = this.createElementDiv();
     this.wrapperElement.classList.add('modal-wrapper');

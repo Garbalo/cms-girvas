@@ -40,7 +40,7 @@ export class ToolImage extends Tool {
     mediaListItemElement.addEventListener('click', (event) => {
       event.preventDefault();
 
-      let inputImageLabelElement = this.modal.target.assembled.querySelector('[name="image_label"]');
+      let inputImageLabelElement = this.modal.target.element.querySelector('[name="image_label"]');
       let imageLabel = inputImageLabelElement.value;
 
       this.editor.textarea.replaceStringSelection(
@@ -124,25 +124,25 @@ export class ToolImage extends Tool {
 
       let formElement = document.createElement('form');
       formElement.classList.add('form');
-      formElement.appendChild(inputFilesElement);
-      formElement.appendChild(inputImageLabelElement);
-      formElement.appendChild(inputImageLinkElement);
+      formElement.append(inputFilesElement);
+      formElement.append(inputImageLabelElement);
+      formElement.append(inputImageLinkElement);
       
       let inputsGroupContainer = document.createElement('div');
       inputsGroupContainer.append(formElement);
 
-      modalBodyContent.appendChild(mediaContainerElement);
-      modalBodyContent.appendChild(inputsGroupContainer);
+      modalBodyContent.append(mediaContainerElement);
+      modalBodyContent.append(inputsGroupContainer);
 
-      this.modal = new Interactive('modal', {title: "Вставить изображение", content: modalBodyContent.outerHTML, width: 'calc(100% - 400px)'});
+      this.modal = new Interactive('modal', {title: "Вставить изображение", content: modalBodyContent, width: 'calc(100% - 400px)'});
       
       let self = this;
       this.modal.target.onClose(() => {
         self.imagesListGroup = 0;
       });
       this.modal.target.addButton('Вставить', () => {
-        let inputImageLabelElement = this.modal.target.assembled.querySelector('[name="image_label"]');
-        let inputImageLinkElement = this.modal.target.assembled.querySelector('[name="image_link"]');
+        let inputImageLabelElement = this.modal.target.element.querySelector('[name="image_label"]');
+        let inputImageLinkElement = this.modal.target.element.querySelector('[name="image_link"]');
         
         let imageLabel = inputImageLabelElement.value;
         let imageLink = inputImageLinkElement.value;
@@ -156,8 +156,8 @@ export class ToolImage extends Tool {
       this.modal.target.addButton('Отмена', () => {
         this.modal.target.close();
       });
-      this.modal.target.assembly();
-      document.body.appendChild(this.modal.target.assembled);
+      this.modal.assembly();
+      document.body.appendChild(this.modal.target.element);
       this.modal.target.show();
 
       this.getMediaFilesArray().then((data) => {
@@ -219,7 +219,7 @@ export class ToolImage extends Tool {
         });
         interactiveButtonNavNext.target.assembly();
 
-        mediaListItemUploadElement.appendChild(interactiveButtonUpload.target.assembled);
+        mediaListItemUploadElement.appendChild(interactiveButtonUpload.target.element);
         mediaListElement.appendChild(mediaListItemUploadElement);
 
         targetElement.appendChild(mediaListElement);
@@ -233,16 +233,16 @@ export class ToolImage extends Tool {
         let listItemsElementStyle = targetElement.currentStyle || window.getComputedStyle(targetElement);
         let listItemsElementCurrentHeight = parseInt(listItemsElementStyle.height);
 
-        interactiveButtonNavPrev.target.assembled.style.position = 'absolute';
-        interactiveButtonNavPrev.target.assembled.style.left = '0px';
-        interactiveButtonNavPrev.target.assembled.style.top = (listItemsElementCurrentHeight / 2) + 'px';
-        interactiveButtonNavPrev.target.assembled.style.zIndex = '101';
-        interactiveButtonNavNext.target.assembled.style.position = 'absolute';
-        interactiveButtonNavNext.target.assembled.style.right = '0px';
-        interactiveButtonNavNext.target.assembled.style.top = (listItemsElementCurrentHeight / 2) + 'px';
-        interactiveButtonNavNext.target.assembled.style.zIndex = '101';
-        targetElement.appendChild(interactiveButtonNavPrev.target.assembled);
-        targetElement.appendChild(interactiveButtonNavNext.target.assembled);
+        interactiveButtonNavPrev.target.element.style.position = 'absolute';
+        interactiveButtonNavPrev.target.element.style.left = '0px';
+        interactiveButtonNavPrev.target.element.style.top = (listItemsElementCurrentHeight / 2) + 'px';
+        interactiveButtonNavPrev.target.element.style.zIndex = '101';
+        interactiveButtonNavNext.target.element.style.position = 'absolute';
+        interactiveButtonNavNext.target.element.style.right = '0px';
+        interactiveButtonNavNext.target.element.style.top = (listItemsElementCurrentHeight / 2) + 'px';
+        interactiveButtonNavNext.target.element.style.zIndex = '101';
+        targetElement.appendChild(interactiveButtonNavPrev.target.element);
+        targetElement.appendChild(interactiveButtonNavNext.target.element);
       });
     });
   }

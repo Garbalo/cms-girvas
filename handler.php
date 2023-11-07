@@ -45,6 +45,12 @@ if (defined('IS_NOT_HACKED')) {
     include_once($api_file_path);
   }
 
+  // Users Group API
+  if ($system_core->urlp->get_path(1) == 'usersGroup') {
+    $api_file_path = sprintf('%s/api/usersGroup.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   // Entries API
   if ($system_core->urlp->get_path(1) == 'entry') {
     $api_file_path = sprintf('%s/api/entry.api.php', CMS_ROOT_DIRECTORY);
@@ -100,6 +106,30 @@ if (defined('IS_NOT_HACKED')) {
     }
 
     $handler_output_data['timezones'] = $timezones;
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'profile') {
+    if ($system_core->urlp->get_path(2) == 'additional-fields') {
+      $cms_locale_setted = $system_core->configurator->get_database_entry_value('base_locale');
+      $fields_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $cms_locale_setted;
+
+      $fields_types = ($system_core->configurator->exists_database_entry_value('users_additional_field_type')) ? json_decode($system_core->configurator->get_database_entry_value('users_additional_field_type'), true) : [];
+      $fields_titles = ($system_core->configurator->exists_database_entry_value('users_additional_field_title')) ? json_decode($system_core->configurator->get_database_entry_value('users_additional_field_title'), true) : [];
+      $fields_descriptions = ($system_core->configurator->exists_database_entry_value('users_additional_field_description')) ? json_decode($system_core->configurator->get_database_entry_value('users_additional_field_description'), true) : [];
+      $fields_names = ($system_core->configurator->exists_database_entry_value('users_additional_field_name')) ? json_decode($system_core->configurator->get_database_entry_value('users_additional_field_name'), true) : [];
+      
+      $fields = [];
+      foreach ($fields_types as $field_index => $field_type) {
+        array_push($fields, [
+          'type' => $field_type,
+          'title' => $fields_titles[$fields_locale][$field_index],
+          'description' => $fields_descriptions[$fields_locale][$field_index],
+          'name' => $fields_names[$field_index]
+        ]);
+      }
+
+      $handler_output_data['additionalFields'] = $fields;
+    }
   }
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'locale') {
@@ -529,9 +559,28 @@ if (defined('IS_NOT_HACKED')) {
   if ($system_core->urlp->get_path(1) == 'admin' && $system_core->urlp->get_path(2) == 'settings') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && $system_core->client->is_logged(2)) {
       if (!empty($_POST)) {
+
         foreach ($_POST as $setting_name => $setting_value) {
           if (preg_match('/^setting_([a-z0-9_]+)$/', $setting_name, $matches, PREG_OFFSET_CAPTURE)) {
             $setting_name = $matches[1][0];
+
+            if ($setting_name == 'users_additional_field_title' && isset($_POST['_users_additional_fields_locale'])) {
+              if ($system_core->configurator->exists_database_entry_value($setting_name)) {
+                $fields_titles = json_decode($system_core->configurator->get_database_entry_value($setting_name), true);
+                $fields_titles[$_POST['_users_additional_fields_locale']] = $setting_value;
+                $setting_value = $fields_titles;
+              }
+            }
+
+            if ($setting_name == 'users_additional_field_description' && isset($_POST['_users_additional_fields_locale'])) {
+              if ($system_core->configurator->exists_database_entry_value($setting_name)) {
+                $fields_descriptions = json_decode($system_core->configurator->get_database_entry_value($setting_name), true);
+                $fields_descriptions[$_POST['_users_additional_fields_locale']] = $setting_value;
+                $setting_value = $fields_descriptions;
+              }
+            }
+
+            if (is_array($setting_value)) $setting_value = json_encode($setting_value);
 
             switch ($setting_name) {
               case 'security_allowed_admin_ip': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
@@ -625,95 +674,100 @@ if (defined('IS_NOT_HACKED')) {
   if ($_SERVER['REQUEST_METHOD'] == 'POST' && $system_core->urlp->get_path(1) == 'registration') {
     $handler_output_data['notificationContainerTargetID'] = 'NE7648538676';
     
-    if (isset($_POST['user_login']) && isset($_POST['user_email']) && isset($_POST['user_password']) && isset($_POST['user_password_repeat'])) {
-      $user_login = $_POST['user_login'];
-      $user_email = $_POST['user_email'];
-      $user_password = $_POST['user_password'];
-      $user_password_repeat = $_POST['user_password_repeat'];
-      
-      if (preg_match('/^[a-z0-9\_]{4,}$/i', $user_login)) {
-        if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-          if (preg_match('/^[a-z0-9\_\$\%\&\#\@\?]{6,}$/i', $user_password)) {
-            if ($user_password == $user_password_repeat) {
-              if (!\core\PHPLibrary\User::exists_by_login($system_core, $user_login)) {
-                if (!\core\PHPLibrary\User::exists_by_email($system_core, $user_email)) {
-                  $allowed_emails = [];
-                  if ($system_core->configurator->exists_database_entry_value('security_allowed_emails')) {
-                    $allowed_emails = $system_core->configurator->get_database_entry_value('security_allowed_emails');
-                    $allowed_emails = json_decode($allowed_emails, true);
-                  }
+    if ($system_core->configurator->get_database_entry_value('security_allowed_users_registration_status') == 'on') {
+      if (isset($_POST['user_login']) && isset($_POST['user_email']) && isset($_POST['user_password']) && isset($_POST['user_password_repeat'])) {
+        $user_login = $_POST['user_login'];
+        $user_email = $_POST['user_email'];
+        $user_password = $_POST['user_password'];
+        $user_password_repeat = $_POST['user_password_repeat'];
+        
+        if (preg_match('/^[a-z0-9\_]{4,}$/i', $user_login)) {
+          if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+            if (preg_match('/^[a-z0-9\_\$\%\&\#\@\?]{6,}$/i', $user_password)) {
+              if ($user_password == $user_password_repeat) {
+                if (!\core\PHPLibrary\User::exists_by_login($system_core, $user_login)) {
+                  if (!\core\PHPLibrary\User::exists_by_email($system_core, $user_email)) {
+                    $allowed_emails = [];
+                    if ($system_core->configurator->exists_database_entry_value('security_allowed_emails')) {
+                      $allowed_emails = $system_core->configurator->get_database_entry_value('security_allowed_emails');
+                      $allowed_emails = json_decode($allowed_emails, true);
+                    }
 
-                  if ($system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) {
-                    $allowed_emails_status = $system_core->configurator->get_database_entry_value('security_allowed_emails_status');
-                  } else {
-                    $allowed_emails_status = 'off';
-                  }
-                  
-                  $user_email_exploded = explode('@', $user_email);
-
-                  if (empty($allowed_emails) || in_array($user_email_exploded[1], $allowed_emails) || $allowed_emails_status == 'off') {
-                    $user = \core\PHPLibrary\User::create($system_core, $user_login, $user_email, $user_password);
+                    if ($system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) {
+                      $allowed_emails_status = $system_core->configurator->get_database_entry_value('security_allowed_emails_status');
+                    } else {
+                      $allowed_emails_status = 'off';
+                    }
                     
-                    if (!is_null($user)) {
-                      $template = new \core\PHPLibrary\Template($system_core, 'official');
-                      $registration_submit = $user->create_registration_submit();
+                    $user_email_exploded = explode('@', $user_email);
 
-                      if (is_array($registration_submit)) {
-                        $email_sender = new \core\PHPLibrary\EmailSender($system_core);
-                        $email_sender->set_from_user('CMS GIRVAS', 'no-reply@garbalo.com');
-                        $email_sender->set_to_user_email($user_email);
-                        $email_sender->add_header(sprintf('From: %s <%s>', 'CMS GIRVAS', 'no-reply@garbalo.com'));
-                        $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
-                        $email_sender->add_header("\r\nMIME-Version: 1.0");
-                        $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
+                    if (empty($allowed_emails) || in_array($user_email_exploded[1], $allowed_emails) || $allowed_emails_status == 'off') {
+                      $user = \core\PHPLibrary\User::create($system_core, $user_login, $user_email, $user_password);
+                      
+                      if (!is_null($user)) {
+                        $template = new \core\PHPLibrary\Template($system_core, 'official');
+                        $registration_submit = $user->create_registration_submit();
 
-                        $email_sender->set_subject('Регистрация на сайте');
-                        $email_sender->set_content(\core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/email/default.tpl', [
-                          'EMAIL_TITLE' => 'Регистрация прошла успешно!',
-                          'EMAIL_CONTENT' => sprintf('%s, здравствуйте! Прежде чем продолжить пользоваться нашим сайтом, Вам необходимо <a href="%s">подтвердить</a> регистрацию. Если Вы не подавали заявку, то <a href="%s">отмените</a> ее.', $user_login, sprintf('%s/registration?submit=%s', $system_core->get_site_url(), $registration_submit['submit_token']), sprintf('%s/registration?refusal=%s', $system_core->get_site_url(), $registration_submit['refusal_token'])),
-                          'EMAIL_COPYRIGHT' => 'С уважением, администрация сайта.'
-                        ]));
+                        if (is_array($registration_submit)) {
+                          $email_sender = new \core\PHPLibrary\EmailSender($system_core);
+                          $email_sender->set_from_user('CMS GIRVAS', 'no-reply@garbalo.com');
+                          $email_sender->set_to_user_email($user_email);
+                          $email_sender->add_header(sprintf('From: %s <%s>', 'CMS GIRVAS', 'no-reply@garbalo.com'));
+                          $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
+                          $email_sender->add_header("\r\nMIME-Version: 1.0");
+                          $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
 
-                        $email_sender->send();
+                          $email_sender->set_subject('Регистрация на сайте');
+                          $email_sender->set_content(\core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/email/default.tpl', [
+                            'EMAIL_TITLE' => 'Регистрация прошла успешно!',
+                            'EMAIL_CONTENT' => sprintf('%s, здравствуйте! Прежде чем продолжить пользоваться нашим сайтом, Вам необходимо <a href="%s">подтвердить</a> регистрацию. Если Вы не подавали заявку, то <a href="%s">отмените</a> ее.', $user_login, sprintf('%s/registration?submit=%s', $system_core->get_site_url(), $registration_submit['submit_token']), sprintf('%s/registration?refusal=%s', $system_core->get_site_url(), $registration_submit['refusal_token'])),
+                            'EMAIL_COPYRIGHT' => 'С уважением, администрация сайта.'
+                          ]));
 
-                        $handler_message = 'Регистрация успешно завершена. На Ваш почтовый адрес выслано уведомление со ссылкой на страницу с активацией аккаунта.';
-                        $handler_status_code = 1;
+                          $email_sender->send();
+
+                          $handler_message = 'Регистрация успешно завершена. На Ваш почтовый адрес выслано уведомление со ссылкой на страницу с активацией аккаунта.';
+                          $handler_status_code = 1;
+                        } else {
+                          $handler_message = 'Регистрация не завершена из-за ошибки: Процесс подтверждения регистрации не был зарегистрирован в БД.';
+                          $handler_status_code = 0;
+                        }
                       } else {
-                        $handler_message = 'Регистрация не завершена из-за ошибки: Процесс подтверждения регистрации не был зарегистрирован в БД.';
+                        $handler_message = 'Регистрация не завершена из-за ошибки: Пользователь не был создан.';
                         $handler_status_code = 0;
                       }
                     } else {
-                      $handler_message = 'Регистрация не завершена из-за ошибки: Пользователь не был создан.';
+                      $handler_message = 'Регистрация не завершена из-за ошибки: Указанный E-Mail не разрешен для регистрации.';
                       $handler_status_code = 0;
                     }
                   } else {
-                    $handler_message = 'Регистрация не завершена из-за ошибки: Указанный E-Mail не разрешен для регистрации.';
+                    $handler_message = 'Регистрация не завершена из-за ошибки: Указанный E-Mail уже занят.';
                     $handler_status_code = 0;
                   }
                 } else {
-                  $handler_message = 'Регистрация не завершена из-за ошибки: Указанный E-Mail уже занят.';
+                  $handler_message = 'Регистрация не завершена из-за ошибки: Указанный логин уже занят.';
                   $handler_status_code = 0;
                 }
               } else {
-                $handler_message = 'Регистрация не завершена из-за ошибки: Указанный логин уже занят.';
+                $handler_message = 'Регистрация не завершена из-за ошибки: Пароли не совпадают.';
                 $handler_status_code = 0;
               }
             } else {
-              $handler_message = 'Регистрация не завершена из-за ошибки: Пароли не совпадают.';
+              $handler_message = 'Регистрация не завершена из-за ошибки: Пароль не соответствует формату.';
               $handler_status_code = 0;
             }
           } else {
-            $handler_message = 'Регистрация не завершена из-за ошибки: Пароль не соответствует формату.';
+            $handler_message = 'Регистрация не завершена из-за ошибки: E-Mail не соответствует формату.';
             $handler_status_code = 0;
           }
         } else {
-          $handler_message = 'Регистрация не завершена из-за ошибки: E-Mail не соответствует формату.';
+          $handler_message = 'Регистрация не завершена из-за ошибки: Логин не соответствует формату.';
           $handler_status_code = 0;
         }
-      } else {
-        $handler_message = 'Регистрация не завершена из-за ошибки: Логин не соответствует формату.';
-        $handler_status_code = 0;
       }
+    } else {
+      $handler_message = 'Регистрация на веб-сайте отключена.';
+      $handler_status_code = 0;
     }
   }
 
@@ -823,134 +877,134 @@ if (defined('IS_NOT_HACKED')) {
   }
 
   // Манипуляция с группами пользователей
-  if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_DELETE['user_group_event_delete']) && $system_core->client->is_logged(2)) {
-      if (isset($_DELETE['user_group_id'])) {
-        $user_group_id = (is_numeric($_DELETE['user_group_id'])) ? (int)$_DELETE['user_group_id'] : 0;
+  // if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
+  //   if (isset($_DELETE['user_group_event_delete']) && $system_core->client->is_logged(2)) {
+  //     if (isset($_DELETE['user_group_id'])) {
+  //       $user_group_id = (is_numeric($_DELETE['user_group_id'])) ? (int)$_DELETE['user_group_id'] : 0;
 
-        if (\core\PHPLibrary\UserGroup::exists_by_id($system_core, $user_group_id)) {
-          $user_group = new \core\PHPLibrary\UserGroup($system_core, $user_group_id);
+  //       if (\core\PHPLibrary\UserGroup::exists_by_id($system_core, $user_group_id)) {
+  //         $user_group = new \core\PHPLibrary\UserGroup($system_core, $user_group_id);
 
-          $user_group_is_deleted = $user_group->delete();
-          if ($user_group_is_deleted) {
-            $handler_message = 'Группа пользователей успешно удалена.';
-            $handler_status_code = 1;
-          } else {
-            $handler_message = 'Группа пользователей не была удалена, поскольку произошел неизвестный сбой.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Группа пользователей не удалена, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
+  //         $user_group_is_deleted = $user_group->delete();
+  //         if ($user_group_is_deleted) {
+  //           $handler_message = 'Группа пользователей успешно удалена.';
+  //           $handler_status_code = 1;
+  //         } else {
+  //           $handler_message = 'Группа пользователей не была удалена, поскольку произошел неизвестный сбой.';
+  //           $handler_status_code = 0;
+  //         }
+  //       } else {
+  //         $handler_message = 'Группа пользователей не удалена, поскольку ее не существует.';
+  //         $handler_status_code = 0;
+  //       }
 
-        $handler_output_data['modalClose'] = true;
-        $handler_output_data['reload'] = true;
-      }
-    }
-  }
+  //       $handler_output_data['modalClose'] = true;
+  //       $handler_output_data['reload'] = true;
+  //     }
+  //   }
+  // }
 
-  if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PUT['user_group_event_save']) && $system_core->client->is_logged(2)) {
-      $user_group_name = isset($_PUT['user_group_name']) ? $_PUT['user_group_name'] : '';
+  // if ($_SERVER['REQUEST_METHOD'] == 'PUT' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
+  //   if (isset($_PUT['user_group_event_save']) && $system_core->client->is_logged(2)) {
+  //     $user_group_name = isset($_PUT['user_group_name']) ? $_PUT['user_group_name'] : '';
       
-      if (!empty($user_group_name)) {
-        if (!\core\PHPLibrary\UserGroup::exists_by_name($system_core, $user_group_name)) {
-          if (preg_match('/[a-z\_]+/i', $user_group_name)) {
-            $user_group_permissions = 0x0000000000000000;
-            $user_group_permissions_array = isset($_PUT['user_group_permissions']) ? $_PUT['user_group_permissions'] : [];
-            if (!empty($user_group_permissions_array)) {
-              foreach ($user_group_permissions_array as $user_group_permission) {
-                switch ($user_group_permission) {
-                  case 'admin_panel_auth': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
-                  case 'admin_users_ban': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_BAN; break;
-                }
-              }
-            }
+  //     if (!empty($user_group_name)) {
+  //       if (!\core\PHPLibrary\UserGroup::exists_by_name($system_core, $user_group_name)) {
+  //         if (preg_match('/[a-z\_]+/i', $user_group_name)) {
+  //           $user_group_permissions = 0x0000000000000000;
+  //           $user_group_permissions_array = isset($_PUT['user_group_permissions']) ? $_PUT['user_group_permissions'] : [];
+  //           if (!empty($user_group_permissions_array)) {
+  //             foreach ($user_group_permissions_array as $user_group_permission) {
+  //               switch ($user_group_permission) {
+  //                 case 'admin_panel_auth': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
+  //                 case 'admin_users_ban': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_BAN; break;
+  //               }
+  //             }
+  //           }
 
-            $user_group = \core\PHPLibrary\UserGroup::create($system_core, $user_group_name, $user_group_permissions);
-            if (!is_null($user_group)) {
-              $handler_message = 'Группа пользователей успешно создана.';
-              $handler_status_code = 1;
+  //           $user_group = \core\PHPLibrary\UserGroup::create($system_core, $user_group_name, $user_group_permissions);
+  //           if (!is_null($user_group)) {
+  //             $handler_message = 'Группа пользователей успешно создана.';
+  //             $handler_status_code = 1;
 
-              $handler_output_data['href'] = sprintf('/admin/userGroup/%d', $user_group->get_id());
-            } else {
-              $handler_message = 'Произошла внутренняя ошибка. Группа пользователей не была создана.';
-              $handler_status_code = 0;
-            }
-          } else {
-            $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование имеет неверный формат.';
-            $handler_status_code = 0;
-          }
-        } else {
-          $handler_message = 'Данные группы пользователей не были сохранены, поскольку указанное наименование уже используется.';
-          $handler_status_code = 0;
-        }
-      } else {
-        $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование не может быть пустым.';
-        $handler_status_code = 0;
-      }
-    }
-  }
+  //             $handler_output_data['href'] = sprintf('/admin/userGroup/%d', $user_group->get_id());
+  //           } else {
+  //             $handler_message = 'Произошла внутренняя ошибка. Группа пользователей не была создана.';
+  //             $handler_status_code = 0;
+  //           }
+  //         } else {
+  //           $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование имеет неверный формат.';
+  //           $handler_status_code = 0;
+  //         }
+  //       } else {
+  //         $handler_message = 'Данные группы пользователей не были сохранены, поскольку указанное наименование уже используется.';
+  //         $handler_status_code = 0;
+  //       }
+  //     } else {
+  //       $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование не может быть пустым.';
+  //       $handler_status_code = 0;
+  //     }
+  //   }
+  // }
 
-  if ($_SERVER['REQUEST_METHOD'] == 'PATCH' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
-    if (isset($_PATCH['user_group_event_save']) && $system_core->client->is_logged(2)) {
-      if (isset($_PATCH['user_group_id'])) {
-        $user_group_id = (is_numeric($_PATCH['user_group_id'])) ? (int)$_PATCH['user_group_id'] : 0;
+  // if ($_SERVER['REQUEST_METHOD'] == 'PATCH' && $system_core->urlp->get_path(1) == 'userGroup' && is_null($system_core->urlp->get_path(2))) {
+  //   if (isset($_PATCH['user_group_event_save']) && $system_core->client->is_logged(2)) {
+  //     if (isset($_PATCH['user_group_id'])) {
+  //       $user_group_id = (is_numeric($_PATCH['user_group_id'])) ? (int)$_PATCH['user_group_id'] : 0;
 
-        if (\core\PHPLibrary\UserGroup::exists_by_id($system_core, $user_group_id)) {
-          $user_group = new \core\PHPLibrary\UserGroup($system_core, $user_group_id);
+  //       if (\core\PHPLibrary\UserGroup::exists_by_id($system_core, $user_group_id)) {
+  //         $user_group = new \core\PHPLibrary\UserGroup($system_core, $user_group_id);
 
-          $user_group_data = [];
+  //         $user_group_data = [];
 
-          if (isset($_PATCH['user_group_name'])) $user_group_data['name'] = $_PATCH['user_group_name'];
+  //         if (isset($_PATCH['user_group_name'])) $user_group_data['name'] = $_PATCH['user_group_name'];
           
-          $user_group_permissions = 0x0000000000000000;
-          $user_group_permissions_array = isset($_PATCH['user_group_permissions']) ? $_PATCH['user_group_permissions'] : [];
+  //         $user_group_permissions = 0x0000000000000000;
+  //         $user_group_permissions_array = isset($_PATCH['user_group_permissions']) ? $_PATCH['user_group_permissions'] : [];
           
-          if (!empty($user_group_permissions_array)) {
-            foreach ($user_group_permissions_array as $user_group_permission) {
-              switch ($user_group_permission) {
-                case 'admin_panel_auth': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
-                case 'admin_users_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT; break;
-                case 'admin_users_groups_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT; break;
-                case 'admin_modules_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT; break;
-                case 'admin_templates_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT; break;
-                case 'admin_settings_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT; break;
-                case 'admin_viewing_logs': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_VIEWING_LOGS; break;
-                case 'moder_users_ban': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_BAN; break;
-                case 'moder_entries_comments_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT; break;
-                case 'moder_users_warns': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_WARNS; break;
-                case 'editor_media_files_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT; break;
-                case 'editor_entries_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
-                case 'editor_entries_categories_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
-                case 'editor_pages_static_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
-                case 'base_entry_comment_rate': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
-              }
-            }
-          }
+  //         if (!empty($user_group_permissions_array)) {
+  //           foreach ($user_group_permissions_array as $user_group_permission) {
+  //             switch ($user_group_permission) {
+  //               case 'admin_panel_auth': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
+  //               case 'admin_users_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT; break;
+  //               case 'admin_users_groups_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT; break;
+  //               case 'admin_modules_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT; break;
+  //               case 'admin_templates_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT; break;
+  //               case 'admin_settings_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT; break;
+  //               case 'admin_viewing_logs': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_VIEWING_LOGS; break;
+  //               case 'moder_users_ban': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_BAN; break;
+  //               case 'moder_entries_comments_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT; break;
+  //               case 'moder_users_warns': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_WARNS; break;
+  //               case 'editor_media_files_management': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT; break;
+  //               case 'editor_entries_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
+  //               case 'editor_entries_categories_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
+  //               case 'editor_pages_static_edit': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
+  //               case 'base_entry_comment_rate': $user_group_permissions = $user_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
+  //             }
+  //           }
+  //         }
 
-          $user_group_data['permissions'] = $user_group_permissions;
+  //         $user_group_data['permissions'] = $user_group_permissions;
 
-          if (preg_match('/[a-z\_]+/i', $user_group_data['name'])) {
-            $user_group_is_updated = $user_group->update($user_group_data);
+  //         if (preg_match('/[a-z\_]+/i', $user_group_data['name'])) {
+  //           $user_group_is_updated = $user_group->update($user_group_data);
 
-            if ($user_group_is_updated) {
-              $handler_message = 'Данные группы пользователей успешно сохранены.';
-              $handler_status_code = 1;
-            } else {
-              $handler_message = 'Данные группы пользователей не были сохранены, поскольку произошел неизвестный сбой.';
-              $handler_status_code = 0;
-            }
-          }
+  //           if ($user_group_is_updated) {
+  //             $handler_message = 'Данные группы пользователей успешно сохранены.';
+  //             $handler_status_code = 1;
+  //           } else {
+  //             $handler_message = 'Данные группы пользователей не были сохранены, поскольку произошел неизвестный сбой.';
+  //             $handler_status_code = 0;
+  //           }
+  //         }
           
-        } else {
-          $handler_message = 'Данные группы пользователей не были сохранены, поскольку ее не существует.';
-          $handler_status_code = 0;
-        }
-      }
-    }
-  }
+  //       } else {
+  //         $handler_message = 'Данные группы пользователей не были сохранены, поскольку ее не существует.';
+  //         $handler_status_code = 0;
+  //       }
+  //     }
+  //   }
+  // }
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST' && $system_core->urlp->get_path(1) == 'parsedown' && is_null($system_core->urlp->get_path(2))) {
     if (isset($_POST['markdown_text'])) {
@@ -988,13 +1042,18 @@ if (defined('IS_NOT_HACKED')) {
           /** @var string $user_token */
           $user_token = \core\PHPLibrary\Client\Session::generate_token();
 
-          /** @var \core\PHPLibrary\Client\Session|null $user_session */
-          $user_session = \core\PHPLibrary\Client\Session::create($system_core, [
-            'user_id' => $user->get_id(),
-            'token' => $user_token,
-            'user_ip' => $user_ip,
-            'type_id' => 1
-          ]);
+          if (!\core\PHPLibrary\Client\Session::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1)) {
+            /** @var \core\PHPLibrary\Client\Session|null $user_session */
+            $user_session = \core\PHPLibrary\Client\Session::create($system_core, [
+              'user_id' => $user->get_id(),
+              'token' => $user_token,
+              'user_ip' => $user_ip,
+              'type_id' => 1
+            ]);
+          } else {
+            $user_session = \core\PHPLibrary\Client\Session::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1);
+            $user_session->update([]);
+          }
 
           if (!is_null($user_session)) {
             $user_session->init_data(['updated_unix_timestamp', 'token']);
@@ -1074,8 +1133,7 @@ if (defined('IS_NOT_HACKED')) {
           $user_token = \core\PHPLibrary\Client\Session::generate_token();
 
           // Если сессия не была найдена, то создаем новую.
-          if (!\core\PHPLibrary\Client\Session::exists_by_ip($system_core, $user_ip, 2)) {
-            
+          if (!\core\PHPLibrary\Client\Session::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2)) {
             /** @var \core\PHPLibrary\Client\Session|null $user_session */
             $user_session = \core\PHPLibrary\Client\Session::create($system_core, [
               'user_id' => $user->get_id(),
@@ -1083,57 +1141,31 @@ if (defined('IS_NOT_HACKED')) {
               'user_ip' => $user_ip,
               'type_id' => 2
             ]);
-
-            if (!is_null($user_session)) {
-              $user_session->init_data(['updated_unix_timestamp', 'token']);
-              $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
-
-              setcookie('_grv_atoken', $user_session->get_token(), [
-                'expires' => $user_session_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain'),
-                'secure' => true,
-                'httponly' => true
-              ]);
-
-              $handler_output_data['reload'] = true;
-
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация прошла успешно. Создана новая сессия.';
-              $handler_status_code = 1;
-            } else {
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация не была пройдена, так как сессия не была создана.';
-            }
-          
-          // Если сессия была найдена, то восстанавливаем или обновляем старую.
           } else {
+            $user_session = \core\PHPLibrary\Client\Session::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2);
+            $user_session->update([]);
+          }
 
-            /** @var \core\PHPLibrary\Session|null $user_session Объект сессии пользователя */
-            $user_session = \core\PHPLibrary\Client\Session::get_by_ip($system_core, $user_ip, 2);
-            
-            if (!is_null($user_session)) {
-              $user_session->reset_expire();
-              $user_session->init_data(['updated_unix_timestamp', 'token']);
-              $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
+          if (!is_null($user_session)) {
+            $user_session->init_data(['updated_unix_timestamp', 'token']);
+            $user_session_expires = $user_session->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
 
-              setcookie('_grv_atoken', $user_session->get_token(), [
-                'expires' => $user_session_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain'),
-                'secure' => true,
-                'httponly' => true
-              ]);
+            setcookie('_grv_atoken', $user_session->get_token(), [
+              'expires' => $user_session_expires,
+              'path' => '/',
+              'domain' => $system_core->configurator->get('domain'),
+              'secure' => true,
+              'httponly' => true
+            ]);
 
-              $handler_output_data['reload'] = true;
+            $handler_output_data['reload'] = true;
 
-              $handler_message = 'Авторизация успешно завершена. Сессия обновлена.';
-              $handler_status_code = 1;
-            } else {
-              /** @var string $handler_message Сообщение обработчика */
-              $handler_message = 'Авторизация не была пройдена, так как сессия не была восстановлена.';
-            }
-
+            /** @var string $handler_message Сообщение обработчика */
+            $handler_message = 'Авторизация прошла успешно. Создана новая сессия.';
+            $handler_status_code = 1;
+          } else {
+            /** @var string $handler_message Сообщение обработчика */
+            $handler_message = 'Авторизация не была пройдена, так как сессия не была создана.';
           }
 
         } else {

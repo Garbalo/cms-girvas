@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
@@ -168,6 +176,17 @@ namespace core\PHPLibrary {
       }
 
       return 0;
+    }
+
+    public function get_additional_field_data(string $field_name) : mixed {
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
+        if (isset($metadata_array['additionalFields'])) {
+          return (isset($metadata_array['additionalFields'][$field_name])) ? $metadata_array['additionalFields'][$field_name] : null;
+        }
+      }
+
+      return null;
     }
     
     /**

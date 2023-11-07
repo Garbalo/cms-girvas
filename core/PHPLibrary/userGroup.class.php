@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
@@ -155,14 +163,14 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_title($locale_name = 'ru_RU') : string {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
-        if (isset($metadata_array['texts'][$locale_name]['title'])) {
-          return $metadata_array['texts'][$locale_name]['title'];
+      if (property_exists($this, 'texts')) {
+        $texts_array = json_decode($this->texts, true);
+        if (isset($texts_array[$locale_name]['title'])) {
+          return $texts_array[$locale_name]['title'];
         }
       }
 
-      return '{ERROR:USER_GROUP_DATA_IS_NOT_EXISTS=metadata_title}';
+      return '';
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
@@ -356,8 +364,20 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts', 'metadata'])) {
           $query_builder->statement->clause_set->add_column($data_name);
+        }
+      }
+
+      if (array_key_exists('texts', $data)) {
+        foreach ($data['texts'] as $lang_name => $data_texts) {
+          $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        }
+      }
+
+      if (array_key_exists('metadata', $data)) {
+        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 
@@ -375,7 +395,7 @@ namespace core\PHPLibrary {
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'texts', 'metadata'])) {
           switch (gettype($data_value)) {
             case 'boolean': $data_value_type = \PDO::PARAM_INT; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;

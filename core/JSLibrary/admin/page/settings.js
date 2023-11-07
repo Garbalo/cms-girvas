@@ -242,4 +242,184 @@ document.addEventListener('DOMContentLoaded', (event) => {
       });
     });
   }
+
+  if (urlp.getPathPart(3) == null || urlp.getPathPart(3) == 'users') {
+    let tableAdditionalFields = document.querySelector('[role="profile-table-additional-fields"]');
+    let tableAdditionalFieldsButtonContainer = document.querySelector('[role="profile-add-field"]');
+
+    let addField = (targetElement, fieldData = {}) => {
+      let tableRow = document.createElement('tr');
+      tableRow.setAttribute('role', 'additional-field');
+      tableRow.classList.add('table__row');
+      
+      let tableCellTypeField = document.createElement('td');
+      tableCellTypeField.classList.add('table__cell');
+
+      let tableCellTitleField = document.createElement('td');
+      tableCellTitleField.classList.add('table__cell');
+
+      let tableCellNameField = document.createElement('td');
+      tableCellNameField.classList.add('table__cell');
+
+      let tableCellDescriptionField = document.createElement('td');
+      tableCellDescriptionField.classList.add('table__cell');
+
+      let interactiveChoicesTypeField = new Interactive('choices');
+      interactiveChoicesTypeField.target.addItem('String', 'text');
+      interactiveChoicesTypeField.target.addItem('Number', 'number');
+      interactiveChoicesTypeField.target.addItem('Date', 'date');
+      interactiveChoicesTypeField.target.addItem('Text', 'textarea');
+      interactiveChoicesTypeField.target.setName('setting_users_additional_field_type[]');
+
+      if (typeof fieldData.type != 'undefined') {
+        switch (fieldData.type) {
+          case 'text': interactiveChoicesTypeField.target.setItemSelectedIndex(0); break;
+          case 'number': interactiveChoicesTypeField.target.setItemSelectedIndex(1); break;
+          case 'date': interactiveChoicesTypeField.target.setItemSelectedIndex(2); break;
+          case 'textarea': interactiveChoicesTypeField.target.setItemSelectedIndex(3); break;
+          default: interactiveChoicesTypeField.target.setItemSelectedIndex(0);
+        }
+      }
+
+      interactiveChoicesTypeField.assembly();
+
+      tableCellTypeField.append(interactiveChoicesTypeField.target.element);
+
+      let additionalFieldInputTitle = document.createElement('input');
+      additionalFieldInputTitle.setAttribute('type', 'text');
+      additionalFieldInputTitle.setAttribute('name', 'setting_users_additional_field_title[]');
+      additionalFieldInputTitle.setAttribute('placeholder', 'My field');
+      additionalFieldInputTitle.classList.add('form__input');
+      additionalFieldInputTitle.classList.add('form__input_text');
+
+      if (typeof fieldData.title != 'undefined') {
+        additionalFieldInputTitle.value = fieldData.title;
+      }
+
+      tableCellTitleField.append(additionalFieldInputTitle);
+
+      let additionalFieldInputName = document.createElement('input');
+      additionalFieldInputName.setAttribute('pattern', '[a-z0-9_]+');
+      additionalFieldInputName.setAttribute('type', 'text');
+      additionalFieldInputName.setAttribute('name', 'setting_users_additional_field_name[]');
+      additionalFieldInputName.setAttribute('placeholder', 'my_field');
+      additionalFieldInputName.classList.add('form__input');
+      additionalFieldInputName.classList.add('form__input_text');
+
+      if (typeof fieldData.name != 'undefined') {
+        additionalFieldInputName.value = fieldData.name;
+      }
+
+      tableCellNameField.append(additionalFieldInputName);
+
+      let additionalFieldInputDescription = document.createElement('textarea');
+      additionalFieldInputDescription.setAttribute('name', 'setting_users_additional_field_description[]');
+      additionalFieldInputDescription.setAttribute('placeholder', 'Description field...');
+      additionalFieldInputDescription.classList.add('form__textarea');
+
+      if (typeof fieldData.description != 'undefined') {
+        additionalFieldInputDescription.innerText = fieldData.description;
+      }
+
+      tableCellDescriptionField.append(additionalFieldInputDescription);
+
+      tableRow.append(tableCellTypeField);
+      tableRow.append(tableCellTitleField);
+      tableRow.append(tableCellNameField);
+      tableRow.append(tableCellDescriptionField);
+
+      targetElement.parentElement.before(tableRow);
+    };
+
+    let buttonAddProfileField = new Interactive('button');
+    buttonAddProfileField.target.setLabel('Новое поле');
+    buttonAddProfileField.target.setCallback((event) => {
+      event.preventDefault();
+
+      addField(tableAdditionalFieldsButtonContainer);
+    });
+    buttonAddProfileField.assembly();
+    
+    let interactiveChoicesFieldsLocale = new Interactive('choices'), locales = [];
+    interactiveChoicesFieldsLocale.target.setName('_users_additional_fields_locale');
+
+    // Получаем все установленные языковые пакеты
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      locales = data.outputData.locales;
+      locales.forEach((locale, localeIndex) => {
+        let localeIconImageElement = document.createElement('img');
+        localeIconImageElement.setAttribute('src', locale.iconURL);
+        localeIconImageElement.setAttribute('alt', locale.title);
+
+        let localeLabelElement = document.createElement('span');
+        localeLabelElement.innerText = locale.title;
+
+        let localeTemplate = document.createElement('template');
+        localeTemplate.innerHTML += localeIconImageElement.outerHTML;
+        localeTemplate.innerHTML += localeLabelElement.outerHTML;
+
+        interactiveChoicesFieldsLocale.target.addItem(localeTemplate.innerHTML, locale.name);
+      });
+    
+      return fetch('/handler/locale/base', {method: 'GET'});
+
+    // Получает выбранный базовый языковой пакет
+    }).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      let localeSelected = data.outputData.locale;
+      locales.forEach((locale, localeIndex) => {
+        if (locale.name === localeSelected.name) {
+          interactiveChoicesFieldsLocale.target.setItemSelectedIndex(localeIndex);
+        }
+      });
+
+      interactiveChoicesFieldsLocale.assembly();
+      
+      let interactiveChoicesFieldsLocaleSelectElement = interactiveChoicesFieldsLocale.target.element.querySelector('select');
+      interactiveChoicesFieldsLocaleSelectElement.addEventListener('change', (event) => {
+        fetch('/handler/profile/additional-fields?locale=' + interactiveChoicesFieldsLocaleSelectElement.value, {method: 'GET'}).then((response) => {
+          return (response.ok) ? response.json() : Promise.reject(response);
+        }).then((data1) => {
+          let additionalFields = document.querySelectorAll('[role="additional-field"]');
+          additionalFields.forEach((element) => {
+            element.remove();
+          })
+
+          let fields = data1.outputData.additionalFields;
+          fields.forEach((field) => {
+            addField(tableAdditionalFieldsButtonContainer, {
+              type: field.type,
+              title: field.title,
+              description: field.description,
+              name: field.name
+            });
+          });
+        });
+      });
+
+      let profileAdditionalFieldsLocaleContainer = document.querySelector('[role="profile-additional-fields-locale"]');
+      profileAdditionalFieldsLocaleContainer.append(interactiveChoicesFieldsLocale.target.element);
+
+      return fetch('/handler/profile/additional-fields?locale=' + localeSelected.name, {method: 'GET'});
+    
+    // Получаем дополнительные поля для профиля
+    }).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      let fields = data.outputData.additionalFields;
+      fields.forEach((field) => {
+        addField(tableAdditionalFieldsButtonContainer, {
+          type: field.type,
+          title: field.title,
+          description: field.description,
+          name: field.name
+        });
+      });
+    });
+
+    tableAdditionalFieldsButtonContainer.append(buttonAddProfileField.target.element);
+  }
 });

@@ -17,7 +17,7 @@
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <input name="entry_name" typde="text" class="form__input entry-form__input" value="{ENTRY_NAME}" placeholder="my-first-entry">
+              <input name="entry_name" type="text" class="form__input entry-form__input" value="{ENTRY_NAME}" placeholder="my-first-entry">
             </div>
           </td>
         </tr>

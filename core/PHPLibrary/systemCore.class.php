@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \core\PHPLibrary\SystemCore\Configurator as SystemCoreConfigurator;
@@ -26,7 +34,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.47 Pre-alpha';
+    public const CMS_VERSION = '0.0.48 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;

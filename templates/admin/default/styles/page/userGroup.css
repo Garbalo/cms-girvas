@@ -1,30 +1,28 @@
-.user-group-editor-form {
-  display: flex;
-  flex-direction: column;
-}
-.user-group-editor-form__panel {
-  display: flex;
-  justify-content: flex-end;
-}
-.user-group-editor-form__panel-submit {
-  margin-right: 10px;
-  cursor: pointer;
-}
-.user-group-editor-form__panel-submit:last-child {
-  margin-right: 0;
-}
-.page__user-group-editor {
+.form.form_user-group .table_user-group {
   margin-bottom: 10px;
 }
-.user-group-editor-form__input {
+.form.form_user-group .table__cell {
+  vertical-align: top;
+}
+.form.form_user-group .cell__title {
+  font-weight: 700;
+  text-transform: uppercase;
   margin-bottom: 10px;
 }
-.user-group-editor-form__input:last-child {
-  margin-bottom: 0;
+.form.form_user-group input,
+.form.form_user-group select,
+.form.form_user-group textarea {
+  width: 100%;
 }
-.user-group-editor-form__textarea {
+.form.form_user-group input:not(:nth-last-child()),
+.form.form_user-group select:not(:nth-last-child()),
+.form.form_user-group textarea:not(:nth-last-child()) {
   margin-bottom: 10px;
 }
-.user-group-editor-form__textarea:last-child {
-  margin-bottom: 0;
+.form.form_user-group textarea {
+  resize: vertical;
+}
+.form.form_user-group .form__input[type="submit"] {
+  width: fit-content;
+  float: right;
 }

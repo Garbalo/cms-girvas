@@ -4,16 +4,55 @@
     <h1 class="page__title">Создание пользователя</h1>
   </div>
   <div class="page__content">
-    <form class="form page__user-editor-form user-editor-form" action="/handler/user">
+    <form class="form form_user" action="/handler/user">
       <input name="user_id" type="hidden" value="{USER_ID}">
-      <input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311">
-      <input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.com">
-      <input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
-      <input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
-      <div class="user-editor-form__panel">
-        <button class="form__button form__button_red user-editor-form__panel-button" data-modal-call="admin-user-delete">Удалить</button>
-        <input type="submit" class="form__input form__input_submit form__input_submit_blue user-editor-form__panel-submit" name="user_event_save" formmethod="{USER_FORM_METHOD}" value="Сохранить">
-      </div>
+      <table class="table table_user">
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:USER_PAGE_USER_LOGIN_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:USER_PAGE_USER_LOGIN_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:USER_PAGE_USER_EMAIL_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:USER_PAGE_USER_EMAIL_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.ru"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:USER_PAGE_USER_PASSWORD_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:USER_PAGE_USER_PASSWORD_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:USER_PAGE_USER_PASSWORD_REPEAT_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+          </td>
+        </tr>
+        {USER_ADDITIONAL_FIELDS}
+      </table>
     </form>
   </div>
 </article>

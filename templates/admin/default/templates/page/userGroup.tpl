@@ -5,10 +5,31 @@
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <form class="form page__user-group-editor-form user-group-editor-form" action="/handler/userGroup">
+    <form class="form form_user-group" action="/handler/usersGroup">
       <input name="user_group_id" type="hidden" value="{USER_GROUP_ID}">
-      <input name="user_group_name" typde="text" class="form__input user-group-editor-form__input" value="{USER_GROUP_NAME}" placeholder="friend">
       <table class="table">
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Заголовок</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Заголовок группы пользователей. Он будет использоваться для отображения на сайте и в административной панели.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_group_title_rus" typde="text" class="form__input form__input_text" value="{USER_GROUP_TITLE}" placeholder="My Group" role="usersGroupTitle"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Техническое наименование</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Это техническое наименование группы пользователей, оно необходимо для проведения некоторых внутренний манипуляций.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_group_name" typde="text" class="form__input form__input_text" value="{USER_GROUP_NAME}" placeholder="my-group" role="usersGroupName"></div>
+          </td>
+        </tr>
         <tr class="table__row">
           <th class="table__cell table__cell_header" colspan="2">Административные права</th>
         </tr>

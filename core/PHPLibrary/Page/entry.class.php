@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
@@ -56,11 +64,13 @@ namespace core\PHPLibrary\Page {
 
           $this->system_core->configurator->set_meta_title($entry->get_title($cms_base_locale_name));
           $this->system_core->configurator->set_meta_description($entry->get_description($cms_base_locale_name));
+          $this->system_core->configurator->set_meta_keywrords($entry->get_keywords($cms_base_locale_name));
 
           $this->page->breadcrumbs->add('Все записи', '/entries');
           $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
           $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
           $this->page->breadcrumbs->assembly();
+
           //sortColumn=created_unix_timestamp&sortType=desc
           $entry_comments_array = $entry->get_comments([
             'limit' => [2, 0],
@@ -109,15 +119,30 @@ namespace core\PHPLibrary\Page {
             ]);
           }
 
+          /**
+           * @var Parsedown Парсер markdown-разметки
+           */
           $parsedown = new Parsedown();
 
+          /**
+           * @var string Заголовок записи
+           */
+          $entry_title = (!empty($entry->get_title($cms_base_locale_name))) ? $entry->get_title($cms_base_locale_name) : $entry->get_title($cms_base_locale_setted_name);
+          /**
+           * @var string Содержание записи
+           */
+          $entry_content = (!empty($entry->get_content($cms_base_locale_name))) ? $entry->get_content($cms_base_locale_name) : $entry->get_content($cms_base_locale_setted_name);
+
+          /**
+           * @property string Собранный шаблон в виде строки
+           */
           $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
             'PAGE_NAME' => 'entry',
             'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
               'ENTRY_ID' => $entry->get_id(),
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
-              'ENTRY_TITLE' => $entry->get_title($cms_base_locale_name),
-              'ENTRY_CONTENT' => $parsedown->text($entry->get_content($cms_base_locale_name)),
+              'ENTRY_TITLE' => $entry_title,
+              'ENTRY_CONTENT' => $parsedown->text($entry_content),
               'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : 'К этой записи нет комментариев.'
             ])
           ]);

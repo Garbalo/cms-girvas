@@ -8,7 +8,6 @@
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
-
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
@@ -91,6 +90,11 @@ namespace core\PHPLibrary\Page\Admin {
         if ($settings_name == 'security') {
           $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_TITLE}');
           $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_DESCRIPTION}');
+        }
+
+        if ($settings_name == 'users') {
+          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_USERS_TITLE}');
+          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_USERS_DESCRIPTION}');
         }
 
         $settings_title = $settings->get_title();

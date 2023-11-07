@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
@@ -44,14 +52,16 @@ namespace core\PHPLibrary\Page {
       foreach ($entries_array_objects as $entry_object) {
         $entry_object->init_data(['id', 'texts', 'metadata', 'name', 'created_unix_timestamp']);
 
-        array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/entriesList/item.tpl', [
-          'ENTRY_ID' => $entry_object->get_id(),
-          'ENTRY_TITLE' => $entry_object->get_title(),
-          'ENTRY_DESCRIPTION' => $entry_object->get_description(),
-          'ENTRY_URL' => $entry_object->get_url(),
-          'ENTRY_PREVIEW_URL' => ($entry_object->get_preview_url() != '') ? $entry_object->get_preview_url() : Entry::get_preview_default_url($this->system_core, 512),
-          'ENTRY_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i', $entry_object->get_created_unix_timestamp())
-        ]));
+        if ($entry_object->is_published()) {
+          array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/entriesList/item.tpl', [
+            'ENTRY_ID' => $entry_object->get_id(),
+            'ENTRY_TITLE' => $entry_object->get_title(),
+            'ENTRY_DESCRIPTION' => $entry_object->get_description(),
+            'ENTRY_URL' => $entry_object->get_url(),
+            'ENTRY_PREVIEW_URL' => ($entry_object->get_preview_url() != '') ? $entry_object->get_preview_url() : Entry::get_preview_default_url($this->system_core, 512),
+            'ENTRY_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i', $entry_object->get_created_unix_timestamp())
+          ]));
+        }
 
         unset($entry_data);
       }

@@ -40,10 +40,10 @@ export class ToolLink extends Tool {
       let inputsGroupContainer = document.createElement('div');
       inputsGroupContainer.append(formElement);
 
-      let interactiveModal = new Interactive('modal', {title: "Вставить ссылку", content: inputsGroupContainer.outerHTML});
+      let interactiveModal = new Interactive('modal', {title: "Вставить ссылку", content: inputsGroupContainer});
       interactiveModal.target.addButton('Вставить', () => {
-        let inputLinkLabelElement = interactiveModal.target.assembled.querySelector('[name="link_label"]');
-        let inputLinkElement = interactiveModal.target.assembled.querySelector('[name="link"]');
+        let inputLinkLabelElement = interactiveModal.target.element.querySelector('[name="link_label"]');
+        let inputLinkElement = interactiveModal.target.element.querySelector('[name="link"]');
         
         let linkLabel = (inputLinkLabelElement.value.trim().length == 0) ? stringSelection : inputLinkLabelElement.value;
         let link = inputLinkElement.value;
@@ -57,8 +57,8 @@ export class ToolLink extends Tool {
       interactiveModal.target.addButton('Отмена', () => {
         interactiveModal.target.close();
       });
-      interactiveModal.target.assembly();
-      document.body.appendChild(interactiveModal.target.assembled);
+      interactiveModal.assembly();
+      document.body.appendChild(interactiveModal.target.element);
       interactiveModal.target.show();
     });
   }

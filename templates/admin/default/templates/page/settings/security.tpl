@@ -2,6 +2,23 @@
   <table class="table table_settings">
     <tr class="table__row">
       <td class="table__cell cell">
+        <div class="cell__title">Регистрация пользователей</div>
+        <div class="cell__description">
+          <div class="page__phar-block">Данная опция разрешает или запрещает регистрироваться пользователям в системе.</div>
+        </div>
+      </td>
+      <td class="table__cell cell">
+        <div class="page__phar-block">
+          <div class="form__checkbox-container checkbox-container">
+            <input type="hidden" name="setting_{SETTINGS_NAME}_allowed_users_registration_status" id="I1474308115" value="{SETTING_ALLOWED_USERS_REGISTRATION_STATUS_VALUE}">
+            <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308805" type="checkbox" {SETTING_ALLOWED_USERS_REGISTRATION_CHECKED_VALUE} data-status-block="I1474308115">
+            <label class="checkbox-container__label form__label" for="I1474308805"></label>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr class="table__row">
+      <td class="table__cell cell">
         <div class="cell__title">Ограничение доступа к административной панели по IP-адресу</div>
         <div class="cell__description">
           <div class="page__phar-block">Ограничение доступа к административной панели по IP-адресу позволит давать доступ к административной панели исключительно по IP-адресам.</div>

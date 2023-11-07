@@ -1,5 +1,7 @@
 'use strict';
 
+import {Interactive} from '../../interactive.class.js';
+
 export class Tool {
   constructor(editor, data) {
     this.editor = editor;

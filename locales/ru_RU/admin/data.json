@@ -15,6 +15,8 @@
   "SETTINGS_PAGE_SETTINGS_GROUP_SEO_DESCRIPTION": "Настройки поисковой оптимизации (SEO) необходимы для того, чтобы роботам поисковых систем было проще находить Ваш сайт.",
   "SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_TITLE": "Безопасность",
   "SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_DESCRIPTION": "Вопросы безопасности очень важны в наше время, поэтому уделите больше внимания этому фактору.",
+  "SETTINGS_PAGE_SETTINGS_GROUP_USERS_TITLE": "Пользователи",
+  "SETTINGS_PAGE_SETTINGS_GROUP_USERS_DESCRIPTION": "Здесь можно настроить систему работы с пользователями.",
   "SETTINGS_PAGE_SETTING_ON": "Включено",
   "SETTINGS_PAGE_SETTING_OFF": "Отключено",
   "SETTINGS_PAGE_SETTING_BASE_TITLE_TITLE": "Наименование сайта",
@@ -34,5 +36,13 @@
   "COMMENT_DETECTED_FROM_PREMODERATION_FILTER": "Комментарий направлен на проверку",
   "COMMENT_PREMODERATION_BANNED_WORDS_DETECTED": "Наличие стоп-слов или стоп-фраз",
   "COMMENT_PREMODERATION_EXTERNAL_LINKS_DETECTED": "Наличие ссылок на внешние ресурсы",
-  "COMMENT_PREMODERATION_MANDATORY_PREMODERATION": "Обязательная премодерация"
+  "COMMENT_PREMODERATION_MANDATORY_PREMODERATION": "Обязательная премодерация",
+  "USER_PAGE_USER_LOGIN_TITLE": "Логин",
+  "USER_PAGE_USER_LOGIN_DESCRIPTION": "Логин пользователя является уникальным его наименованием в системе.",
+  "USER_PAGE_USER_EMAIL_TITLE": "E-Mail",
+  "USER_PAGE_USER_EMAIL_DESCRIPTION": "Электронный адрес пользователя необходим для подтверждения регистрации, а также получения различных уведомлений.",
+  "USER_PAGE_USER_PASSWORD_TITLE": "Пароль",
+  "USER_PAGE_USER_PASSWORD_DESCRIPTION": "Пароль пользователя должен отвечать правилам безопасности CMS, поскольку благодаря ему пользователь сможет совершать вход в систему.",
+  "USER_PAGE_USER_PASSWORD_REPEAT_TITLE": "Повтор пароля",
+  "USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION": "Повторите введенный ранее пароль."
 }

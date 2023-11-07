@@ -48,6 +48,7 @@ namespace core\PHPLibrary\Page\Admin\Settings {
     public function assembly(array $template_values = []) {
       $form_template_path = sprintf('%s/%s.tpl', self::FORM_PATH, $this->name);
       
+      $setting_allowed_users_registration_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_users_registration_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_users_registration_status') : '';
       $setting_allowed_emails_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_emails_status') : '';
       $setting_allowed_ip_admin_status_value = ($this->system_core->configurator->exists_database_entry_value('security_allowed_admin_ip_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_admin_ip_status') : '';
       $setting_premoderation_create_status_value = ($this->system_core->configurator->exists_database_entry_value('security_premoderation_create_status')) ? $this->system_core->configurator->get_database_entry_value('security_premoderation_create_status') : '';
@@ -56,6 +57,8 @@ namespace core\PHPLibrary\Page\Admin\Settings {
 
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, $form_template_path, [
         'SETTINGS_NAME' => $this->name,
+        'SETTING_ALLOWED_USERS_REGISTRATION_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_users_registration_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_users_registration_status') : 'off',
+        'SETTING_ALLOWED_USERS_REGISTRATION_CHECKED_VALUE' => ($setting_allowed_users_registration_status_value == 'on') ? 'checked' : '',
         'SETTING_ALLOWED_EMAILS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails')) ? implode(', ', json_decode($this->system_core->configurator->get_database_entry_value('security_allowed_emails'), true)) : '',
         'SETTING_ALLOWED_EMAILS_STATUS_VALUE' => ($this->system_core->configurator->exists_database_entry_value('security_allowed_emails_status')) ? $this->system_core->configurator->get_database_entry_value('security_allowed_emails_status') : 'off',
         'SETTING_ALLOWED_EMAILS_CHECKED_VALUE' => ($setting_allowed_emails_status_value == 'on') ? 'checked' : '',

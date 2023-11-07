@@ -33,7 +33,7 @@ namespace core\PHPLibrary\Page\Admin {
       $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/web-channel/latest-news');
       $web_channel_xml = $web_channel_importer->get();
       $web_channel_items_assembled = [];
-      if (isset($web_channel_xml->channel->item)) {
+      if (isset($web_channel_xml->channel->item) && $web_channel_xml != false) {
         $count_max = 3; $item_index = 0;
         foreach ($web_channel_xml->channel->item as $item) {
           array_push($web_channel_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/webChannel/listItem.tpl', [

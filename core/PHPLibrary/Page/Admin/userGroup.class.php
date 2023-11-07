@@ -19,6 +19,7 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/userGroup.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_script(['src' => 'admin/page/usersGroup.js', 'type' => 'module'], true);
 
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
@@ -43,7 +44,7 @@ namespace core\PHPLibrary\Page\Admin {
         $user_group = (UserGroup::exists_by_id($this->system_core, $user_group_id)) ? new UserGroup($this->system_core, $user_group_id) : null;
         
         if (!is_null($user_group)) {
-          $user_group->init_data(['id', 'name', 'permissions']);
+          $user_group->init_data(['id', 'name', 'permissions', 'texts']);
         }
       }
 
@@ -53,6 +54,7 @@ namespace core\PHPLibrary\Page\Admin {
         'ADMIN_PANEL_PAGE_NAME' => 'user-group',
         'USER_GROUP_ID' => (!is_null($user_group)) ? $user_group->get_id() : 0,
         'USER_GROUP_NAME' => (!is_null($user_group)) ? $user_group->get_name() : '',
+        'USER_GROUP_TITLE' => (!is_null($user_group)) ? $user_group->get_title() : '',
         'USER_GROUP_FORM_METHOD' => (!is_null($user_group)) ? 'PATCH' : 'PUT',
         'USER_GROUP_PERMISSION_ADMIN_PANEL_AUTH_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_PANEL_AUTH)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_USERS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT)) ? 'checked' : ''),

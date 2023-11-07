@@ -35,20 +35,12 @@ export class Toolbar {
           let buttonTest = new Interactive('button');
           buttonTest.target.setLabel('Включить');
           buttonTest.target.setCallback(() => {});
-          buttonTest.target.assembly();
+          buttonTest.assembly();
 
-          optionItemInteractiveElement = buttonTest.target.assembled;
-          optionItemInteractiveElement.classList.add('nadvo-te__toolbar-button');
+          optionItemInteractiveElement = buttonTest.target.element;
+          optionItemInteractiveElement.firstChild.classList.add('nadvo-te__toolbar-button');
         }
-
-        if (optionItem.type == 'select') {
-          optionItemIconContainerElement = this.editor.createElementDiv();
-          optionItemIconContainerElement.classList.add('nadvo-te__toolbar-icon-container');
-
-          optionItemInteractiveElement = this.editor.createElementDiv();
-          optionItemInteractiveElement.classList.add('nadvo-te__toolbar-select');
-        }
-
+        
         switch (optionItem.name) {
           case 'bold': this.tools.bold = new ToolBold(this.editor, optionItemInteractiveElement); break;
           case 'italic': this.tools.italic = new ToolItalic(this.editor, optionItemInteractiveElement); break;
