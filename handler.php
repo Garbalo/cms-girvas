@@ -33,6 +33,12 @@ if (defined('IS_NOT_HACKED')) {
    * Обработчик CMS GIRVAS
    * ==================================================== */
 
+  // Installation API
+  if ($system_core->urlp->get_path(1) == 'install') {
+    $api_file_path = sprintf('%s/api/installation.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   // Modules API
   if ($system_core->urlp->get_path(1) == 'module') {
     $api_file_path = sprintf('%s/api/module.api.php', CMS_ROOT_DIRECTORY);
@@ -1158,6 +1164,11 @@ if (defined('IS_NOT_HACKED')) {
               'httponly' => true
             ]);
 
+            $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS, [
+              'clientIP' => $system_core->client->get_ip_address(),
+              'date' => date('Y/m/d H:i:s', time())
+            ]);
+
             $handler_output_data['reload'] = true;
 
             /** @var string $handler_message Сообщение обработчика */
@@ -1169,10 +1180,20 @@ if (defined('IS_NOT_HACKED')) {
           }
 
         } else {
+          $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL, [
+            'clientIP' => $system_core->client->get_ip_address(),
+            'date' => date('Y/m/d H:i:s', time())
+          ]);
+
           /** @var string $handler_message Сообщение обработчика */
           $handler_message = 'Невозможно завершить авторизацию, поскольку пользователь с такими данными не был найден.';
         }
       } else {
+        $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL, [
+          'clientIP' => $system_core->client->get_ip_address(),
+          'date' => date('Y/m/d H:i:s', time())
+        ]);
+        
         /** @var string $handler_message Сообщение обработчика */
         $handler_message = 'Невозможно завершить авторизацию, поскольку пользователь с такими данными не был найден.';
       }

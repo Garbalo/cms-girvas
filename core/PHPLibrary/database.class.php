@@ -12,6 +12,7 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\DatabaseManagementSystem as EnumDatabaseManagementSystem;
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \PDO as PDO;
+  use \PDOException as PDOException;
 
   final class Database {
     public const SQL_LIBRARY_PATH = 'core/SQLLibrary';
@@ -23,6 +24,7 @@ namespace core\PHPLibrary {
     private EnumDatabaseManagementSystem $database_management_system;
     private DatabaseQueryBuilder $query_builder;
     public PDO $connection;
+
 
     /**
      * __construct
@@ -149,9 +151,36 @@ namespace core\PHPLibrary {
       $database_connection_query_modified = sprintf($database_connection_query, $database_host, $database_name);
 
       try {
-        $this->connection = new PDO($database_connection_query_modified, $database_user, $database_password);
+        $this->connection = new PDO($database_connection_query_modified, $database_user, $database_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING]);
       } catch (PDOException $exception) {
         echo $exception->getMessage();
+      }
+    }
+
+    public function connect_test() : bool {
+      /** @var string $database_name Наименование базы данных */
+      $database_name = $this->get_database_name();
+      /** @var string $database_user Пользователь базы данных */
+      $database_user = $this->get_database_user();
+      /** @var string $database_password Пароль базы данных */
+      $database_password = $this->get_database_password();
+      /** @var string $database_host Хост базы данных */
+      $database_host = $this->get_database_host();
+
+      /** @var EnumDatabaseManagementSystem $database_management_system */
+      $database_management_system = $this->get_database_management_system();
+      switch ($database_management_system->value) {
+        case 'mysql': $database_connection_query = 'mysql:host=%s;dbname=%s'; break;
+        case 'pgsql': $database_connection_query = 'pgsql:host=%s;dbname=%s'; break;
+      }
+
+      $database_connection_query_modified = sprintf($database_connection_query, $database_host, $database_name);
+
+      try {
+        $this->connection = new PDO($database_connection_query_modified, $database_user, $database_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING]);
+        return true;
+      } catch (PDOException $exception) {
+        return false;
       }
     }
 

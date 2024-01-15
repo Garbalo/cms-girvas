@@ -64,7 +64,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       $user_group_number = 1;
       foreach ($users_groups_array_objects as $user_group_object) {
-        $user_group_object->init_data(['id', 'name', 'metadata_json', 'created_unix_timestamp', 'updated_unix_timestamp']);
+        $user_group_object->init_data(['id', 'texts', 'name', 'metadata', 'created_unix_timestamp', 'updated_unix_timestamp']);
 
         $user_group_created_date_timestamp = date('d.m.Y H:i:s', $user_group_object->get_created_unix_timestamp());
         $user_group_updated_date_timestamp = date('d.m.Y H:i:s', $user_group_object->get_updated_unix_timestamp());

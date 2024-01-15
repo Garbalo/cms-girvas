@@ -69,8 +69,7 @@ namespace core\PHPLibrary {
     
     /**
      * Получить идентификатор
-     *
-     * @param  mixed $value
+     * 
      * @return int
      */
     public function get_id() : int {
@@ -78,7 +77,7 @@ namespace core\PHPLibrary {
     }
 
     public function get_name() : string {
-      return (property_exists($this, 'name')) ? $this->name : '{ERROR:USER_GROUP_DATA_IS_NOT_EXISTS=name}';
+      return (property_exists($this, 'name')) ? $this->name : '';
     }
 
     public function get_permissions() : int {
@@ -93,7 +92,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->add_table('users');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('(metadata_json->>\'group_id\')::int = :group_id');
+      $query_builder->statement->clause_where->add_condition('(metadata->>\'group_id\')::int = :group_id');
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 
@@ -311,7 +310,7 @@ namespace core\PHPLibrary {
       return ($execute) ? true : false;
     }
 
-    public static function create(SystemCore $system_core, string $group_name, array $permissions = []) : UserGroup|null {
+    public static function create(SystemCore $system_core, string $group_name, array $texts = [], int $permissions = 0x0000000000000000) : UserGroup|null {
       $query_builder = new DatabaseQueryBuilder();
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users_groups');
@@ -319,28 +318,25 @@ namespace core\PHPLibrary {
       $query_builder->statement->add_column('created_unix_timestamp');
       $query_builder->statement->add_column('updated_unix_timestamp');
       $query_builder->statement->add_column('permissions');
-      $query_builder->statement->add_column('metadata_json');
-      $query_builder->statement->add_column('email_is_submitted');
+      $query_builder->statement->add_column('metadata');
+      $query_builder->statement->add_column('texts');
       $query_builder->statement->set_clause_returning();
       $query_builder->statement->clause_returning->add_column('id');
       $query_builder->statement->assembly();
 
-      $user_group_created_unix_timestamp = time();
-      $user_group_updated_unix_timestamp = $user_group_created_unix_timestamp;
-      $user_group_metadata_json = json_encode([], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-      $user_group_permissions = 0x0000000000000000;
-      foreach ($permissions as $permission) {
-        $user_group_permissions = $user_group_permissions | $permission;
-      }
+      $created_unix_timestamp = time();
+      $updated_unix_timestamp = $created_unix_timestamp;
+      $metadata_json = json_encode([], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+      $texts_json = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       $database_query->bindParam(':name', $group_name, \PDO::PARAM_STR);
-      $database_query->bindParam(':created_unix_timestamp', $user_created_unix_timestamp, \PDO::PARAM_INT);
-      $database_query->bindParam(':updated_unix_timestamp', $user_updated_unix_timestamp, \PDO::PARAM_INT);
-      $database_query->bindParam(':permissions', $user_group_permissions, \PDO::PARAM_INT);
-      $database_query->bindParam(':metadata_json', $user_group_metadata_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':created_unix_timestamp', $created_unix_timestamp, \PDO::PARAM_INT);
+      $database_query->bindParam(':updated_unix_timestamp', $updated_unix_timestamp, \PDO::PARAM_INT);
+      $database_query->bindParam(':permissions', $permissions, \PDO::PARAM_INT);
+      $database_query->bindParam(':metadata', $metadata_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':texts', $texts_json, \PDO::PARAM_STR);
 			$execute = $database_query->execute();
 
       if ($execute) {

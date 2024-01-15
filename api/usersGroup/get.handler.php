@@ -20,7 +20,7 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
   $users_group = (is_numeric($system_core->urlp->get_path(2)) ? new UserGroup($system_core, $system_core->urlp->get_path(2)) : UserGroup::get_by_name($system_core, $system_core->urlp->get_path(2)));
 
   if (!is_null($users_group)) {
-    $users_group->init_data(['metadata_json', 'permissions']);
+    $users_group->init_data(['metadata', 'permissions']);
 
     $handler_output_data['usersGroup'] = [];
     $handler_output_data['usersGroup']['permissions'] = [];

@@ -80,6 +80,14 @@ if ($system_core->client->is_logged(2)) {
     $client_session = $system_core->client->get_session(2, ['user_id']);
     $entry = Entry::create($system_core, $entry_name, $client_session->get_user_id(), 1, $texts);
     if (!is_null($entry)) {
+      $entry->init_data(['texts']);
+
+      $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_ENTRY_CREATED, [
+        'clientIP' => $system_core->client->get_ip_address(),
+        'entryTitle' => $entry->get_title(),
+        'date' => date('Y/m/d H:i:s', time())
+      ]);
+      
       $handler_message = 'Запись успешно создана.';
       $handler_status_code = 1;
 

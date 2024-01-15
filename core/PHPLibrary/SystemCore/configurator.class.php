@@ -25,7 +25,9 @@ namespace core\PHPLibrary\SystemCore {
       if (file_exists(sprintf('%s/%s', CMS_ROOT_DIRECTORY, self::FILE_PATH))) {
         $this->merge($this->get_file_data());
       } else {
-        die('Configurations CMS file is not exists!');
+        if ($this->system_core->urlp->get_param('mode') != 'install') {
+          die('Configurations CMS file is not exists!');
+        }
       }
     }
 

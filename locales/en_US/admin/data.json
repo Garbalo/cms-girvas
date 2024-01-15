@@ -44,5 +44,10 @@
   "USER_PAGE_USER_PASSWORD_TITLE": "Password",
   "USER_PAGE_USER_PASSWORD_DESCRIPTION": "The user's password must comply with CMS security rules because it will allow the user to log in to the system.",
   "USER_PAGE_USER_PASSWORD_REPEAT_TITLE": "Password repeat",
-  "USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION": "Repeat the password you entered earlier."
+  "USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION": "Repeat the password you entered earlier.",
+  "REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL": "An attempt to authenticate with IP {CLIENT_IP} failed.",
+  "REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS": "Authorization was successful with IP {CLIENT_IP}.",
+  "REPORT_TYPE_ID_AP_ENTRY_CREATED": "New entry created: '{ENTRY_TITLE}' by user [IP: {CLIENT_IP}].",
+  "REPORT_TYPE_ID_AP_ENTRY_EDITED": "The entry '{ENTRY_TITLE}' was edited by [IP: {CLIENT_IP}].",
+  "REPORT_TYPE_ID_AP_ENTRY_DELETED": "The entry '{ENTRY_TITLE}' was deleted by [IP: {CLIENT_IP}]."
 }

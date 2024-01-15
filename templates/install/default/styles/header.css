@@ -1,0 +1,31 @@
+.header__container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.header__brand-container {
+  flex: 0 0 128px;
+}
+.header__brand {
+  fill: var(--common-main-color-4);
+}
+.header__container {
+  display: flex;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-bottom: 4px solid var(--common-main-color-4);
+}
+.header__title-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  padding-left: 40px;
+}
+.header__title {
+  font-size: 18px;
+  margin: 0;
+}
+.header__copyright-container .copyright-container__phar {
+  font-size: 14px;
+  margin: 0;
+}

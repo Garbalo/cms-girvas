@@ -38,9 +38,21 @@ if ($system_core->client->is_logged(2)) {
 
       if (Entry::exists_by_id($system_core, $entry_id)) {
         $entry = new Entry($system_core, $entry_id);
+
+        $entry->init_data(['texts']);
+        $entry_title = $entry->get_title();
+
         $entry_is_deleted = $entry->delete();
 
         if ($entry_is_deleted) {
+          $entry->init_data(['texts']);
+    
+          $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_ENTRY_DELETED, [
+            'clientIP' => $system_core->client->get_ip_address(),
+            'entryTitle' => $entry_title,
+            'date' => date('Y/m/d H:i:s', time())
+          ]);
+
           $handler_message = 'Запись успешно удалена.';
           $handler_status_code = 1;
         } else {

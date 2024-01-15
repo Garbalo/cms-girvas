@@ -14,6 +14,7 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\SystemCore\DatabaseConnector as SystemCoreDatabaseConnector;
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
+  use \core\PHPLibrary\SystemCore\Report as SystemCoreReport;
   use \core\PHPLibrary\Client as Client;
   
   /**
@@ -34,7 +35,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.48 Pre-alpha';
+    public const CMS_VERSION = '0.0.49 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -145,16 +146,16 @@ namespace core\PHPLibrary {
       $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
       $file_connector->reset_current_directory();
 
+      $this->init_url_parser();
       $this->configurator = new SystemCoreConfigurator($this);
-      $this->configurator->set('cms_language_default', 'ru_RU');
 
-      $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
-      $this->database_connector->database->connect();
+      if ($this->urlp->get_param('mode') != 'install') {
+        $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
+      }
 
       $this->client = new Client($this);
-      $this->init_url_parser();
 
-      if ($this->urlp->get_path(0) == 'install') {
+      if ($this->urlp->get_param('mode') != 'install') {
         $install_locale = (!is_null($this->urlp->get_param('locale'))) ? $this->urlp->get_param('locale') : 'en_US';
       }
 
@@ -197,10 +198,13 @@ namespace core\PHPLibrary {
       }
 
       if ($this->urlp->get_path(0) != 'handler') {
-        $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
+        if ($this->urlp->get_param('mode') != 'install') {
+          $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
+          $cms_base_locale_name = ($this->configurator->exists_database_entry_value('base_locale')) ? $this->configurator->get_database_entry_value('base_locale') : 'en_US';
+          $cms_admin_locale_name = ($this->configurator->exists_database_entry_value('base_admin_locale')) ? $this->configurator->get_database_entry_value('base_admin_locale') : 'en_US';
+        }
 
-        $cms_base_locale_name = ($this->configurator->exists_database_entry_value('base_locale')) ? $this->configurator->get_database_entry_value('base_locale') : 'en_US';
-        $cms_admin_locale_name = ($this->configurator->exists_database_entry_value('base_admin_locale')) ? $this->configurator->get_database_entry_value('base_admin_locale') : 'en_US';
+        $install_locale = ($this->urlp->get_param('locale') != null) ? $this->urlp->get_param('locale') : 'ru_RU';
 
         switch ($this->urlp->get_path(0)) {
           case 'install': $this->set_template(new Template($this, 'default', 'install')); $this->locale = new SystemCoreLocale($this, $install_locale, 'install'); break;

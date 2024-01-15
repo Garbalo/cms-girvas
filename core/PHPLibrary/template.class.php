@@ -289,6 +289,18 @@ namespace core\PHPLibrary {
      */
     public function get_core_assembled() : string {
       if (isset($this->core->assembled)) {
+        if ($this->system_core->urlp->get_param('mode') == 'install') {
+          $site_title = 'Installation | CMS GIRVAS';
+          $site_description = '';
+          $site_keywords = '';
+          $site_charset = 'UTF-8';
+        } else {
+          $site_title = (empty($this->system_core->configurator->get_meta_title())) ? $this->system_core->configurator->get_site_title() : $this->system_core->configurator->get_meta_title();
+          $site_description = (empty($this->system_core->configurator->get_site_description())) ? $this->system_core->configurator->get_site_description() : $this->system_core->configurator->get_meta_description();
+          $site_keywords = (empty($this->system_core->configurator->get_meta_keywords())) ? $this->system_core->configurator->get_site_keywords() : $this->system_core->configurator->get_meta_keywords_imploded();
+          $site_charset = $this->system_core->configurator->get_site_charset();
+        }
+
         $template_category = $this->get_category();
         $template_tags_array = [
           // Стили веб-страницы в DOM-элементе HEAD
@@ -296,10 +308,11 @@ namespace core\PHPLibrary {
           // Скрипты веб-страницы в DOM-элементе HEAD
           'SITE_SCRIPTS' => TemplateCollector::assembly_scripts($this, $this->get_scripts()),
           'SITE_TEMPLATE_URL' => ($template_category != 'default') ? sprintf('/templates/%s/%s', $template_category, $this->get_name()) : sprintf('/templates/%s', $this->get_name()),
-          'SITE_TITLE' => (empty($this->system_core->configurator->get_meta_title())) ? $this->system_core->configurator->get_site_title() : $this->system_core->configurator->get_meta_title(),
-          'SITE_DESCRIPTION' => (empty($this->system_core->configurator->get_meta_description())) ? $this->system_core->configurator->get_site_description() : $this->system_core->configurator->get_meta_description(),
-          'SITE_KEYWORDS' => (empty($this->system_core->configurator->get_meta_keywords())) ? $this->system_core->configurator->get_site_keywords() : $this->system_core->configurator->get_meta_keywords_imploded(),
-          'SITE_CHARSET' => $this->system_core->configurator->get_site_charset(),
+          'SITE_TITLE' => $site_title,
+          'SITE_DESCRIPTION' => $site_description,
+          'SITE_KEYWORDS' => $site_keywords,
+          'SITE_CHARSET' => $site_charset,
+          'CMS_VERSION' => $this->system_core->get_cms_version()
         ];
 
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);
