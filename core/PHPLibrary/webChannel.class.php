@@ -116,7 +116,7 @@ namespace core\PHPLibrary {
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -147,7 +147,7 @@ namespace core\PHPLibrary {
      * @return WebChannel
      */
     public static function get_by_name(SystemCore $system_core, string $name) : WebChannel|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -179,7 +179,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_name(\core\PHPLibrary\SystemCore $system_core, string $name) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -209,7 +209,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_id(\core\PHPLibrary\SystemCore $system_core, int $id) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -235,7 +235,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function delete() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('web_channels');
@@ -260,7 +260,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('web_channels');
       $query_builder->statement->set_clause_set();
@@ -311,7 +311,7 @@ namespace core\PHPLibrary {
     }
 
     public static function create(SystemCore $system_core, string $name, int $entries_category_id, int $type_id, array $texts) : WebChannel|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('web_channels');
       $query_builder->statement->add_column('entries_category_id');

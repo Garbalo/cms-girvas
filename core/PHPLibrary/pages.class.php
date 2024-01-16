@@ -31,7 +31,7 @@ namespace core\PHPLibrary {
      * @return array
      */
     public function get_all(array $params_array = []) : array {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -69,7 +69,7 @@ namespace core\PHPLibrary {
      * @return array
      */
     public function get_count_total() : int {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
       $query_builder->statement->set_clause_from();

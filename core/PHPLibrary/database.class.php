@@ -33,7 +33,7 @@ namespace core\PHPLibrary {
      */
     public function __construct(EnumDatabaseManagementSystem $database_management_system) {
       $this->set_database_management_system($database_management_system);
-      $this->query_builder = new DatabaseQueryBuilder();
+      //$this->query_builder = new DatabaseQueryBuilder();
     }
     
     /**

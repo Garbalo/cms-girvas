@@ -161,7 +161,7 @@ namespace core\PHPLibrary {
      * @return int
      */
     public function get_answers_count() : int {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(id)']);
       $query_builder->statement->set_clause_from();
@@ -187,7 +187,7 @@ namespace core\PHPLibrary {
      * @return array
      */
     public function get_answers() : array {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -299,7 +299,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -330,7 +330,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public static function exists_by_id(SystemCore $system_core, int $comment_id) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -356,7 +356,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function delete() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('entries_comments');
@@ -384,7 +384,7 @@ namespace core\PHPLibrary {
      * @return EntryComment|null
      */
     public static function create(SystemCore $system_core, int $entry_id, int $author_id, string $content) : EntryComment|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('entries_comments');
       $query_builder->statement->add_column('author_id');
@@ -432,7 +432,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('entries_comments');
       $query_builder->statement->set_clause_set();

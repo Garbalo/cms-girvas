@@ -16,6 +16,13 @@
   border-color: var(--table-cell-border-color);
   padding: 10px;
 }
+.table__cell .cell__title {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.table__cell .cell__title:not(:last-child) {
+  margin-bottom: 10px;
+}
 .table__cell .cell__block-phar {
   margin-bottom: 10px;
 }

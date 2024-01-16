@@ -348,6 +348,8 @@ if ($system_core->urlp->get_param('stepIndex') == 5) {
     fwrite($file, '  \'domain_cookies\' => \'www.cms-girvas.ru\',' . PHP_EOL);
     fwrite($file, '  \'ssl_is_enabled\' => true,' . PHP_EOL);
     fwrite($file, '  \'database\' => [' . PHP_EOL);
+    fwrite($file, sprintf('    \'prefix\' => \'%s\',', $_GET['database_prefix']) . PHP_EOL);
+    fwrite($file, sprintf('    \'scheme\' => \'%s\',', $_GET['database_scheme']) . PHP_EOL);
     fwrite($file, sprintf('    \'host\' => \'%s\',', $_GET['database_host']) . PHP_EOL);
     fwrite($file, sprintf('    \'user\' => \'%s\',', $_GET['database_user']) . PHP_EOL);
     fwrite($file, sprintf('    \'password\' => \'%s\',', $_GET['database_pass']) . PHP_EOL);
@@ -380,18 +382,306 @@ if ($system_core->urlp->get_param('stepIndex') == 5) {
 }
 
 if ($system_core->urlp->get_param('stepIndex') == 6) {
-  $db_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator, true);
+  $database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+  $database_configurations = $system_core->configurator->get('database');
 
   $dom_document = new \DOMDocument();
   $tip_block = $dom_document->createElement('div');
 
-  if ($db_connector->database->connect_test()) {
-    $tip_block->setAttribute('class', 'tip tip_green');
-    $tip_block->nodeValue = 'Таблицы сгенерированы.';
-  } else {
-    $tip_block->setAttribute('class', 'tip tip_red');
-    $tip_block->nodeValue = 'Таблицы не сгенерированы.';
-  }
+  $db_prefix = $database_configurations['prefix'];
+  $db_scheme = $database_configurations['scheme'];
+  $db_prefix = ($db_prefix != '') ? $db_prefix . '_' : '';
+  $db_scheme = ($db_scheme != '') ? $db_scheme . '.' : '';
+
+  // =======================
+  // ТАБЛИЦА КОНФИГУРАЦИЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('configurations');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('value', 'text');
+  $query_builder->statement->add_column('texts', 'json');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ЗАПИСЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('entries');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('category_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('author_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('texts', 'jsonb');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА КАТЕГОРИЙ ЗАПИСЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('entries_categories');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('parent_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('texts', 'jsonb');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА КОММЕНТАРИЕВ ЗАПИСЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('entries_comments');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('entry_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('author_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('content', 'text');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА СТАТИЧЕСКИХ СТРАНИЦ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('pages_static');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('texts', 'jsonb');
+  $query_builder->statement->add_column('author_id', 'bigint');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ОТЧЕТОВ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('reports');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('variables', 'jsonb');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('users');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('login', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('email', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('password_hash', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('security_hash', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('email_is_submitted', 'boolean', 'NOT NULL DEFAULT false');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ГРУПП ПОЛЬЗОВАТЕЛЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('users_groups');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('texts', 'jsonb');
+  $query_builder->statement->add_column('permissions', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('metadata', 'jsonb');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ЗАЯВОК НА ПОДТВЕРЖДЕНИЕ РЕГИСТРАЦИИ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('users_registration_submits');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('user_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('submit_token', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('refusal_token', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА СЕССИЙ ПОЛЬЗОВАТЕЛЕЙ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('users_sessions');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('user_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('token', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('user_ip', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('type_id', 'integer', 'NOT NULL DEFAULT 1');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ТАБЛИЦА ВЕБ-КАНАЛОВ
+  // =======================
+
+  $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+  $query_builder->set_statement_create_table();
+  $query_builder->statement->set_check_exists(true);
+  $query_builder->statement->set_table_name('web_channels');
+  $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+  $query_builder->statement->add_column('name', 'text', 'NOT NULL');
+  $query_builder->statement->add_column('entries_category_id', 'bigint', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('type_id', 'integer', 'NOT NULL DEFAULT 1');
+  $query_builder->statement->add_column('texts', 'jsonb');
+  $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+  $query_builder->statement->assembly();
+
+  $database_connection = $database_connector->database->connection;
+  $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+  $execute = $database_query->execute();
+
+  // =======================
+  // ПЕРВИЧНОЕ НАПОЛНЕНИЕ БАЗЫ ДАННЫХ
+  // =======================
+
+  $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+
+  $first_entry_texts = [];
+  $first_entry_texts['en_US'] = [
+    'title' => 'Hello, World!',
+    'content' => 'Welcome to &nbsp; **CMS &laquo;GIRVAS&raquo;**! Here is the first published entry &nbsp;&mdash; It was generated automatically when installing a control system. If you&nbsp;it&nbsp;you see, then &nbsp; then the installation has passed well.<br><br>## What is next?<br>You need <a href="/admin">to configure</a> the installed system. To do this, go to&nbsp;the administrative panel and&nbsp;start following the six blocks that will be displayed on&nbsp;the start page.<br><br>Thanks for&nbsp;what you selected **CMS&laquo;GIRVAS&raquo;**, good luck!'
+  ];
+
+  $first_entry = \core\PHPLibrary\Entry::create($system_core, 'hello-world', 1, 1, $first_entry_texts);
+  $first_entry->update(['metadata' => ['is_publish' => true]]);
+
+  $first_users_group_texts = [];
+  $first_users_group_texts['en_US'] = [
+    'title' => 'Administrator'
+  ];
+
+  $second_users_group_texts = [];
+  $second_users_group_texts['en_US'] = [
+    'title' => 'Moderator'
+  ];
+
+  $thirty_users_group_texts = [];
+  $thirty_users_group_texts['en_US'] = [
+    'title' => 'Editor'
+  ];
+
+  $fourty_users_group_texts = [];
+  $fourty_users_group_texts['en_US'] = [
+    'title' => 'User'
+  ];
+
+  $first_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'admin', $first_users_group_texts, 80887);
+  $second_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'moder', $second_users_group_texts, 66433);
+  $thirty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'editor', $thirty_users_group_texts, 79873);
+  $fourty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'user', $fourty_users_group_texts, 65536);
+
+  $system_core->configurator->insert_database_entry_value('base_template', 'default');
+  $system_core->configurator->insert_database_entry_value('base_site_title', 'CMS GIRVAS');
+  $system_core->configurator->insert_database_entry_value('base_engineering_works', 'off');
+  $system_core->configurator->insert_database_entry_value('base_engineering_works_text', '');
+  $system_core->configurator->insert_database_entry_value('seo_site_description', 'CMS GIRVAS - a multidisciplinary free contents control system from the Garbalo Karelian developers.');
+  $system_core->configurator->insert_database_entry_value('seo_site_keywords', '["CMS GIRVAS","Free Content Management System","Free CMS","Garbalo"]');
+  $system_core->configurator->insert_database_entry_value('base_site_title', 'CMS GIRVAS');
+
+  $tip_block->setAttribute('class', 'tip tip_green');
+  $tip_block->nodeValue = 'Таблицы сгенерированы.';
 
   $dom_document->appendChild($tip_block);
 

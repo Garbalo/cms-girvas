@@ -216,7 +216,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -247,7 +247,7 @@ namespace core\PHPLibrary {
      * @return PageStatic
      */
     public static function get_by_name(SystemCore $system_core, string $page_static_name) : PageStatic|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -276,7 +276,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public static function exists_by_name(SystemCore $system_core, string $page_static_name) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -304,7 +304,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public static function exists_by_id(SystemCore $system_core, int $page_static_id) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -330,7 +330,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function delete() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('pages_static');
@@ -359,7 +359,7 @@ namespace core\PHPLibrary {
      * @return PageStatic
      */
     public static function create(SystemCore $system_core, string $name, int $author_id, array $texts, array $metadata = []) : PageStatic|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('pages_static');
       $query_builder->statement->add_column('author_id');
@@ -402,7 +402,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('pages_static');
       $query_builder->statement->set_clause_set();

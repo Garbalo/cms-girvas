@@ -25,7 +25,7 @@ namespace core\PHPLibrary {
     }
     
     public function get_all() : array {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();

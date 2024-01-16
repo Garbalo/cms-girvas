@@ -6,7 +6,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
   use \core\PHPLibrary\Database\QueryBuilder\InterfaceStatement as InterfaceStatement;
 
   final class StatementInsert implements InterfaceStatement {
-    private QueryBuilder $query_builder;
+    public QueryBuilder $query_builder;
     private array $columns = [];
     public string $table_name = '';
     public ClauseReturning|null $clause_returning = null;
@@ -53,7 +53,19 @@ namespace core\PHPLibrary\Database\QueryBuilder {
      * @return string
      */
     public function get_table() : string {
-      return $this->table_name;
+      $database_configurations = $this->query_builder->system_core->configurator->get('database');
+      
+      $table_fullname = '';
+      if ($database_configurations['scheme'] != '') {
+        $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
+      }
+      if ($database_configurations['prefix'] != '') {
+        $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
+      }
+
+      $table_fullname .= $this->table_name;
+
+      return $table_fullname;
     }
 
     /**

@@ -35,6 +35,15 @@ namespace templates\install\default {
      * @return string
      */
     public function assembly_main(array $template_replaces = []) : string {
+      $database_configurations = $this->template->system_core->configurator->get('database');
+
+      $template_replaces['CONFIGURATION_DATABASE_SCHEME'] = $database_configurations['scheme'];
+      $template_replaces['CONFIGURATION_DATABASE_PREFIX'] = $database_configurations['prefix'];
+      $template_replaces['CONFIGURATION_DATABASE_HOST'] = $database_configurations['host'];
+      $template_replaces['CONFIGURATION_DATABASE_PASSWORD'] = $database_configurations['password'];
+      $template_replaces['CONFIGURATION_DATABASE_NAME'] = $database_configurations['name'];
+      $template_replaces['CONFIGURATION_DATABASE_USER'] = $database_configurations['user'];
+
       return TemplateCollector::assembly_file_content($this->template, 'templates/main.tpl', $template_replaces);
     }
     

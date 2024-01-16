@@ -8,7 +8,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
 
 
   final class StatementDelete implements InterfaceStatement {
-    private QueryBuilder $query_builder;
+    public QueryBuilder $query_builder;
     public ClauseFrom|null $clause_from = null;
     public ClauseWhere|null $clause_where = null;
     public string $assembled = '';

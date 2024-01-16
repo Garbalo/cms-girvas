@@ -9,7 +9,7 @@ namespace core\PHPLibrary\Database\QueryBuilder {
   use \core\PHPLibrary\Database\QueryBuilder\InterfaceStatement as InterfaceStatement;
 
   final class StatementSelect implements InterfaceStatement {
-    private QueryBuilder $query_builder;
+    public QueryBuilder $query_builder;
     private array $selections = [];
     public ClauseFrom|null $clause_from = null;
     public ClauseWhere|null $clause_where = null;

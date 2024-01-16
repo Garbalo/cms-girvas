@@ -98,7 +98,7 @@ namespace core\PHPLibrary\SystemCore {
      * @return array
      */
     public function get_database_entry_value(string $name) : mixed {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['value']);
       $query_builder->statement->set_clause_from();
@@ -119,7 +119,7 @@ namespace core\PHPLibrary\SystemCore {
     }
 
     public function exists_database_entry_value(string $name) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -140,7 +140,7 @@ namespace core\PHPLibrary\SystemCore {
     }
 
     public function insert_database_entry_value(string $name, string $value) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('configurations');
       $query_builder->statement->add_column('name');
@@ -157,7 +157,7 @@ namespace core\PHPLibrary\SystemCore {
     }
 
     public function update_database_entry_value(string $name, string|int $value) : mixed {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('configurations');
       $query_builder->statement->set_clause_set();

@@ -25,6 +25,33 @@ if ($system_core->client->is_logged(2)) {
       $users_group = new UserGroup($system_core, $users_group_id);
       $users_group_data = [];
 
+      $users_group_permissions = 0x0000000000000000;
+      $users_group_permissions_array = isset($_PATCH['user_group_permissions']) ? $_PATCH['user_group_permissions'] : [];
+      
+      if (!empty($users_group_permissions_array)) {
+        foreach ($users_group_permissions_array as $users_group_permission) {
+          switch ($users_group_permission) {
+            case 'admin_panel_auth': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_PANEL_AUTH; break;
+            case 'admin_users_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_MANAGEMENT; break;
+            case 'admin_users_groups_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT; break;
+            case 'admin_modules_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT; break;
+            case 'admin_templates_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT; break;
+            case 'admin_settings_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT; break;
+            case 'admin_viewing_logs': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_ADMIN_VIEWING_LOGS; break;
+            case 'moder_users_ban': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_BAN; break;
+            case 'moder_entries_comments_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT; break;
+            case 'moder_users_warns': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_MODER_USERS_WARNS; break;
+            case 'editor_media_files_management': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT; break;
+            case 'editor_entries_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
+            case 'editor_entries_categories_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
+            case 'editor_pages_static_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
+            case 'base_entry_comment_rate': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
+          }
+        }
+      }
+
+      $users_group_data['permissions'] = $users_group_permissions;
+
       $cms_locales_names = $system_core->get_array_locales_names();
       if (count($cms_locales_names) > 0) {
         foreach ($cms_locales_names as $index => $cms_locale_name) {

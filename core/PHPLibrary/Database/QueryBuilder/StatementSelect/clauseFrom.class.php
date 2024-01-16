@@ -38,8 +38,19 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementSelect {
     public function assembly() {
       $query_array = [];
 
+      $database_configurations = $this->statement->query_builder->system_core->configurator->get('database');
+
       foreach ($this->tables as $table) {
-        array_push($query_array, $table->get_name());
+        $table_fullname = '';
+        if ($database_configurations['scheme'] != '') {
+          $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
+        }
+        if ($database_configurations['prefix'] != '') {
+          $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
+        }
+
+        $table_fullname .= $table->get_name();
+        array_push($query_array, $table_fullname);
       }
 
       if (count($this->tables) > 0) {

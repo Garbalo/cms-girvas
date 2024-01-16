@@ -93,7 +93,7 @@ namespace core\PHPLibrary\Client {
     }
 
     public function reset_expire() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('users_sessions');
       $query_builder->statement->set_clause_set();
@@ -118,7 +118,7 @@ namespace core\PHPLibrary\Client {
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -146,7 +146,7 @@ namespace core\PHPLibrary\Client {
     }
 
     public static function get_by_ip(SystemCore $system_core, string $user_ip, int $type_id) {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -169,7 +169,7 @@ namespace core\PHPLibrary\Client {
     }
 
     public static function get_by_ip_and_user_id(SystemCore $system_core, string $user_ip, int $user_id, int $type_id) {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -199,7 +199,7 @@ namespace core\PHPLibrary\Client {
      * @return void
      */
     public static function exists_by_ip_and_user_id(SystemCore $system_core, string $user_ip, int $user_id, int $type_id) {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -228,7 +228,7 @@ namespace core\PHPLibrary\Client {
      * @return void
      */
     public static function exists_by_ip(SystemCore $system_core, string $user_ip, int $type_id) {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -250,7 +250,7 @@ namespace core\PHPLibrary\Client {
     }
 
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('users_sessions');
       $query_builder->statement->set_clause_set();
@@ -302,7 +302,7 @@ namespace core\PHPLibrary\Client {
      * @return Session
      */
     public static function create(SystemCore $system_core, array $session_data = []) : Session|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users_sessions');
       $query_builder->statement->add_column('user_id');

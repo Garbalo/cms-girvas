@@ -231,7 +231,7 @@ namespace core\PHPLibrary {
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -262,7 +262,7 @@ namespace core\PHPLibrary {
      * @return User
      */
     public static function get_by_login(SystemCore $system_core, string $user_login) : User|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -294,7 +294,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_login(\core\PHPLibrary\SystemCore $system_core, string $user_login) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -324,7 +324,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_email(\core\PHPLibrary\SystemCore $system_core, string $user_email) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -354,7 +354,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_id(\core\PHPLibrary\SystemCore $system_core, int $user_id) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -380,7 +380,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function delete() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('users');
@@ -399,7 +399,7 @@ namespace core\PHPLibrary {
     }
 
     public static function create(SystemCore $system_core, string $user_login, string $user_email, string $user_password) : User|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users');
       $query_builder->statement->add_column('login');
@@ -448,7 +448,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('users');
       $query_builder->statement->set_clause_set();
@@ -493,7 +493,7 @@ namespace core\PHPLibrary {
     }
 
     public function create_registration_submit() : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users_registration_submits');
       $query_builder->statement->add_column('user_id');
@@ -528,7 +528,7 @@ namespace core\PHPLibrary {
     }
 
     public static function get_user_id_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['user_id']);
       $query_builder->statement->set_clause_from();
@@ -551,7 +551,7 @@ namespace core\PHPLibrary {
     }
 
     public static function get_user_id_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['user_id']);
       $query_builder->statement->set_clause_from();
@@ -574,7 +574,7 @@ namespace core\PHPLibrary {
     }
 
     public static function exists_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -595,7 +595,7 @@ namespace core\PHPLibrary {
     }
 
     public static function exists_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -616,7 +616,7 @@ namespace core\PHPLibrary {
     }
 
     public static function delete_registration_submit_by_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('users_registration_submits');
@@ -635,7 +635,7 @@ namespace core\PHPLibrary {
     }
 
     public static function delete_registration_submit_by_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('users_registration_submits');

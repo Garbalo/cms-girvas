@@ -189,7 +189,7 @@ namespace core\PHPLibrary\SystemCore {
      * @return Report
      */
     public static function create(SystemCore $system_core, int $type_id, array $variables = []) : Report|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('reports');
       $query_builder->statement->add_column('variables');
@@ -228,7 +228,7 @@ namespace core\PHPLibrary\SystemCore {
      * @return void
      */
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();

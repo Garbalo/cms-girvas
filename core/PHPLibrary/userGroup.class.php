@@ -85,7 +85,7 @@ namespace core\PHPLibrary {
     }
 
     public function get_users() : array {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -114,7 +114,7 @@ namespace core\PHPLibrary {
     }
 
     public function get_users_count() : int {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
       $query_builder->statement->set_clause_from();
@@ -173,7 +173,7 @@ namespace core\PHPLibrary {
     }
 
     private function get_database_columns_data(array $columns = ['*']) : array|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections($columns);
       $query_builder->statement->set_clause_from();
@@ -204,7 +204,7 @@ namespace core\PHPLibrary {
      * @return UserGroup
      */
     public static function get_by_name(SystemCore $system_core, string $group_name) : UserGroup|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
@@ -236,7 +236,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_name(\core\PHPLibrary\SystemCore $system_core, string $group_name) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -266,7 +266,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public static function exists_by_id(\core\PHPLibrary\SystemCore $system_core, int $group_id) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
       $query_builder->statement->set_clause_from();
@@ -292,7 +292,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function delete() : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('users_groups');
@@ -311,7 +311,7 @@ namespace core\PHPLibrary {
     }
 
     public static function create(SystemCore $system_core, string $group_name, array $texts = [], int $permissions = 0x0000000000000000) : UserGroup|null {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
       $query_builder->statement->set_table('users_groups');
       $query_builder->statement->add_column('name');
@@ -354,7 +354,7 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function update(array $data) : bool {
-      $query_builder = new DatabaseQueryBuilder();
+      $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
       $query_builder->statement->set_table('users_groups');
       $query_builder->statement->set_clause_set();

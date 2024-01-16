@@ -1,21 +1,33 @@
 <?php
 
 namespace core\PHPLibrary\Database {
+  use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\Database\QueryBuilder\StatementCreateTable as StatementCreateTable;
   use \core\PHPLibrary\Database\QueryBuilder\StatementSelect as StatementSelect;
   use \core\PHPLibrary\Database\QueryBuilder\StatementInsert as StatementInsert;
   use \core\PHPLibrary\Database\QueryBuilder\StatementUpdate as StatementUpdate;
   use \core\PHPLibrary\Database\QueryBuilder\StatementDelete as StatementDelete;
 
   class QueryBuilder {
-    public StatementSelect|StatementInsert|StatementUpdate|StatementDelete $statement;
-    
+    public StatementCreateTable|StatementSelect|StatementInsert|StatementUpdate|StatementDelete $statement;
+    public readonly SystemCore $system_core;
+
     /**
      * __construct
      *
      * @return void
      */
-    public function __construct() {
-      // ...
+    public function __construct(SystemCore $system_core) {
+      $this->system_core = $system_core;
+    }
+    
+    /**
+     * set_statement_select
+     *
+     * @return void
+     */
+    public function set_statement_create_table() : void {
+      $this->statement = new StatementCreateTable($this);
     }
     
     /**

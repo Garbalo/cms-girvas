@@ -28,12 +28,32 @@
           <p class="page__phar">Мастер-установщик проанализировал установленные СУБД и вывел результат в таблице. Если в таблице указана отрицательная оценка (помечена красным цветом) по отношению к предпочитаемой, то данная СУБД не была идентифицирована на Вашем сервере. Установите необходимую СУБД или выберите в следующем шаге доступную.</p>
         </div>
         <div class="main__page page" data-page-index="5">
-          <p class="page__phar">
-            Для начала работы с базой данных, необходимо проверить настройку конфигураций CMS.
-          </p>
+          <p class="page__phar">Перед началом работы с базой данных, необходимо настроить CMS для работы с ней. Заполните все необходимые данные в форме ниже, после чего нажмите на кнопку "Создать конфигурации".</p>
           <p class="page__phar">
             <form class="form" role="form-database">
               <table class="table">
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Префикс базы данных</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Префикс базы данных позволит предотвратить конфликт наименований таблиц в том случае, если в Вашей базе данных уже имеются другие таблицы. Если префикс не нужен, то оставьте поле пустым.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <input name="database_prefix" type="text" class="form__input" value="{CONFIGURATION_DATABASE_PREFIX}" placeholder="base">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Схема базы данных</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Если Вы используете схемы, то укажите здесь ее наименование (обычно это "public"). Если не используете, то оставьте поле пустым.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <input name="database_scheme" type="text" class="form__input" value="{CONFIGURATION_DATABASE_SCHEME}" placeholder="public">
+                  </td>
+                </tr>
                 <tr class="table__row">
                   <td class="table__cell cell">
                     <div class="cell__title">Хост базы данных</div>
