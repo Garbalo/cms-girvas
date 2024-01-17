@@ -44,6 +44,10 @@ namespace templates\install\default {
       $template_replaces['CONFIGURATION_DATABASE_NAME'] = $database_configurations['name'];
       $template_replaces['CONFIGURATION_DATABASE_USER'] = $database_configurations['user'];
 
+      $template_replaces['SITE_TITLE_VALUE'] = ($this->template->system_core->configurator->exists_database_entry_value('base_title')) ? $this->template->system_core->configurator->get_database_entry_value('base_title') : '';
+      $template_replaces['SITE_DESCRIPTION_VALUE'] = ($this->template->system_core->configurator->exists_database_entry_value('seo_site_description')) ? $this->template->system_core->configurator->get_database_entry_value('seo_site_description') : '';
+      $template_replaces['SITE_KEYWORDS_VALUE'] = ($this->template->system_core->configurator->exists_database_entry_value('seo_site_keywords')) ? implode(', ', json_decode($this->template->system_core->configurator->get_database_entry_value('seo_site_keywords'), true)) : '';
+
       return TemplateCollector::assembly_file_content($this->template, 'templates/main.tpl', $template_replaces);
     }
     

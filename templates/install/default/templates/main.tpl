@@ -94,6 +94,165 @@
           <p class="page__phar">Выберите доступную СУБД, а мастер-установщик сгенерирует для Вас таблицы для подключенной базы данных. Это не займет много времени!</p>
           <p class="page__phar" role="cms-dms-selector"></p>
         </div>
+        <div class="main__page page" data-page-index="7">
+          <p class="page__phar">Осталось еще немного! Предлагаем Вам настроить язык и часовой пояс.</p>
+          <p class="page__phar">
+            <form class="form" role="form-locale">
+              <table class="table">
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Язык сайта</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Выбранный Вами язык будет стандартным для пользователей. Он будет применяться до тех пор, пока пользователи самостоятельно не выберут другой.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <div id="E85485302311" class="page__interactive-container"></div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Язык административной панели</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Выбранный Вами язык будет стандартным для пользователей административной панели. Он будет применяться до тех пор, пока пользователи самостоятельно не выберут другой.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <div id="E85485302312" class="page__interactive-container"></div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Часовой пояс</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Выбранный Вами часовой пояс будет применен ко всем пользователям и гостям веб-сайта.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <div id="E85485302313" class="page__interactive-container"></div>
+                  </td>
+                </tr>
+              </table>
+            </form>
+          </p>
+          <p class="page__phar" role="cms-locale-and-timezone"></p>
+        </div>
+        <div class="main__page page" data-page-index="8">
+          <p class="page__phar">Вы уже почти на финишной прямой! Заполните краткую информацию о Вашем веб-сайте.</p>
+          <p class="page__phar">
+            <form class="form" role="form-metadata">
+              <table class="table">
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Наименование сайта</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Напишите наименование сайта таким образом, чтобы это отражало суть его наполнения.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <input name="site_title" type="text" class="form__input" value="{SITE_TITLE_VALUE}" placeholder="Мой сайт">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Описание сайта</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Описание сайта должно точно отражать суть его содержимого, а также включать в себя ключевые слова.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <textarea name="site_description" id="" cols="30" rows="10" class="form__textarea" placeholder="Это мой первый сайт">{SITE_DESCRIPTION_VALUE}</textarea>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Ключевые слова</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Ключевые слова должны помогать находить сайт в поисковых системах. Для подбора ключевых слов рекомендуем использовать такие сервисы &laquo;<a href="https://wordstat.yandex.ru/" target="_blank">Yandex&nbsp;Wordstat</a>&raquo; и &laquo;<a href="https://trends.google.com/" target="_blank">Google&nbsp;Trends</a>&raquo;.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <textarea class="form__textarea" name="site_keywords" id="" cols="30" rows="10" placeholder="Ключевое слово 1, ключевое слово 2, ключевое слово 3">{SITE_KEYWORDS_VALUE}</textarea>
+                  </td>
+                </tr>
+              </table>
+            </form>
+          </p>
+          <p class="page__phar" role="cms-metadata"></p>
+        </div>
+        <div class="main__page page" data-page-index="9">
+          <p class="page__phar">Это предпоследний этап установки CMS &laquo;GIRVAS&raquo;! Сейчас Вам необходимо создать аккаунт администратора - для этого заполните форму ниже и нажмите на кнопку "Создать аккаунт".</p>
+          <p class="page__phar">
+            <form class="form" role="form-admin-create">
+              <table class="table">
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Логин</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Придумайте логин для Вашего администратора. Старайтесь избегать популярных логинов: admin, user и других.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <input name="admin_login" type="text" class="form__input" value="" placeholder="ILoveThisCMS_97">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">E-Mail</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Укажите существующий E-Mail администратора. Туда будут приходить важные уведомления от CMS, а также через него можно будет восстановить доступ к аккаунту.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <input name="admin_email" type="email" class="form__input" value="" placeholder="admin@domain.com">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Пароль</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Придумайте сложный пароль. Хороший пароль должен ключать в себя минимум 8 символов, включать в себя латинские символы, цифры и специальные символы: !@#$%^&*(){}.</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <input name="admin_password" type="password" class="form__input" value="" placeholder="">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Повторите пароль</div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <input name="admin_password_repeat" type="password" class="form__input" value="" placeholder="">
+                  </td>
+                </tr>
+              </table>
+            </form>
+          </p>
+          <p class="page__phar" role="cms-admin-create"></p>
+        </div>
+        <div class="main__page page" data-page-index="10">
+          <p class="page__phar">Добро пожаловать на заключительный этап! Осталось сгенерировать секретный ключ - для этого нажмите на кнопку "Сгенерировать ключ".</p>
+          <p class="page__phar"><b>Внимание!</b> Ключ, который будет отображен перед Вами, необходимо куда-нибудь записать, поскольку без него Вы не сможете авторизоваться в административной панели.</p>
+          <p class="page__phar" role="cms-secret-key"></p>
+        </div>
+        <div class="main__page page" data-page-index="11">
+          <p class="page__phar">Поздравляем с завершением установки CMS &laquo;GIRVAS&raquo;! Теперь Вы можете перейти на сам <a href="/" target="_blank">веб-сайт</a> или в <a href="/admin" target="_blank">администативную панель</a>. Для того, чтобы избежать повторной установки, мы сгенерировали в корне ситсемы пустой файл с именем "INSTALLED" - ни в коем случае его не удалайте, иначе станет возможна повторная установка CMS, что может привести к плохим последствиям.</p>
+        </div>
         <div class="main__page-panel-container panel-container" role="installation-buttons-panel"></div>
       </div>
     </div>

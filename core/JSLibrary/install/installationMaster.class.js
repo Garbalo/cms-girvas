@@ -217,8 +217,6 @@ export class InstallationMaster {
     }
 
     if (this.getStepIndex() == 6) {
-
-
       this.buttons.updateData = new Interactive('button');
       this.buttons.updateData.target.setLabel('Сгенерировать таблицы');
       this.buttons.updateData.target.setCallback((event) => {
@@ -237,6 +235,200 @@ export class InstallationMaster {
           
           let dynamicDiv = document.createElement('div');
           dynamicDiv.setAttribute('role', 'cms-dms-tables-generate');
+          dynamicDiv.innerHTML = resultHTML;
+
+          let installationPages = document.querySelectorAll('[data-page-index]');
+          installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+        });
+      });
+
+      this.buttons.updateData.assembly();
+    }
+
+    if (this.getStepIndex() == 7) {
+      fetch('/handler/locales', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data) => {
+        let locales = data.outputData.locales;
+        let interactiveLocalesChoices = new Interactive('choices');
+        let interactiveLocalesAPChoices = new Interactive('choices');
+
+        locales.forEach((locale, localeIndex) => {
+          let localeTitle = locale.title;
+          let localeIconURL = locale.iconURL;
+          let localeName = locale.name;
+          let localeISO639_2 = locale.iso639_2;
+
+          let localeIconImageElement = document.createElement('img');
+          localeIconImageElement.setAttribute('src', localeIconURL);
+          localeIconImageElement.setAttribute('alt', localeTitle);
+
+          let localeLabelElement = document.createElement('span');
+          localeLabelElement.innerText = localeTitle;
+
+          let localeTemplate = document.createElement('template');
+          localeTemplate.innerHTML += localeIconImageElement.outerHTML;
+          localeTemplate.innerHTML += localeLabelElement.outerHTML;
+
+          interactiveLocalesChoices.target.addItem(localeTemplate.innerHTML, localeName);
+          interactiveLocalesAPChoices.target.addItem(localeTemplate.innerHTML, localeName);
+        });
+
+        interactiveLocalesChoices.target.setName('setting_base_locale');
+        interactiveLocalesAPChoices.target.setName('setting_admin_locale');
+
+        interactiveLocalesChoices.assembly();
+        interactiveLocalesAPChoices.assembly();
+
+        let interactiveLocalesContainerElement = document.querySelector('#E85485302311');
+        let interactiveLocalesAPContainerElement = document.querySelector('#E85485302312');
+
+        interactiveLocalesContainerElement.append(interactiveLocalesChoices.target.element);
+        interactiveLocalesAPContainerElement.append(interactiveLocalesAPChoices.target.element);
+      });
+
+      fetch('/handler/timezones', {
+        method: 'GET'
+      }).then((response) => {
+        return response.json();
+      }).then((data) => {
+        let timezones = data.outputData.timezones;
+
+        let interactiveChoicesSettingsTimezone = new Interactive('choices');
+        timezones.forEach((timezone, timezoneIndex) => {
+          let timezoneElement = document.createElement('span');
+          timezoneElement.innerText = `${timezone.name} (${timezone.utc})`;
+          let timezoneElementTemplate = document.createElement('template');
+          timezoneElementTemplate.innerHTML += timezoneElement.outerHTML;
+
+          interactiveChoicesSettingsTimezone.target.addItem(timezoneElementTemplate.innerHTML, timezone.name);
+        });
+
+        interactiveChoicesSettingsTimezone.target.setName('setting_base_timezone');
+        interactiveChoicesSettingsTimezone.assembly();
+
+        document.querySelector('#E85485302313').prepend(interactiveChoicesSettingsTimezone.target.element);
+      });
+
+      this.buttons.updateData = new Interactive('button');
+      this.buttons.updateData.target.setLabel('Применить');
+      this.buttons.updateData.target.setCallback((event) => {
+        event.preventDefault();
+
+        let formTarget = document.querySelector('[role="form-locale"]');
+        /** @type {FormData} */
+        let formData = new FormData(formTarget);
+        
+        fetch('/handler/install/set-locales-and-timezone', {method: 'POST', body: formData}).then((response) => {
+          return response.json();
+        }).then((data) => {
+          let resultHTML = data.outputData.html;
+
+          let tableSystemsElement = document.querySelector('[role="cms-locale-and-timezone"]');
+
+          if (tableSystemsElement) {
+            tableSystemsElement.remove();
+          }
+          
+          let dynamicDiv = document.createElement('div');
+          dynamicDiv.setAttribute('role', 'cms-locale-and-timezone');
+          dynamicDiv.innerHTML = resultHTML;
+
+          let installationPages = document.querySelectorAll('[data-page-index]');
+          installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+        });
+      });
+
+      this.buttons.updateData.assembly();
+    }
+
+    if (this.getStepIndex() == 8) {
+      this.buttons.updateData = new Interactive('button');
+      this.buttons.updateData.target.setLabel('Применить');
+      this.buttons.updateData.target.setCallback((event) => {
+        event.preventDefault();
+
+        let formTarget = document.querySelector('[role="form-metadata"]');
+        /** @type {FormData} */
+        let formData = new FormData(formTarget);
+        
+        fetch('/handler/install/set-metadata', {method: 'POST', body: formData}).then((response) => {
+          return response.json();
+        }).then((data) => {
+          let resultHTML = data.outputData.html;
+
+          let tableSystemsElement = document.querySelector('[role="cms-metadata"]');
+
+          if (tableSystemsElement) {
+            tableSystemsElement.remove();
+          }
+          
+          let dynamicDiv = document.createElement('div');
+          dynamicDiv.setAttribute('role', 'cms-metadata');
+          dynamicDiv.innerHTML = resultHTML;
+
+          let installationPages = document.querySelectorAll('[data-page-index]');
+          installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+        });
+      });
+
+      this.buttons.updateData.assembly();
+    }
+
+    if (this.getStepIndex() == 9) {
+      this.buttons.updateData = new Interactive('button');
+      this.buttons.updateData.target.setLabel('Создать аккаунт');
+      this.buttons.updateData.target.setCallback((event) => {
+        event.preventDefault();
+
+        let formTarget = document.querySelector('[role="form-admin-create"]');
+        /** @type {FormData} */
+        let formData = new FormData(formTarget);
+        
+        fetch('/handler/install/create-admin', {method: 'POST', body: formData}).then((response) => {
+          return response.json();
+        }).then((data) => {
+          let resultHTML = data.outputData.html;
+
+          let tableSystemsElement = document.querySelector('[role="cms-admin-create"]');
+
+          if (tableSystemsElement) {
+            tableSystemsElement.remove();
+          }
+          
+          let dynamicDiv = document.createElement('div');
+          dynamicDiv.setAttribute('role', 'cms-admin-create');
+          dynamicDiv.innerHTML = resultHTML;
+
+          let installationPages = document.querySelectorAll('[data-page-index]');
+          installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+        });
+      });
+
+      this.buttons.updateData.assembly();
+    }
+
+    if (this.getStepIndex() == 10) {
+      this.buttons.updateData = new Interactive('button');
+      this.buttons.updateData.target.setLabel('Сгенерировать ключ');
+      this.buttons.updateData.target.setCallback((event) => {
+        event.preventDefault();
+
+        fetch('/handler/install/generate-secret-key', {method: 'POST'}).then((response) => {
+          return response.json();
+        }).then((data) => {
+          let resultHTML = data.outputData.html;
+
+          let tableSystemsElement = document.querySelector('[role="cms-secret-key"]');
+
+          if (tableSystemsElement) {
+            tableSystemsElement.remove();
+          }
+          
+          let dynamicDiv = document.createElement('div');
+          dynamicDiv.setAttribute('role', 'cms-secret-key');
           dynamicDiv.innerHTML = resultHTML;
 
           let installationPages = document.querySelectorAll('[data-page-index]');
@@ -318,6 +510,10 @@ export class InstallationMaster {
             });
           }
 
+          if (this.getStepIndex() == 7) {
+            //
+          }
+
           this.buildPanel();
         });
 
@@ -354,10 +550,11 @@ export class InstallationMaster {
       case 3: return 'Проверка прав доступа';
       case 4: return 'Проверка драйверов PDO';
       case 5: return 'Генерация локальных конфигураций';
-      case 6: return 'Выбор СУБД и генерация таблиц БД';
-      case 7: return 'Создание администратора';
-      case 8: return 'Настройка CMS';
-      case 9: return 'Завершение';
+      case 6: return 'Генерация таблиц базы данных';
+      case 7: return 'Настройка локализации и времени';
+      case 8: return 'Метаданные веб-сайта';
+      case 9: return 'Создание аккаунта администратора';
+      case 10: return 'Завершение';
       default: return '¯\_(ツ)_/¯';
     }
   }

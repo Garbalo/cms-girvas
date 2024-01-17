@@ -6,6 +6,8 @@
   outline: 0;
   padding: 10px;
   transition: background-color .2s, border-color .2s;
+  min-width: 180px;
+  width: 100%;
 }
 .form__input {
   background-color: var(--form-input-background-color);
