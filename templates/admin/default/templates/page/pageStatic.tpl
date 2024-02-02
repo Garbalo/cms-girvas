@@ -5,7 +5,7 @@
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <form id="SYSTEM_F0648538658" class="form form_page-static page-static-form" action="/handler/pageStatic">
+    <form class="form form_page-static page-static-form" action="/handler/pageStatic">
       <input name="page_static_id" type="hidden" value="{PAGE_STATIC_ID}">
       <table class="table">
         <tr class="table__row">

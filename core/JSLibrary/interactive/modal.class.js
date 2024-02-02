@@ -1,3 +1,11 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 'use strict';
 
 import {Interactive} from "../interactive.class.js";
@@ -18,6 +26,18 @@ export class Modal {
     let interval = setInterval(() => {
       if (this.opacity < 1) {
         this.opacity += 0.01;
+        elementWrapper.style.opacity = this.opacity;
+      } else {
+        clearInterval(interval);
+      }
+    }, 1);
+  }
+
+  hide() {
+    let elementWrapper = this.element.querySelector('.interactive__modal-wrapper');
+    let interval = setInterval(() => {
+      if (this.opacity > 0) {
+        this.opacity -= 0.01;
         elementWrapper.style.opacity = this.opacity;
       } else {
         clearInterval(interval);
@@ -116,7 +136,7 @@ export class Modal {
 
     let elementModal = document.createElement('div');
     elementModal.classList.add('interactive__modal');
-    elementModal.style.width = this.width;
+    elementModal.style.width = this.width + 'px';
 
     elementModal.appendChild(elementHeader);
     elementModal.appendChild(elementBody);

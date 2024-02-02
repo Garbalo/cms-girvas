@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -41,9 +41,7 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/settings.css', 'rel' => 'stylesheet']);
-      
-      $this->system_core->template->add_script(['src' => 'admin/page/settings.js', 'type' => 'module'], true);
-      
+
       $settings_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'base';
 
       $available_settings_transformed = [];

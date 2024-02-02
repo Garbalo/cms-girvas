@@ -1,3 +1,11 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 'use strict';
 
 import {Interactive} from "../interactive.class.js";
@@ -510,8 +518,8 @@ export class InstallationMaster {
             });
           }
 
-          if (this.getStepIndex() == 7) {
-            //
+          if (this.getStepIndex() == 11) {
+            fetch('/handler/install/finish', {method: 'POST'});
           }
 
           this.buildPanel();
@@ -554,7 +562,8 @@ export class InstallationMaster {
       case 7: return 'Настройка локализации и времени';
       case 8: return 'Метаданные веб-сайта';
       case 9: return 'Создание аккаунта администратора';
-      case 10: return 'Завершение';
+      case 10: return 'Генерация секретного ключа';
+      case 11: return 'Завершение';
       default: return '¯\_(ツ)_/¯';
     }
   }

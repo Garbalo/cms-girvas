@@ -5,10 +5,6 @@
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      CMS &laquo;GIRVAS&raquo; позволяет работать с записями на Вашем сайте. 
-      Для этого можете выбрать либо существующую запись, либо <a href="./entry">создать новую</a>.
-    </p>
     {ADMIN_PANEL_ENTRIES_TABLE}
   </div>
 </article>

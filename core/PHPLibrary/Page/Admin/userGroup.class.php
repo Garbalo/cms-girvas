@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
@@ -19,7 +27,6 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/userGroup.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'admin/page/usersGroup.js', 'type' => 'module'], true);
 
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [

@@ -41,3 +41,10 @@
   display: flex;
   align-items: center;
 }
+.form.form_settings .form__bottom-panel {
+  display: flex;
+  justify-content: end;
+}
+.form.form_settings .form__bottom-panel > *[cmsg-interactive-uid]:not(:last-child) {
+  margin-right: 10px;
+}

@@ -45,6 +45,8 @@
   "USER_PAGE_USER_PASSWORD_DESCRIPTION": "Пароль пользователя должен отвечать правилам безопасности CMS, поскольку благодаря ему пользователь сможет совершать вход в систему.",
   "USER_PAGE_USER_PASSWORD_REPEAT_TITLE": "Повтор пароля",
   "USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION": "Повторите введенный ранее пароль.",
+  "USER_PAGE_USER_GROUP_TITLE": "Группа",
+  "USER_PAGE_USER_GROUP_DESCRIPTION": "Группа предоставляет определенный набор прав для пользователя.",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL": "Была совершена неудачная попытка авторизации с IP {CLIENT_IP}.",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS": "Была совершена успешная авторизации с IP {CLIENT_IP}.",
   "REPORT_TYPE_ID_AP_ENTRY_CREATED": "Создана новая запись: &laquo;{ENTRY_TITLE}&raquo; пользователем [IP: {CLIENT_IP}].",

@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -148,6 +148,22 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Получить статус блокировки пользователя
+     *
+     * @return bool
+     */
+    public function is_blocked() : bool {
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
+        if (isset($metadata_array['isBlocked'])) {
+          return (bool)$metadata_array['isBlocked'];
+        }
+      }
+
+      return false;
+    }
+    
+    /**
      * Получить объект группы пользователя
      *
      * @return UserGroup|null
@@ -160,6 +176,38 @@ namespace core\PHPLibrary {
       }
 
       return null;
+    }
+
+    /**
+     * Получить временную метку создания токена для сброса пароля
+     *
+     * @return string
+     */
+    public function get_password_reset_created_unix_timestamp() : int {
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
+        if (isset($metadata_array['passwordResetTokenCreatedUnixTimestamp'])) {
+          return $metadata_array['passwordResetTokenCreatedUnixTimestamp'];
+        }
+      }
+
+      return 0;
+    }
+
+    /**
+     * Получить токен сброса пароля
+     *
+     * @return string
+     */
+    public function get_password_reset_token() : string {
+      if (property_exists($this, 'metadata_json')) {
+        $metadata_array = json_decode($this->metadata_json, true);
+        if (isset($metadata_array['passwordResetToken'])) {
+          return $metadata_array['passwordResetToken'];
+        }
+      }
+
+      return '';
     }
     
     /**
@@ -279,6 +327,38 @@ namespace core\PHPLibrary {
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       $database_query->bindParam(':login', $user_login, \PDO::PARAM_STR);
+			$database_query->execute();
+
+      $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+      
+      return ($result) ? new User($system_core, (int)$result['id']) : null;
+    }
+    
+    /**
+     * Получить объекта пользователя по адресу электронной почты
+     *
+     * @param  mixed $system_core
+     * @param  mixed $user_email
+     * @return User
+     */
+    public static function get_by_email(SystemCore $system_core, string $user_email) : User|null {
+      $query_builder = new DatabaseQueryBuilder($system_core);
+      $query_builder->set_statement_select();
+      $query_builder->statement->add_selections(['id']);
+      $query_builder->statement->set_clause_from();
+      $query_builder->statement->clause_from->add_table('users');
+      $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_where();
+      $query_builder->statement->clause_where->add_condition('LOWER(email) = :email');
+      $query_builder->statement->clause_where->assembly();
+      $query_builder->statement->set_clause_limit(1);
+      $query_builder->statement->assembly();
+
+      $user_email = strtolower($user_email);
+
+      $database_connection = $system_core->database_connector->database->connection;
+      $database_query = $database_connection->prepare($query_builder->statement->assembled);
+      $database_query->bindParam(':email', $user_email, \PDO::PARAM_STR);
 			$database_query->execute();
 
       $result = $database_query->fetch(\PDO::FETCH_ASSOC);
@@ -418,7 +498,17 @@ namespace core\PHPLibrary {
       $user_password_hash = self::password_hash($system_core, $user_security_hash, $user_password);
       $user_created_unix_timestamp = time();
       $user_updated_unix_timestamp = $user_created_unix_timestamp;
-      $user_metadata_json = json_encode([], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+      $user_default_metadata = [
+        'name' => '',
+        'surname' => '',
+        'patronymic' => '',
+        'group_id' => 4,
+        'passwordResetToken' => '',
+        'passwordResetTokenCreatedUnixTimestamp' => '',
+      ];
+
+      $user_metadata_json = json_encode($user_default_metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
       $email_is_submitted = false;
 
       $database_connection = $system_core->database_connector->database->connection;
@@ -454,9 +544,14 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata_json'])) {
           $query_builder->statement->clause_set->add_column($data_name);
         }
+      }
+      
+      // Обновление значений для колонки с метаданными
+      if (array_key_exists('metadata_json', $data)) {
+        $query_builder->statement->clause_set->add_column('metadata_json', sprintf('metadata_json::jsonb || \'%s\'', json_encode($data['metadata_json'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
       }
 
       $query_builder->statement->clause_set->add_column('updated_unix_timestamp');
@@ -473,7 +568,7 @@ namespace core\PHPLibrary {
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata_json'])) {
           switch (gettype($data_value)) {
             case 'boolean': $data_value_type = \PDO::PARAM_INT; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;

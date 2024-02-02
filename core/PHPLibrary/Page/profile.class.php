@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -69,7 +69,7 @@ namespace core\PHPLibrary\Page {
         }
         
         if (!is_null($profile_user)) {
-          if (!is_null($this->system_core->urlp->get_param('editor'))) {
+          if ($this->system_core->urlp->get_param('event') == 'edit') {
             $fields_types = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_type')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_type'), true) : [];
             $fields_titles = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_title')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_title'), true) : [];
             $fields_names = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_name')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_name'), true) : [];
@@ -103,7 +103,7 @@ namespace core\PHPLibrary\Page {
             }
 
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
-              'PAGE_NAME' => 'profile',
+              'PAGE_NAME' => 'profile-editor',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile/editor.tpl', [
                 'USER_LOGIN' => $profile_user->get_login(),
                 'USER_AVATAR_URL' => $profile_user->get_avatar_url(96),
@@ -117,7 +117,7 @@ namespace core\PHPLibrary\Page {
             ]);
           } else {
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
-              'PAGE_NAME' => 'profile-editor',
+              'PAGE_NAME' => 'profile',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile.tpl', [
                 'USER_LOGIN' => $profile_user->get_login(),
                 'USER_AVATAR_URL' => $profile_user->get_avatar_url(96),

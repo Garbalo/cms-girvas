@@ -50,5 +50,5 @@
       </td>
     </tr>
   </table>
-  <input type="submit" class="form__input form__input_submit" value="{LANG:BUTTON_SAVE_LABEL}">
+  <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
 </form>

@@ -43,10 +43,12 @@ if ($system_core->client->is_logged(2)) {
 
     $entries_category = EntryCategory::create($system_core, $entries_category_name, $entries_category_parent_id, $texts, $metadata);
     if (!is_null($entries_category)) {
+
+      $handler_output_data['entriesCategory'] = [];
+      $handler_output_data['entriesCategory']['id'] = $entries_category->get_id();
+
       $handler_message = 'Категория записей успешно создана.';
       $handler_status_code = 1;
-
-      $handler_output_data['href'] = sprintf('/admin/entriesCategory/%d', $entries_category->get_id());
     } else {
       $handler_message = 'Произошла внутренняя ошибка. Категория записей не была создана.';
       $handler_status_code = 0;

@@ -4,10 +4,9 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
-
 
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
@@ -28,7 +27,6 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/users.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'admin/page/users.js'], true);
 
       $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'list';
 

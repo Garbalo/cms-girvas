@@ -2,12 +2,9 @@
   {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">Пользователи</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      CMS &laquo;GIRVAS&raquo; позволяет работать с пользователями на Вашем сайте. 
-      Для этого можете выбрать либо существующего пользователя, либо <a href="./user">создать нового</a>.
-    </p>
     {ADMIN_PANEL_USERS_TABLE}
   </div>
 </article>

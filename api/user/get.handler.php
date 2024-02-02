@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -15,6 +15,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
+use \core\PHPLibrary\UsersGroups as UsersGroups;
 
 if ($system_core->urlp->get_path(3) == 'permissions') {
   $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
@@ -69,6 +70,8 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
     $handler_output_data['user']['id'] = $user->get_id();
     $handler_output_data['user']['login'] = $user->get_login();
     $handler_output_data['user']['avatarURL'] = $user->get_avatar_url(64);
+    $handler_output_data['user']['isBlocked'] = $user->is_blocked();
+    $handler_output_data['user']['groupID'] = $user->get_group_id();
 
     $handler_message = 'Данные о пользователе успешно получены.';
     $handler_status_code = 1;

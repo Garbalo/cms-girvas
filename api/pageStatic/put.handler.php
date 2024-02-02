@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -18,6 +18,7 @@ use \core\PHPLibrary\SystemCore\Locale as Locale;
 
 if ($system_core->client->is_logged(2)) {
   $page_static_name = isset($_PUT['page_static_name']) ? $_PUT['page_static_name'] : '';
+  $page_creation_allowed = true;
   $texts = [];
 
   $cms_locales_names = $system_core->get_array_locales_names();
@@ -36,25 +37,38 @@ if ($system_core->client->is_logged(2)) {
         if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$title_input_name];
         if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = $_PUT[$description_textarea_name];
         if (array_key_exists($content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = $_PUT[$content_textarea_name];
-        if (array_key_exists($keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', $_PATCH[$keywords_textarea_name], -1, PREG_SPLIT_NO_EMPTY);
+        if (array_key_exists($keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', $_PUT[$keywords_textarea_name], -1, PREG_SPLIT_NO_EMPTY);
       }
     }
   }
 
-  $client_session = $system_core->client->get_session(2, ['user_id']);
-  $page_static = PageStatic::create($system_core, $page_static_name, $client_session->get_user_id(), 1, $texts);
-  if (!is_null($page_static)) {
-    $handler_message = 'Статическая страница успешно создана.';
-    $handler_status_code = 1;
-
-    $handler_output_data['pageStatic'] = [];
-    $handler_output_data['pageStatic']['id'] = $page_static->get_id();
-
-    $handler_output_data['href'] = sprintf('/admin/pageStatic/%d', $page_static->get_id());
-  } else {
-    $handler_message = 'Произошла внутренняя ошибка. Статическая страница не была создана.';
-    $handler_status_code = 0;
+  if (empty($page_static_name)) {
+    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Техническое наименование страницы не может быть пустым.' : $handler_message;
+    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+    $page_creation_allowed = false;
   }
+
+  if ($page_creation_allowed) {
+    $client_session = $system_core->client->get_session(2, ['user_id']);
+    
+    $page_static = PageStatic::create($system_core, $page_static_name, $client_session->get_user_id(), $texts);
+    if (!is_null($page_static)) {
+      $handler_output_data['pageStatic'] = [];
+      $handler_output_data['pageStatic']['id'] = $page_static->get_id();
+
+      $handler_message = (!isset($handler_message)) ? 'Страница успешно создана.' : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
+    } else {
+      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Страница не была создана.' : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+    }
+  } else {
+    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя неизвестная ошибка.' : $handler_message;
+    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+  }
+} else {
+  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 
 ?>

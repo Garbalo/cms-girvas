@@ -6,7 +6,7 @@
   <div class="page__content">
     <form class="form form_user" action="/handler/user">
       <input name="user_id" type="hidden" value="{USER_ID}">
-      <table class="table table_user">
+      <table id="SYSTEM_F0648538231" class="table table_user">
         <tr class="table__row">
           <td class="table__cell cell">
             <div class="cell__title">{LANG:USER_PAGE_USER_LOGIN_TITLE}</div>
@@ -51,8 +51,20 @@
             <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
           </td>
         </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:USER_PAGE_USER_GROUP_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:USER_PAGE_USER_GROUP_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div id="SYSTEM_E6372840180" class="page__phar-block"></div>
+          </td>
+        </tr>
         {USER_ADDITIONAL_FIELDS}
       </table>
+      <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
     </form>
   </div>
 </article>

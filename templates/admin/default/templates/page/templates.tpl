@@ -5,10 +5,6 @@
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      Для CMS &laquo;GIRVAS&raquo; существуют бесплатные шаблоны, которые помогут изменить внешний вид Вашего сайта. 
-      Также доступны премиальные шаблоны в <a href="#">интернет-магазине "Galior-Market"</a>.
-    </p>
     {TEMPLATES_LIST}
   </div>
 </article>

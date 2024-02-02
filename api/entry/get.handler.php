@@ -114,14 +114,14 @@ if (is_numeric($system_core->urlp->get_path(2))) {
     $entries_category->init_data(['id', 'texts', 'metadata', 'name', 'parent_id', 'created_unix_timestamp', 'updated_unix_timestamp']);
     $entries_category_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
 
-    $handler_output_data['entryCategory'] = [];
-    $handler_output_data['entryCategory']['id'] = $entries_category->get_id();
-    $handler_output_data['entryCategory']['name'] = $entries_category->get_name();
-    $handler_output_data['entryCategory']['title'] = $entries_category->get_title($entries_category_locale);
-    $handler_output_data['entryCategory']['description'] = $entries_category->get_description($entries_category_locale);
-    $handler_output_data['entryCategory']['parentID'] = $entries_category->get_parent_id();
-    $handler_output_data['entryCategory']['createdUnixTimestamp'] = $entries_category->get_created_unix_timestamp();
-    $handler_output_data['entryCategory']['updatedUnixTimestamp'] = $entries_category->get_updated_unix_timestamp();
+    $handler_output_data['entriesCategory'] = [];
+    $handler_output_data['entriesCategory']['id'] = $entries_category->get_id();
+    $handler_output_data['entriesCategory']['name'] = $entries_category->get_name();
+    $handler_output_data['entriesCategory']['title'] = $entries_category->get_title($entries_category_locale);
+    $handler_output_data['entriesCategory']['description'] = $entries_category->get_description($entries_category_locale);
+    $handler_output_data['entriesCategory']['parentID'] = $entries_category->get_parent_id();
+    $handler_output_data['entriesCategory']['createdUnixTimestamp'] = $entries_category->get_created_unix_timestamp();
+    $handler_output_data['entriesCategory']['updatedUnixTimestamp'] = $entries_category->get_updated_unix_timestamp();
 
     $handler_message = 'Данные по категории записей успешно получены.';
     $handler_status_code = 1;

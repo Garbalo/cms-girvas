@@ -160,10 +160,7 @@
           </td>
         </tr>
       </table>
-      <div class="user-group-editor-form__panel">
-        <button class="form__button form__button_red user-group-editor-form__panel-button" data-modal-call="admin-user-group-delete">Удалить</button>
-        <input type="submit" class="form__input form__input_submit form__input_submit_blue user-group-editor-form__panel-submit" name="user_group_event_save" formmethod="{USER_GROUP_FORM_METHOD}" value="Сохранить">
-      </div>
+      <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
     </form>
   </div>
 </article>

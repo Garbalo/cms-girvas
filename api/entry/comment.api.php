@@ -32,7 +32,9 @@ if (isset($system_core)) {
   }
 
   // Подключаем файл необходимого обработчика
-  include_once($handler_path);
+  if (file_exists($handler_path)) {
+    include_once($handler_path);
+  }
 }
 
 ?>

@@ -26,3 +26,10 @@
   width: fit-content;
   float: right;
 }
+.form.form_user-group .form__bottom-panel {
+  display: flex;
+  justify-content: end;
+}
+.form.form_user-group .form__bottom-panel > *[cmsg-interactive-uid]:not(:last-child) {
+  margin-right: 10px;
+}

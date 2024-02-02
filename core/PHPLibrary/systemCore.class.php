@@ -35,7 +35,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.51 Pre-alpha';
+    public const CMS_VERSION = '0.0.52 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -206,10 +206,14 @@ namespace core\PHPLibrary {
 
         $install_locale = ($this->urlp->get_param('locale') != null) ? $this->urlp->get_param('locale') : 'ru_RU';
 
-        switch ($this->urlp->get_path(0)) {
-          case 'install': $this->set_template(new Template($this, 'default', 'install')); $this->locale = new SystemCoreLocale($this, $install_locale, 'install'); break;
-          case 'admin': $this->set_template(new Template($this, 'default', 'admin')); $this->locale = new SystemCoreLocale($this, $cms_admin_locale_name, 'admin'); break;
-          default: $this->set_template(new Template($this, $template_base_name)); $this->locale = new SystemCoreLocale($this, $cms_base_locale_name, 'base'); break;
+        if ($this->urlp->get_path(0) == 'install' && !file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
+          $this->set_template(new Template($this, 'default', 'install'));
+          $this->locale = new SystemCoreLocale($this, $install_locale, 'install');
+        } else {
+          switch ($this->urlp->get_path(0)) {
+            case 'admin': $this->set_template(new Template($this, 'default', 'admin')); $this->locale = new SystemCoreLocale($this, $cms_admin_locale_name, 'admin'); break;
+            default: $this->set_template(new Template($this, $template_base_name)); $this->locale = new SystemCoreLocale($this, $cms_base_locale_name, 'base'); break;
+          }
         }
 
         $template = $this->get_template();

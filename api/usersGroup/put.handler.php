@@ -4,7 +4,7 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
@@ -65,10 +65,11 @@ if (is_null($system_core->urlp->get_path(2))) {
 
         $user_group = UserGroup::create($system_core, $user_group_name, $texts, $user_group_permissions);
         if (!is_null($user_group)) {
+          $handler_output_data['usersGroup'] = [];
+          $handler_output_data['usersGroup']['id'] = $user_group->get_id();
+
           $handler_message = 'Группа пользователей успешно создана.';
           $handler_status_code = 1;
-
-          $handler_output_data['href'] = sprintf('/admin/userGroup/%d', $user_group->get_id());
         } else {
           $handler_message = 'Произошла внутренняя ошибка. Группа пользователей не была создана.';
           $handler_status_code = 0;
@@ -85,6 +86,9 @@ if (is_null($system_core->urlp->get_path(2))) {
     $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование не может быть пустым.';
     $handler_status_code = 0;
   }
+} else {
+  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 
 ?>

@@ -1,0 +1,7 @@
+.form.form_webchannel .form__bottom-panel {
+  display: flex;
+  justify-content: end;
+}
+.form.form_webchannel .form__bottom-panel > *[cmsg-interactive-uid]:not(:last-child) {
+  margin-right: 10px;
+}

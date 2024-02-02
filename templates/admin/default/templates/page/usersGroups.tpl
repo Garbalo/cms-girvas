@@ -2,12 +2,9 @@
   {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">Группы пользователей</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      CMS &laquo;GIRVAS&raquo; позволяет работать с группами пользователей на Вашем сайте. 
-      Для этого можете выбрать либо существующую группу, либо <a href="./userGroup">создать новую</a>.
-    </p>
     {ADMIN_PANEL_USERS_GROUPS_TABLE}
   </div>
 </article>

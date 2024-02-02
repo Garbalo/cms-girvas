@@ -5,7 +5,7 @@
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <form class="form page__web-channel-editor-form web-channel-editor-form" action="/handler/webChannel">
+    <form class="form form_webchannel page__web-channel-editor-form web-channel-editor-form" action="/handler/webChannel">
       <input name="web_channel_id" type="hidden" value="{WEB_CHANNEL_ID}">
       <table class="table">
         <tr class="table__row">
@@ -62,10 +62,7 @@
           <td id="TC6474387200" class="table__cell cell"></td>
         </tr>
       </table>
-      <div class="web-channel-editor-form__panel">
-        <button class="form__button form__button_red web-channel-editor-form__panel-button" data-modal-call="admin-web-channel-delete">Удалить</button>
-        <input type="submit" class="form__input form__input_submit form__input_submit_blue web-channel-editor-form__panel-submit" name="web_channel_event_save" formmethod="{WEB_CHANNEL_FORM_METHOD}" value="Сохранить">
-      </div>
+      <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
     </form>
   </div>
 </article>

@@ -2,12 +2,9 @@
   {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">Веб-каналы</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      CMS &laquo;GIRVAS&raquo; позволяет работать с веб-каналами на Вашем сайте для трансляции текстового контента. 
-      Для этого можете выбрать либо существующий веб-канал, либо <a href="./webChannel">создать новый</a>.
-    </p>
     {ADMIN_PANEL_WEB_CHANNELS_TABLE}
   </div>
 </article>

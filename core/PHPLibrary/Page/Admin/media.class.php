@@ -4,10 +4,9 @@
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
  * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
-
 
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
@@ -29,9 +28,7 @@ namespace core\PHPLibrary\Page\Admin {
 
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/media.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'admin/page/media/mediaLoader.js'], true);
-      $this->system_core->template->add_script(['src' => 'admin/page/media.js'], true);
-
+      
       $media_files_path = sprintf('%s/uploads/media', $this->system_core->get_cms_path());
       $media_files = array_diff(scandir($media_files_path), ['.', '..']);
 

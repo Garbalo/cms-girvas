@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 namespace templates\admin\default {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
@@ -101,12 +109,12 @@ namespace templates\admin\default {
       $this->template->add_style(['href' => 'styles/interactive.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/notification.css', 'rel' => 'stylesheet']);
       
-      $this->template->add_script(['src' => 'urlParser.class.js'], true);
       $this->template->add_script(['src' => 'popupNotification.class.js'], true);
       $this->template->add_script(['src' => 'form.class.js'], true);
       $this->template->add_script(['src' => 'modal.class.js'], true);
       $this->template->add_script(['src' => 'interactive.class.js', 'type' => 'module'], true);
       $this->template->add_script(['src' => 'common.js'], true);
+      $this->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
 
       /** @var string $user_ip IP-адрес пользователя */
       $user_ip = $_SERVER['REMOTE_ADDR'];
