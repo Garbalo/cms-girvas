@@ -77,6 +77,7 @@ namespace core\PHPLibrary\Page\Admin {
               foreach ($curl_exucute_result['outputData'] as $module_name => $module_data) {
                 $module = new Module($this->system_core, $module_name);
                 $module_installed_status = ($module->exists_file_metadata_json()) ? 'installed' : 'not-installed';
+                $module_enabled_status = ($module->is_enabled()) ? 'enabled' : 'disabled';
 
                 array_push($modules_list_items_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/modules/listItem.tpl', [
                   'MODULE_NAME' => $module_name,
@@ -85,7 +86,8 @@ namespace core\PHPLibrary\Page\Admin {
                   'MODULE_CREATED_TIMESTAMP' => date('d.m.Y', $module_data['metadata']['createdUnixTimestamp']),
                   'MODULE_AUTHOR' => $module_data['metadata']['authorName'],
                   'MODULE_PREVIEW_URL' => $module_data['previews'][0],
-                  'MODULE_INSTALLED_STATUS' => $module_installed_status
+                  'MODULE_INSTALLED_STATUS' => $module_installed_status,
+                  'MODULE_ENABLED_STATUS' => $module_enabled_status
                 ]));
               }
             }
@@ -102,6 +104,7 @@ namespace core\PHPLibrary\Page\Admin {
           foreach ($uploaded_modules_names as $module_name) {
             $module = new Module($this->system_core, $module_name);
             $module_installed_status = ($module->exists_file_metadata_json()) ? 'installed' : 'not-installed';
+            $module_enabled_status = ($module->is_enabled()) ? 'enabled' : 'disabled';
 
             if ($module->exists_file_metadata_json()) {
               array_push($modules_list_items_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/modules/listItem.tpl', [
@@ -112,7 +115,8 @@ namespace core\PHPLibrary\Page\Admin {
                 'MODULE_AUTHOR' => $module->get_author_name(),
                 //'MODULE_PREVIEW_URL' => $module->get_preview_url(),
                 'MODULE_LINK' => sprintf('/admin/module/%s', $module->get_name()),
-                'MODULE_INSTALLED_STATUS' => $module_installed_status
+                'MODULE_INSTALLED_STATUS' => $module_installed_status,
+                'MODULE_ENABLED_STATUS' => $module_enabled_status
               ]));
             }
 

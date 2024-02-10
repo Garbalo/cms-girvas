@@ -58,6 +58,20 @@
             <div id="TC6474389602" class="page__phar-block"></div>
           </td>
         </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">Отображение на стартовой странице</div>
+            <div class="cell__description">
+              <div class="page__phar-block">Если необходимо отключить отображение на стартовой странице веб-сайта этой категории, то отключите этот параметр.</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308970" name="entries_category_show_index" type="checkbox" value="on" {ENTRIES_CATEGORY_SHOW_ON_INDEX_PAGE}>
+              <label class="checkbox-container__label form__label" for="I1474308970"></label>
+            </div>
+          </td>
+        </tr>
       </table>
       <div class="form__bottom-panel" id="SYSTEM_E3724126170"></div>
     </form>

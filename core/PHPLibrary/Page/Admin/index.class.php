@@ -29,9 +29,15 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
 
-      $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/web-channel/latest-news');
-      $web_channel_xml = $web_channel_importer->get();
+      $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/web-channel/last-releases');
+      $web_channel_xml = $web_channel_importer->get([
+        'ssl' => [
+          'verify_peer' => false,
+          'verify_peer_name' => false
+        ]
+      ]);
       $web_channel_items_assembled = [];
+
       if (isset($web_channel_xml->channel->item) && $web_channel_xml != false) {
         $count_max = 3; $item_index = 0;
         foreach ($web_channel_xml->channel->item as $item) {
@@ -57,19 +63,28 @@ namespace core\PHPLibrary\Page\Admin {
       }
 
       $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/web-channel/last-releases');
-      $web_channel_xml = $web_channel_importer->get();
+      $web_channel_xml = $web_channel_importer->get([
+        'ssl' => [
+          'verify_peer' => false,
+          'verify_peer_name' => false
+        ]
+      ]);
       $web_channel_items_assembled = [];
-      if (isset($web_channel_xml->channel->item)) {
+      
+      if (!is_bool($web_channel_xml)) {
         $count_max = 3; $item_index = 0;
-        foreach ($web_channel_xml->channel->item as $item) {
-          array_push($web_channel_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/webChannel/listItem.tpl', [
-            'ITEM_TITLE' => $item->title,
-            'ITEM_DESCRIPTION' => $item->description,
-            'ITEM_LINK' => $item->link
-          ]));
+        
+        foreach ($web_channel_xml->channel as $channel) {
+          foreach ($channel->item as $item) {
+            array_push($web_channel_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/webChannel/listItem.tpl', [
+              'ITEM_TITLE' => $item->title,
+              'ITEM_DESCRIPTION' => $item->description,
+              'ITEM_LINK' => $item->link
+            ]));
 
-          if ($item_index == $count_max - 1) break;
-          $item_index++;
+            if ($item_index == $count_max - 1) break;
+            $item_index++;
+          }
         }
       }
 

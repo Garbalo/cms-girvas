@@ -114,6 +114,22 @@ namespace core\PHPLibrary {
     }
 
     /**
+     * Отображается ли категория на стартовой странице
+     *
+     * @return bool
+     */
+    public function is_showed_on_index_page() : bool {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['isShowedOnIndexPage'])) {
+          return (bool)$metadata_array['isShowedOnIndexPage'];
+        }
+      }
+
+      return true;
+    }
+
+    /**
      * Получить описание записи
      *
      * @param  mixed $locale_name Наименование локализации
@@ -299,8 +315,8 @@ namespace core\PHPLibrary {
       $entry_created_unix_timestamp = time();
       $entry_updated_unix_timestamp = $entry_created_unix_timestamp;
 
-      $texts_json = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-      $metadata_json = json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+      $texts_json = (!empty($texts)) ? json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '{}';
+      $metadata_json = (!empty($metadata)) ? json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '{}';
 
       $database_connection = $system_core->database_connector->database->connection;
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
@@ -340,13 +356,13 @@ namespace core\PHPLibrary {
 
       if (array_key_exists('texts', $data)) {
         foreach ($data['texts'] as $lang_name => $data_texts) {
-          $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+          $query_builder->statement->clause_set->add_column('texts', sprintf('texts || \'{"%s": %s}\'::jsonb', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 
       if (array_key_exists('metadata', $data)) {
         foreach ($data['metadata'] as $metadata_name => $metadata_value) {
-          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('metadata || \'{"%s": %s}\'::jsonb', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 

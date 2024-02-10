@@ -39,21 +39,21 @@ export class PageModules {
 
       let listItems = document.querySelectorAll('.modules-list .list__item');
       for (let listItem of listItems) {
-        let buttons = {delete: null, install: null};
+        let buttons = {delete: null, install: null, enable: null, disable: null, more: null};
 
         let moduleName = listItem.getAttribute('data-module-name');
-        let moduleInstalledStatus = listItem.getAttribute('data-module-installed-status');
+        let moduleInstalledStatus = (listItem.hasAttribute('data-module-installed-status')) ? listItem.getAttribute('data-module-installed-status') : 'not-installed';
+        let moduleEnabledStatus = (listItem.hasAttribute('data-module-enabled-status')) ? listItem.getAttribute('data-module-enabled-status') : 'disabled';
         let itemFooterContainer = listItem.querySelector('[role="item-footer-panel"]');
 
         // Добавление интерактивных элементов
         // Кнопка "Подробнее"
-        let interactiveButtonMore = new Interactive('button');
-        interactiveButtonMore.target.setLabel('Подробнее');
-        interactiveButtonMore.target.setCallback(() => {
+        buttons.more = new Interactive('button');
+        buttons.more.target.setLabel('Подробнее');
+        buttons.more.target.setCallback(() => {
           window.location.href = (searchParams.getPathPart(3) == null) ? `./module/${moduleName}` : `./repository/${moduleName}`;
         });
-        interactiveButtonMore.assembly();
-        itemFooterContainer.appendChild(interactiveButtonMore.target.element);
+        buttons.more.assembly();
 
         // Кнопка "Удалить"
         buttons.delete = new Interactive('button');
@@ -90,7 +90,6 @@ export class PageModules {
           interactiveModal.target.show();
         });
         buttons.delete.assembly();
-        itemFooterContainer.appendChild(buttons.delete.target.element);
 
         // Кнопка "Установить"
         buttons.install = new Interactive('button');
@@ -102,7 +101,7 @@ export class PageModules {
           let notification_start = new PopupNotification('Загрузка модуля...', document.body, true);
           notification_start.show();
 
-          fetch('/handler/admin/modules/download', {
+          fetch('/handler/module/install', {
             method: 'POST',
             body: formData
           }).then((response) => {
@@ -120,10 +119,83 @@ export class PageModules {
           });
         });
         buttons.install.assembly();
+
+        // Кнопка "Активировать"
+        buttons.enable = new Interactive('button');
+        buttons.enable.target.setLabel('Активировать');
+        buttons.enable.target.setCallback(() => {
+          let formData = new FormData();
+          formData.append('module_name', moduleName);
+          formData.append('module_event', 'enable');
+
+          let notification_start = new PopupNotification('Активация модуля...', document.body, true);
+          notification_start.show();
+
+          fetch('/handler/module', {
+            method: 'PATCH',
+            body: formData
+          }).then((response) => {
+            return response.json();
+          }).then((data) => {
+            notification_start.hide();
+
+            if (data.statusCode == 1) {
+              buttons.enable.target.element.style.display = 'none';
+              buttons.disable.target.element.style.display = 'flex';
+            }
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        });
+        buttons.enable.assembly();
+
+        // Кнопка "Деактивировать"
+        buttons.disable = new Interactive('button');
+        buttons.disable.target.setLabel('Деактивировать');
+        buttons.disable.target.setCallback(() => {
+          let formData = new FormData();
+          formData.append('module_name', moduleName);
+          formData.append('module_event', 'disable');
+
+          let notification_start = new PopupNotification('Деактивация модуля...', document.body, true);
+          notification_start.show();
+
+          fetch('/handler/module', {
+            method: 'PATCH',
+            body: formData
+          }).then((response) => {
+            return response.json();
+          }).then((data) => {
+            notification_start.hide();
+
+            if (data.statusCode == 1) {
+              buttons.enable.target.element.style.display = 'flex';
+              buttons.disable.target.element.style.display = 'none';
+            }
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        });
+        buttons.disable.assembly();
+
+        itemFooterContainer.appendChild(buttons.more.target.element);
         itemFooterContainer.appendChild(buttons.install.target.element);
+        itemFooterContainer.appendChild(buttons.delete.target.element);
+        itemFooterContainer.appendChild(buttons.enable.target.element);
+        itemFooterContainer.appendChild(buttons.disable.target.element);
 
         buttons.install.target.element.style.display = (moduleInstalledStatus == 'installed') ? 'none' : 'flex';
         buttons.delete.target.element.style.display = (moduleInstalledStatus == 'installed') ? 'flex' : 'none';
+
+        if (moduleInstalledStatus == 'installed' && (searchParams.getPathPart(3) == 'local' || searchParams.getPathPart(3) == null)) {
+          buttons.enable.target.element.style.display = (moduleEnabledStatus == 'enabled') ? 'none' : 'flex';
+          buttons.disable.target.element.style.display = (moduleEnabledStatus == 'enabled') ? 'flex' : 'none';
+        } else {
+          buttons.enable.target.element.style.display = 'none';
+          buttons.disable.target.element.style.display = 'none';
+        }
       }
     });
   }

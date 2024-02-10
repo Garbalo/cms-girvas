@@ -17,7 +17,7 @@ use \core\PHPLibrary\Module as Module;
 use \ZipArchive as ZipArchive;
 
 if ($system_core->client->is_logged(2)) {
-  if (isset($_POST['module_name'])) {
+  if (isset($_POST['module_name']) && $system_core->urlp->get_path(2) == 'install') {
     $module_name = $_POST['module_name'];
     $module = new Module($system_core, $module_name);
 

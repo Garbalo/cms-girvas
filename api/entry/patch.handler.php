@@ -25,6 +25,7 @@ if ($system_core->client->is_logged(2)) {
 
       if (EntryCategory::exists_by_id($system_core, $entries_category_id)) {
         $entries_category = new EntryCategory($system_core, $entries_category_id);
+        $entries_category->init_data(['metadata']);
         $entries_category_data = [];
 
         $cms_locales_names = $system_core->get_array_locales_names();
@@ -47,6 +48,15 @@ if ($system_core->client->is_logged(2)) {
 
         if (isset($_PATCH['entries_category_name'])) $entries_category_data['name'] = $_PATCH['entries_category_name'];
         if (isset($_PATCH['entries_category_parent_id'])) $entries_category_data['parent_id'] = $_PATCH['entries_category_parent_id'];
+        
+        if (isset($_PATCH['entries_category_show_index'])) {
+          if (!isset($entries_category_data['metadata'])) $entries_category_data['metadata'] = [];
+          $entries_category_data['metadata']['isShowedOnIndexPage'] = 1;
+        } else {
+          if (!isset($entries_category_data['metadata'])) $entries_category_data['metadata'] = [];
+          $entries_category_data['metadata']['isShowedOnIndexPage'] = 0;
+        }
+        
         $entries_category_is_updated = $entries_category->update($entries_category_data);
 
         if ($entries_category_is_updated) {

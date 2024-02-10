@@ -56,17 +56,20 @@ namespace core\PHPLibrary\Page\Admin {
       }
 
       if ($this->system_core->urlp->get_path(2) == 'repository') {
-
+        
         $ch = curl_init('https://repository.cms-girvas.ru/templates');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $curl_exucute_result = json_decode(curl_exec($ch), true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $curl_result = curl_exec($ch);
+        $curl_result = json_decode($curl_result, true);
+
         curl_close($ch);
 
-        if (isset($curl_exucute_result['outputData'])) {
+        if (isset($curl_result['outputData'])) {
           $templates_list_items_transformed_array = [];
 
-          if (count($curl_exucute_result['outputData']) > 0) {
-            foreach ($curl_exucute_result['outputData'] as $template_name => $template_data) {
+          if (count($curl_result['outputData']) > 0) {
+            foreach ($curl_result['outputData'] as $template_name => $template_data) {
               $template = new Template($this->system_core, $template_name);
               $template_installed_status = ($template->exists_file_metadata_json()) ? 'installed' : 'not-installed';
 

@@ -52,7 +52,7 @@ namespace core\PHPLibrary\Page\Admin {
         $entries_category = (EntryCategory::exists_by_id($this->system_core, $entries_category_id)) ? new EntryCategory($this->system_core, $entries_category_id) : null;
         
         if (!is_null($entries_category)) {
-          $entries_category->init_data(['id', 'texts', 'name', 'parent_id']);
+          $entries_category->init_data(['id', 'texts', 'name', 'parent_id', 'metadata']);
         }
       }
       
@@ -65,6 +65,7 @@ namespace core\PHPLibrary\Page\Admin {
         'ENTRIES_CATEGORY_DESCRIPTION' => (!is_null($entries_category)) ? $entries_category->get_description() : '',
         'ENTRIES_CATEGORY_NAME' => (!is_null($entries_category)) ? $entries_category->get_name() : '',
         'ENTRIES_CATEGORY_FORM_METHOD' => (!is_null($entries_category)) ? 'PATCH' : 'PUT',
+        'ENTRIES_CATEGORY_SHOW_ON_INDEX_PAGE' => (is_null($entries_category)) ? '' : (($entries_category->is_showed_on_index_page()) ? 'checked' : ''),
       ]);
     }
 

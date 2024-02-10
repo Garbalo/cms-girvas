@@ -56,7 +56,7 @@ if (defined('IS_NOT_HACKED')) {
         ]);
       }
 
-      header('Content-type: text/xml');
+      header('Content-Type: text/xml');
 
       $web_channel_builder->assembly();
       echo $web_channel_builder->assembled;

@@ -5,8 +5,8 @@
 	
 	RewriteBase /
 
-	RewriteCond %{HTTP_HOST} ^cms\-girvas\.ru [NC]
-	RewriteRule ^(.*)$ https://www.cms-girvas.ru/$1 [NC,R=301,L]
+	RewriteCond %{SERVER_PORT} ^80$
+	RewriteRule ^(.*)$ https\:\/\/www.cms-girvas.ru\/$1 [NC,R=301,L]
 	
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d

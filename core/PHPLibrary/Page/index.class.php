@@ -50,9 +50,10 @@ namespace core\PHPLibrary\Page {
 
       $entries_array_templates = [];
       foreach ($entries_array_objects as $entry_object) {
-        $entry_object->init_data(['id', 'texts', 'metadata', 'name', 'created_unix_timestamp']);
-
-        if ($entry_object->is_published()) {
+        $entry_object->init_data(['id', 'texts', 'metadata', 'name', 'created_unix_timestamp', 'category_id']);
+        $entry_category_object = $entry_object->get_category(['metadata']);
+        
+        if ($entry_object->is_published() && $entry_category_object->is_showed_on_index_page()) {
           array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/entriesList/item.tpl', [
             'ENTRY_ID' => $entry_object->get_id(),
             'ENTRY_TITLE' => $entry_object->get_title(),

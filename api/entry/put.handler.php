@@ -43,6 +43,15 @@ if ($system_core->client->is_logged(2)) {
 
     $entries_category = EntryCategory::create($system_core, $entries_category_name, $entries_category_parent_id, $texts, $metadata);
     if (!is_null($entries_category)) {
+      $entries_category->init_data(['metadata']);
+
+      if (isset($_PUT['entries_category_show_index'])) {
+        if (!isset($entries_category_data['metadata'])) $entries_category_data['metadata'] = [];
+        $entries_category_data['metadata']['isShowedOnIndexPage'] = 1;
+      } else {
+        if (!isset($entries_category_data['metadata'])) $entries_category_data['metadata'] = [];
+        $entries_category_data['metadata']['isShowedOnIndexPage'] = 0;
+      }
 
       $handler_output_data['entriesCategory'] = [];
       $handler_output_data['entriesCategory']['id'] = $entries_category->get_id();

@@ -89,6 +89,7 @@ export class PageWebChannel {
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {
+          console.log(data1);
           if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
             let webChannelData = data1.outputData.webChannel;
             window.location.href = '/admin/webChannel/' + webChannelData.id;

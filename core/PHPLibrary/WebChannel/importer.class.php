@@ -11,6 +11,7 @@
 namespace core\PHPLibrary\WebChannel {
   use \DOMDocument as DOMDocument;
   use \SimpleXMLElement as SimpleXMLElement;
+  use \XMLReader as XMLReader;
   use \core\PHPLibrary\SystemCore as SystemCore;
 
   final class Importer {
@@ -20,9 +21,11 @@ namespace core\PHPLibrary\WebChannel {
       $this->set_web_channel_link($web_channel_link);
     }
 
-    public function get() : SimpleXMLElement|bool {
+    public function get(array $stream_context = []) : SimpleXMLElement|bool {
       $web_channel_link = $this->get_web_channel_link();
-      return @simplexml_load_file($web_channel_link);
+
+      $assertion = file_get_contents($web_channel_link, false, stream_context_create($stream_context));
+      return simplexml_load_string($assertion);
     }
 
     private function set_web_channel_link(string $link) : void {
