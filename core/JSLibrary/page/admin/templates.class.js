@@ -21,23 +21,23 @@ export class PageTemplates {
 
     let listItems = document.querySelectorAll('.templates-list .list__item');
     for (let listItem of listItems) {
-      let listItemButtons = {more: null, delete: null, install: null};
+      let buttons = {more: null, delete: null, install: null};
 
       let templateName = listItem.getAttribute('data-template-name');
       let templateCategory = listItem.getAttribute('data-template-category');
       let templateInstalledStatus = listItem.getAttribute('data-template-installed-status');
       let itemFooterContainer = listItem.querySelector('[role="item-footer-panel"]');
 
-      listItemButtons.more = new Interactive('button');
-      listItemButtons.more.target.setLabel('Подробнее');
-      listItemButtons.more.target.setCallback((event) => {
+      buttons.more = new Interactive('button');
+      buttons.more.target.setLabel('Подробнее');
+      buttons.more.target.setCallback((event) => {
         window.location.href = (searchParams.getPathPart(3) == null) ? `./template/${templateName}` : `../template/${templateName}`;
       });
-      listItemButtons.more.assembly();
+      buttons.more.assembly();
 
-      listItemButtons.delete = new Interactive('button');
-      listItemButtons.delete.target.setLabel('Удалить');
-      listItemButtons.delete.target.setCallback((event) => {
+      buttons.delete = new Interactive('button');
+      buttons.delete.target.setLabel('Удалить');
+      buttons.delete.target.setCallback((event) => {
         let interactiveModal = new Interactive('modal', {title: "Удаление шаблона", content: "Вы действительно хотите удалить шаблон? Действие отменить будет нельзя."});
         interactiveModal.target.addButton('Удалить', () => {
           let formData = new FormData();
@@ -69,11 +69,11 @@ export class PageTemplates {
         document.body.appendChild(interactiveModal.target.element);
         interactiveModal.target.show();
       });
-      listItemButtons.delete.assembly();
+      buttons.delete.assembly();
 
-      listItemButtons.install = new Interactive('button');
-      listItemButtons.install.target.setLabel('Установить');
-      listItemButtons.install.target.setCallback((event) => {
+      buttons.install = new Interactive('button');
+      buttons.install.target.setLabel('Установить');
+      buttons.install.target.setCallback((event) => {
         let formData = new FormData();
         formData.append('template_name', templateName);
         formData.append('template_category', templateCategory);
@@ -81,7 +81,7 @@ export class PageTemplates {
         let notification_start = new PopupNotification('Загрузка шаблона...', document.body, true);
         notification_start.show();
 
-        fetch('/handler/admin/templates/download', {
+        fetch('/handler/template/install', {
           method: 'POST',
           body: formData
         }).then((response) => {
@@ -98,14 +98,14 @@ export class PageTemplates {
           notification.show();
         });
       });
-      listItemButtons.install.assembly();
+      buttons.install.assembly();
 
-      itemFooterContainer.appendChild(listItemButtons.more.target.element);
-      itemFooterContainer.appendChild(listItemButtons.delete.target.element);
-      itemFooterContainer.appendChild(listItemButtons.install.target.element);
+      itemFooterContainer.appendChild(buttons.more.target.element);
+      itemFooterContainer.appendChild(buttons.delete.target.element);
+      itemFooterContainer.appendChild(buttons.install.target.element);
 
-      listItemButtons.install.target.element.style.display = (templateInstalledStatus == 'installed') ? 'none' : 'flex';
-      listItemButtons.delete.target.element.style.display = (templateInstalledStatus == 'installed') ? 'flex' : 'none';
+      buttons.install.target.element.style.display = (templateInstalledStatus == 'installed') ? 'none' : 'flex';
+      buttons.delete.target.element.style.display = (templateInstalledStatus == 'installed') ? 'flex' : 'none';
     }
   }
 }

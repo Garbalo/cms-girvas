@@ -7,7 +7,7 @@
     let editorContent = document.querySelector('#E3473967486_CONTENT');
 
     let nadvoTE = new NadvoTE(document.querySelector('#E3473967486'), {
-      'handler': '/handler/parsedown',
+      'handler': '/handler/utils/parsedown',
       'toolbar': [
         {'name': 'bold', 'type': 'button'},
         {'name': 'italic', 'type': 'button'},

@@ -26,7 +26,7 @@ export class ToolImage extends Tool {
   }
 
   async getMediaFilesArray() {
-    return await fetch('/handler/media/list', {
+    return await fetch('/handler/media', {
       method: 'GET'
     }).then((response) => {
       return response.json();
@@ -80,7 +80,7 @@ export class ToolImage extends Tool {
     let formData = new FormData();
     formData.append('mediaFile', input.files[fileIndex]);
 
-    fetch('/handler/upload/media', {
+    fetch('/handler/media', {
       method: 'POST',
       body: formData
     }).then((response) => {
@@ -114,6 +114,7 @@ export class ToolImage extends Tool {
       inputFilesElement.style.display = 'none';
       inputFilesElement.addEventListener('change', (event) => {
         if (inputFilesElement.files.length > 0) {
+          console.log(`[NADVO TE] New images upload...`);
           this.imageUpload(inputFilesElement, 0);
         }
       });

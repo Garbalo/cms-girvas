@@ -34,7 +34,7 @@ export class PageGlobal {
           let authForm = new Interactive('form');
           authForm.target.init({
             method: 'POST',
-            action: `/handler/auth`
+            action: `/handler/authorization?method=base`
           });
 
           /** @type {ElementInput} */

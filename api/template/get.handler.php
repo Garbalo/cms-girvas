@@ -13,7 +13,9 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
-use \core\PHPLibrary\Module as Module;
+use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
+use \core\PHPLibrary\Template as Template;
+use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
 if ($system_core->urlp->get_path(2) == 'assembly') {
   if (isset($_GET['templateCategory']) && isset($_GET['templateFilePath'])) {
@@ -27,14 +29,14 @@ if ($system_core->urlp->get_path(2) == 'assembly') {
     }
 
     switch ($template_category) {
-      case 'default': $system_core->locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $locale_name, 'base'); break;
-      case 'admin': $system_core->locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $locale_name, 'admin'); break;
-      case 'install': $system_core->locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $locale_name, 'install'); break;
+      case 'default': $system_core->locale = new SystemCoreLocale($system_core, $locale_name, 'base'); break;
+      case 'admin': $system_core->locale = new SystemCoreLocale($system_core, $locale_name, 'admin'); break;
+      case 'install': $system_core->locale = new SystemCoreLocale($system_core, $locale_name, 'install'); break;
       default: $system_core->locale = sprintf('%s_template', $template_category); break;
     }
 
     $template_name = ($system_core->configurator->exists_database_entry_value($template_config_name)) ? $system_core->configurator->get_database_entry_value($template_config_name) : 'default';
-    $template = new \core\PHPLibrary\Template($system_core, $template_name, $template_category);
+    $template = new Template($system_core, $template_name, $template_category);
 
     $templates_patterns = [];
     if (isset($_GET['patternNames']) && isset($_GET['patternValues'])) {
@@ -45,7 +47,7 @@ if ($system_core->urlp->get_path(2) == 'assembly') {
       }
     }
 
-    $handler_output_data['templateAssembled'] = \core\PHPLibrary\Template\Collector::assembly_locale(\core\PHPLibrary\Template\Collector::assembly_file_content($template, $_GET['templateFilePath'], $templates_patterns), $system_core->locale);
+    $handler_output_data['templateAssembled'] = TemplateCollector::assembly_locale(TemplateCollector::assembly_file_content($template, $_GET['templateFilePath'], $templates_patterns), $system_core->locale);
   }
 }
 

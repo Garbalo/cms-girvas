@@ -83,7 +83,7 @@ export class PageMedia {
     let formData = new FormData();
     formData.append('mediaFile', inputElement.files[fileIndex]);
 
-    fetch('/handler/upload/media', {
+    fetch('/handler/media', {
       method: 'POST',
       body: formData
     }).then((response) => {
