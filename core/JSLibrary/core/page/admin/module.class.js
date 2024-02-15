@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageModule {
   constructor(params = {}) {
@@ -17,8 +17,7 @@ export class PageModule {
   }
 
   init() {
-    let searchParams = new URLParser();
-    let locales, localeBaseSelected, localeAdminSelected;
+    let searchParams = new URLParser(), locales;
     let buttons = {enable: null, disable: null, install: null, delete: null};
 
     let moduleBlock = document.querySelector('.module');
@@ -27,26 +26,16 @@ export class PageModule {
     let moduleInstalledStatus = moduleBlock.getAttribute('data-module-installed-status');
     let interactiveContainerElement = document.querySelector('#E8548530785');
 
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeAdminSelected = data.outputData.locale;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       if (searchParams.getPathPart(2) != null) {
         buttons.enable = new Interactive('button');
-        buttons.enable.target.setLabel('Включить');
+        buttons.enable.target.setLabel(localeData.BUTTON_ENABLE_LABEL);
         buttons.enable.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
@@ -72,7 +61,7 @@ export class PageModule {
         buttons.enable.assembly();
     
         buttons.disable = new Interactive('button');
-        buttons.disable.target.setLabel('Выключить');
+        buttons.disable.target.setLabel(localeData.BUTTON_DISABLE_LABEL);
         buttons.disable.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
@@ -98,7 +87,7 @@ export class PageModule {
         buttons.disable.assembly();
     
         buttons.install = new Interactive('button');
-        buttons.install.target.setLabel('Установить');
+        buttons.install.target.setLabel(localeData.BUTTON_INSTALL_LABEL);
         buttons.install.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
@@ -127,7 +116,7 @@ export class PageModule {
         buttons.install.assembly();
     
         buttons.delete = new Interactive('button');
-        buttons.delete.target.setLabel('Удалить');
+        buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
         buttons.delete.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);

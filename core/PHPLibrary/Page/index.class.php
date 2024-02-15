@@ -41,7 +41,6 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
 
       /** @var Entries $entries Объект класса Entries */
       $entries = new Entries($this->system_core);

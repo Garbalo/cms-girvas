@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageModules {
   constructor(params = {}) {
@@ -17,25 +17,14 @@ export class PageModules {
   }
 
   init() {
-    let searchParams = new URLParser();
-    let locales, localeBaseSelected, localeAdminSelected;
+    let searchParams = new URLParser(), locales;
 
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeAdminSelected = data.outputData.locale;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       let listItems = document.querySelectorAll('.modules-list .list__item');
       for (let listItem of listItems) {
@@ -49,7 +38,7 @@ export class PageModules {
         // Добавление интерактивных элементов
         // Кнопка "Подробнее"
         buttons.more = new Interactive('button');
-        buttons.more.target.setLabel('Подробнее');
+        buttons.more.target.setLabel(localeData.BUTTON_MORE_DETAILS_LABEL);
         buttons.more.target.setCallback(() => {
           window.location.href = (searchParams.getPathPart(3) == null) ? `./module/${moduleName}` : `./repository/${moduleName}`;
         });
@@ -57,10 +46,10 @@ export class PageModules {
 
         // Кнопка "Удалить"
         buttons.delete = new Interactive('button');
-        buttons.delete.target.setLabel('Удалить');
+        buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
         buttons.delete.target.setCallback(() => {
-          let interactiveModal = new Interactive('modal', {title: "Удаление модуля", content: "Вы действительно хотите удалить модуль? Действие отменить будет нельзя."});
-          interactiveModal.target.addButton('Удалить', () => {
+          let interactiveModal = new Interactive('modal', {title: localeData.MODAL_MODULE_DELETE_TITLE, content: localeData.MODAL_MODULE_DELETE_DESCRIPTION});
+          interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
             let formData = new FormData();
             formData.append('module_name', moduleName);
 
@@ -93,12 +82,12 @@ export class PageModules {
 
         // Кнопка "Установить"
         buttons.install = new Interactive('button');
-        buttons.install.target.setLabel('Установить');
+        buttons.install.target.setLabel(localeData.BUTTON_INSTALL_LABEL);
         buttons.install.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
 
-          let notification_start = new PopupNotification('Загрузка модуля...', document.body, true);
+          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_LOADING_MODULE, document.body, true);
           notification_start.show();
 
           fetch('/handler/module/install', {
@@ -122,13 +111,13 @@ export class PageModules {
 
         // Кнопка "Активировать"
         buttons.enable = new Interactive('button');
-        buttons.enable.target.setLabel('Активировать');
+        buttons.enable.target.setLabel(localeData.BUTTON_ACTIVATION_LABEL);
         buttons.enable.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
           formData.append('module_event', 'enable');
 
-          let notification_start = new PopupNotification('Активация модуля...', document.body, true);
+          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_ACTIVATION_MODULE, document.body, true);
           notification_start.show();
 
           fetch('/handler/module', {
@@ -152,13 +141,13 @@ export class PageModules {
 
         // Кнопка "Деактивировать"
         buttons.disable = new Interactive('button');
-        buttons.disable.target.setLabel('Деактивировать');
+        buttons.disable.target.setLabel(localeData.BUTTON_DEACTIVATION_LABEL);
         buttons.disable.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
           formData.append('module_event', 'disable');
 
-          let notification_start = new PopupNotification('Деактивация модуля...', document.body, true);
+          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_DEACTIVATION_MODULE, document.body, true);
           notification_start.show();
 
           fetch('/handler/module', {

@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageUser {
   constructor(params = {}) {
@@ -17,24 +17,16 @@ export class PageUser {
   }
 
   init() {
-    let searchParams = new URLParser();
+    let searchParams = new URLParser(), locales, userData, usersGroups;
     let elementForm = document.querySelector('.form_user');
     
-    let locales, localeSelected, usersGroups;
     let interactiveChoicesUsersGroups = new Interactive('choices');
-    
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeSelected = data.outputData.locale;
-      return fetch('/handler/usersGroups' + '?locale=' + localeSelected.name, {method: 'GET'});
+      return fetch('/handler/usersGroups' + '?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
@@ -50,7 +42,9 @@ export class PageUser {
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      let userData = data.outputData.user;
+      userData = data.outputData.user;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       if (searchParams.getPathPart(3) != null) {
         usersGroups.forEach((usersGroup, usersGroupIndex) => {
@@ -61,7 +55,7 @@ export class PageUser {
       }
 
       this.buttons.save = new Interactive('button');
-      this.buttons.save.target.setLabel('Сохранить');
+      this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
@@ -85,7 +79,7 @@ export class PageUser {
       this.buttons.save.assembly();
   
       this.buttons.block = new Interactive('button');
-      this.buttons.block.target.setLabel('Заблокировать');
+      this.buttons.block.target.setLabel(localeData.BUTTON_BAN_LABEL);
       this.buttons.block.target.setCallback((event) => {
         event.preventDefault();
         
@@ -111,7 +105,7 @@ export class PageUser {
       this.buttons.block.assembly();
   
       this.buttons.unblock = new Interactive('button');
-      this.buttons.unblock.target.setLabel('Разблокировать');
+      this.buttons.unblock.target.setLabel(localeData.BUTTON_UNBAN_LABEL);
       this.buttons.unblock.target.setCallback((event) => {
         event.preventDefault();
         
@@ -137,12 +131,12 @@ export class PageUser {
       this.buttons.unblock.assembly();
   
       this.buttons.delete = new Interactive('button');
-      this.buttons.delete.target.setLabel('Удалить');
+      this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
       this.buttons.delete.target.setCallback((event) => {
         event.preventDefault();
   
-        let interactiveModal = new Interactive('modal', {title: "Удаление пользователя", content: "Вы действительно хотите удалить пользователя? Действие отменить будет нельзя."});
-        interactiveModal.target.addButton('Удалить', () => {
+        let interactiveModal = new Interactive('modal', {title: localeData.MODAL_USER_DELETE_TITLE, content: localeData.MODAL_USER_DELETE_DESCRIPTION});
+        interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('user_id', searchParams.getPathPart(3));
   
@@ -161,7 +155,7 @@ export class PageUser {
           });
         });
   
-        interactiveModal.target.addButton('Отмена', () => {
+        interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
           interactiveModal.target.close();
         });
   

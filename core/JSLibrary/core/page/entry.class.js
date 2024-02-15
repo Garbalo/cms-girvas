@@ -8,9 +8,9 @@
 
 'use strict';
 
-import {Interactive} from "../interactive.class.js";
-import {ElementButton} from "../interactive/form/elementButton.class.js";
-import {ElementTextarea} from "../interactive/form/elementTextarea.class.js";
+import {Interactive} from "../../interactive.class.js";
+import {ElementButton} from "../../interactive/form/elementButton.class.js";
+import {ElementTextarea} from "../../interactive/form/elementTextarea.class.js";
 import {EntryComment} from "./entry/comment.class.js";
 
 export class PageEntry {
@@ -32,7 +32,17 @@ export class PageEntry {
     this.postLoadComments = [];
     this.comments = [];
 
-    fetch('/handler/user/@me/permissions', {method: 'GET'}).then((response) => {
+    let locales;
+
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      locales = data.outputData.locales;
+      return window.CMSCore.locales.base.getData();
+    }).then((localeData) => {
+      this.localeBaseData = localeData;
+      return fetch('/handler/user/@me/permissions', {method: 'GET'});
+    }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       if (typeof data.outputData.user != 'undefined') {
@@ -101,13 +111,13 @@ export class PageEntry {
         let formTextarea = commentForm.target.createElementTextarea();
         formTextarea.init({
           name: 'comment_content',
-          placeholder: 'Как хотите это прокомментировать?',
+          placeholder: this.localeBaseData.ENTRY_COMMENT_TEXTAREA_PLACEHOLDER,
           rows: 6
         });
 
         /** @type {ElementButton} */
         let formButton = commentForm.target.createElementButton();
-        formButton.setStringLabel('Отправить');
+        formButton.setStringLabel(this.localeBaseData.BUTTON_SEND_LABEL);
         formButton.setClickEvent((event) => {
           event.preventDefault();
           commentForm.target.send();
@@ -150,7 +160,7 @@ export class PageEntry {
       
       let entryCommentsContainerElement = elementEntry.querySelector('[role="entry-comments-container"]');
       let interactiveButtonCommentsLoad = new Interactive('button');
-      interactiveButtonCommentsLoad.target.setLabel('Загрузить еще комментарии');
+      interactiveButtonCommentsLoad.target.setLabel(this.localeBaseData.BUTTON_LOAD_MORE_COMMENTS_LABEL);
       interactiveButtonCommentsLoad.target.setCallback((event) => {
         fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'}).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);

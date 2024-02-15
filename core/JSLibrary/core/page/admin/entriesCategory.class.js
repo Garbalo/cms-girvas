@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageEntriesCategory {
   constructor(params = {}) {
@@ -20,26 +20,16 @@ export class PageEntriesCategory {
     let searchParams = new URLParser();
     let elementForm = document.querySelector('.form_entries-category');
 
-    let locales, localeBaseSelected, localeAdminSelected;
+    let locales;
     let interactiveLocaleChoices = new Interactive('choices');
     let interactiveParentChoices = new Interactive('choices');
 
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeAdminSelected = data.outputData.locale;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -62,7 +52,7 @@ export class PageEntriesCategory {
       });
 
       locales.forEach((locale, localeIndex) => {
-        if (locale.name === localeBaseSelected.name) {
+        if (locale.name === window.CMSCore.locales.base.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
         }
       });
@@ -98,7 +88,7 @@ export class PageEntriesCategory {
 
       let entriesCategoryData = {}, entriesCategoriesData = {};
       
-      fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + localeAdminSelected.name, {
+      fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + window.CMSCore.locales.admin.name, {
         method: 'GET'
       }).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
@@ -107,7 +97,7 @@ export class PageEntriesCategory {
           entriesCategoryData = data1.outputData.entriesCategory;
         }
 
-        return fetch('/handler/entry/categories' + '?locale=' + localeAdminSelected.name, {method: 'GET'});
+        return fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'});
       }).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
       }).then((data1) => {
@@ -133,7 +123,7 @@ export class PageEntriesCategory {
       });
 
       this.buttons.save = new Interactive('button');
-      this.buttons.save.target.setLabel('Сохранить');
+      this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
@@ -156,12 +146,12 @@ export class PageEntriesCategory {
       this.buttons.save.assembly();
 
       this.buttons.delete = new Interactive('button');
-      this.buttons.delete.target.setLabel('Удалить');
+      this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
       this.buttons.delete.target.setCallback((event) => {
         event.preventDefault();
 
-        let interactiveModal = new Interactive('modal', {title: "Удаление категории записей", content: "Вы действительно хотите удалить категорию записей? Действие отменить будет нельзя."});
-        interactiveModal.target.addButton('Удалить', () => {
+        let interactiveModal = new Interactive('modal', {title: localeData.MODAL_ENTRIES_CATEGORY_DELETE_TITLE, content: localeData.MODAL_ENTRIES_CATEGORY_DELETE_DESCRIPTION});
+        interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('entries_category_id', searchParams.getPathPart(3));
 
@@ -180,7 +170,7 @@ export class PageEntriesCategory {
           });
         });
 
-        interactiveModal.target.addButton('Отмена', () => {
+        interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
           interactiveModal.target.close();
         });
 

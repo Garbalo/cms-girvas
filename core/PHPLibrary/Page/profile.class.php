@@ -50,7 +50,6 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/profile.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
       
       if ($this->system_core->client->is_logged(1)) {
         /**

@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageWebChannel {
   constructor(params = {}) {
@@ -17,37 +17,26 @@ export class PageWebChannel {
   }
 
   init() {
-    let searchParams = new URLParser();
+    let searchParams = new URLParser(), locales;
     let elementForm = document.querySelector('.form_webchannel');
 
-    let locales, localeBaseSelected, localeAdminSelected;
     let interactiveLocalesChoices = new Interactive('choices');
     let interactiveChoicesEntriesCategories = new Interactive('choices');
 
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeAdminSelected = data.outputData.locale;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       this.buttons.delete = new Interactive('button');
-      this.buttons.delete.target.setLabel('Удалить');
+      this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
       this.buttons.delete.target.setCallback((event) => {
         event.preventDefault();
         
-        let interactiveModal = new Interactive('modal', {title: "Удаление веб-канала", content: "Вы действительно хотите удалить веб-канал? Действие отменить будет нельзя."});
-        interactiveModal.target.addButton('Удалить', () => {
+        let interactiveModal = new Interactive('modal', {title: localeData.MODAL_WEB_CHANNEL_DELETE_TITLE, content: localeData.MODAL_WEB_CHANNEL_DELETE_DESCRIPTION});
+        interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('user_id', searchParams.getPathPart(3));
   
@@ -66,7 +55,7 @@ export class PageWebChannel {
           });
         });
   
-        interactiveModal.target.addButton('Отмена', () => {
+        interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
           interactiveModal.target.close();
         });
   
@@ -77,7 +66,7 @@ export class PageWebChannel {
       this.buttons.delete.assembly();
 
       this.buttons.save = new Interactive('button');
-      this.buttons.save.target.setLabel('Сохранить');
+      this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
@@ -133,7 +122,7 @@ export class PageWebChannel {
 
         let entriesCategories;
 
-        fetch('/handler/entries/categories?locale=' + localeAdminSelected.name, {
+        fetch('/handler/entries/categories?locale=' + window.CMSCore.locales.admin.name, {
           method: 'GET'}
         ).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
@@ -180,7 +169,7 @@ export class PageWebChannel {
         });
 
         locales.forEach((locale, localeIndex) => {
-          if (locale.name === localeBaseSelected.name) {
+          if (locale.name === window.CMSCore.locales.base.name) {
             interactiveLocalesChoices.target.setItemSelectedIndex(localeIndex);
           }
         });

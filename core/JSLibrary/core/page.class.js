@@ -30,7 +30,6 @@ import {PageWebChannel as PageAdminWebChannel} from './page/admin/webChannel.cla
 import {PageWebChannels as PageAdminWebChannels} from './page/admin/webChannels.class.js';
 import {PageGlobal as PageAdminGlobal} from './page/admin/global.class.js';
 import {PageGlobal as PageDefaultGlobal} from './page/global.class.js';
-import {URLParser} from './urlParser.class.js';
 
 export class Page {
   constructor(pageCategory, pageName, params = {}) {
@@ -78,37 +77,3 @@ export class Page {
     console.log(`Page "${this.target.constructor.name} inited!"`);
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  let searchParams = new URLParser(), pages = {default: {}, admin: {}};
-
-  if (searchParams.getPathPart(1) == 'entry') {
-    pages.default.entry = new Page('default', 'entry');
-  }
-
-  if (searchParams.getPathPart(1) == 'admin') {
-    if (searchParams.getPathPart(2) == 'entry') pages.admin.entry = new Page('admin', 'entry');
-    if (searchParams.getPathPart(2) == 'entries') pages.admin.entries = new Page('admin', 'entries');
-    if (searchParams.getPathPart(2) == 'entriesCategory') pages.admin.entriesCategory = new Page('admin', 'entriesCategory');
-    if (searchParams.getPathPart(2) == 'entriesCategories') pages.admin.entriesCategories = new Page('admin', 'entriesCategories');
-    if (searchParams.getPathPart(2) == 'entriesComments') pages.admin.entriesComments = new Page('admin', 'entriesComments');
-    if (searchParams.getPathPart(2) == 'pages') pages.admin.pages = new Page('admin', 'pages');
-    if (searchParams.getPathPart(2) == 'page') pages.admin.pageStatic = new Page('admin', 'pageStatic');
-    if (searchParams.getPathPart(2) == 'media') pages.admin.media = new Page('admin', 'media');
-    if (searchParams.getPathPart(2) == 'module') pages.admin.module = new Page('admin', 'module');
-    if (searchParams.getPathPart(2) == 'modules') pages.admin.modules = new Page('admin', 'modules');
-    if (searchParams.getPathPart(2) == 'settings') pages.admin.settings = new Page('admin', 'settings');
-    if (searchParams.getPathPart(2) == 'template') pages.admin.template = new Page('admin', 'template');
-    if (searchParams.getPathPart(2) == 'templates') pages.admin.templates = new Page('admin', 'templates');
-    if (searchParams.getPathPart(2) == 'user') pages.admin.user = new Page('admin', 'user');
-    if (searchParams.getPathPart(2) == 'users') pages.admin.users = new Page('admin', 'users');
-    if (searchParams.getPathPart(2) == 'userGroup') pages.admin.usersGroup = new Page('admin', 'usersGroup');
-    if (searchParams.getPathPart(2) == 'usersGroups') pages.admin.usersGroups = new Page('admin', 'usersGroups');
-    if (searchParams.getPathPart(2) == 'webChannel') pages.admin.webChannel = new Page('admin', 'webChannel');
-    if (searchParams.getPathPart(2) == 'webChannels') pages.admin.webChannels = new Page('admin', 'webChannels');
-
-    pages.admin.global = new Page('admin', 'global');
-  } else {
-    pages.default.global = new Page('default', 'global');
-  }
-});

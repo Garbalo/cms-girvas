@@ -8,9 +8,9 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {ElementButton} from "../../interactive/form/elementButton.class.js";
-import {ElementTextarea} from "../../interactive/form/elementTextarea.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {ElementButton} from "../../../interactive/form/elementButton.class.js";
+import {ElementTextarea} from "../../../interactive/form/elementTextarea.class.js";
 import {EntryComment} from "./../entry/comment.class.js";
 
 export class PageGlobal {

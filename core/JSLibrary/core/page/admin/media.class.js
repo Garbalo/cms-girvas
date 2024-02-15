@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PageMedia {
   static buttonIcons = {
@@ -21,7 +21,7 @@ export class PageMedia {
     this.buttons = {upload: null};
   }
 
-  initMediaElement(element) {
+  initMediaElement(localeData, element) {
     let buttons = {};
     let fileName, fileURL;
 
@@ -33,8 +33,8 @@ export class PageMedia {
     buttons.delete.target.setCallback((event) => {
       event.preventDefault();
       
-      let interactiveModal = new Interactive('modal', {title: "Удаление медиа-файла", content: "Вы действительно хотите удалить медиа-файл? Действие отменить будет нельзя."});
-      interactiveModal.target.addButton('Удалить', () => {
+      let interactiveModal = new Interactive('modal', {title: localeData.MODAL_MEDIA_DELETE_TITLE, content: localeData.MODAL_MEDIA_DELETE_DESCRIPTION});
+      interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
         let formData = new FormData();
         formData.append('media_file_fullname', fileName);
 
@@ -53,7 +53,7 @@ export class PageMedia {
         });
       });
 
-      interactiveModal.target.addButton('Отмена', () => {
+      interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
         interactiveModal.target.close();
       });
 
@@ -70,7 +70,7 @@ export class PageMedia {
       
       navigator.clipboard.writeText(fileURL);
       
-      let notification = new PopupNotification('Относительная ссылка скопирована', document.body, true);
+      let notification = new PopupNotification(localeData.POPUP_SLIDE_RELATIVE_LINK_COPIED, document.body, true);
       notification.show();
     });
     buttons.link.assembly();
@@ -134,29 +134,25 @@ export class PageMedia {
   init() {
     let searchParams = new URLParser();
 
-    let locales, localeBaseSelected, localeAdminSelected;
+    let locales;
     let interactiveContainerPagePanelElement = document.querySelector('#E8548530785');
     let mediaUploaderInput = document.querySelector('.form__input_file');
 
     this.initUploaderInput(mediaUploaderInput);
 
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
+      let listElements = document.querySelectorAll('.media-list__item');
+      for (let listElement of listElements) {
+        this.initMediaElement(localeData, listElement);
+      }
+
       this.buttons.upload = new Interactive('button');
-      this.buttons.upload.target.setLabel('Загрузить');
+      this.buttons.upload.target.setLabel(localeData.BUTTON_UPLOAD_LABEL);
       this.buttons.upload.target.setCallback((event) => {
         event.preventDefault();
         mediaUploaderInput.click();
@@ -165,10 +161,5 @@ export class PageMedia {
 
       interactiveContainerPagePanelElement.append(this.buttons.upload.target.element);
     });
-  
-    let listElements = document.querySelectorAll('.media-list__item');
-    for (let listElement of listElements) {
-      this.initMediaElement(listElement);
-    }
   }
 }

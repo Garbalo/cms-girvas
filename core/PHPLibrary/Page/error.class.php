@@ -66,7 +66,6 @@ namespace core\PHPLibrary\Page {
       http_response_code($this->error_code);
 
       $this->system_core->template->add_style(['href' => 'styles/page/error.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
 
       $this->system_core->configurator->set_meta_title($this->error_title);
 

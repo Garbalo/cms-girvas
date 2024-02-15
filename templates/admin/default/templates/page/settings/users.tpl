@@ -1,4 +1,4 @@
-<form action="/handler/admin/settings" class="form form_settings">
+<form class="form form_settings">
   <table class="table table_settings">
     <tr class="table__row">
       <td class="table__cell cell">

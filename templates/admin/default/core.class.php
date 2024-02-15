@@ -114,7 +114,7 @@ namespace templates\admin\default {
       $this->template->add_script(['src' => 'modal.class.js'], true);
       $this->template->add_script(['src' => 'interactive.class.js', 'type' => 'module'], true);
       $this->template->add_script(['src' => 'common.js'], true);
-      $this->template->add_script(['src' => 'page.class.js', 'type' => 'module'], true);
+      $this->template->add_script(['src' => 'core.class.js', 'type' => 'module'], true);
 
       /** @var string $user_ip IP-адрес пользователя */
       $user_ip = $_SERVER['REMOTE_ADDR'];

@@ -8,7 +8,7 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
+import {Interactive} from "../../../interactive.class.js";
 
 export class EntryComment {
   constructor(entry, data) {
@@ -39,7 +39,7 @@ export class EntryComment {
     interactivePanelButtonContainerElement.setAttribute('data-parent-id', this.entryID);
 
     let interactivePanelButton = new Interactive('button');
-    interactivePanelButton.target.setLabel('Загрузить ответы');
+    interactivePanelButton.target.setLabel(this.entry.localeBaseData.BUTTON_LOAD_ANSWERS_COMMENTS_LABEL);
     interactivePanelButton.target.setCallback((event) => {
       fetch(`/handler/entry/${this.entryID}/comments?sortColumn=created_unix_timestamp&sortType=desc&parentID=${this.id}&limit=${this.answersLoadingLimit}&offset=${this.answersLoadingOffset}`, {method: 'GET'}).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
@@ -102,7 +102,7 @@ export class EntryComment {
       // Edit comment
       if (clientUserData.id == this.authorID) {
         let interactiveButtonEdit = new Interactive('button');
-        interactiveButtonEdit.target.setLabel('Редактировать');
+        interactiveButtonEdit.target.setLabel(this.entry.localeBaseData.BUTTON_EDIT_LABEL);
         interactiveButtonEdit.target.setCallback((event) => {
           let form = elementEntry.querySelector('[role="entry-comment-form"]');
           form.setAttribute('method', 'PATCH');
@@ -155,8 +155,8 @@ export class EntryComment {
           elementTextarea.setAttribute('placeholder', 'Укажите причину...');
           elementForm.append(elementTextarea);
           
-          let interactiveModal = new Interactive('modal', {title: "Скрытие комментария", content: elementForm});
-          interactiveModal.target.addButton('Подтвердить', () => {
+          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_HIDE_TITLE, content: elementForm});
+          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_SUBMIT_LABEL, () => {
             let formData = new FormData();
             formData.append('comment_id', this.id);
             formData.append('comment_is_hidden', 'on');
@@ -199,12 +199,12 @@ export class EntryComment {
       // Show comment
       if (clientUserPermissions.moder_entries_comments_management) {
         let interactiveButtonPublish = new Interactive('button');
-        interactiveButtonPublish.target.setLabel('Опубликовать');
+        interactiveButtonPublish.target.setLabel(this.entry.localeBaseData.BUTTON_SHOW_LABEL);
         interactiveButtonPublish.target.setCallback((event) => {
           event.preventDefault();
 
-          let interactiveModal = new Interactive('modal', {title: "Снять запрет на показ", content: 'Вы действительно хотите вновь показывать этот комментарий?'});
-          interactiveModal.target.addButton('Да', () => {
+          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_SHOW_TITLE, content: this.entry.localeBaseData.MODAL_COMMENT_SHOW_DESCRIPTION});
+          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
             let formData = new FormData();
             formData.append('comment_id', this.id);
             formData.append('comment_is_hidden', 'off');
@@ -227,7 +227,7 @@ export class EntryComment {
             });
           });
 
-          interactiveModal.target.addButton('Нет', () => {
+          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
             interactiveModal.target.close();
           });
 
@@ -246,13 +246,13 @@ export class EntryComment {
       // Delete comment
       if (clientUserPermissions.moder_entries_comments_management) {
         let interactiveButtonDelete = new Interactive('button');
-        interactiveButtonDelete.target.setLabel('Удалить');
+        interactiveButtonDelete.target.setLabel(this.entry.localeBaseData.BUTTON_DELETE_LABEL);
         interactiveButtonDelete.target.setCallback((event) => {
           let formData = new FormData();
           formData.append('comment_id', this.id);
 
-          let interactiveModal = new Interactive('modal', {title: "Удаление комментария", content: 'Вы действительно хотите удалить этот комментарий?'});
-          interactiveModal.target.addButton('Да', () => {
+          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_TITLE, content: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_DESCRIPTION});
+          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
             if (this.answersCount == 0) {
               let formData = new FormData();
               formData.append('comment_id', this.id);
@@ -276,7 +276,7 @@ export class EntryComment {
               let formData = new FormData();
               formData.append('comment_id', this.id);
               formData.append('comment_is_hidden', 'on');
-              formData.append('comment_hidden_reason', 'Комментарий был удален пользователем.');
+              formData.append('comment_hidden_reason', this.entry.localeBaseData.MODAL_COMMENT_HIDEN_REASON_DELETED);
 
               fetch('/handler/entry/comment', {
                 method: 'PATCH',
@@ -296,7 +296,7 @@ export class EntryComment {
             }
           });
 
-          interactiveModal.target.addButton('Нет', () => {
+          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
             interactiveModal.target.close();
           });
 
@@ -311,7 +311,7 @@ export class EntryComment {
       if (!this.isHidden) {
         // Answer to comment
         let interactiveButtonAnswer = new Interactive('button');
-        interactiveButtonAnswer.target.setLabel('Ответить');
+        interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
         interactiveButtonAnswer.target.setCallback((event) => {
           let form = elementEntry.querySelector('[role="entry-comment-form"]');
           let formTextarea = elementEntry.querySelector('[name="comment_content"]');

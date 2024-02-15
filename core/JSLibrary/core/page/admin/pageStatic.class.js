@@ -8,8 +8,8 @@
 
 'use strict';
 
-import {Interactive} from "../../interactive.class.js";
-import {URLParser} from "../../urlParser.class.js";
+import {Interactive} from "../../../interactive.class.js";
+import {URLParser} from "../../../urlParser.class.js";
 
 export class PagePageStatic {
   constructor(params = {}) {
@@ -17,28 +17,17 @@ export class PagePageStatic {
   }
 
   init() {
-    let searchParams = new URLParser();
-    let elementForm = document.querySelector('.form_page-static');
+    let searchParams = new URLParser(), locales;
 
-    let locales, localeBaseSelected, localeAdminSelected;
+    let elementForm = document.querySelector('.form_page-static');
     let interactiveLocaleChoices = new Interactive('choices');
     
-    fetch('/handler/locales', {
-      method: 'GET'
-    }).then((response) => {
+    fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/locale/base', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeBaseSelected = data.outputData.locale;
-      return fetch('/handler/locale/admin', {method: 'GET'});
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      localeAdminSelected = data.outputData.locale;
+      return window.CMSCore.locales.admin.getData();
+    }).then((localeData) => {
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -61,7 +50,7 @@ export class PagePageStatic {
       });
 
       locales.forEach((locale, localeIndex) => {
-        if (locale.name === localeBaseSelected.name) {
+        if (locale.name === window.CMSCore.locales.base.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
         }
       });
@@ -126,12 +115,12 @@ export class PagePageStatic {
       this.buttons.save.assembly();
 
       this.buttons.delete = new Interactive('button');
-      this.buttons.delete.target.setLabel('Удалить');
+      this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
       this.buttons.delete.target.setCallback((event) => {
         event.preventDefault();
 
-        let interactiveModal = new Interactive('modal', {title: "Удаление страницы", content: "Вы действительно хотите удалить страницу? Действие отменить будет нельзя."});
-        interactiveModal.target.addButton('Удалить', () => {
+        let interactiveModal = new Interactive('modal', {title: localeData.MODAL_PAGE_DELETE_TITLE, content: localeData.MODAL_PAGE_DELETE_DESCRIPTION});
+        interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('page_static_id', searchParams.getPathPart(3));
 
@@ -150,7 +139,7 @@ export class PagePageStatic {
           });
         });
 
-        interactiveModal.target.addButton('Отмена', () => {
+        interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
           interactiveModal.target.close();
         });
 
@@ -161,7 +150,7 @@ export class PagePageStatic {
       this.buttons.delete.assembly();
 
       this.buttons.publish = new Interactive('button');
-      this.buttons.publish.target.setLabel('Опубликовать');
+      this.buttons.publish.target.setLabel(localeData.BUTTON_PUBLISH_LABEL);
       this.buttons.publish.target.setCallback((event) => {
         event.preventDefault();
 
@@ -187,7 +176,7 @@ export class PagePageStatic {
       this.buttons.publish.assembly();
 
       this.buttons.unpublish = new Interactive('button');
-      this.buttons.unpublish.target.setLabel('Снять с публикации');
+      this.buttons.unpublish.target.setLabel(localeData.BUTTON_UNPUBLISH_LABEL);
       this.buttons.unpublish.target.setCallback((event) => {
         event.preventDefault();
 
@@ -239,12 +228,12 @@ export class PagePageStatic {
           let file = event.target.files[0], fileReader = new FileReader();
 
           if (!fileReader) {
-            console.error('FileReader не поддерживается, невозможно отобразить загружаемое изображение.');
+            console.error(localeData.REPORT_JS_CMSCORE_ERROR_FILEREADER_IS_NOT_SUPPORTED);
             return;
           }
 
           if (event.target.files.length == 0) {
-            console.error('Изображения не были загружены.');
+            console.error(localeData.REPORT_JS_CMSCORE_ERROR_IMAGES_WHERE_NOT_LOADED);
             return;
           }
 
@@ -278,7 +267,7 @@ export class PagePageStatic {
           fileReader.readAsDataURL(file);
         });
 
-        interactiveButtonPreviewUpload.target.setLabel('Загрузить обложку');
+        interactiveButtonPreviewUpload.target.setLabel(localeData.BUTTON_UPLOAD_COVER_LABEL);
         interactiveButtonPreviewUpload.target.setCallback((event) => {
           event.preventDefault();
           previewFormInputFileElement.click();
