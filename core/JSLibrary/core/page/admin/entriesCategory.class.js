@@ -73,7 +73,7 @@ export class PageEntriesCategory {
             entryTitleInputElement.setAttribute('name', 'entries_category_title_' + locale.iso639_2);
 
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
+              fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
                 method: 'GET'
               }).then((response) => {
                 return (response.ok) ? response.json() : Promise.reject(response);
@@ -88,7 +88,7 @@ export class PageEntriesCategory {
 
       let entriesCategoryData = {}, entriesCategoriesData = {};
       
-      fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + window.CMSCore.locales.admin.name, {
+      fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
         method: 'GET'
       }).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
@@ -97,7 +97,7 @@ export class PageEntriesCategory {
           entriesCategoryData = data1.outputData.entriesCategory;
         }
 
-        return fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'});
+        return fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
       }).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
       }).then((data1) => {
@@ -128,7 +128,7 @@ export class PageEntriesCategory {
         event.preventDefault();
         
         let formData = new FormData(elementForm);
-        let fetchLink = (searchParams.getPathPart(3) == null) ? '/handler/entry/category' : '/handler/entry/category/' + searchParams.getPathPart(3);
+        let fetchLink = (searchParams.getPathPart(3) == null) ? '/handler/entry/category?localeMessage=' + window.CMSCore.locales.admin.name : '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name;
         let fetchMethod = (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH';
 
         fetch(fetchLink, {method: fetchMethod, body: formData}).then((response) => {
@@ -155,7 +155,7 @@ export class PageEntriesCategory {
           let formData = new FormData();
           formData.append('entries_category_id', searchParams.getPathPart(3));
 
-          fetch('/handler/entry/category/' + searchParams.getPathPart(3), {
+          fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {

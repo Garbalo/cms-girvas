@@ -48,7 +48,7 @@
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
               <polygon points="27.9,10 17.6,20.3 17.6,64 60.9,64 60.9,10 "/>
             </svg>
-            <div class="admin-navigation-list__item-label">Медиа-файлы</div>
+            <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MEDIA_LABEL}</div>
           </a>
         </li>
         <li class="admin-navigation-list__item">
@@ -68,7 +68,7 @@
               <path d="M42.5,64h-9.3c0-17.5,14.4-30.9,30.8-30.9v9.3C51.7,42.4,42.5,52.8,42.5,64z"/>
               <circle cx="57.4" cy="57.4" r="6.6"/>
             </svg>
-            <div class="admin-navigation-list__item-label">Веб-каналы</div>
+            <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_WEB_CHANNELS_LABEL}</div>
           </a>
         </li>
         <li class="admin-navigation-list__item">

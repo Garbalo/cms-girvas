@@ -75,7 +75,7 @@ export class PagePageStatic {
             keywordsInputElement.setAttribute('name', 'page_static_keywords_' + locale.iso639_2);
             
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
+              fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
                 method: 'GET'
               }).then((response) => {
                 return (response.ok) ? response.json() : Promise.reject(response);
@@ -97,7 +97,7 @@ export class PagePageStatic {
         
         let formData = new FormData(elementForm);
 
-        fetch('/handler/pageStatic', {
+        fetch('/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
           body: formData
         }).then((response) => {
@@ -124,7 +124,7 @@ export class PagePageStatic {
           let formData = new FormData();
           formData.append('page_static_id', searchParams.getPathPart(3));
 
-          fetch('/handler/pageStatic/' + searchParams.getPathPart(3), {
+          fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {
@@ -158,7 +158,7 @@ export class PagePageStatic {
         formData.append('page_static_id', searchParams.getPathPart(3));
         formData.append('page_static_is_published', 1);
 
-        fetch('/handler/pageStatic/' + searchParams.getPathPart(3), {
+        fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -184,7 +184,7 @@ export class PagePageStatic {
         formData.append('page_static_id', searchParams.getPathPart(3));
         formData.append('page_static_is_published', 0);
 
-        fetch('/handler/pageStatic/' + searchParams.getPathPart(3), {
+        fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -249,7 +249,7 @@ export class PagePageStatic {
             formData.append('page_static_id', searchParams.getPathPart(3));
             formData.append('page_static_preview', fileReader.result);
     
-            fetch('/handler/pageStatic', {
+            fetch('/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -277,7 +277,7 @@ export class PagePageStatic {
         let previewImageContainerElement = document.createElement('div');
         previewImageContainerElement.classList.add('form-page-static-preview__container-image');
 
-        fetch('/handler/pageStatic/' + searchParams.getPathPart(3), {
+        fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);

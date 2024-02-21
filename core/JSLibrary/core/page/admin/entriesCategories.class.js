@@ -54,7 +54,7 @@ export class PageEntriesCategories {
                 let formData = new FormData();
                 formData.append('entries_category_id', entriesCategoryID);
 
-                fetch('/handler/entry/category/' + entriesCategoryID, {
+                fetch('/handler/entry/category/' + entriesCategoryID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'DELETE',
                   body: formData
                 }).then((response) => {

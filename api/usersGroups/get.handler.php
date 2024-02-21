@@ -34,10 +34,10 @@ if (count($users_groups) > 0) {
     ]);
   }
 
-  $handler_message = (!isset($handler_message)) ? 'Данные по группам пользователей успешно получены.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS') : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Данные по группам пользователей не были получены, так как их не существует' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUPS_ERROR_NOT_FOUND')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
 }
 

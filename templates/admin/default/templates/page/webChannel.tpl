@@ -1,7 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   {PAGE_NAVIGATION}
   <div class="page__title-container">
-    <h1 class="page__title">Создание веб-канала</h1>
+    <h1 class="page__title">{LANG:PAGE_WEB_CHANNEL_TITLE}</h1>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
@@ -10,9 +10,9 @@
       <table class="table">
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Техническое наименование канала</div>
+            <div class="cell__title">{LANG:PAGE_WEB_CHANNEL_TECHNICAL_NAME_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Это техническое наименование канала, которое будет использоваться в URL.</div>
+              <div class="page__phar-block">{LANG:PAGE_WEB_CHANNEL_TECHNICAL_NAME_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -21,9 +21,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Заголовок канала</div>
+            <div class="cell__title">{LANG:PAGE_WEB_CHANNEL_TITLE_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Укажите заголовок, который описывал бы суть содержимого веб-канала.</div>
+              <div class="page__phar-block">{LANG:PAGE_WEB_CHANNEL_TITLE_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -32,9 +32,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Описание канала</div>
+            <div class="cell__title">{LANG:PAGE_WEB_CHANNEL_DESCRIPTION_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Кратко опишите содержимое веб-канала.</div>
+              <div class="page__phar-block">{LANG:PAGE_WEB_CHANNEL_DESCRIPTION_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -45,18 +45,18 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Тип канала</div>
+            <div class="cell__title">{LANG:PAGE_WEB_CHANNEL_SPECIFICATION_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Выберите тип канала, на основе спецификации которого будет отображаться веб-канал.</div>
+              <div class="page__phar-block">{LANG:PAGE_WEB_CHANNEL_SPECIFICATION_DESCRIPTION}</div>
             </div>
           </td>
           <td id="TC6474387201" class="table__cell cell"></td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Категория контента</div>
+            <div class="cell__title">{LANG:PAGE_WEB_CHANNEL_ENTRIES_CATEGORY_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Выберите категорию контента, которая будет выгружаться через веб-канал.</div>
+              <div class="page__phar-block">{LANG:PAGE_WEB_CHANNEL_ENTRIES_CATEGORY_DESCRIPTION}</div>
             </div>
           </td>
           <td id="TC6474387200" class="table__cell cell"></td>
@@ -68,9 +68,9 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Популярные записи</h2>
+    <h2 class="page-aside__block-title">[ ??? ]</h2>
     <div class="page-aside__block-content">
-      Тут колонка записей
+      [ ??? ]
     </div>
   </article>
 </aside>

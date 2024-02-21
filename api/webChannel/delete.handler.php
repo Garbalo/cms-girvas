@@ -25,22 +25,22 @@ if ($system_core->client->is_logged(2)) {
 
       $web_channel_is_deleted = $web_channel->delete();
       if ($web_channel_is_deleted) {
-        $handler_message = (!isset($handler_message)) ? 'Веб-канал успешно удален.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_DELETE_DATA_SUCCESS') : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
       } else {
-        $handler_message = (!isset($handler_message)) ? 'Произошла неизвестная внутренняя ошибка.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Веб-канала не существует.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FEED_ERROR_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Передан неверный ID.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FEED_ERROR_NOT_FOUND')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

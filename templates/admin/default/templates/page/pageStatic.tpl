@@ -1,7 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   {PAGE_NAVIGATION}
   <div class="page__title-container">
-    <h1 class="page__title">Создание статической страницы</h1>
+    <h1 class="page__title">{LANG:PAGE_STATIC_PAGE_TITLE}</h1>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
@@ -10,9 +10,9 @@
       <table class="table">
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Техническое наименование</div>
+            <div class="cell__title">{LANG:PAGE_STATIC_PAGE_INPUT_TECH_NAME_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Это техническое наименование страницы, которое будет использоваться в URL.</div>
+              <div class="page__phar-block">{LANG:PAGE_STATIC_PAGE_INPUT_TECH_NAME_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -23,40 +23,40 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Заголовок</div>
+            <div class="cell__title">{LANG:PAGE_STATIC_PAGE_INPUT_TITLE_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Заголовок страницы должен отображать суть ее содержимого.</div>
+              <div class="page__phar-block">{LANG:PAGE_STATIC_PAGE_INPUT_TITLE_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <input name="page_static_title_rus" type="text" class="form__input page-static-form__input" role="pageStaticTitle" value="{PAGE_STATIC_TITLE}" placeholder="Заголовок страницы">
+              <input name="page_static_title_rus" type="text" class="form__input page-static-form__input" role="pageStaticTitle" value="{PAGE_STATIC_TITLE}" placeholder="{LANG:PAGE_STATIC_PAGE_INPUT_TITLE_LABEL}">
             </div>
           </td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Описание</div>
+            <div class="cell__title">{LANG:PAGE_STATIC_PAGE_INPUT_DESCRIPTION_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Описание страницы должно отображать суть ее содержимого. При составлении описания старайтесь описать содержимое кратко и точно, используя ключевые слова, чтобы это положительно отразилось на поисковой оптимизации.</div>
+              <div class="page__phar-block">{LANG:PAGE_STATIC_PAGE_INPUT_DESCRIPTION_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <textarea name="page_static_description_rus" class="form__textarea page-static-form__textarea" role="pageStaticDescription" placeholder="Описание записи">{PAGE_STATIC_DESCRIPTION}</textarea>
+              <textarea name="page_static_description_rus" class="form__textarea page-static-form__textarea" role="pageStaticDescription" placeholder="{LANG:PAGE_STATIC_PAGE_INPUT_DESCRIPTION_LABEL}">{PAGE_STATIC_DESCRIPTION}</textarea>
             </div>
           </td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Ключевые слова и фразы</div>
+            <div class="cell__title">{LANG:PAGE_STATIC_PAGE_INPUT_KEYWORDS_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Ключевые слова и фразы могут помогать в поиске контента в сети Интернет поисковым роботам. Рекомендуем включать их в описание, заголовок и содержимое страницы.</div>
+              <div class="page__phar-block">{LANG:PAGE_STATIC_PAGE_INPUT_KEYWORDS_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <textarea name="page_static_keywords_rus" class="form__textarea page-static-form__textarea" role="pageStaticKeywords" placeholder="Вулкан Гирвас, Республика Карелия, Ловля рыбы в поселке Надвоицы">{PAGE_STATIC_KEYWORDS}</textarea>
+              <textarea name="page_static_keywords_rus" class="form__textarea page-static-form__textarea" role="pageStaticKeywords" placeholder="{LANG:PAGE_STATIC_PAGE_INPUT_KEYWORDS_PLACEHOLDER}">{PAGE_STATIC_KEYWORDS}</textarea>
             </div>
           </td>
         </tr>
@@ -74,13 +74,13 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block" id="SYSTEM_E3754926184">
-    <h2 class="page-aside__block-title">Обложка</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_STATIC_PAGE_SIDEBAR_BLOCK_COVER_TITLE}</h2>
     <div class="page-aside__block-content"></div>
   </article>
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Популярные записи</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_STATIC_PAGE_SIDEBAR_BLOCK_POPULAR_ENTRIES_TITLE}</h2>
     <div class="page-aside__block-content">
-      Тут колонка записей
+      [ ??? ]
     </div>
   </article>
 </aside>

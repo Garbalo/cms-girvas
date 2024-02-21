@@ -47,6 +47,8 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       $entries_category_name = (!is_null($this->system_core->urlp->get_path(1))) ? urldecode($this->system_core->urlp->get_path(1)) : 'all';
       
       if (EntryCategory::exists_by_name($this->system_core, $entries_category_name) || $entries_category_name == 'all') {
@@ -62,7 +64,7 @@ namespace core\PHPLibrary\Page {
           $cms_base_locale_name = $cms_base_locale_setted_name;
         }
 
-        $this->page->breadcrumbs->add('Все записи', '/entries');
+        $this->page->breadcrumbs->add($locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'], '/entries');
 
         if ($entries_category_name != 'all') {
           $entries_category = EntryCategory::get_by_name($this->system_core, $entries_category_name);
@@ -83,7 +85,7 @@ namespace core\PHPLibrary\Page {
         } else {
           $this->page->breadcrumbs->assembly();
 
-          $this->system_core->configurator->set_meta_title(sprintf('Все записи | %s', $this->system_core->configurator->get_site_title()));
+          $this->system_core->configurator->set_meta_title(sprintf('%s | %s', $locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'], $this->system_core->configurator->get_site_title()));
 
           /** @var Entries $entries Объект класса Entries */
           $entries = new Entries($this->system_core);
@@ -120,7 +122,7 @@ namespace core\PHPLibrary\Page {
           'PAGE_NAME' => 'entries',
           'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries.tpl', [
             'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
-            'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? 'Все записи' : $entries_category->get_title(),
+            'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? $locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'] : $entries_category->get_title(),
             'ENTRIES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/list.tpl', [
               'ENTRIES_LIST_ITEMS' => implode($entries_array_templates)
             ]),

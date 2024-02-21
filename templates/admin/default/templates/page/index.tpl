@@ -1,16 +1,11 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
-  <h1 style="display: none;">CMS GIRVAS</h1>
+  <h1 style="display: none;">CMS&nbsp;&laquo;GIRVAS&raquo;</h1>
   <div class="page__title-container">
-    <h2 class="page__title">Добро&nbsp;пожаловать в&nbsp;CMS&nbsp;&laquo;GIRVAS&raquo;!</h2>
+    <h2 class="page__title">{LANG:PAGE_INDEX_TITLE}</h2>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <p class="page__content-phar">
-      Спасибо за то, что выбрали нашу систему. Мы позаботились над простотой использования нашей 
-      CMS, поэтому уделили много времени интерфейсу. Надеемся, что система Вам понравится. Для 
-      того, чтобы помочь Вам с адаптацией мы подготовили несколько шагов, которые помогут Вам 
-      провести первые настройки CMS &laquo;GIRVAS&raquo;.
-    </p>
+    <p class="page__content-phar">{LANG:PAGE_INDEX_THANKS}</p>
     <div class="page-content-block page-content-block_welcome">
       <ul class="steps-list list-reset">
         <li class="steps-list__item">
@@ -25,13 +20,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Первоначальная настройка</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_START_SETTINGS_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Проведите свою первую&nbsp;настройку системы управления&nbsp;содержимым. Интуитивно-понятный&nbsp;интерфейс Вам в&nbsp;этом&nbsp;поможет.</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_START_SETTINGS_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="/admin/settings" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/settings" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -42,13 +37,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Внимание, запись!</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_CREATE_ENTRY_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Напишите свою первую&nbsp;запись и&nbsp;опубликуйте&nbsp;ее, чтобы каждый смог ее&nbsp;увидеть. Для&nbsp;этого мы&nbsp;подготовили целый текстовый&nbsp;редактор, который работает с&nbsp;разметкой&nbsp;&laquo;MarkDown&raquo;.</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_CREATE_ENTRY_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="/admin/entry" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/entry" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -61,13 +56,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Всегда стильный</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_CHANGE_TEMPLATE_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Выберите подходящий шаблон&nbsp;дизайна для Вашего&nbsp;сайта. Наша&nbsp;команда подготовила как платные, так и&nbsp;бесплатные варианты&nbsp;оформления.</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_CHANGE_TEMPLATE_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="/admin/templates" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/templates" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -83,13 +78,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Расширению нет предела!</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_INSTALL_MODULES_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Недостаточно базового&nbsp;функционала? Всегда можно подключить новые&nbsp;модули, разработанные специально для CMS&nbsp;&laquo;GIRVAS&raquo;. Загрузить их можно через наш репозиторий.</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_INSTALL_MODULES_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="/admin/modules" class="steps-list__item-link">Приступить!</a>
+          <a href="/admin/modules" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -102,13 +97,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Аналитика каждому!</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_ANALYTIC_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Команда&nbsp;&raquo;Garbalo&raquo; подготовила инструмент для&nbsp;аналитики&nbsp;данных по&nbsp;сайту и&nbsp;контенту. Следите за&nbsp;показателями прямо в&nbsp;административной&nbsp;панели!</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_ANALYTIC_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="#" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
         <li class="steps-list__item">
           <div class="steps-list__item-wrapper">
@@ -127,13 +122,13 @@
               </svg>
             </div>
             <div class="steps-list__item-label-container">
-              <h3 class="steps-list__item-label-title">Хочу знать больше!</h3>
+              <h3 class="steps-list__item-label-title">{LANG:PAGE_INDEX_STEP_MORE_INFORMATION_TITLE}</h3>
               <div class="steps-list__item-label-description step-description">
-                <p class="step-description__phar">Если Вам необходимо больше информации, то всегда можно обратиться к нашей справке по эксплуатации CMS&nbsp;&laquo;GIRVAS&raquo;.</p>
+                <p class="step-description__phar">{LANG:PAGE_INDEX_STEP_MORE_INFORMATION_DESCRIPTION}</p>
               </div>
             </div>
           </div>
-          <a href="#" class="steps-list__item-link">Приступить!</a>
+          <a href="#" class="steps-list__item-link">{LANG:PAGE_INDEX_HOVER_LABEL}</a>
         </li>
       </ul>
     </div>
@@ -141,13 +136,13 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Последние новости</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_INDEX_SIDEBAR_BLOCK_LATEST_NEWS_TITLE}</h2>
     <div class="page-aside__block-content">
       {WEB_CHANNEL_LATEST_NEWS_LIST}
     </div>
   </article>
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Последние релизы</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_INDEX_SIDEBAR_BLOCK_LATEST_RELEASES_TITLE}</h2>
     <div class="page-aside__block-content">
       {WEB_CHANNEL_LATEST_RELEASES_LIST}
     </div>

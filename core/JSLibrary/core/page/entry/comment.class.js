@@ -41,7 +41,7 @@ export class EntryComment {
     let interactivePanelButton = new Interactive('button');
     interactivePanelButton.target.setLabel(this.entry.localeBaseData.BUTTON_LOAD_ANSWERS_COMMENTS_LABEL);
     interactivePanelButton.target.setCallback((event) => {
-      fetch(`/handler/entry/${this.entryID}/comments?sortColumn=created_unix_timestamp&sortType=desc&parentID=${this.id}&limit=${this.answersLoadingLimit}&offset=${this.answersLoadingOffset}`, {method: 'GET'}).then((response) => {
+      fetch(`/handler/entry/${this.entryID}/comments?sortColumn=created_unix_timestamp&sortType=desc&parentID=${this.id}&limit=${this.answersLoadingLimit}&offset=${this.answersLoadingOffset}&localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
         return (response.ok) ? response.json() : Promise.reject(response);
       }).then((commentsLoadedData) => {
         let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
@@ -52,7 +52,7 @@ export class EntryComment {
         answersListElement.classList.add('list-reset');
 
         let appendComment = (commentData) => {
-          fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'}).then((response) => {
+          fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
             return (response.ok) ? response.json() : Promise.reject(response);
           }).then((authorLoadedData) => {
             let authorData = authorLoadedData.outputData.user;
@@ -162,7 +162,7 @@ export class EntryComment {
             formData.append('comment_is_hidden', 'on');
             formData.append('comment_hidden_reason', elementTextarea.value);
 
-            fetch('/handler/entry/comment', {
+            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -210,7 +210,7 @@ export class EntryComment {
             formData.append('comment_is_hidden', 'off');
             formData.append('comment_hidden_reason', '');
 
-            fetch('/handler/entry/comment', {
+            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -278,7 +278,7 @@ export class EntryComment {
               formData.append('comment_is_hidden', 'on');
               formData.append('comment_hidden_reason', this.entry.localeBaseData.MODAL_COMMENT_HIDEN_REASON_DELETED);
 
-              fetch('/handler/entry/comment', {
+              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
                 method: 'PATCH',
                 body: formData
               }).then((response) => {
@@ -336,7 +336,7 @@ export class EntryComment {
             formData.append('comment_id', this.id);
             formData.append('comment_rating_vote', 'up');
 
-            fetch('/handler/entry/comment', {
+            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -370,7 +370,7 @@ export class EntryComment {
             formData.append('comment_id', this.id);
             formData.append('comment_rating_vote', 'down');
 
-            fetch('/handler/entry/comment', {
+            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -431,7 +431,7 @@ export class EntryComment {
 
     let urlSearchParams = new URLSearchParams(requestData);
     
-    fetch('/handler/template/assembly?' + urlSearchParams.toString(), {method: 'GET'}).then((response) => {
+    fetch(`/handler/template/assembly?localeMessage=${window.CMSCore.locales.base.name}&` + urlSearchParams.toString(), {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       let templateAssembled = data.outputData.templateAssembled;

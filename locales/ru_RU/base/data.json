@@ -31,5 +31,22 @@
   "COMMENT_PREMODERATION_BANNED_WORDS_DETECTED": "Наличие стоп-слов или стоп-фраз",
   "COMMENT_PREMODERATION_EXTERNAL_LINKS_DETECTED": "Наличие ссылок на внешние ресурсы",
   "COMMENT_PREMODERATION_MANDATORY_PREMODERATION": "Обязательная премодерация",
-  "ENTRY_COMMENT_TEXTAREA_PLACEHOLDER": "Как хотите это прокомментировать?"
+  "ENTRY_COMMENT_TEXTAREA_PLACEHOLDER": "Как хотите это прокомментировать?",
+  "PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL": "Стартовая страница",
+  "PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL": "Все записи",
+  "PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL": "К этой записи нет комментариев.",
+  "PAGE_ENTRY_COMMENT_HIDE_LABEL": "Комментарий скрыт",
+  "PAGE_ENTRY_COMMENTS_BLOCK_TITLE": "Комментарии",
+  "PAGE_ENTRY_BREADCRUMPS_ALL_ENTRIES_LABEL": "Все записи",
+  "PAGE_REGISTRATION_SUBMIT_TITLE": "Подтверждение регистрации",
+  "PAGE_REGISTRATION_SUBMIT_SUCCESS_DESCRIPTION": "Уважаемый пользователь, Ваш электронный адрес успешно подтвержден!",
+  "PAGE_REGISTRATION_SUBMIT_FAIL_DESCRIPTION": "Уважаемый пользователь, подтверждение Вашего электронного адреса не увенчалось успехом по техническим причинам.",
+  "PAGE_ERROR_404_TITLE": "Страница не найдена",
+  "PAGE_ERROR_404_DESCRIPTION": "К сожалению, искомая Вами страница по адресу \"%s\" была удалена, либо перенесена. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>.",
+  "PAGE_ERROR_500_TITLE": "Внутренняя ошибка сервера",
+  "PAGE_ERROR_500_DESCRIPTION": "К сожалению, на стороне сервера возникла ошибка, которая не позволяет обработать Ваш запрос. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>.",
+  "PAGE_ERROR_503_TITLE": "Доступ запрещен",
+  "PAGE_ERROR_503_DESCRIPTION": "К сожалению, доступ к данной странице ограничен. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>.",
+  "PAGE_ERROR_UNKNOWN_TITLE": "Неизвестная ошибка",
+  "PAGE_ERROR_UNKNOWN_DESCRIPTION": "К сожалению, что-то пошло не так. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>."
 }

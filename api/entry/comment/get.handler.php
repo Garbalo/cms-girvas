@@ -36,10 +36,10 @@ if ($system_core->client->is_logged(1)) {
     $handler_output_data['comment']['createdUnixTimestamp'] = $comment->get_created_unix_timestamp();
     $handler_output_data['comment']['updatedUnixTimestamp'] = $comment->get_updated_unix_timestamp();
 
-    $handler_message = 'Данные по комментарию успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Данные по комментарию не были получены, так как его не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_COMMENT_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 }

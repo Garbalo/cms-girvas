@@ -33,10 +33,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
     $handler_output_data['webChannel']['createdUnixTimestamp'] = $web_channel->get_created_unix_timestamp();
     $handler_output_data['webChannel']['updatedUnixTimestamp'] = $web_channel->get_updated_unix_timestamp();
 
-    $handler_message = (!isset($handler_message)) ? 'Данные по веб-каналу успешно получены.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS') : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Данные по веб-каналу не были получены, так как его не существует.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FEED_ERROR_NOT_FOUND')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 }

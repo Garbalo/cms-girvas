@@ -35,7 +35,7 @@ export class PageSettings {
         
         let formData = new FormData(elementForm);
 
-        fetch('/handler/settings', {
+        fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'POST',
           body: formData
         }).then((response) => {
@@ -118,7 +118,7 @@ export class PageSettings {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
           timezones = data.outputData.timezones;
-          return fetch('/handler/timezone', {method: 'GET'});
+          return fetch('/handler/timezone?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
@@ -142,12 +142,12 @@ export class PageSettings {
           interactiveChoicesSettingsTimezone.target.setName('setting_base_timezone');
           interactiveChoicesSettingsTimezone.assembly();
 
-          return fetch('/handler/charsets', {method: 'GET'});
+          return fetch('/handler/charsets?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
           charsets = data.outputData.charsets;
-          return fetch('/handler/charset', {method: 'GET'});
+          return fetch('/handler/charset?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
@@ -166,7 +166,7 @@ export class PageSettings {
           interactiveChoicesSettingsCharset.target.setName('setting_base_site_charset');
           interactiveChoicesSettingsCharset.assembly();
 
-          return fetch('/handler/ew-status', {method: 'GET'});
+          return fetch('/handler/ew-status?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
@@ -282,7 +282,7 @@ export class PageSettings {
         
         let interactiveChoicesFieldsLocaleSelectElement = interactiveChoicesFieldsLocale.target.element.querySelector('select');
         interactiveChoicesFieldsLocaleSelectElement.addEventListener('change', (event) => {
-          fetch('/handler/profile/additional-fields?locale=' + interactiveChoicesFieldsLocaleSelectElement.value, {method: 'GET'}).then((response) => {
+          fetch('/handler/profile/additional-fields?locale=' + interactiveChoicesFieldsLocaleSelectElement.value + '&localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'}).then((response) => {
             return (response.ok) ? response.json() : Promise.reject(response);
           }).then((data1) => {
             let additionalFields = document.querySelectorAll('[role="additional-field"]');
@@ -306,7 +306,7 @@ export class PageSettings {
         profileAdditionalFieldsLocaleContainer.append(interactiveChoicesFieldsLocale.target.element);
 
         // Получаем все установленные языковые пакеты
-        fetch('/handler/profile/additional-fields?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'}).then((response) => {
+        fetch('/handler/profile/additional-fields?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'}).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data) => {
           let fields = data.outputData.additionalFields;

@@ -56,19 +56,20 @@ if ($system_core->client->is_logged(2)) {
       $handler_output_data['pageStatic'] = [];
       $handler_output_data['pageStatic']['id'] = $page_static->get_id();
 
-      $handler_message = (!isset($handler_message)) ? 'Страница успешно создана.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS') : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Страница не была создана.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя неизвестная ошибка.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
-  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+  http_response_code(401);
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
+  $handler_status_code = 0;
 }
 
 ?>

@@ -89,25 +89,25 @@ if ($system_core->client->is_logged(1)) {
             }
           }
 
-          $handler_message = 'Комментарий успешно создан.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS');
           $handler_status_code = 1;
 
           $handler_output_data['comment'] = [];
           $handler_output_data['comment']['id'] = $comment->get_id();
         } else {
-          $handler_message = 'Произошла внутренняя ошибка. Комментарий не был создан.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
           $handler_status_code = 0;
         }
       } else {
-        $handler_message = 'Невозможно отправить комментарий к несуществующей записи.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Комментарий должен содержать не менее 16 символов.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_COMMENT_ERROR_FEW_CHARACTERS'));
       $handler_status_code = 0;
     }
   } else {
-    $handler_message = 'Невозможно отправить пустой комментарий.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_COMMENT_ERROR_EMPTY'));
     $handler_status_code = 0;
   }
 }

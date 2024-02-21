@@ -35,7 +35,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.55 Pre-alpha';
+    public const CMS_VERSION = '0.0.56 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -198,10 +198,13 @@ namespace core\PHPLibrary {
       }
 
       if ($this->urlp->get_path(0) != 'handler') {
+
         if ($this->urlp->get_param('mode') != 'install') {
+
           $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
           $cms_base_locale_name = ($this->configurator->exists_database_entry_value('base_locale')) ? $this->configurator->get_database_entry_value('base_locale') : 'en_US';
           $cms_admin_locale_name = ($this->configurator->exists_database_entry_value('base_admin_locale')) ? $this->configurator->get_database_entry_value('base_admin_locale') : 'en_US';
+        
         }
 
         $install_locale = ($this->urlp->get_param('locale') != null) ? $this->urlp->get_param('locale') : 'ru_RU';
@@ -220,6 +223,9 @@ namespace core\PHPLibrary {
         $template->init();
 
         $template->core->assembled = $template->get_core_assembled();
+      } else {
+        $handler_locale_name = (!is_null($this->urlp->get_param('localeMessage'))) ? $this->urlp->get_param('localeMessage') : 'en_US';
+        $this->locale = new SystemCoreLocale($this, $handler_locale_name, 'handler');
       }
       
       $modules_installed = Modules::get_installed_modules_array();

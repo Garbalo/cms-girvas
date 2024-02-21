@@ -39,12 +39,12 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     }
 
     $tip_block->setAttribute('class', 'tip tip_green');
-    $tip_block->nodeValue = 'Язык и часовой пояс изменены.';
+    $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS');
 
     $dom_document->appendChild($tip_block);
 
     $handler_output_data['html'] = $dom_document->saveHTML();
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -73,12 +73,12 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     }
 
     $tip_block->setAttribute('class', 'tip tip_green');
-    $tip_block->nodeValue = 'Метаданные веб-сайта изменены.';
+    $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS');
 
     $dom_document->appendChild($tip_block);
 
     $handler_output_data['html'] = $dom_document->saveHTML();
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -105,37 +105,37 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
                   $admin->update(['email_is_submitted' => true, 'metadata_json' => json_encode(['group_id' => 1])]);
 
                   $tip_block->setAttribute('class', 'tip tip_green');
-                  $tip_block->nodeValue = 'Аккаунт администратора успешно создан.';
+                  $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS');
 
-                  $handler_message = 'Аккаунт успешно создан.';
+                  $handler_message = $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS');
                   $handler_status_code = 1;
                 } else {
                   $tip_block->setAttribute('class', 'tip tip_red');
-                  $tip_block->nodeValue = 'Аккаунт администратора не был создан по неизвестной причине.';
+                  $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN');
                 }
               } else {
                 $tip_block->setAttribute('class', 'tip tip_red');
-                $tip_block->nodeValue = 'Пользователь с таким E-Mail уже существует.';
+                $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_EMAIL_ALREADY_EXISTS');
               }
             } else {
               $tip_block->setAttribute('class', 'tip tip_red');
-              $tip_block->nodeValue = 'Пользователь с таким логином уже существует.';
+              $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_LOGIN_ALREADY_EXISTS');
             }
           } else {
             $tip_block->setAttribute('class', 'tip tip_red');
-            $tip_block->nodeValue = 'Указанные Вами пароли не совпадают.';
+            $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_INVALID_REPEAT_PASSWORD');
           }
         } else {
           $tip_block->setAttribute('class', 'tip tip_red');
-          $tip_block->nodeValue = 'Пароль не соответствует правилам безопасности.';
+          $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_INVALID_PASSWORD');
         }
       } else {
         $tip_block->setAttribute('class', 'tip tip_red');
-        $tip_block->nodeValue = 'Указанный Вами E-Mail не соответствует формату.';
+        $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_INVALID_EMAIL');
       }
     } else {
       $tip_block->setAttribute('class', 'tip tip_red');
-      $tip_block->nodeValue = 'Указанный Вами логин не соответствует формату.';
+      $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_ADMIN_ACCOUNT_CREATED_ERROR_INVALID_LOGIN');
     }
 
     $dom_document->appendChild($tip_block);
@@ -176,7 +176,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     }
 
     $tip_block->setAttribute('class', 'tip tip_green');
-    $tip_block->nodeValue = 'Ваш ключ: ' . implode('-', $codes_open);
+    $tip_block->nodeValue = sprintf('%s: ' . implode('-', $codes_open), $system_core->locale->get_single_value_by_key('API_INSTALLATION_SECRET_KEY_LABEL'));
 
     $dom_document->appendChild($tip_block);
     $handler_output_data['html'] = $dom_document->saveHTML();

@@ -29,6 +29,7 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/template.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
       $template_name = $this->system_core->urlp->get_path(2);
       $template = new Template($this->system_core, $template_name);
 
@@ -59,7 +60,7 @@ namespace core\PHPLibrary\Page\Admin {
           if (in_array($metadata_name, $allowed_template_metadata)) {
             $metadata_title = $metadata_name;
             switch ($metadata_name) {
-              case 'authorName': $metadata_title = 'Автор'; break;
+              case 'authorName': $metadata_title = $locale_data['PAGE_TEMPLATE_AUTHOR_LABEL']; break;
             }
 
             array_push($template_metadata_items_transformed, TemplateCollector::assembly('<li class="template__metadata-item"><b>{METADATA_TITLE}:</b> {METADATA_VALUE}</li>', [
@@ -74,7 +75,7 @@ namespace core\PHPLibrary\Page\Admin {
             'METADATA_LIST' => implode($template_metadata_items_transformed)
           ]);
         } else {
-          $template_metadata_list_transformed = 'Данные отсутствуют.';
+          $template_metadata_list_transformed = $locale_data['PAGE_TEMPLATE_METADATA_BLOCK_METADATA_NOT_FOUND_TITLE'];
         }
 
         $parsedown = new Parsedown();
@@ -87,7 +88,7 @@ namespace core\PHPLibrary\Page\Admin {
           'TEMPLATE_METADATA_LIST' => $template_metadata_list_transformed
         ]);
       } else {
-        $this->assembled = 'Шаблона не существует';
+        $this->assembled = $locale_data['PAGE_TEMPLATE_TEMPLATE_NOT_FOUND_TITLE'];
       }
     }
   }

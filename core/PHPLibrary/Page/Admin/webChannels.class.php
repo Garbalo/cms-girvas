@@ -29,14 +29,16 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/webChannels.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_WEB_CHANNELS_NAVIGATION_INDEX_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Веб-каналы',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_WEB_CHANNELS_NAVIGATION_WEB_CHANNELS_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/webChannels',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
       ]));

@@ -38,9 +38,9 @@ export class PageWebChannel {
         let interactiveModal = new Interactive('modal', {title: localeData.MODAL_WEB_CHANNEL_DELETE_TITLE, content: localeData.MODAL_WEB_CHANNEL_DELETE_DESCRIPTION});
         interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
-          formData.append('user_id', searchParams.getPathPart(3));
+          formData.append('web_channel_id', searchParams.getPathPart(3));
   
-          fetch('/handler/webChannel/' + searchParams.getPathPart(3), {
+          fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {
@@ -72,7 +72,7 @@ export class PageWebChannel {
         
         let formData = new FormData(elementForm);
   
-        fetch('/handler/webChannel', {
+        fetch('/handler/webChannel?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
           body: formData
         }).then((response) => {
@@ -94,13 +94,13 @@ export class PageWebChannel {
         let webChannelsTypes;
         let interactiveChoicesWebChannelsTypes = new Interactive('choices');
 
-        fetch('/handler/webChannels/types', {
+        fetch('/handler/webChannels/types?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {
           webChannelsTypes = data1.outputData.webChannelsTypes;
-          return fetch('/handler/webChannel/' + searchParams.getPathPart(3), {method: 'GET'});
+          return fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {
@@ -122,13 +122,13 @@ export class PageWebChannel {
 
         let entriesCategories;
 
-        fetch('/handler/entries/categories?locale=' + window.CMSCore.locales.admin.name, {
+        fetch('/handler/entries/categories?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'}
         ).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {
           entriesCategories = data1.outputData.entriesCategories;
-          return fetch('/handler/webChannel/' + searchParams.getPathPart(3), {method: 'GET'});
+          return fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {
@@ -189,7 +189,7 @@ export class PageWebChannel {
               webChannelDescriptionTextareaElement.setAttribute('name', 'web_channel_description_' + locale.iso639_2);
               webChannelTitleInputElement.setAttribute('name', 'web_channel_title_' + locale.iso639_2);
               
-              fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
+              fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
                 method: 'GET'
               }).then((response) => {
                 return (response.ok) ? response.json() : Promise.reject(response);
@@ -201,7 +201,7 @@ export class PageWebChannel {
           });
         });
       } else {
-        fetch('/handler/webChannels/types', {
+        fetch('/handler/webChannels/types?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
@@ -218,7 +218,7 @@ export class PageWebChannel {
   
           document.querySelector('#TC6474387201').append(interactiveChoicesWebChannelsTypes.target.element);
   
-          return fetch('/handler/entries/categories', {method: 'GET'});
+          return fetch('/handler/entries/categories?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {

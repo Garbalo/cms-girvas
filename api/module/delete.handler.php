@@ -24,29 +24,29 @@ if ($system_core->client->is_logged(2)) {
       $system_core::recursive_files_remove($module->get_path());
 
       http_response_code(200);
-      $handler_message = 'Модуль успешно удален.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_DELETE_MODULE_SUCCESS');
       $handler_status_code = 1;
     } else {
       if (file_exists($module->get_path())) {
         $system_core::recursive_files_remove($module->get_path());
 
         http_response_code(200);
-        $handler_message = 'Ядро модуля не было обнаружено, однако его папка осталась - она удалена.';
+        $handler_message = $system_core->locale->get_single_value_by_key('API_DELETE_MODULE_DIRECTORY_SUCCESS');
         $handler_status_code = 1;
       } else {
         http_response_code(500);
-        $handler_message = 'Ошибка сервера: модуль невозможно удалить, так как он не обнаружен.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ERROR_NOT_FOUND'));
         $handler_status_code = 0;
       }
     }
   } else {
     http_response_code(400);
-    $handler_message = 'Ошибка запроса: отсутствует техническое имя модуля.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 } else {
   http_response_code(401);
-  $handler_message = 'Ошибка авторизации: доступ запрещен.';
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
   $handler_status_code = 0;
 }
 

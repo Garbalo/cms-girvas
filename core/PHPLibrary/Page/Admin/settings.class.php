@@ -42,6 +42,7 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/settings.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
       $settings_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'base';
 
       $available_settings_transformed = [];
@@ -51,7 +52,7 @@ namespace core\PHPLibrary\Page\Admin {
           $item_class_is_active = ($settings_name == $available_setting_category) ? 'navigation-item__link_is-active' : '';
           
           array_push($available_settings_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-            'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_%s_TITLE}', mb_strtoupper($available_setting_category)),
+            'NAVIGATION_ITEM_TITLE' => sprintf('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_%s_TITLE}', mb_strtoupper($available_setting_category)),
             'NAVIGATION_ITEM_URL' => sprintf('/admin/settings/%s', $available_setting_category),
             'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => $item_class_is_active
           ]));
@@ -76,23 +77,23 @@ namespace core\PHPLibrary\Page\Admin {
         $settings = new $class_namespace($this->system_core, $settings_name);
 
         if ($settings_name == 'base') {
-          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_BASE_TITLE}');
-          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_BASE_DESCRIPTION}');
+          $settings->set_title('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_BASE_TITLE}');
+          $settings->set_description('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_BASE_DESCRIPTION}');
         }
 
         if ($settings_name == 'seo') {
-          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SEO_TITLE}');
-          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SEO_DESCRIPTION}');
+          $settings->set_title('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_SEO_TITLE}');
+          $settings->set_description('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_SEO_DESCRIPTION}');
         }
 
         if ($settings_name == 'security') {
-          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_TITLE}');
-          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_SECURITY_DESCRIPTION}');
+          $settings->set_title('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_SECURITY_TITLE}');
+          $settings->set_description('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_SECURITY_DESCRIPTION}');
         }
 
         if ($settings_name == 'users') {
-          $settings->set_title('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_USERS_TITLE}');
-          $settings->set_description('{LANG:SETTINGS_PAGE_SETTINGS_GROUP_USERS_DESCRIPTION}');
+          $settings->set_title('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_USERS_TITLE}');
+          $settings->set_description('{LANG:PAGE_SETTINGS_SETTINGS_GROUP_USERS_DESCRIPTION}');
         }
 
         $settings_title = $settings->get_title();
@@ -105,11 +106,9 @@ namespace core\PHPLibrary\Page\Admin {
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/settings.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
-        'SETTINGS_TITLE' => (isset($settings_title)) ? $settings_title : 'Неизвестные настройки',
-        'SETTINGS_DESCRIPTION' => (isset($settings_description)) ? $settings_description : 'Настройки не найдены',
-        'SETTINGS_FORM' => TemplateCollector::assembly($settings->assembled, [
-
-        ])
+        'SETTINGS_TITLE' => (isset($settings_title)) ? $settings_title : $locale_data['PAGE_SETTINGS_GROUP_NOT_FOUND_TITLE'],
+        'SETTINGS_DESCRIPTION' => (isset($settings_description)) ? $settings_description : $locale_data['PAGE_SETTINGS_GROUP_NOT_FOUND_DESCRIPTION'],
+        'SETTINGS_FORM' => TemplateCollector::assembly($settings->assembled, [])
       ]);
     }
 

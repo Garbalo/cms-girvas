@@ -99,7 +99,7 @@ export class PageEntry {
         
         let formData = new FormData(elementForm);
 
-        fetch('/handler/entry', {
+        fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
           body: formData
         }).then((response) => {
@@ -126,7 +126,7 @@ export class PageEntry {
           let formData = new FormData();
           formData.append('entry_id', searchParams.getPathPart(3));
 
-          fetch('/handler/entry/' + searchParams.getPathPart(3), {
+          fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {
@@ -160,7 +160,7 @@ export class PageEntry {
         formData.append('entry_id', searchParams.getPathPart(3));
         formData.append('entry_is_published', 1);
 
-        fetch('/handler/entry/' + searchParams.getPathPart(3), {
+        fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -186,7 +186,7 @@ export class PageEntry {
         formData.append('entry_id', searchParams.getPathPart(3));
         formData.append('entry_is_published', 0);
 
-        fetch('/handler/entry/' + searchParams.getPathPart(3), {
+        fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -204,7 +204,7 @@ export class PageEntry {
       this.buttons.unpublish.assembly();
 
       if (searchParams.getPathPart(3) == null) {
-        fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name, {
+        fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
@@ -271,7 +271,7 @@ export class PageEntry {
             formData.append('entry_id', searchParams.getPathPart(3));
             formData.append('entry_preview', fileReader.result);
     
-            fetch('/handler/entry', {
+            fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
               method: 'PATCH',
               body: formData
             }).then((response) => {
@@ -301,7 +301,7 @@ export class PageEntry {
 
         let entryData;
 
-        fetch('/handler/entry/' + searchParams.getPathPart(3), {
+        fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
@@ -334,7 +334,7 @@ export class PageEntry {
             this.buttons.save.target.element.style.display = 'flex';
           }
           
-          return fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'});
+          return fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
         }).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((data1) => {

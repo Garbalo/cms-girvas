@@ -10,9 +10,9 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Популярные записи</h2>
+    <h2 class="page-aside__block-title">[ ??? ]</h2>
     <div class="page-aside__block-content">
-      Тут колонка записей
+      [ ??? ]
     </div>
   </article>
 </aside>

@@ -1,6 +1,6 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   <div class="page__title-container">
-    <h1 class="page__title">Шаблон: {TEMPLATE_TITLE}</h1>
+    <h1 class="page__title">{LANG:PAGE_TEMPLATE_TITLE}: {TEMPLATE_TITLE}</h1>
   </div>
   <div class="page__content">
     <div class="template">
@@ -21,13 +21,13 @@
           {TEMPLATE_GALLARY_LIST}
         </div>
         <div class="template__metadata-container">
-          <h2 class="template__metadata-label">Метаданные шаблона</h2>
+          <h2 class="template__metadata-label">{LANG:PAGE_TEMPLATE_METADATA_TITLE}</h2>
           {TEMPLATE_METADATA_LIST}
         </div>
       </div>
       <div class="template__right-block">
         <div class="template__description-container">
-          <h2 class="template__description-label">Описание шаблона</h2>
+          <h2 class="template__description-label">{LANG:PAGE_TEMPLATE_DESCRIPTION_TITLE}</h2>
           <div class="template__description">{TEMPLATE_DESCRIPTION}</div>
         </div>
       </div>
@@ -36,9 +36,9 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Оценки пользователей</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_TEMPLATE_DESCRIPTION_SIDEBAR_BLOCK_RATING_TITLE}</h2>
     <div class="page-aside__block-content">
-      Тут оценки
+      [ ??? ]
     </div>
   </article>
 </aside>

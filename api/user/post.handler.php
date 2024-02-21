@@ -33,15 +33,17 @@ if ($system_core->urlp->get_path(2) == 'request-password-reset') {
   $user->init_data(['login', 'email', 'metadata_json']);
 
   if (!is_null($user)) {
+    $site_title = (empty($system_core->configurator->get_meta_title())) ? $system_core->configurator->get_site_title() : $system_core->configurator->get_meta_title();
+
     $user_email = $user->get_email();
     $user_login = $user->get_login();
 
     $template = new \core\PHPLibrary\Template($system_core, 'official');
 
     $email_sender = new \core\PHPLibrary\EmailSender($system_core);
-    $email_sender->set_from_user('CMS GIRVAS', 'support@garbalo.com');
+    $email_sender->set_from_user($site_title, 'support@garbalo.com');
     $email_sender->set_to_user_email($user_email);
-    $email_sender->add_header(sprintf("From: %s <%s>", 'CMS GIRVAS', 'support@garbalo.com'));
+    $email_sender->add_header(sprintf("From: %s <%s>", $site_title, 'support@garbalo.com'));
     $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
     $email_sender->add_header("\r\nMIME-Version: 1.0");
     $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
@@ -50,11 +52,11 @@ if ($system_core->urlp->get_path(2) == 'request-password-reset') {
     $reset_password_created_unix_timestamp = time();
     $reset_password_token = md5($reset_password_created_unix_timestamp . $system_core::CMS_VERSION);
 
-    $email_sender->set_subject('Восстановление пароля');
+    $email_sender->set_subject($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_SUBJECT'));
     $email_sender->set_content(\core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/email/default.tpl', [
-      'EMAIL_TITLE' => 'Запрос на восстановление пароля',
-      'EMAIL_CONTENT' => sprintf('%s, здравствуйте! Для восстановления пароля пройдите по следующей ссылке: %s', $user_login, sprintf('%s/password-reset?token=%s', $system_core->get_site_url(), $reset_password_token)),
-      'EMAIL_COPYRIGHT' => 'С уважением, администрация сайта.'
+      'EMAIL_TITLE' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_TITLE'),
+      'EMAIL_CONTENT' => sprintf($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_CONTENT'), $user_login, sprintf('%s/password-reset?token=%s', $system_core->get_site_url(), $reset_password_token)),
+      'EMAIL_COPYRIGHT' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_COPYRIGHT')
     ]));
 
     $email_sender->send();
@@ -62,10 +64,10 @@ if ($system_core->urlp->get_path(2) == 'request-password-reset') {
     $reset_password_created_unix_timestamp = time();
     $user->update(['metadata_json' => ['passwordResetToken' => $reset_password_token, 'passwordResetTokenCreatedUnixTimestamp' => $reset_password_created_unix_timestamp]]);
 
-    $handler_message = 'Запрос на восстановление успешно отправлен.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_SENDED_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Запрос на восстановление отправить невозможно. Такого пользователя не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 }

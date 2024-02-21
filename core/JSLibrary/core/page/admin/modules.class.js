@@ -53,7 +53,7 @@ export class PageModules {
             let formData = new FormData();
             formData.append('module_name', moduleName);
 
-            fetch('/handler/module', {
+            fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
               method: 'DELETE',
               body: formData
             }).then((response) => {
@@ -90,7 +90,7 @@ export class PageModules {
           let notification_start = new PopupNotification(localeData.POPUP_SLIDE_LOADING_MODULE, document.body, true);
           notification_start.show();
 
-          fetch('/handler/module/install', {
+          fetch('/handler/module/install?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'POST',
             body: formData
           }).then((response) => {
@@ -120,7 +120,7 @@ export class PageModules {
           let notification_start = new PopupNotification(localeData.POPUP_SLIDE_ACTIVATION_MODULE, document.body, true);
           notification_start.show();
 
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'PATCH',
             body: formData
           }).then((response) => {
@@ -150,7 +150,7 @@ export class PageModules {
           let notification_start = new PopupNotification(localeData.POPUP_SLIDE_DEACTIVATION_MODULE, document.body, true);
           notification_start.show();
 
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'PATCH',
             body: formData
           }).then((response) => {

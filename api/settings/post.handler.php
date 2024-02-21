@@ -52,15 +52,15 @@ if ($system_core->client->is_logged(2)) {
       }
     }
 
-    $handler_message = (!isset($handler_message)) ? 'Настройки успешно сохранены.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Настройки не были переданы серверу.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
   http_response_code(401);
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

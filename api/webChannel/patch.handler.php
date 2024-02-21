@@ -46,18 +46,18 @@ if ($system_core->client->is_logged(2)) {
     $web_channel_is_updated = $web_channel->update($web_channel_data);
 
     if ($web_channel_is_updated) {
-      $handler_message = (!isset($handler_message)) ? 'Веб-канал успешно сохранен.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Веб-канал не был сохранен, поскольку произошел неизвестный сбой.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Веб-канал не обновлен, поскольку его не существует.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FEED_ERROR_NOT_FOUND')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

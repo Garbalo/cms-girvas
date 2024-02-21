@@ -38,7 +38,7 @@ export class PageMedia {
         let formData = new FormData();
         formData.append('media_file_fullname', fileName);
 
-        fetch('/handler/media', {
+        fetch('/handler/media?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'DELETE',
           body: formData
         }).then((response) => {
@@ -83,7 +83,7 @@ export class PageMedia {
     let formData = new FormData();
     formData.append('mediaFile', inputElement.files[fileIndex]);
 
-    fetch('/handler/media', {
+    fetch('/handler/media?localeMessage=' + window.CMSCore.locales.admin.name, {
       method: 'POST',
       body: formData
     }).then((response) => {

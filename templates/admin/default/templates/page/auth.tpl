@@ -16,8 +16,8 @@
       </div>
       <div class="main__form-auth-container">
         <form action="/handler/utils/authorization?method=admin" class="main__form-auth" method="POST">
-          <h1 class="main__form-title form-auth">Авторизация в&nbsp;панели&nbsp;управления</h1>
-          <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="Логин" required>
+          <h1 class="main__form-title form-auth">{LANG:MAIN_AUTHORIZATION_BLOCK_TITLE}</h1>
+          <input name="user_login" type="text" class="form-auth__input form-auth__input_text" placeholder="{LANG:MAIN_AUTHORIZATION_FORM_INPUT_LOGIN_PLACEHOLDER}" required>
           <input name="user_password" type="password" class="form-auth__input form-auth__input_password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required>
           <div class="form-auth__inputs-group">
             <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
@@ -25,9 +25,9 @@
             <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
             <input name="admin_access-code[]" type="password" class="form-auth__input form-auth__input_access-code" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" minlength="4" required>
           </div>
-          <input class="form-auth__input form-auth__input_submit" type="submit" value="Авторизация">
+          <input class="form-auth__input form-auth__input_submit" type="submit" value="{LANG:MAIN_AUTHORIZATION_FORM_BUTTON_SUBMIT_PLACEHOLDER}">
         </form>
-        <div class="main__auth-footer">&copy;&nbsp;www.cms-girvas.ru. Разработано:&nbsp;www.garbalo.com. 2022&mdash;2023&nbsp;годы. Все&nbsp;права защищены.</div>
+        <div class="main__auth-footer">{LANG:FOOTER_CMS_COPYRIGHT}</div>
       </div>
     </section>
   </div>

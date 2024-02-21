@@ -28,7 +28,7 @@ if ($system_core->client->is_logged(2)) {
         $handler_message = 'Категория записей успешно удалена.';
         $handler_status_code = 1;
       } else {
-        $handler_message = 'Категория записей не была удалена, поскольку произошел неизвестный сбой.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
         $handler_status_code = 0;
       }
     }
@@ -51,14 +51,14 @@ if ($system_core->client->is_logged(2)) {
             'date' => date('Y/m/d H:i:s', time())
           ]);
 
-          $handler_message = 'Запись успешно удалена.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_DELETE_DATA_SUCCESS');
           $handler_status_code = 1;
         } else {
-          $handler_message = 'Запись не была удалена, поскольку произошел неизвестный сбой.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
           $handler_status_code = 0;
         }
       } else {
-        $handler_message = 'Запись не удалена, поскольку ее не существует.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
         $handler_status_code = 0;
       }
 

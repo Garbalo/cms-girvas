@@ -28,9 +28,11 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/userGroup.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Назад',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_USERS_GROUP_NAVIGATION_BACK_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin/usersGroups',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));

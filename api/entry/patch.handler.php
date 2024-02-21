@@ -60,12 +60,15 @@ if ($system_core->client->is_logged(2)) {
         $entries_category_is_updated = $entries_category->update($entries_category_data);
 
         if ($entries_category_is_updated) {
-          $handler_message = 'Данные успешно сохранены.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
           $handler_status_code = 1;
         } else {
-          $handler_message = 'Данные не сохранены, поскольку произошел неизвестный сбой.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
           $handler_status_code = 0;
         }
+      } else {
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRIES_CATEGORY_ERROR_NOT_FOUND'));
+        $handler_status_code = 0;
       }
     }
   } else {
@@ -125,14 +128,14 @@ if ($system_core->client->is_logged(2)) {
             'date' => date('Y/m/d H:i:s', time())
           ]);
 
-          $handler_message = 'Запись успешно сохранена.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
           $handler_status_code = 1;
         } else {
-          $handler_message = 'Запись не была сохранена, поскольку произошел неизвестный сбой.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
           $handler_status_code = 0;
         }
       } else {
-        $handler_message = 'Запись не обновлена, поскольку ее не существует.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
         $handler_status_code = 0;
       }
     }

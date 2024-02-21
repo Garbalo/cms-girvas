@@ -20,13 +20,13 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $php_loaded_extensions = get_loaded_extensions();
 
     $table_data = [
-      ['Версия PHP', '>= 8.2.6', phpversion()],
-      ['PHP-модуль SimpleXML', 'Включен', (in_array('SimpleXML', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PHP-модуль PDO', 'Включен', (in_array('PDO', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PHP-модуль curl', 'Включен', (in_array('curl', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PHP-модуль dom', 'Включен', (in_array('dom', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PHP-модуль mbstring', 'Включен', (in_array('mbstring', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PHP-модуль json', 'Включен', (in_array('json', $php_loaded_extensions) ? 'Включен' : 'Выключен')]
+      [$system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_VERSION_LABEL'), '>= 8.2.6', phpversion()],
+      [sprintf('%s SimpleXML', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('SimpleXML', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s PDO', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('PDO', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s curl', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('curl', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s dom', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('dom', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s mbstring', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('mbstring', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s json', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('json', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))]
     ];
 
     $table_cells_font_color = [
@@ -53,9 +53,9 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       $table_cell->setAttribute('class', 'table__cell table__cell_header');
     }
 
-    $table_cells_headers[0]->nodeValue = 'Наименование';
-    $table_cells_headers[1]->nodeValue = 'Ожидание';
-    $table_cells_headers[2]->nodeValue = 'Факт';
+    $table_cells_headers[0]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_NAME_LABEL');
+    $table_cells_headers[1]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_EXPECTATION_LABEL');
+    $table_cells_headers[2]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_FACT_LABEL');
 
     $table_row_header->appendChild($table_cells_headers[0]);
     $table_row_header->appendChild($table_cells_headers[1]);
@@ -91,7 +91,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     $handler_output_data['html'] = $dom_document->saveHTML();
 
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -99,10 +99,10 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $dom_document = new \DOMDocument();
     
     $table_data = [
-      ['./backups/', (file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY))) ? 'Директория обнаружена' : 'Директория не обнаружена'],
-      ['./modules/', (file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY))) ? 'Директория обнаружена' : 'Директория не обнаружена'],
-      ['./templates/', (file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY))) ? 'Директория обнаружена' : 'Директория не обнаружена'],
-      ['./uploads/', (file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))) ? 'Директория обнаружена' : 'Директория не обнаружена'],
+      ['./backups/', (file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY))) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_FOUND_LABEL') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./modules/', (file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY))) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_FOUND_LABEL') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./templates/', (file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY))) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_FOUND_LABEL') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./uploads/', (file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_FOUND_LABEL') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
     ];
 
     $table_cells_font_color = [
@@ -125,8 +125,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       $table_cell->setAttribute('class', 'table__cell table__cell_header');
     }
 
-    $table_cells_headers[0]->nodeValue = 'Наименование';
-    $table_cells_headers[1]->nodeValue = 'Факт';
+    $table_cells_headers[0]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_NAME_LABEL');
+    $table_cells_headers[1]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_FACT_LABEL');
 
     $table_row_header->appendChild($table_cells_headers[0]);
     $table_row_header->appendChild($table_cells_headers[1]);
@@ -160,7 +160,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     $handler_output_data['html'] = $dom_document->saveHTML();
 
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -170,10 +170,10 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $php_loaded_extensions = get_loaded_extensions();
 
     $table_data = [
-      ['./backups/', '0755', file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/backups', CMS_ROOT_DIRECTORY))), -4) : 'Директория не найдена'],
-      ['./modules/', '0755', file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/modules', CMS_ROOT_DIRECTORY))), -4) : 'Директория не найдена'],
-      ['./templates/', '0755', file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/templates', CMS_ROOT_DIRECTORY))), -4) : 'Директория не найдена'],
-      ['./uploads/', '0755', file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))), -4) : 'Директория не найдена'],
+      ['./backups/', '0755', file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/backups', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./modules/', '0755', file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/modules', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./templates/', '0755', file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/templates', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
+      ['./uploads/', '0755', file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
     ];
 
     $table_cells_font_color = [
@@ -197,9 +197,9 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       $table_cell->setAttribute('class', 'table__cell table__cell_header');
     }
 
-    $table_cells_headers[0]->nodeValue = 'Наименование';
-    $table_cells_headers[1]->nodeValue = 'Ожидание';
-    $table_cells_headers[2]->nodeValue = 'Факт';
+    $table_cells_headers[0]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_NAME_LABEL');
+    $table_cells_headers[1]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_EXPECTATION_LABEL');
+    $table_cells_headers[2]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_FACT_LABEL');
 
     $table_row_header->appendChild($table_cells_headers[0]);
     $table_row_header->appendChild($table_cells_headers[1]);
@@ -235,7 +235,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     $handler_output_data['html'] = $dom_document->saveHTML();
 
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -245,17 +245,17 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $php_loaded_extensions = get_loaded_extensions();
 
     $table_data = [
-      ['Cubrid', (in_array('pdo_cubrid', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['FreeTDS / Microsoft SQL Server / Sybase', (in_array('pdo_dblib', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['Firebird', (in_array('pdo_firebird', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['IBM DB2', (in_array('pdo_ibm', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['IBM Informix Dynamic Server', (in_array('pdo_informix', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['MySQL', (in_array('pdo_mysql', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['Oracle Call Interface', (in_array('pdo_ocl', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['ODBC v3 (IBM DB2, unixODBC, win32 ODBC)', (in_array('pdo_odbc', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['PostgreSQL', (in_array('pdo_pgsql', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['SQLite 3 и SQLite 2', (in_array('pdo_sqlite', $php_loaded_extensions) ? 'Включен' : 'Выключен')],
-      ['Microsoft SQL Server / SQL Azure', (in_array('pdo_sqlsrv', $php_loaded_extensions) ? 'Включен' : 'Выключен')]
+      ['Cubrid', (in_array('pdo_cubrid', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['FreeTDS / Microsoft SQL Server / Sybase', (in_array('pdo_dblib', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['Firebird', (in_array('pdo_firebird', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['IBM DB2', (in_array('pdo_ibm', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['IBM Informix Dynamic Server', (in_array('pdo_informix', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['MySQL', (in_array('pdo_mysql', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['Oracle Call Interface', (in_array('pdo_ocl', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['ODBC v3 (IBM DB2, unixODBC, win32 ODBC)', (in_array('pdo_odbc', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['PostgreSQL', (in_array('pdo_pgsql', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['SQLite 3 и SQLite 2', (in_array('pdo_sqlite', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      ['Microsoft SQL Server / SQL Azure', (in_array('pdo_sqlsrv', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))]
     ];
 
     $table_cells_font_color = [
@@ -285,8 +285,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       $table_cell->setAttribute('class', 'table__cell table__cell_header');
     }
 
-    $table_cells_headers[0]->nodeValue = 'Драйвер PDO';
-    $table_cells_headers[1]->nodeValue = 'Состояние';
+    $table_cells_headers[0]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_DRIVER_PDO_LABEL');
+    $table_cells_headers[1]->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_DRIVER_PDO_STATUS_LABEL');
 
     $table_row_header->appendChild($table_cells_headers[0]);
     $table_row_header->appendChild($table_cells_headers[1]);
@@ -320,7 +320,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     $handler_output_data['html'] = $dom_document->saveHTML();
 
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -369,16 +369,16 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     if (file_exists($config_file_path)) {
       $tip_block->setAttribute('class', 'tip tip_green');
-      $tip_block->nodeValue = 'Конфигурационный файл успешно создан.';
+      $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_CONFIGURATION_FILE_CREATED');
     } else {
       $tip_block->setAttribute('class', 'tip tip_red');
-      $tip_block->nodeValue = 'Конфигурационный файл не был создан.';
+      $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_CONFIGURATION_FILE_NOT_CREATED');
     }
 
     $dom_document->appendChild($tip_block);
 
     $handler_output_data['html'] = $dom_document->saveHTML();
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 
@@ -682,12 +682,12 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $system_core->configurator->insert_database_entry_value('base_site_title', 'CMS GIRVAS');
 
     $tip_block->setAttribute('class', 'tip tip_green');
-    $tip_block->nodeValue = 'Таблицы сгенерированы.';
+    $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_INSTALLATION_TABLES_GENERATED');
 
     $dom_document->appendChild($tip_block);
 
     $handler_output_data['html'] = $dom_document->saveHTML();
-    $handler_message = 'Данные успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   }
 }

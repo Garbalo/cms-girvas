@@ -75,19 +75,19 @@ if ($system_core->client->is_logged(2)) {
       $users_group_is_updated = $users_group->update($users_group_data);
 
       if ($users_group_is_updated) {
-        $handler_message = 'Группа пользователей успешно сохранена.';
+        $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
         $handler_status_code = 1;
       } else {
-        $handler_message = 'Группа пользователей не была сохранена, поскольку произошел неизвестный сбой.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Группа пользователей не обновлена, поскольку ее не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUP_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

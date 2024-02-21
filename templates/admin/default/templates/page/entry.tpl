@@ -1,7 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   {PAGE_NAVIGATION}
   <div class="page__title-container">
-    <h1 class="page__title">Создание записи</h1>
+    <h1 class="page__title">{LANG:PAGE_ENTRY_TITLE}</h1>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
@@ -10,9 +10,9 @@
       <table class="table">
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Техническое наименование</div>
+            <div class="cell__title">{LANG:PAGE_ENTRY_INPUT_TECH_NAME_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Это техническое наименование записи, которое будет использоваться в URL.</div>
+              <div class="page__phar-block">{LANG:PAGE_ENTRY_INPUT_TECH_NAME_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -23,48 +23,48 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Заголовок</div>
+            <div class="cell__title">{LANG:PAGE_ENTRY_INPUT_TITLE_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Заголовок записи должен отображать суть ее содержимого.</div>
+              <div class="page__phar-block">{LANG:PAGE_ENTRY_INPUT_TITLE_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <input name="entry_title_rus" type="text" class="form__input entry-form__input" role="entryTitle" value="{ENTRY_TITLE}" placeholder="Заголовок записи">
+              <input name="entry_title_rus" type="text" class="form__input entry-form__input" role="entryTitle" value="{ENTRY_TITLE}" placeholder="{LANG:PAGE_ENTRY_INPUT_TITLE_LABEL}">
             </div>
           </td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Описание</div>
+            <div class="cell__title">{LANG:PAGE_ENTRY_INPUT_DESCRIPTION_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Описание записи должно отображать суть ее содержимого. При составлении описания старайтесь описать содержимое кратко и точно, используя ключевые слова, чтобы это положительно отразилось на поисковой оптимизации.</div>
+              <div class="page__phar-block">{LANG:PAGE_ENTRY_INPUT_DESCRIPTION_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <textarea name="entry_description_rus" class="form__textarea entry-form__textarea" role="entryDescription" placeholder="Описание записи">{ENTRY_DESCRIPTION}</textarea>
+              <textarea name="entry_description_rus" class="form__textarea entry-form__textarea" role="entryDescription" placeholder="{LANG:PAGE_ENTRY_INPUT_DESCRIPTION_LABEL}">{ENTRY_DESCRIPTION}</textarea>
             </div>
           </td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Ключевые слова и фразы</div>
+            <div class="cell__title">{LANG:PAGE_ENTRY_INPUT_KEYWORDS_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Ключевые слова и фразы могут помогать в поиске контента в сети Интернет поисковым роботам. Рекомендуем включать их в описание, заголовок и содержимое записи.</div>
+              <div class="page__phar-block">{LANG:PAGE_ENTRY_INPUT_KEYWORDS_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <textarea name="entry_keywords_rus" class="form__textarea entry-form__textarea" role="entryKeywords" placeholder="Вулкан Гирвас, Республика Карелия, Ловля рыбы в поселке Надвоицы">{ENTRY_KEYWORDS}</textarea>
+              <textarea name="entry_keywords_rus" class="form__textarea entry-form__textarea" role="entryKeywords" placeholder="{LANG:PAGE_ENTRY_INPUT_KEYWORDS_PLACEHOLDER}">{ENTRY_KEYWORDS}</textarea>
             </div>
           </td>
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">Категория</div>
+            <div class="cell__title">{LANG:PAGE_ENTRY_SELECT_CATEGORY_LABEL}</div>
             <div class="cell__description">
-              <div class="page__phar-block">Выберите соответствующую категорию, или оставьте поле пустым.</div>
+              <div class="page__phar-block">{LANG:PAGE_ENTRY_SELECT_CATEGORY_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -85,19 +85,19 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block" id="SYSTEM_E3754926184">
-    <h2 class="page-aside__block-title">Обложка</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_ENTRY_SIDEBAR_BLOCK_COVER_TITLE}</h2>
     <div class="page-aside__block-content"></div>
   </article>
   <article class="page-aside__block block-comments">
-    <h2 class="page-aside__block-title">Последние комментарии</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_ENTRY_SIDEBAR_BLOCK_POPULAR_ENTRIES_TITLE}</h2>
     <div class="page-aside__block-content">
       {ENTRY_COMMENTS_LIST}
     </div>
   </article>
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">Популярные записи</h2>
+    <h2 class="page-aside__block-title">{LANG:PAGE_ENTRY_SIDEBAR_BLOCK_LAST_COMMENTS_TITLE}</h2>
     <div class="page-aside__block-content">
-      Тут колонка записей
+      [ ??? ]
     </div>
   </article>
 </aside>

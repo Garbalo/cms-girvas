@@ -41,7 +41,7 @@ export class PageModule {
           formData.append('module_name', moduleName);
           formData.append('module_event', 'enable');
     
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'PATCH',
             body: formData
           }).then((response) => {
@@ -67,7 +67,7 @@ export class PageModule {
           formData.append('module_name', moduleName);
           formData.append('module_event', 'disable');
     
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'PATCH',
             body: formData
           }).then((response) => {
@@ -93,7 +93,7 @@ export class PageModule {
           formData.append('module_name', moduleName);
           formData.append('module_event', 'install');
     
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'POST',
             body: formData
           }).then((response) => {
@@ -121,7 +121,7 @@ export class PageModule {
           let formData = new FormData();
           formData.append('module_name', moduleName);
     
-          fetch('/handler/module', {
+          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {

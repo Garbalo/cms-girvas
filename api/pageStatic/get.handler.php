@@ -36,12 +36,16 @@ if ($system_core->client->is_logged(2)) {
     $handler_output_data['pageStatic']['createdUnixTimestamp'] = $page_static->get_created_unix_timestamp();
     $handler_output_data['pageStatic']['updatedUnixTimestamp'] = $page_static->get_updated_unix_timestamp();
 
-    $handler_message = 'Данные по статической странице успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Данные по статической странице не были получены, так как ее не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_STATIC_PAGE_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
+} else {
+  http_response_code(401);
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
+  $handler_status_code = 0;
 }
 
 ?>

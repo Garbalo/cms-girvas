@@ -56,10 +56,10 @@ if ($system_core->client->is_logged(2)) {
       $handler_output_data['entriesCategory'] = [];
       $handler_output_data['entriesCategory']['id'] = $entries_category->get_id();
 
-      $handler_message = 'Категория записей успешно создана.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS');
       $handler_status_code = 1;
     } else {
-      $handler_message = 'Произошла внутренняя ошибка. Категория записей не была создана.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
       $handler_status_code = 0;
     }
   } else {
@@ -99,7 +99,7 @@ if ($system_core->client->is_logged(2)) {
         'date' => date('Y/m/d H:i:s', time())
       ]);
       
-      $handler_message = 'Запись успешно создана.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS');
       $handler_status_code = 1;
 
       $handler_output_data['entry'] = [];
@@ -107,7 +107,7 @@ if ($system_core->client->is_logged(2)) {
 
       $handler_output_data['href'] = sprintf('/admin/entry/%d', $entry->get_id());
     } else {
-      $handler_message = 'Произошла внутренняя ошибка. Запись не была создана.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
       $handler_status_code = 0;
     }
   }

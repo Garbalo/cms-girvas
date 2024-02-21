@@ -54,7 +54,7 @@ export class PageUsers {
                 let formData = new FormData();
                 formData.append('user_id', userID);
 
-                fetch('/handler/user/' + userID, {
+                fetch('/handler/user/' + userID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'DELETE',
                   body: formData
                 }).then((response) => {

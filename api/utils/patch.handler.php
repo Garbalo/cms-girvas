@@ -37,10 +37,10 @@ if ($system_core->client->is_logged(2) && $system_core->urlp->get_path(2) == 'se
     unset($code_chars_array);
   }
 
-  $handler_message = (!isset($handler_message)) ? 'Секретные коды успешно обновлены.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_SECRET_CODES_GENERATED_SUCCESS') : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

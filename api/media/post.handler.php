@@ -40,27 +40,27 @@ if ($system_core->client->is_logged(2)) {
           $handler_output_data['file']['url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
           $handler_output_data['file']['fullname'] = $file_converted['file_name'];
 
-          $handler_message = (!isset($handler_message)) ? 'Медиа-файл успешно загружен.' : $handler_message;
+          $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_POST_FILES_SUCCESS') : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
         } else {
-          $handler_message = (!isset($handler_message)) ? 'Произошла неизвестная внутренняя ошибка. Медиа-файл не был загружен.' : $handler_message;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
-        $handler_message = (!isset($handler_message)) ? sprintf('Произошла внутренняя ошибка. Медиа-файл с данным расширением [%s] не подлежит загрузке на сервер.', $uploaded_file_extention) : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FILE_ERROR_INVALID_EXTENSION')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Медиа-файл не может быть загружен, поскольку директория [/uploads/media] для их загрузки отсутствует.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FILE_ERROR_DIRECTORY_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Медиа-файлы не были переданы на сервер.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
   http_response_code(401);
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

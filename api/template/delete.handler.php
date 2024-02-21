@@ -23,21 +23,21 @@ if ($system_core->client->is_logged(2)) {
   if ($template->exists_core_file()) {
     $system_core::recursive_files_remove($template->get_path());
 
-    $handler_message = (!isset($handler_message)) ? 'Шаблон успешно удален.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
   } else {
     if (file_exists($template->get_path())) {
       $system_core::recursive_files_remove($template->get_path());
 
-      $handler_message = (!isset($handler_message)) ? 'Ядро шаблона не было обнаружено, но осталась его директория, которая только что была удалена.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Шаблон не найден в системе.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_TEMPLATE_ERROR_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

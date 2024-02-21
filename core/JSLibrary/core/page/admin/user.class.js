@@ -26,7 +26,7 @@ export class PageUser {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
-      return fetch('/handler/usersGroups' + '?locale=' + window.CMSCore.locales.admin.name, {method: 'GET'});
+      return fetch('/handler/usersGroups' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
@@ -38,7 +38,7 @@ export class PageUser {
 
       interactiveChoicesUsersGroups.target.setName('user_group_id');
 
-      return fetch('/handler/user/' + searchParams.getPathPart(3), {method: 'GET'});
+      return fetch('/handler/user/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
@@ -61,7 +61,7 @@ export class PageUser {
         
         let formData = new FormData(elementForm);
   
-        fetch('/handler/user', {
+        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
           body: formData
         }).then((response) => {
@@ -87,7 +87,7 @@ export class PageUser {
         formData.append('user_id', searchParams.getPathPart(3));
         formData.append('user_is_block', 1);
   
-        fetch('/handler/user', {
+        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -113,7 +113,7 @@ export class PageUser {
         formData.append('user_id', searchParams.getPathPart(3));
         formData.append('user_is_block', 0);
   
-        fetch('/handler/user', {
+        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'PATCH',
           body: formData
         }).then((response) => {
@@ -140,7 +140,7 @@ export class PageUser {
           let formData = new FormData();
           formData.append('user_id', searchParams.getPathPart(3));
   
-          fetch('/handler/user/' + searchParams.getPathPart(3), {
+          fetch('/handler/user/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {

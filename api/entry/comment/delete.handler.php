@@ -24,14 +24,14 @@ if ($system_core->client->is_logged(2)) {
       $comment_is_deleted = $comment->delete();
 
       if ($comment_is_deleted) {
-        $handler_message = 'Комментарий успешно удален.';
+        $handler_message = $system_core->locale->get_single_value_by_key('API_DELETE_DATA_SUCCESS');
         $handler_status_code = 1;
       } else {
-        $handler_message = 'Комментарий не был удален, поскольку произошел неизвестный сбой.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Комментарий не удален, поскольку его не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_COMMENT_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
 

@@ -68,26 +68,26 @@ if (is_null($system_core->urlp->get_path(2))) {
           $handler_output_data['usersGroup'] = [];
           $handler_output_data['usersGroup']['id'] = $user_group->get_id();
 
-          $handler_message = 'Группа пользователей успешно создана.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS');
           $handler_status_code = 1;
         } else {
-          $handler_message = 'Произошла внутренняя ошибка. Группа пользователей не была создана.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
           $handler_status_code = 0;
         }
       } else {
-        $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование имеет неверный формат.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUP_ERROR_INVALID_NAME'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Данные группы пользователей не были сохранены, поскольку указанное наименование уже используется.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUP_ERROR_NAME_ALREADY_EXISTS'));
       $handler_status_code = 0;
     }
   } else {
-    $handler_message = 'Данные группы пользователей не были сохранены, поскольку наименование не может быть пустым.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET'));
     $handler_status_code = 0;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

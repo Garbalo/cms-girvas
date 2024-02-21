@@ -30,9 +30,11 @@ namespace core\PHPLibrary\Page\Admin {
       $this->system_core->template->add_style(['href' => 'styles/page/reports.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_script(['src' => 'admin/page/reports.js'], true);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_REPORTS_NAVIGATION_INDEX_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));

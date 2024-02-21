@@ -12,6 +12,7 @@ namespace core\PHPLibrary\SystemCore {
   use \core\PHPLibrary\SystemCore as SystemCore;
 
   final class Locale {
+    public SystemCore $system_core;
     private string $name;
     private string $core_path;
     private string $data_path;
@@ -104,11 +105,16 @@ namespace core\PHPLibrary\SystemCore {
       return sprintf('%s/data.json', $this->get_data_path());
     }
 
-    public function get_data() : array|null {
+    public function get_data() : array|bool|null {
       $file_path = $this->get_file_data_json_path();
       $file_content = file_get_contents($file_path);
 
       return json_decode($file_content, true);
+    }
+
+    public function get_single_value_by_key(string $key) : string {
+      $locale_data = $this->get_data();
+      return (isset($locale_data[$key])) ? $locale_data[$key] : '[ ??? ]';
     }
 
     public function exists_file_metadata_json() : bool {

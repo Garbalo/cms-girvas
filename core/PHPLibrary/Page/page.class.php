@@ -42,6 +42,8 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       if (!is_null($this->system_core->urlp->get_path(1))) {
         $page_static_name = urldecode($this->system_core->urlp->get_path(1));
 
@@ -51,7 +53,7 @@ namespace core\PHPLibrary\Page {
           $page_static = PageStatic::get_by_name($this->system_core, $page_static_name);
           $page_static->init_data(['id', 'texts', 'name', 'metadata']);
 
-          $this->page->breadcrumbs->add('Главная', '/');
+          $this->page->breadcrumbs->add($locale_data['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
           $this->page->breadcrumbs->add($page_static->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), $page_static->get_name());
           $this->page->breadcrumbs->assembly();
 

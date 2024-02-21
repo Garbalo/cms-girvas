@@ -64,7 +64,7 @@ export class PageUsersGroup {
             usersGroupTitleInputElement.setAttribute('name', 'user_group_title_' + locale.iso639_2);
 
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + event.target.value, {
+              fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + event.target.value + '&localeMessage=' + window.CMSCore.locales.admin.name, {
                 method: 'GET'
               }).then((response) => {
                 return (response.ok) ? response.json() : Promise.reject(response);
@@ -85,7 +85,7 @@ export class PageUsersGroup {
         
         let formData = new FormData(elementForm);
 
-        fetch('/handler/usersGroup', {
+        fetch('/handler/usersGroup?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
           body: formData
         }).then((response) => {
@@ -112,7 +112,7 @@ export class PageUsersGroup {
           let formData = new FormData();
           formData.append('user_group_id', searchParams.getPathPart(3));
 
-          fetch('/handler/usersGroup/' + searchParams.getPathPart(3), {
+          fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'DELETE',
             body: formData
           }).then((response) => {

@@ -1,7 +1,7 @@
 <li id="#comment{COMMENT_INDEX}" class="comments-list__item comment" data-comment-id="{COMMENT_ID}">
   <ul class="comment__metadata-list metadata-list list-reset">
     <li class="metadata-list__item">#{COMMENT_INDEX}</li>
-    <li class="metadata-list__item">Дата публикации: {COMMENT_CREATED_DATE_TIMESTAMP}</li>
+    <li class="metadata-list__item">{LANG:PAGE_ENTRY_COMMENT_PUBLICATION_DATE_LABEL}: {COMMENT_CREATED_DATE_TIMESTAMP}</li>
   </ul>
   <div class="comment__avatar-container">
     <img src="{COMMENT_AUTHOR_AVATAR_URL}" alt="COMMENT_AUTHOR_LOGIN">

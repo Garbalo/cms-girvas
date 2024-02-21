@@ -65,17 +65,21 @@ if ($system_core->client->is_logged(2)) {
       $page_static_is_updated = $page_static->update($page_static_data);
 
       if ($page_static_is_updated) {
-        $handler_message = 'Статическая страница успешно сохранена.';
+        $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
         $handler_status_code = 1;
       } else {
-        $handler_message = 'Статическая страница не была сохранена, поскольку произошел неизвестный сбой.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Статическая страница не обновлена, поскольку ее не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_STATIC_PAGE_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
   }
+} else {
+  http_response_code(401);
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
+  $handler_status_code = 0;
 }
 
 ?>

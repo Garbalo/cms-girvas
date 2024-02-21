@@ -24,19 +24,19 @@ if ($system_core->client->is_logged(2)) {
 
       $user_group_is_deleted = $user_group->delete();
       if ($user_group_is_deleted) {
-        $handler_message = (!isset($handler_message)) ? 'Группа пользователей успешно удалена.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_DELETE_DATA_SUCCESS') : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
       } else {
-        $handler_message = (!isset($handler_message)) ? 'Группа пользователей не был удалена, поскольку произошел неизвестный сбой.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Группа пользователей не был удалена, поскольку ее не существует.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUP_ERROR_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

@@ -1,7 +1,7 @@
 <article class="main__page page page_{ADMIN_PANEL_PAGE_NAME}">
   {PAGE_NAVIGATION}
   <div class="page__title-container">
-    <h1 class="page__title">Создание пользователя</h1>
+    <h1 class="page__title">{LANG:PAGE_USER_TITLE}</h1>
   </div>
   <div class="page__content">
     <form class="form form_user" action="/handler/user">
@@ -9,9 +9,9 @@
       <table id="SYSTEM_F0648538231" class="table table_user">
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">{LANG:USER_PAGE_USER_LOGIN_TITLE}</div>
+            <div class="cell__title">{LANG:PAGE_USER_USER_LOGIN_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">{LANG:USER_PAGE_USER_LOGIN_DESCRIPTION}</div>
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_LOGIN_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -20,9 +20,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">{LANG:USER_PAGE_USER_EMAIL_TITLE}</div>
+            <div class="cell__title">{LANG:PAGE_USER_USER_EMAIL_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">{LANG:USER_PAGE_USER_EMAIL_DESCRIPTION}</div>
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_EMAIL_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -31,9 +31,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">{LANG:USER_PAGE_USER_PASSWORD_TITLE}</div>
+            <div class="cell__title">{LANG:PAGE_USER_USER_PASSWORD_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">{LANG:USER_PAGE_USER_PASSWORD_DESCRIPTION}</div>
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_PASSWORD_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -42,9 +42,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">{LANG:USER_PAGE_USER_PASSWORD_REPEAT_TITLE}</div>
+            <div class="cell__title">{LANG:PAGE_USER_USER_PASSWORD_REPEAT_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">{LANG:USER_PAGE_USER_PASSWORD_REPEAT_DESCRIPTION}</div>
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_PASSWORD_REPEAT_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">
@@ -53,9 +53,9 @@
         </tr>
         <tr class="table__row">
           <td class="table__cell cell">
-            <div class="cell__title">{LANG:USER_PAGE_USER_GROUP_TITLE}</div>
+            <div class="cell__title">{LANG:PAGE_USER_USER_GROUP_TITLE}</div>
             <div class="cell__description">
-              <div class="page__phar-block">{LANG:USER_PAGE_USER_GROUP_DESCRIPTION}</div>
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_GROUP_DESCRIPTION}</div>
             </div>
           </td>
           <td class="table__cell cell">

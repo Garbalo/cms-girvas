@@ -28,21 +28,22 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/users.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
       $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'list';
 
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_USERS_NAVIGATION_INDEX_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Пользователи',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_USERS_NAVIGATION_USERS_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/users',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Группы',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_USERS_NAVIGATION_GROUPS_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/usersGroups',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));

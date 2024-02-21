@@ -29,6 +29,8 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/web-channel/last-releases');
       $web_channel_xml = $web_channel_importer->get([
         'ssl' => [
@@ -55,7 +57,7 @@ namespace core\PHPLibrary\Page\Admin {
       unset($web_channel_importer);
       unset($web_channel_xml);
 
-      $web_channel_last_news_list = 'Записи не были получены.';
+      $web_channel_last_news_list = $locale_data['PAGE_INDEX_SIDEBAR_BLOCK_WEB_CHANNEL_ENTRIES_NOT_FOUND_LABEL'];
       if (count($web_channel_items_assembled) > 0) {
         $web_channel_last_news_list = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/webChannel/list.tpl', [
           'WEB_CHANNEL_ITEMS' => implode($web_channel_items_assembled)
@@ -91,7 +93,7 @@ namespace core\PHPLibrary\Page\Admin {
       unset($web_channel_importer);
       unset($web_channel_xml);
 
-      $web_channel_last_releases_list = 'Записи не были получены.';
+      $web_channel_last_releases_list = $locale_data['PAGE_INDEX_SIDEBAR_BLOCK_WEB_CHANNEL_ENTRIES_NOT_FOUND_LABEL'];
       if (count($web_channel_items_assembled) > 0) {
         $web_channel_last_releases_list = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/webChannel/list.tpl', [
           'WEB_CHANNEL_ITEMS' => implode($web_channel_items_assembled)

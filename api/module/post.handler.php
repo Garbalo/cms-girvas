@@ -68,46 +68,46 @@ if ($system_core->client->is_logged(2)) {
                 }
 
                 http_response_code(200);
-                $handler_message = 'Модуль загружен.';
+                $handler_message = $system_core->locale->get_single_value_by_key('API_MODULE_UPLOADED');
                 $handler_status_code = 1;
               } else {
                 http_response_code(500);
-                $handler_message = 'Ошибка сервера: ядро загруженного модуля не обнаружено.';
+                $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ERROR_CORE_NOT_FOUND'));
                 $handler_status_code = 0;
               }
             } else {
               http_response_code(500);
-              $handler_message = 'Ошибка сервера: разархивация модуля невозможна.';
+              $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNZIPPING_NOT_POSSIBLE'));
               $handler_status_code = 0;
             }
           } else {
             http_response_code(500);
-            $handler_message = 'Ошибка сервера: сервер не смог открыть архив модуля.';
+            $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNZIPPING_NOT_POSSIBLE'));
             $handler_status_code = 0;
           }
         } else {
           http_response_code(500);
-          $handler_message = 'Ошибка сервера: архив модуля не был обнаружен.';
+          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ERROR_ARCHIVE_NOT_FOUND'));
           $handler_status_code = 0;
         }
       } else {
         http_response_code(500);
-        $handler_message = 'Ошибка сервера: репозиторий не смог предоставить данные по модулю.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ERROR_REPOSITORY_DATA_NOT_GETTED'));
         $handler_status_code = 0;
       }
     } else {
       http_response_code(500);
-      $handler_message = 'Ошибка сервера: модуль уже загружен.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_MODULE_ALREADY_UPLOADED'));
       $handler_status_code = 0;
     }
   } else {
     http_response_code(400);
-    $handler_message = 'Ошибка запроса: отсутствует техническое имя модуля.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET'));
     $handler_status_code = 0;
   }
 } else {
   http_response_code(401);
-  $handler_message = 'Ошибка авторизации: доступ запрещен.';
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
   $handler_status_code = 0;
 }
 

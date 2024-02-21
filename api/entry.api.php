@@ -32,7 +32,8 @@ if ($system_core->urlp->get_path(2) == 'comment') {
     // Если абсолютный путь не был инициализирован, то запрещаем дальше работать с API
     if (!isset($handler_path)) {
       http_response_code(500);
-      die('The handler associated with the request method was not found in the system.');
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_HANDLER_NOT_FOUND')) : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
 
     // Подключаем файл необходимого обработчика

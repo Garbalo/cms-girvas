@@ -2,9 +2,9 @@
   <table class="table table_settings">
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Регистрация пользователей</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_REGISTRATION_USERS_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">Данная опция разрешает или запрещает регистрироваться пользователям в системе.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_REGISTRATION_USERS_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -19,10 +19,10 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Ограничение доступа к административной панели по IP-адресу</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_RESTRICTING_ACCESS_TO_AP_BY_IP_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">Ограничение доступа к административной панели по IP-адресу позволит давать доступ к административной панели исключительно по IP-адресам.</div>
-          <div class="page__phar-block">В случае, если группы пользователя имеется доступ к административной панели, но включен данный фильтр, то в случае отсутствия IP-адреса пользователя в данном списке - ему доступ будет закрыт.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_RESTRICTING_ACCESS_TO_AP_BY_IP_DESCRIPTION_1}</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_RESTRICTING_ACCESS_TO_AP_BY_IP_DESCRIPTION_2}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -40,9 +40,9 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Фильтр почтовых адресов при регистрации</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_FILTER_REGISTRATION_BY_EMAIL_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">Фильтр почтовых адресов поможет отсеять нежелательные регистрации со стороны различных почтовых адресов. Система не будет пропускать к регистрации тех пользователей, которые пытаются создать аккаунт через почтовые сервисы, которые НЕ внесены в данный список.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_FILTER_REGISTRATION_BY_EMAIL_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -60,9 +60,9 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Премодерация создаваемых комментариев</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">В случае, если данная опция будет активирована, то каждый комментарий, который будет создаваться в дальнейшем - будет автоматически скрываться до момента его проверки.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -77,9 +77,9 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Отрицательный оценочный порог</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_NEGATIVE_THRESHOLD_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">Отрицательный оценочный порог необходим для автоматической отправки комментариев на проверку в том случае, если его оценка достигнет текущего отрицательного оценочного порога. Работает только при включенном рейтинге у комментариев.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_NEGATIVE_THRESHOLD_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -90,9 +90,9 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Премодерация комментариев при наличии сторонних ссылок</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_FILTER_BY_EXTERNAL_LINKS_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">В случае, если данная опция будет активирована, то каждый комментарий, который будет содержать стороннюю ссылку, будет скрываться до проверки.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_FILTER_BY_EXTERNAL_LINKS_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">
@@ -107,9 +107,9 @@
     </tr>
     <tr class="table__row">
       <td class="table__cell cell">
-        <div class="cell__title">Фильтр слов для комментариев</div>
+        <div class="cell__title">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_FILTER_BY_WORDS_TITLE}</div>
         <div class="cell__description">
-          <div class="page__phar-block">Фильтр слов позволит автоматически скрывать комментарии, которые будут содержать указанные слова.</div>
+          <div class="page__phar-block">{LANG:PAGE_SETTINGS_SETTING_SECURITY_ENTRY_COMMENTS_PREMODERATION_FILTER_BY_WORDS_DESCRIPTION}</div>
         </div>
       </td>
       <td class="table__cell cell">

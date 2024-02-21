@@ -29,6 +29,8 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/modules.css', 'rel' => 'stylesheet']);
       
+      $locale_data = $this->system_core->locale->get_data();
+
       $parsedown = new Parsedown();
 
       $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'local';
@@ -37,7 +39,7 @@ namespace core\PHPLibrary\Page\Admin {
       $navigations_items = ['local', 'repository'];
 
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_MODULES_NAVIGATION_INDEX_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
@@ -139,7 +141,7 @@ namespace core\PHPLibrary\Page\Admin {
           'ADMIN_PANEL_PAGE_NAME' => 'modules',
           'MODULES_LIST' => (!empty($modules_list_items_transformed_array)) ? TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/modules/list.tpl', [
             'MODULES_LIST_ITEMS' => implode($modules_list_items_transformed_array)
-          ]) : '<p class="page__content-phar">Установленные модули не обнаружены.</p>'
+          ]) : sprintf('<p class="page__content-phar">%s</p>', $locale_data['PAGE_MODULES_MODULES_INSTALLED_NOT_FOUND_TITLE'])
         ]);
       }
     }

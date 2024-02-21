@@ -22,10 +22,10 @@ if ($system_core->urlp->get_path(2) == 'parsedown') {
     $parsedown = new Parsedown();
     $handler_output_data['parsedown'] = $parsedown->text($_POST['markdown_text']);
 
-    $handler_message = (!isset($handler_message)) ? 'Текст успешно преобразован.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_PARSEDOWN_TRANSFORMED_SUCCESS') : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 }
@@ -67,71 +67,73 @@ if ($system_core->urlp->get_path(2) == 'registration') {
                         $registration_submit = $user->create_registration_submit();
 
                         if (is_array($registration_submit)) {
+                          $site_title = (empty($system_core->configurator->get_meta_title())) ? $system_core->configurator->get_site_title() : $system_core->configurator->get_meta_title();
+
                           $email_sender = new \core\PHPLibrary\EmailSender($system_core);
-                          $email_sender->set_from_user('CMS GIRVAS', 'no-reply@garbalo.com');
+                          $email_sender->set_from_user($site_title, 'no-reply@garbalo.com');
                           $email_sender->set_to_user_email($user_email);
-                          $email_sender->add_header(sprintf('From: %s <%s>', 'CMS GIRVAS', 'no-reply@garbalo.com'));
+                          $email_sender->add_header(sprintf('From: %s <%s>', $site_title, 'no-reply@garbalo.com'));
                           $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
                           $email_sender->add_header("\r\nMIME-Version: 1.0");
                           $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
 
-                          $email_sender->set_subject('Регистрация на сайте');
+                          $email_sender->set_subject($system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_EMAIL_SUBJECT'));
                           $email_sender->set_content(\core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/email/default.tpl', [
-                            'EMAIL_TITLE' => 'Регистрация прошла успешно!',
-                            'EMAIL_CONTENT' => sprintf('%s, здравствуйте! Прежде чем продолжить пользоваться нашим сайтом, Вам необходимо <a href="%s">подтвердить</a> регистрацию. Если Вы не подавали заявку, то <a href="%s">отмените</a> ее.', $user_login, sprintf('%s/registration?submit=%s', $system_core->get_site_url(), $registration_submit['submit_token']), sprintf('%s/registration?refusal=%s', $system_core->get_site_url(), $registration_submit['refusal_token'])),
-                            'EMAIL_COPYRIGHT' => 'С уважением, администрация сайта.'
+                            'EMAIL_TITLE' => $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_EMAIL_TITLE'),
+                            'EMAIL_CONTENT' => sprintf($system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_EMAIL_CONTENT'), $user_login, sprintf('%s/registration?submit=%s', $system_core->get_site_url(), $registration_submit['submit_token']), sprintf('%s/registration?refusal=%s', $system_core->get_site_url(), $registration_submit['refusal_token'])),
+                            'EMAIL_COPYRIGHT' => $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_EMAIL_COPYRIGHT')
                           ]));
 
                           $email_sender->send();
                           
-                          $handler_message = (!isset($handler_message)) ? 'Регистрация успешно завершена. На Ваш почтовый адрес выслано уведомление со ссылкой на страницу с активацией аккаунта.' : $handler_message;
+                          $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_SENDED_SUCCESS') : $handler_message;
                           $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
                         } else {
-                          $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Запрос для активации аккаунта не был создан.' : $handler_message;
+                          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
                           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                         }
                       } else {
-                        $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Пользователь не был создан.' : $handler_message;
+                        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
                         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                       }
                     } else {
-                      $handler_message = (!isset($handler_message)) ? 'Указанный Вами E-Mail не допущен к регистрации на сайте.' : $handler_message;
+                      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_EMAIL_IS_NOT_ALLOWED')) : $handler_message;
                       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                     }
                   } else {
-                    $handler_message = (!isset($handler_message)) ? 'Указанный Вами E-Mail уже привязан к другому аккаунту.' : $handler_message;
+                    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
                     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                   }
                 } else {
-                  $handler_message = (!isset($handler_message)) ? 'Указанный Вами логин уже привязан к другому аккаунту.' : $handler_message;
+                  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
                   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                 }
               } else {
-                $handler_message = (!isset($handler_message)) ? 'Указанные Вами пароли не совпадают.' : $handler_message;
+                $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
                 $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
               }
             } else {
-              $handler_message = (!isset($handler_message)) ? 'Указанный Вами пароль не соответствует требованиям.' : $handler_message;
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_INVALID_PASSWORD')) : $handler_message;
               $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
             }
           } else {
-            $handler_message = (!isset($handler_message)) ? 'Указанный Вами E-Mail не соответствует заданному формату.' : $handler_message;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_INVALID_EMAIL')) : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
         } else {
-          $handler_message = (!isset($handler_message)) ? 'Указанный Вами логин не соответствует заданному формату.' : $handler_message;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_INVALID_LOGIN')) : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
-        $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Невозможно продолжить регистрацию, так как не были переданы технически необходимые данные.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Регистрация на сайте отключена.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_DISABLED')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Регистрация недоступна, так как Вы авторизованы.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_REGISTRATION_ERROR_AUTHORIZATION_ALREADY')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 }
@@ -186,30 +188,30 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
             $handler_output_data['reload'] = true;
 
             /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? 'Авторизация прошла успешно.' : $handler_message;
+            $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_SUCCESS') : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
           } else {
             /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Сессия не была создана.' : $handler_message;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
 
         } else {
           /** @var string $handler_message Сообщение обработчика */
-          $handler_message = (!isset($handler_message)) ? 'Пользователь с указанными Вами данными отсутствует в системе.' : $handler_message;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
         /** @var string $handler_message Сообщение обработчика */
-        $handler_message = (!isset($handler_message)) ? 'Пользователь с указанными Вами данными отсутствует в системе.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Невозможно продолжить авторизацию, так как не были переданы технически необходимые данные.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Вы уже авторизованы.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_AUTHORIZATION_ALREADY')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 }
@@ -316,11 +318,11 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
             $handler_output_data['reload'] = true;
 
             /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? 'Авторизация прошла успешно.' : $handler_message;
+            $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_SUCCESS') : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
           } else {
             /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Сессия не была создана.' : $handler_message;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
 
@@ -331,7 +333,7 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
           ]);
 
           /** @var string $handler_message Сообщение обработчика */
-          $handler_message = (!isset($handler_message)) ? 'Пользователь с указанными Вами данными отсутствует в системе.' : $handler_message;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
@@ -341,16 +343,16 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
         ]);
         
         /** @var string $handler_message Сообщение обработчика */
-        $handler_message = (!isset($handler_message)) ? 'Пользователь с указанными Вами данными отсутствует в системе.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
 
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Невозможно продолжить авторизацию, так как не были переданы технически необходимые данные.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Вы уже авторизованы.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_AUTHORIZATION_ALREADY')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 }

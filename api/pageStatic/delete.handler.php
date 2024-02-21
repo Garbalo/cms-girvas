@@ -24,20 +24,24 @@ if ($system_core->client->is_logged(2)) {
       $page_static_is_deleted = $page_static->delete();
 
       if ($page_static_is_deleted) {
-        $handler_message = 'Статическая страница успешно удалена.';
+        $handler_message = $system_core->locale->get_single_value_by_key('API_DELETE_DATA_SUCCESS');
         $handler_status_code = 1;
       } else {
-        $handler_message = 'Статическая страница не была удалена, поскольку произошел неизвестный сбой.';
+        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
         $handler_status_code = 0;
       }
     } else {
-      $handler_message = 'Статическая страница не удалена, поскольку ее не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_STATIC_PAGE_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
 
     $handler_output_data['modalClose'] = true;
     $handler_output_data['reload'] = true;
   }
+} else {
+  http_response_code(401);
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
+  $handler_status_code = 0;
 }
 
 ?>

@@ -42,6 +42,8 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/registration.css', 'rel' => 'stylesheet']);
       
+      $locale_data = $this->system_core->locale->get_data();
+
       if (is_null($this->system_core->urlp->get_param('submit')) && is_null($this->system_core->urlp->get_param('refusal'))) {
         if (!$this->system_core->client->is_logged(1)) {
           $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
@@ -68,16 +70,16 @@ namespace core\PHPLibrary\Page {
               $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
                 'PAGE_NAME' => 'registration',
                 'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/registrationSubmit.tpl', [
-                  'REGISTRATION_SUBMIT_TITLE' => 'Подтверждение регистрации',
-                  'REGISTRATION_SUBMIT_TEXT' => 'Уважаемый пользователь, Ваш электронный адрес успешно подтвержден!'
+                  'REGISTRATION_SUBMIT_TITLE' => $locale_data['PAGE_REGISTRATION_CONFIRMATION_TITLE'],
+                  'REGISTRATION_SUBMIT_TEXT' => $locale_data['PAGE_REGISTRATION_CONFIRMATION_SUCCESS_DESCRIPTION']
                 ])
               ]);
             } else {
               $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
                 'PAGE_NAME' => 'registration',
                 'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/registrationSubmit.tpl', [
-                  'REGISTRATION_SUBMIT_TITLE' => 'Подтверждение регистрации',
-                  'REGISTRATION_SUBMIT_TEXT' => 'Уважаемый пользователь, подтверждение Вашего электронного адреса не увенчалось успехом по техническим причинам.'
+                  'REGISTRATION_SUBMIT_TITLE' => $locale_data['PAGE_REGISTRATION_CONFIRMATION_TITLE'],
+                  'REGISTRATION_SUBMIT_TEXT' => $locale_data['PAGE_REGISTRATION_CONFIRMATION_FAIL_DESCRIPTION']
                 ])
               ]);
             }
@@ -100,16 +102,16 @@ namespace core\PHPLibrary\Page {
               $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
                 'PAGE_NAME' => 'registration',
                 'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/registrationSubmit.tpl', [
-                  'REGISTRATION_SUBMIT_TITLE' => 'Отзыв регистрации',
-                  'REGISTRATION_SUBMIT_TEXT' => 'Ваша заявка на регистрацию успешно отозвана, аккаунт удален.'
+                  'REGISTRATION_SUBMIT_TITLE' => $locale_data['PAGE_REGISTRATION_CANCELLATION_TITLE'],
+                  'REGISTRATION_SUBMIT_TEXT' => $locale_data['PAGE_REGISTRATION_CANCELLATION_SUCCESS_DESCRIPTION']
                 ])
               ]);
             } else {
               $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
                 'PAGE_NAME' => 'registration',
                 'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/registrationSubmit.tpl', [
-                  'REGISTRATION_SUBMIT_TITLE' => 'Подтверждение регистрации',
-                  'REGISTRATION_SUBMIT_TEXT' => 'Ваша заявка на регистрацию не была отозвана по техническим причинам.'
+                  'REGISTRATION_SUBMIT_TITLE' => $locale_data['PAGE_REGISTRATION_CANCELLATION_TITLE'],
+                  'REGISTRATION_SUBMIT_TEXT' => $locale_data['PAGE_REGISTRATION_CANCELLATION_FAIL_DESCRIPTION']
                 ])
               ]);
             }

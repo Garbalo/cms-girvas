@@ -37,22 +37,24 @@ namespace core\PHPLibrary\Page\Admin {
       $this->page = $page;
       $this->error_code = $error_code;
 
+      $locale_data = $this->system_core->locale->get_data();
+
       switch ($error_code) {
         case 404:
-          $this->error_title = 'Страница не найдена';
-          $this->error_desription = sprintf('К сожалению, искомая Вами страница по адресу "%s" была удалена, либо перенесена. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.', urldecode($_SERVER['REQUEST_URI']));
+          $this->error_title = $locale_data['PAGE_ERROR_404_TITLE'];
+          $this->error_desription = sprintf($locale_data['PAGE_ERROR_404_DESCRIPTION'], urldecode($_SERVER['REQUEST_URI']));
           break;
         case 500:
-          $this->error_title = 'Внутренняя ошибка сервера';
-          $this->error_desription = 'К сожалению, на стороне сервера возникла ошибка, которая не позволяет обработать Ваш запрос. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.';
+          $this->error_title = $locale_data['PAGE_ERROR_500_TITLE'];
+          $this->error_desription = $locale_data['PAGE_ERROR_500_DESCRIPTION'];
           break;
         case 503:
-          $this->error_title = 'Доступ запрещен';
-          $this->error_desription = 'К сожалению, доступ к данной странице ограничен. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.';
+          $this->error_title = $locale_data['PAGE_ERROR_503_TITLE'];
+          $this->error_desription = $locale_data['PAGE_ERROR_503_DESCRIPTION'];
           break;
         default:
-          $this->error_title = 'Неизвестная ошибка';
-          $this->error_desription = 'К сожалению, что-то пошло не так. Рекомендуем вернуться на <a href="/" title="{SITE_TITLE}">главную страницу</a>.';
+          $this->error_title = $locale_data['PAGE_ERROR_UNKNOWN_TITLE'];
+          $this->error_desription = $locale_data['PAGE_ERROR_UNKNOWN_DESCRIPTION'];
       }
 
     }

@@ -54,7 +54,7 @@ export class PagePages {
                 let formData = new FormData();
                 formData.append('page_static_id', pageStaticID);
 
-                fetch('/handler/pageStatic/' + pageStaticID, {
+                fetch('/handler/pageStatic/' + pageStaticID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'DELETE',
                   body: formData
                 }).then((response) => {

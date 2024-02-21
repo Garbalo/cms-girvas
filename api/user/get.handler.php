@@ -46,14 +46,14 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
       $handler_output_data['user']['permissions']['editor_pages_static_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT);
       $handler_output_data['user']['permissions']['base_entry_comment_rate'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE);
 
-      $handler_message = 'Данные по права пользователя успешно получены.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
       $handler_status_code = 1;
     } else {
-      $handler_message = 'Данные не были получены, так как группы пользователя не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USERS_GROUP_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
   } else {
-    $handler_message = 'Данные не были получены, так как пользователя не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 } else if (is_null($system_core->urlp->get_path(3))) {
@@ -73,10 +73,10 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
     $handler_output_data['user']['isBlocked'] = $user->is_blocked();
     $handler_output_data['user']['groupID'] = $user->get_group_id();
 
-    $handler_message = 'Данные о пользователе успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Данные не были получены, так как пользователя не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 }

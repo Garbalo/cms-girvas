@@ -47,22 +47,22 @@ if ($system_core->client->is_logged(2)) {
 
         unlink($template_archive_path);
 
-        $handler_message = (!isset($handler_message)) ? 'Шаблон успешно загружен и установлен.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_TEMPLATE_UPLOADED') : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
       } else {
-        $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Шаблон не был загружен.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Шаблон не был установлен, так как его архив не был загружен с репозитория.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNZIPPING_NOT_POSSIBLE')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Шаблон в репозитории не обнаружен.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_TEMPLATE_ERROR_REPOSITORY_DATA_NOT_GETTED')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

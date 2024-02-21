@@ -41,7 +41,7 @@ export class PageEntry {
       return window.CMSCore.locales.base.getData();
     }).then((localeData) => {
       this.localeBaseData = localeData;
-      return fetch('/handler/user/@me/permissions', {method: 'GET'});
+      return fetch(`/handler/user/@me/permissions?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
@@ -62,11 +62,11 @@ export class PageEntry {
             let commentID = data.outputData.comment.id;
             let commentData = {}, authorData = {};
 
-            fetch(`/handler/entry/comment/${commentID}`, {method: 'GET'}).then((response) => {
+            fetch(`/handler/entry/comment/${commentID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
               return (response.ok) ? response.json() : Promise.reject(response);
             }).then((commentCreatedData) => {
               commentData = commentCreatedData.outputData.comment;
-              return fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'});
+              return fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
             }).then((response) => {
               return (response.ok) ? response.json() : Promise.reject(response);
             }).then((authorCommentCreatedData) => {
@@ -152,7 +152,7 @@ export class PageEntry {
         commentFormContainerElement.append(this.commentForm.target.element);
       }
 
-      return fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'});
+      return fetch(`/handler/entry/${entryID}/comments?localeMessage=${window.CMSCore.locales.base.name}&limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
@@ -162,7 +162,7 @@ export class PageEntry {
       let interactiveButtonCommentsLoad = new Interactive('button');
       interactiveButtonCommentsLoad.target.setLabel(this.localeBaseData.BUTTON_LOAD_MORE_COMMENTS_LABEL);
       interactiveButtonCommentsLoad.target.setCallback((event) => {
-        fetch(`/handler/entry/${entryID}/comments?limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'}).then((response) => {
+        fetch(`/handler/entry/${entryID}/comments?localeMessage=${window.CMSCore.locales.base.name}&limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'}).then((response) => {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((commentsLoadedData) => {
           let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
@@ -202,7 +202,7 @@ export class PageEntry {
       interactiveButtonCommentsLoad.assembly();
       entryCommentsContainerElement.append(interactiveButtonCommentsLoad.target.element);
       
-      return fetch(`/handler/user/@me`, {method: 'GET'});
+      return fetch(`/handler/user/@me?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {

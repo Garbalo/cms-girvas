@@ -49,7 +49,7 @@ export class PageEntriesComments {
                 formData.append('comment_is_hidden', 'off');
                 formData.append('comment_hidden_reason', '');
 
-                fetch('/handler/entry/comment', {
+                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'PATCH',
                   body: formData
                 }).then((response) => {
@@ -92,7 +92,7 @@ export class PageEntriesComments {
                 formData.append('comment_is_hidden', 'on');
                 formData.append('comment_hidden_reason', elementTextarea.value);
 
-                fetch('/handler/entry/comment', {
+                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'PATCH',
                   body: formData
                 }).then((response) => {
@@ -124,7 +124,7 @@ export class PageEntriesComments {
                 let formData = new FormData();
                 formData.append('comment_id', commentID);
 
-                fetch('/handler/entry/comment', {
+                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'DELETE',
                   body: formData
                 }).then((response) => {

@@ -71,10 +71,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
         $handler_output_data['comments'][] = $comment_data;
       }
 
-      $handler_message = 'Данные по комментариям записи успешно получены.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
       $handler_status_code = 1;
     } else {
-      $handler_message = 'Данные по комментариям не были получены, так как записи не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
   } else {
@@ -99,10 +99,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
       $handler_output_data['entry']['createdUnixTimestamp'] = $entry->get_created_unix_timestamp();
       $handler_output_data['entry']['updatedUnixTimestamp'] = $entry->get_updated_unix_timestamp();
 
-      $handler_message = 'Данные по записи успешно получены.';
+      $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
       $handler_status_code = 1;
     } else {
-      $handler_message = 'Данные по записи не были получены, так как ее не существует.';
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
       $handler_status_code = 0;
     }
   }
@@ -123,10 +123,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
     $handler_output_data['entriesCategory']['createdUnixTimestamp'] = $entries_category->get_created_unix_timestamp();
     $handler_output_data['entriesCategory']['updatedUnixTimestamp'] = $entries_category->get_updated_unix_timestamp();
 
-    $handler_message = 'Данные по категории записей успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Данные по категории записей не были получены, так как ее не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRIES_CATEGORY_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 } else if ($system_core->urlp->get_path(2) == 'categories') {
@@ -148,10 +148,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
       ]);
     }
 
-    $handler_message = 'Данные по категориям записей успешно получены.';
+    $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {
-    $handler_message = 'Данные по категориям записей не были получены, так как их не существует.';
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRIES_CATEGORY_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
 }

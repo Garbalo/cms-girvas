@@ -29,24 +29,26 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/entriesCategories.css', 'rel' => 'stylesheet']);
       
+      $locale_data = $this->system_core->locale->get_data();
+
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => '< Главная',
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_ENTRIES_CATEGORIES_NAVIGATION_INDEX_LABEL']),
         'NAVIGATION_ITEM_URL' => '/admin',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Записи',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_ENTRIES_CATEGORIES_NAVIGATION_ENTRIES_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/entries',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Категории',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_ENTRIES_CATEGORIES_NAVIGATION_CATEGORIES_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/entriesCategories',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => 'navigation-item__link_is-active'
       ]));
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
-        'NAVIGATION_ITEM_TITLE' => 'Комментарии',
+        'NAVIGATION_ITEM_TITLE' => $locale_data['PAGE_ENTRIES_CATEGORIES_NAVIGATION_COMMENTS_LABEL'],
         'NAVIGATION_ITEM_URL' => '/admin/entriesComments',
         'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
       ]));

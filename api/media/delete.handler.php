@@ -24,24 +24,24 @@ if ($system_core->client->is_logged(2)) {
       unlink($media_file_dir_path);
 
       if (!file_exists($media_file_dir_path)) {
-        $handler_message = (!isset($handler_message)) ? 'Медиа-файл успешно удален.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_DELETE_FILE_SUCCESS') : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
       } else {
-        $handler_message = (!isset($handler_message)) ? 'Произошла неизвестная внутренняя ошибка. Медиа-файл не был удален.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Медиа-файл не найден.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FILE_ERROR_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
     http_response_code(400);
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Наименование медиа-файла не передано.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_FILE_ERROR_NOT_FOUND')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
   http_response_code(401);
-  $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

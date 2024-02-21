@@ -29,16 +29,16 @@ if ($system_core->client->is_logged(2)) {
 
           if ($module->is_enabled()) {
             http_response_code(200);
-            $handler_message = 'Модуль успешно включен.';
+            $handler_message = $system_core->locale->get_single_value_by_key('API_MODULE_ENABLED');
             $handler_status_code = 1;
           } else {
             http_response_code(500);
-            $handler_message = 'Ошибка сервера: модуль не был включен.';
+            $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
             $handler_status_code = 0;
           }
         } else {
           http_response_code(500);
-          $handler_message = 'Ошибка сервера: модуль уже включен.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_MODULE_ALREADY_ENABLED');
           $handler_status_code = 0;
         }
       }
@@ -49,21 +49,25 @@ if ($system_core->client->is_logged(2)) {
 
           if (!$module->is_enabled()) {
             http_response_code(200);
-            $handler_message = 'Модуль успешно отключен.';
+            $handler_message = $system_core->locale->get_single_value_by_key('API_MODULE_DISABLED');
             $handler_status_code = 1;
           } else {
             http_response_code(500);
-            $handler_message = 'Ошибка сервера: модуль не был отключен.';
+            $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
             $handler_status_code = 0;
           }
         } else {
           http_response_code(500);
-          $handler_message = 'Ошибка сервера: модуль уже отключен.';
+          $handler_message = $system_core->locale->get_single_value_by_key('API_MODULE_ALREADY_DISABLED');
           $handler_status_code = 0;
         }
       }
     }
   }
+} else {
+  http_response_code(401);
+  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
+  $handler_status_code = 0;
 }
 
 ?>

@@ -43,6 +43,8 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/entry.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->system_core->locale->get_data();
+
       if (!is_null($this->system_core->urlp->get_path(1))) {
         $entry_name = urldecode($this->system_core->urlp->get_path(1));
 
@@ -65,7 +67,7 @@ namespace core\PHPLibrary\Page {
           $this->system_core->configurator->set_meta_description($entry->get_description($cms_base_locale_name));
           $this->system_core->configurator->set_meta_keywrords($entry->get_keywords($cms_base_locale_name));
 
-          $this->page->breadcrumbs->add('Все записи', '/entries');
+          $this->page->breadcrumbs->add($locale_data['PAGE_ENTRY_BREADCRUMPS_ALL_ENTRIES_LABEL'], '/entries');
           $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
           $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
           $this->page->breadcrumbs->assembly();
@@ -106,7 +108,7 @@ namespace core\PHPLibrary\Page {
               'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
               'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
               'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
-              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('Комментарий скрыт: %s', $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
+              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
             ]));
 
             $entry_comment_index++;
@@ -142,7 +144,7 @@ namespace core\PHPLibrary\Page {
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'ENTRY_TITLE' => $entry_title,
               'ENTRY_CONTENT' => $parsedown->text($entry_content),
-              'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : 'К этой записи нет комментариев.'
+              'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL']
             ])
           ]);
         } else {

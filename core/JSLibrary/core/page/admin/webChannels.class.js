@@ -54,7 +54,7 @@ export class PageWebChannels {
                 let formData = new FormData();
                 formData.append('web_channel_id', webChannelID);
 
-                fetch('/handler/webChannel/' + webChannelID, {
+                fetch('/handler/webChannel/' + webChannelID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
                   method: 'DELETE',
                   body: formData
                 }).then((response) => {

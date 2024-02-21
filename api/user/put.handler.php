@@ -26,13 +26,13 @@ if ($system_core->client->is_logged(2)) {
   $user_password_repeat = isset($_PUT['user_password_repeat']) ? $_PUT['user_password_repeat'] : '';
 
   if (User::exists_by_login($system_core, $user_login)) {
-    $handler_message = (!isset($handler_message)) ? 'Пользователь не был создан, поскольку другой пользователь с таким логином уже существует.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     $user_creation_allowed = false;
   }
 
   if (User::exists_by_email($system_core, $user_email)) {
-    $handler_message = (!isset($handler_message)) ? 'Пользователь не был создан, поскольку другой пользователь с таким e-mail уже существует.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     $user_creation_allowed = false;
   }
@@ -40,12 +40,12 @@ if ($system_core->client->is_logged(2)) {
   if (isset($user_password) && isset($user_password_repeat)) {
     if (!empty($user_password) || !empty($user_password_repeat)) {
       if ($user_password != $user_password_repeat) {
-        $handler_message = (!isset($handler_message)) ? 'Пользователь не был создан, поскольку пароли не совпадают.' : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_REPEAT_PASSWORD')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         $user_creation_allowed = false;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Пользователь не был создан, поскольку необходимо указать для него пароль.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       $user_creation_allowed = false;
     }
@@ -53,7 +53,7 @@ if ($system_core->client->is_logged(2)) {
 
   if (isset($user_email)) {
     if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-      $handler_message = (!isset($handler_message)) ? 'Пользователь не был создан, поскольку e-mail имеет неверный формат.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       $user_creation_allowed = false;
     }
@@ -98,18 +98,18 @@ if ($system_core->client->is_logged(2)) {
       $handler_output_data['user'] = [];
       $handler_output_data['user']['id'] = $user->get_id();
 
-      $handler_message = (!isset($handler_message)) ? 'Новый пользователь успешно создан.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS') : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
     } else {
-      $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя ошибка. Новый пользователь не был создан.' : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? 'Произошла внутренняя неизвестная ошибка.' : $handler_message;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
-  $handler_message = (!isset($handler_message)) ? 'Доступ запрещен. Ошибка авторизации.' : $handler_message;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
   $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 

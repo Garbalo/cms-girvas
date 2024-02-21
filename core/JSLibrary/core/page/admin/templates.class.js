@@ -54,7 +54,7 @@ export class PageTemplates {
             formData.append('template_name', templateName);
             formData.append('template_category', templateCategory);
 
-            fetch('/handler/template', {
+            fetch('/handler/template?localeMessage=' + window.CMSCore.locales.admin.name, {
               method: 'DELETE',
               body: formData
             }).then((response) => {
@@ -88,7 +88,7 @@ export class PageTemplates {
           let notification_start = new PopupNotification(localeData.POPUP_SLIDE_INSTALL_TEMPLATE, document.body, true);
           notification_start.show();
 
-          fetch('/handler/template/install', {
+          fetch('/handler/template/install?localeMessage=' + window.CMSCore.locales.admin.name, {
             method: 'POST',
             body: formData
           }).then((response) => {
