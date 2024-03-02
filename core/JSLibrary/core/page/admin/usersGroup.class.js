@@ -27,6 +27,7 @@ export class PageUsersGroup {
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
       let interactiveChoicesLocales = new Interactive('choices');
+      let usersGroupTitleInputElement = document.querySelector('[role="usersGroupTitle"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -46,8 +47,24 @@ export class PageUsersGroup {
 
         interactiveChoicesLocales.target.addItem(localeTemplate.innerHTML, localeName);
 
-        if (locale.name === window.CMSCore.locales.base.name) {
+        if (locale.name === window.CMSCore.locales.admin.name) {
           interactiveChoicesLocales.target.setItemSelectedIndex(localeIndex);
+        }
+
+        if (locale.name === window.CMSCore.locales.admin.name) {
+          usersGroupTitleInputElement.setAttribute('name', 'user_group_title_' + locale.iso639_2);
+
+          if (searchParams.getPathPart(3) != null) {
+            fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
+              method: 'GET'
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((data1) => {
+              let usersGroupData = data1.outputData.usersGroup;
+
+              usersGroupTitleInputElement.value = usersGroupData.title;
+            });
+          }
         }
       });
 
@@ -58,7 +75,6 @@ export class PageUsersGroup {
 
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
-        let usersGroupTitleInputElement = document.querySelector('[role="usersGroupTitle"]');
         locales.forEach((locale, localeIndex) => {
           if (locale.name === event.target.value) {
             usersGroupTitleInputElement.setAttribute('name', 'user_group_title_' + locale.iso639_2);

@@ -166,9 +166,12 @@
 </article>
 <aside class="main__page-aside page-aside">
   <article class="page-aside__block">
-    <h2 class="page-aside__block-title">[ ??? ]</h2>
-    <div class="page-aside__block-content">
-      [ ??? ]
+    <h2 class="page-aside__block-title">{LANG:PAGE_USERS_GROUP_SIDEBAR_BLOCK_ABOUT_TITLE}</h2>
+    <div class="page-aside__block-content block-content">
+      <div class="note-block note-block_blue">
+        <p class="block-content__phar">{LANG:PAGE_USERS_GROUP_SIDEBAR_BLOCK_ABOUT_DESCRIPTION_1}</p>
+        <p class="block-content__phar">{LANG:PAGE_USERS_GROUP_SIDEBAR_BLOCK_ABOUT_DESCRIPTION_2}</p>
+      </div>
     </div>
   </article>
 </aside>

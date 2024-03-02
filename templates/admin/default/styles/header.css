@@ -1,3 +1,11 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 .header {
   position: sticky;
   box-sizing: border-box;
@@ -8,6 +16,11 @@
   box-shadow: 0 0 10px var(--admin-panel-header-shadow-color);
   top: 0;
   z-index: 1;
+}
+@media (max-width: 1199px) {
+  .header {
+    top: 64px;
+  }
 }
 .header__container {
   display: flex;

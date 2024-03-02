@@ -79,22 +79,22 @@ namespace core\PHPLibrary\SystemCore {
 
     public function get_title() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['title'])) ? $metadata['title'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=title}';
+      return (isset($metadata['title'])) ? $metadata['title'] : '';
     }
 
     public function get_author_name() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['authorName'])) ? $metadata['authorName'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=authorName}';
+      return (isset($metadata['authorName'])) ? $metadata['authorName'] : '';
     }
 
     public function get_iso_639_1() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['iso639_1'])) ? $metadata['iso639_1'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=iso639_1}';
+      return (isset($metadata['iso639_1'])) ? $metadata['iso639_1'] : '';
     }
 
     public function get_iso_639_2() : string {
       $metadata = $this->get_metadata();
-      return (isset($metadata['iso639_2'])) ? $metadata['iso639_2'] : '{ERROR:METADATA_VALUE_IS_NOT_EXISTS=iso639_2}';
+      return (isset($metadata['iso639_2'])) ? $metadata['iso639_2'] : '';
     }
 
     public function exists_file_data_json() : bool {
@@ -107,7 +107,7 @@ namespace core\PHPLibrary\SystemCore {
 
     public function get_data() : array|bool|null {
       $file_path = $this->get_file_data_json_path();
-      $file_content = file_get_contents($file_path);
+      $file_content = (file_exists($file_path)) ? file_get_contents($file_path) : '{}';
 
       return json_decode($file_content, true);
     }

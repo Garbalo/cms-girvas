@@ -52,7 +52,7 @@ export class PageEntriesCategory {
       });
 
       locales.forEach((locale, localeIndex) => {
-        if (locale.name === window.CMSCore.locales.base.name) {
+        if (locale.name === window.CMSCore.locales.admin.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
         }
       });

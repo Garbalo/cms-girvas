@@ -96,10 +96,10 @@ if ($system_core->client->is_logged(2)) {
               if (!array_key_exists('texts', $entry_data)) $entry_data['texts'] = [];
               if (!array_key_exists($cms_locale->get_name(), $entry_data['texts'])) $entry_data['texts'][$cms_locale->get_name()] = [];
 
-              if (array_key_exists($entry_title_input_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['title'] = $_PATCH[$entry_title_input_name];
-              if (array_key_exists($entry_description_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['description'] = $_PATCH[$entry_description_textarea_name];
-              if (array_key_exists($entry_content_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['content'] = $_PATCH[$entry_content_textarea_name];
-              if (array_key_exists($entry_keywords_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', $_PATCH[$entry_keywords_textarea_name], -1, PREG_SPLIT_NO_EMPTY);
+              if (array_key_exists($entry_title_input_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars($_PATCH[$entry_title_input_name]);
+              if (array_key_exists($entry_description_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars($_PATCH[$entry_description_textarea_name]);
+              if (array_key_exists($entry_content_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['content'] = htmlspecialchars($_PATCH[$entry_content_textarea_name]);
+              if (array_key_exists($entry_keywords_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars($_PATCH[$entry_keywords_textarea_name]), -1, PREG_SPLIT_NO_EMPTY);
             }
           }
         }

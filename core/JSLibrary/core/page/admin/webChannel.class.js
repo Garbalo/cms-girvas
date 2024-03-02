@@ -93,6 +93,8 @@ export class PageWebChannel {
       if (searchParams.getPathPart(3) != null) {
         let webChannelsTypes;
         let interactiveChoicesWebChannelsTypes = new Interactive('choices');
+        let webChannelDescriptionTextareaElement = document.querySelector('[role="webChannelDescription"]');
+        let webChannelTitleInputElement = document.querySelector('[role="webChannelTitle"]');
 
         fetch('/handler/webChannels/types?localeMessage=' + window.CMSCore.locales.admin.name, {
           method: 'GET'
@@ -169,8 +171,22 @@ export class PageWebChannel {
         });
 
         locales.forEach((locale, localeIndex) => {
-          if (locale.name === window.CMSCore.locales.base.name) {
+          if (locale.name === window.CMSCore.locales.admin.name) {
             interactiveLocalesChoices.target.setItemSelectedIndex(localeIndex);
+          }
+
+          if (locale.name === window.CMSCore.locales.admin.name) {
+            webChannelDescriptionTextareaElement.setAttribute('name', 'web_channel_description_' + locale.iso639_2);
+            webChannelTitleInputElement.setAttribute('name', 'web_channel_title_' + locale.iso639_2);
+            
+            fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
+              method: 'GET'
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((data) => {
+              webChannelDescriptionTextareaElement.value = data.outputData.webChannel.description;
+              webChannelTitleInputElement.value = data.outputData.webChannel.title;
+            });
           }
         });
 
@@ -181,9 +197,6 @@ export class PageWebChannel {
 
         let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
         interactiveChoicesSelectElement.addEventListener('change', (event) => {
-          let webChannelDescriptionTextareaElement = document.querySelector('[role="webChannelDescription"]');
-          let webChannelTitleInputElement = document.querySelector('[role="webChannelTitle"]');
-
           locales.forEach((locale, localeIndex) => {
             if (locale.name == event.target.value) {
               webChannelDescriptionTextareaElement.setAttribute('name', 'web_channel_description_' + locale.iso639_2);

@@ -28,6 +28,10 @@ export class PagePageStatic {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      let contentTextareaElement = document.querySelector('[role="pageStaticContent"]');
+      let descriptionTextareaElement = document.querySelector('[role="pageStaticDescription"]');
+      let titleInputElement = document.querySelector('[role="pageStaticTitle"]');
+      let keywordsInputElement = document.querySelector('[role="pageStaticKeywords"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -50,8 +54,28 @@ export class PagePageStatic {
       });
 
       locales.forEach((locale, localeIndex) => {
-        if (locale.name === window.CMSCore.locales.base.name) {
+        if (locale.name === window.CMSCore.locales.admin.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
+        }
+
+        if (locale.name === window.CMSCore.locales.admin.name) {
+          contentTextareaElement.setAttribute('name', 'page_static_content_' + locale.iso639_2);
+          descriptionTextareaElement.setAttribute('name', 'page_static_description_' + locale.iso639_2);
+          titleInputElement.setAttribute('name', 'page_static_title_' + locale.iso639_2);
+          keywordsInputElement.setAttribute('name', 'page_static_keywords_' + locale.iso639_2);
+            
+          if (searchParams.getPathPart(3) != null) {
+            fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
+              method: 'GET'
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((data1) => {
+              contentTextareaElement.value = data1.outputData.pageStatic.content;
+              descriptionTextareaElement.value = data1.outputData.pageStatic.description;
+              titleInputElement.value = data1.outputData.pageStatic.title;
+              keywordsInputElement.value = data1.outputData.pageStatic.keywords.join(', ');
+            });
+          }
         }
       });
 
@@ -62,11 +86,6 @@ export class PagePageStatic {
 
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
-        let contentTextareaElement = document.querySelector('[role="pageStaticContent"]');
-        let descriptionTextareaElement = document.querySelector('[role="pageStaticDescription"]');
-        let titleInputElement = document.querySelector('[role="pageStaticTitle"]');
-        let keywordsInputElement = document.querySelector('[role="pageStaticKeywords"]');
-        
         locales.forEach((locale, localeIndex) => {
           if (locale.name == event.target.value) {
             contentTextareaElement.setAttribute('name', 'page_static_content_' + locale.iso639_2);

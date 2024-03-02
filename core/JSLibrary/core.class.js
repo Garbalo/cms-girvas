@@ -20,12 +20,27 @@ export class Core {
   }
 
   async initLocales() {
-    return fetch('/handler/locale/base', {
+    return fetch('/handler/locales', {
       method: 'GET'
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      this.locales.base = new Locale(data.outputData.locale.name, 'base');
+      this.locales.list = data.outputData.locales;
+      return fetch('/handler/locale/base', {method: 'GET'});
+    }).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      let cookieMatches = document.cookie.match(new RegExp('(^| )locale=([^;]+)'));
+      this.locales.list.forEach(element => {
+        if (element.name == cookieMatches[2]) {
+          this.locales.base = new Locale(element.name, 'base');
+        }
+      });
+
+      if (!cookieMatches) {
+        this.locales.base = new Locale(data.outputData.locale.name, 'base');
+      }
+
       return fetch('/handler/locale/admin', {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);

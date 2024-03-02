@@ -34,10 +34,10 @@ if ($system_core->client->is_logged(2)) {
       if (array_key_exists($title_input_name, $_PUT) || array_key_exists($description_textarea_name, $_PUT) || array_key_exists($content_textarea_name, $_PUT)) {
         if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
 
-        if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$title_input_name];
-        if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = $_PUT[$description_textarea_name];
-        if (array_key_exists($content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = $_PUT[$content_textarea_name];
-        if (array_key_exists($keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', $_PUT[$keywords_textarea_name], -1, PREG_SPLIT_NO_EMPTY);
+        if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars($_PUT[$title_input_name]);
+        if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = htmlspecialchars($_PUT[$description_textarea_name]);
+        if (array_key_exists($content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = htmlspecialchars($_PUT[$content_textarea_name]);
+        if (array_key_exists($keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars($_PUT[$keywords_textarea_name]), -1, PREG_SPLIT_NO_EMPTY);
       }
     }
   }

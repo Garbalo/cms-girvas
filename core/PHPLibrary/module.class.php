@@ -9,6 +9,8 @@
  */
 
 namespace core\PHPLibrary {  
+  use \core\PHPLibrary\Module\Locale as ModuleLocale;
+
   /**
    * Module
    * 
@@ -17,9 +19,12 @@ namespace core\PHPLibrary {
    * @author Andrey Shestakov <drelagas.new@gmail.com>
    * @version 0.0.1
    */
+  #[\AllowDynamicProperties]
   final class Module {
     /** @var SystemCore|null $system_core Объект системного ядра */
-    private SystemCore|null $system_core = null;
+    public SystemCore|null $system_core = null;
+    /** @var ModuleLocale|null $locale Объект локализации */
+    public ModuleLocale|null $locale = null;
     /** @var string|null $name Техническое наименование модуля */
     private string|null $name = null;
     /** @var string|null $path Абсолютный путь до файлов модуля */
@@ -35,6 +40,21 @@ namespace core\PHPLibrary {
     public function __construct(SystemCore $system_core, string $name) {
       $this->system_core = $system_core;
       $this->set_name($name);
+      
+      $cms_base_locale_setted_name = $system_core->configurator->get_database_entry_value('base_locale');
+      $url_base_locale_setted_name = $system_core->urlp->get_param('locale');
+      $cookie_base_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+
+      $cms_base_locale_name = (!is_null($url_base_locale_setted_name)) ? $url_base_locale_setted_name : $cookie_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cookie_base_locale_setted_name : $cms_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cms_base_locale_name : 'en_US';
+      $cms_base_locale = new ModuleLocale($this, $cms_base_locale_name);
+      if (!$cms_base_locale->exists_file_data_json()) {
+        $cms_base_locale = new ModuleLocale($this, $cms_base_locale_setted_name);
+        $cms_base_locale_name = $cms_base_locale_setted_name;
+      }
+
+      $this->locale = $cms_base_locale;
 
       $path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $name);
       $this->set_path($path);

@@ -31,6 +31,11 @@ export class PageEntry {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      let contentTextareaElement = document.querySelector('[role="entryContent"]');
+      let descriptionTextareaElement = document.querySelector('[role="entryDescription"]');
+      let titleInputElement = document.querySelector('[role="entryTitle"]');
+      let keywordsInputElement = document.querySelector('[role="entryKeywords"]');
+
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
         let localeIconURL = locale.iconURL;
@@ -52,8 +57,28 @@ export class PageEntry {
       });
 
       locales.forEach((locale, localeIndex) => {
-        if (locale.name === window.CMSCore.locales.base.name) {
+        if (locale.name === window.CMSCore.locales.admin.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
+        }
+
+        if (locale.name === window.CMSCore.locales.admin.name) {
+          contentTextareaElement.setAttribute('name', 'entry_content_' + locale.iso639_2);
+          descriptionTextareaElement.setAttribute('name', 'entry_description_' + locale.iso639_2);
+          titleInputElement.setAttribute('name', 'entry_title_' + locale.iso639_2);
+          keywordsInputElement.setAttribute('name', 'entry_keywords_' + locale.iso639_2);
+
+          if (searchParams.getPathPart(3) != null) {
+            fetch('/handler/entry/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
+              method: 'GET'
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((data1) => {
+              contentTextareaElement.value = data1.outputData.entry.content;
+              descriptionTextareaElement.value = data1.outputData.entry.description;
+              titleInputElement.value = data1.outputData.entry.title;
+              keywordsInputElement.value = data1.outputData.entry.keywords.join(', ');
+            });
+          }
         }
       });
 
@@ -64,11 +89,6 @@ export class PageEntry {
 
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
-        let contentTextareaElement = document.querySelector('[role="entryContent"]');
-        let descriptionTextareaElement = document.querySelector('[role="entryDescription"]');
-        let titleInputElement = document.querySelector('[role="entryTitle"]');
-        let keywordsInputElement = document.querySelector('[role="entryKeywords"]');
-        
         locales.forEach((locale, localeIndex) => {
           if (locale.name == event.target.value) {
             contentTextareaElement.setAttribute('name', 'entry_content_' + locale.iso639_2);

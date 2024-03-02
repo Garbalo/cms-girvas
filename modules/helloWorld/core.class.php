@@ -29,7 +29,7 @@ namespace modules\helloWorld {
 
     public function init() : void {
       if (!is_null($this->system_core->template)) {
-        $this->system_core->template->add_global_variable('F4E267_HELLO_WORLD', 'Привет, мир!');
+        $this->system_core->template->add_global_variable('F4E267_HELLO_WORLD', $this->module->locale->get_single_value_by_key('HELLO_WORLD'));
       }
     }
 

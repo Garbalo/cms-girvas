@@ -27,7 +27,7 @@ export class PageEntry {
     this.clientUserPermissions = {};
     this.clientUserData = {};
 
-    this.commentsLimit = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length;
+    this.commentsLimit = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length : 0;
     this.commentsOffset = 0;
     this.postLoadComments = [];
     this.comments = [];
@@ -208,7 +208,7 @@ export class PageEntry {
     }).then((data) => {
       this.clientUserData = data.outputData.user;
 
-      let commentsElements = entryCommentsListElement.querySelectorAll('[role="entry-comment"]');
+      let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entry-comment"]') : [];
       commentsElements.forEach((comment, commentIndex) => {
         this.postLoadComments[commentIndex].entryID = entryID;
         let entryComment = new EntryComment(this, this.postLoadComments[commentIndex]);

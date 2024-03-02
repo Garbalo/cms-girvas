@@ -1,4 +1,12 @@
-.table-entries-comments__item[data-comment-is-hidden="true"] {
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
+ .table-entries-comments__item[data-comment-is-hidden="true"] {
   background-color: var(--common-secondary-color-4);
 }
 .table-entries-comments__item[data-comment-is-hidden="false"] .cell__block-phar_hidden-reason {

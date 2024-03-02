@@ -1,3 +1,11 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 .main {
   display: flex;
   align-items: center;
@@ -8,16 +16,58 @@
 .main__container {
   flex: 0 0 100%;
 }
+@media (max-width: 1199px) {
+  .main__container {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+  }
+}
 .main__auth-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.main__brand-container {
-  flex: 0 0 400px;
+@media (max-width: 399px) {
+  .main__auth-section {
+    padding: 0 30px;
+  }
 }
-.main__form-auth-container {
-  flex: 0 0 400px;
+@media (max-width: 1199px) {
+  .main__auth-section {
+    flex-direction: column;
+    width: fit-content;
+  }
+}
+@media (max-width: 399px) {
+  .main__brand-image {
+    width: 60%;
+  }
+}
+@media (min-width: 400px) and (max-width: 1199px) {
+  .main__brand-image {
+    width: 200px;
+  }
+}
+@media (max-width: 1199px) {
+  .main__brand-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  .main__form-auth-container {
+    max-width: 400px;
+    width: 100%;
+  }
+}
+@media (min-width: 1200px) {
+  .main__brand-container {
+    flex: 0 0 400px;
+  }
+  .main__form-auth-container {
+    flex: 0 0 400px;
+  }
 }
 .main__form-auth {
   box-sizing: border-box;
@@ -27,13 +77,22 @@
   margin-bottom: 20px;
 }
 .main__form-title {
-  font-size: 24px;
   color: var(--main-admin-auth-form-title-font-color);
   text-transform: uppercase;
   text-align: center;
   font-weight: 900;
   margin-top: 0;
   margin-bottom: 20px;
+}
+@media (max-width: 767px) {
+  .main__form-title {
+    font-size: 18px;
+  }
+}
+@media (min-width: 768px) {
+  .main__form-title {
+    font-size: 24px;
+  }
 }
 .form-auth__inputs-group {
   display: flex;
@@ -48,9 +107,22 @@
 .form-auth__input_text,
 .form-auth__input_password,
 .form-auth__input.form-auth__input_access-code {
-  font-size: 16px;
   padding: 10px;
   transition: background-color .2s, border-color .2s, color .2s;
+}
+@media (max-width: 767px) {
+  .form-auth__input_text,
+  .form-auth__input_password,
+  .form-auth__input.form-auth__input_access-code {
+    font-size: 14px;
+  }
+}
+@media (min-width: 768px) {
+  .form-auth__input_text,
+  .form-auth__input_password,
+  .form-auth__input.form-auth__input_access-code {
+    font-size: 16px;
+  }
 }
 .form-auth__input_text {
   background-color: var(--main-admin-auth-form-input-text-background-color);
@@ -107,7 +179,6 @@
 }
 .form-auth__input.form-auth__input_submit {
   background-color: var(--main-admin-auth-form-input-submit-background-color);
-  font-size: 16px;
   font-weight: 700;
   color: var(--main-admin-auth-form-input-submit-font-color);
   text-transform: uppercase;
@@ -117,6 +188,16 @@
   width: 100%;
   cursor: pointer;
   transition: background-color .2s, color .2s;
+}
+@media (max-width: 767px) {
+  .form-auth__input.form-auth__input_submit {
+    font-size: 14px;
+  }
+}
+@media (min-width: 768px) {
+  .form-auth__input.form-auth__input_submit {
+    font-size: 16px;
+  }
 }
 .form-auth__input.form-auth__input_submit:hover {
   background-color: var(--main-admin-auth-form-input-submit-background-color--hover);

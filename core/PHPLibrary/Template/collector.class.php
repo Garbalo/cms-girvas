@@ -11,6 +11,8 @@
 namespace core\PHPLibrary\Template {
   use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Template as Template;
+  use \core\PHPLibrary\Template\Locale as TemplateLocale;
+  use \core\PHPLibrary\Module\Locale as ModuleLocale;
 
   final class Collector {
     private const TEMPLATE_TAG_PATTERN = '/\{([a-zA-Z0-9_]+)\}/';
@@ -83,7 +85,7 @@ namespace core\PHPLibrary\Template {
       return implode($scripts_assembled);
     }
 
-    public static function assembly_locale(string $template_string, SystemCoreLocale $locale) : string {
+    public static function assembly_locale(string $template_string, SystemCoreLocale|TemplateLocale|ModuleLocale $locale) : string {
       $template_transformed = $template_string;
 
       $locale_data = $locale->get_data();

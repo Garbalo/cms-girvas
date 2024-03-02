@@ -1,17 +1,43 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 .main__page-wrapper {
   display: flex;
+}
+@media (max-width: 991px) {
+  .main__page-wrapper {
+    flex-direction: column;
+  }
 }
 .main__page {
   box-sizing: border-box;
   flex-grow: 1;
-  padding-right: 20px;
   padding-top: 20px;
   padding-bottom: 20px;
 }
+@media (min-width: 992px) {
+  .main__page {
+    padding-right: 20px;
+  }
+}
 .main__page-aside {
-  padding-top: 20px;
   padding-bottom: 20px;
-  flex: 0 0 400px;
+}
+@media (max-width: 991px) {
+  .main__page-aside {
+    flex: 0 0 100%;
+  }
+}
+@media (min-width: 992px) {
+  .main__page-aside {
+    padding-top: 20px;
+    flex: 0 0 400px;
+  }
 }
 .main__page-aside .page-aside__block {
   box-sizing: border-box;
@@ -123,4 +149,11 @@
   &:last-child {
     margin-right: 0;
   }
+}
+.page-aside__block-content .block-content__phar {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.page-aside__block-content .block-content__phar:last-child {
+  margin-bottom: 0px;
 }

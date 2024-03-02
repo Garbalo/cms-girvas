@@ -51,6 +51,21 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/profile.css', 'rel' => 'stylesheet']);
       
+      $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
+      $url_base_locale_setted_name = $this->system_core->urlp->get_param('locale');
+      $cookie_base_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+      
+      $cms_base_locale_name = (!is_null($url_base_locale_setted_name)) ? $url_base_locale_setted_name : $cookie_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cms_base_locale_name : $cms_base_locale_setted_name;
+      $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_name);
+      if (!$cms_base_locale->exists_file_data_json()) {
+        $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_setted_name);
+        $cms_base_locale_name = $cms_base_locale_setted_name;
+      }
+
+      $this->system_core->locale = $cms_base_locale;
+      $locale_data = $this->system_core->locale->get_data();
+
       if ($this->system_core->client->is_logged(1)) {
         /**
          * @var string Логин пользователя
@@ -73,8 +88,6 @@ namespace core\PHPLibrary\Page {
             $fields_titles = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_title')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_title'), true) : [];
             $fields_names = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_name')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_name'), true) : [];
             
-            $cms_locale_setted = $this->system_core->configurator->get_database_entry_value('base_locale');
-
             $additional_fields_elements = [];
             foreach ($fields_types as $field_index => $field_type) {
               $field_name_exploded = explode('_', $fields_names[$field_index]);
@@ -88,14 +101,14 @@ namespace core\PHPLibrary\Page {
               if ($field_type == 'textarea') {
                 array_push($additional_fields_elements, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile/editor/fieldTextarea.tpl', [
                   'FIELD_NAME' => $fields_names[$field_index],
-                  'FIELD_TITLE' => $fields_titles[$cms_locale_setted][$field_index],
+                  'FIELD_TITLE' => $fields_titles[$cms_base_locale_name][$field_index],
                   'FIELD_VALUE' => (!is_null($profile_user->get_additional_field_data($field_name_transformed))) ? $profile_user->get_additional_field_data($field_name_transformed) : ''
                 ]));
               } else {
                 array_push($additional_fields_elements, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile/editor/fieldInput.tpl', [
                   'FIELD_NAME' => $fields_names[$field_index],
                   'FIELD_TYPE' => $fields_types[$field_index],
-                  'FIELD_TITLE' => $fields_titles[$cms_locale_setted][$field_index],
+                  'FIELD_TITLE' => $fields_titles[$cms_base_locale_name][$field_index],
                   'FIELD_VALUE' => (!is_null($profile_user->get_additional_field_data($field_name_transformed))) ? $profile_user->get_additional_field_data($field_name_transformed) : ''
                 ]));
               }

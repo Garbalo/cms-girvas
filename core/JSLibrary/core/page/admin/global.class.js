@@ -24,6 +24,9 @@ export class PageGlobal {
    */
 
   init() {
-    //
+    let navigationBurgerElement = document.querySelector('[role="navagation-burger"]');
+    navigationBurgerElement.addEventListener('click', (event) => {
+      navigationBurgerElement.classList.toggle('admin-navigation__burger_is-active');
+    });
   }
 }

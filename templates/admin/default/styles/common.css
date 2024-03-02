@@ -1,3 +1,11 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
 html {
   font-family: 'Roboto', 'Helvetica', 'sans-serif';
   height: 100%;
@@ -36,27 +44,108 @@ code {
   flex: 0 0 100%;
 }
 .admin-panel__navigation {
+  position: relative;
+  display: block;
   background-color: var(--admin-panel-navigation-background-color);
   flex: 0 0 64px;
   z-index: 10;
 }
+@media (max-width: 1199px) {
+  .admin-panel__navigation {
+    position: sticky;
+    top: 0;
+  }
+}
 .admin-navigation-list {
   position: sticky;
-  display: flex;
-  flex-direction: column;
   top: 0;
 }
-.admin-navigation-list__item {
-  position: relative;
+@media (max-width: 1199px) {
+  .admin-navigation-list {
+    flex-direction: row;
+  }
+}
+@media (min-width: 1200px) {
+  .admin-navigation-list {
+    flex-direction: column;
+  }
+}
+.admin-navigation-list__item,
+.admin-navigation__burger {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 100%;
   height: 64px;
 }
+.admin-navigation__burger {
+  display: flex;
+  background-color: var(--admin-panel-navigation-item-link-background-color);
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+  width: 64px;
+}
+@media (max-width: 991px) {
+  .admin-navigation__burger {
+    display: flex;
+  }
+  .admin-navigation__burger_is-active + .admin-navigation-list {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 64px;
+  }
+  .admin-navigation__burger_is-active + .admin-navigation-list .admin-navigation-list__item-link:hover .admin-navigation-list__item-label,
+  .admin-navigation__burger_is-active + .admin-navigation-list .admin-navigation-list__item-link:focus .admin-navigation-list__item-label,
+  .admin-navigation__burger_is-active + .admin-navigation-list .admin-navigation-list__item-link:active .admin-navigation-list__item-label {
+    position: absolute;
+    display: flex;
+    background-color: var(--common-main-color-5);
+    align-items: center;
+    opacity: 1;
+    padding: 0 20px;
+    width: unset;
+    height: 64px;
+    left: 64px;
+    top: 0;
+  }
+  .admin-navigation-list {
+    display: none;
+  }
+}
+@media (min-width: 992px) {
+  .admin-navigation__burger {
+    display: none;
+  }
+  .admin-navigation-list {
+    display: flex;
+  }
+}
+.admin-navigation__burger_is-active {
+  background-color: var(--common-main-color-5);
+}
+@media (max-width: 1199px) {
+  .admin-navigation-list__item,
+  .admin-navigation__burger {
+    flex-basis: 64px;
+  }
+  .admin-navigation-list__item:hover,
+  .admin-navigation-list__item:focus,
+  .admin-navigation-list__item:active,
+  .admin-navigation__burger:hover,
+  .admin-navigation__burger:focus,
+  .admin-navigation__burger:active {
+    flex-basis: fit-content;
+  }
+}
+@media (min-width: 1200px) {
+  .admin-navigation-list__item {
+    flex-basis: 100%;
+  }
+}
 .admin-navigation-list__item-link {
+  position: relative;
   box-sizing: border-box;
-  position: absolute;
   display: flex;
   align-items: center;
   background-color: var(--admin-panel-navigation-item-link-background-color);
@@ -66,14 +155,22 @@ code {
   width: 100%;
   height: 100%;
 }
-.admin-navigation-list__item-icon {
+.admin-navigation-list__item-link:hover,
+.admin-navigation-list__item-link:focus,
+.admin-navigation-list__item-link:active {
+  background-color: var(--common-main-color-5);
+}
+.admin-navigation-list__item-icon,
+.admin-navigation__burger-icon {
   box-sizing: border-box;
   fill: var(--admin-panel-navigation-icon-color);
   width: 32px;
   height: 32px;
 }
 .admin-navigation-list__item-label {
+  display: none;
   box-sizing: border-box;
+  background-color: var(--admin-panel-navigation-item-link-background-color);
   font-size: 16px;
   font-weight: 700;
   color: var(--admin-panel-navigation-item-label-font-color);
@@ -84,13 +181,38 @@ code {
   opacity: 0;
   transition: opacity .2s;
 }
+@media (max-width: 1199px) {
+  .admin-navigation-list__item:hover .admin-navigation-list__item-label,
+  .admin-navigation-list__item:focus .admin-navigation-list__item-label,
+  .admin-navigation-list__item:active .admin-navigation-list__item-label {
+    display: flex;
+    position: absolute;
+    box-sizing: border-box;
+    background-color: var(--common-main-color-5);
+    padding: 16px;
+    left: 0;
+    top: 64px;
+  }
+}
+@media (min-width: 1200px) {
+  .admin-navigation-list__item-label {
+    position: absolute;
+    align-items: center;
+    background-color: var(--common-main-color-5);
+    padding: 16px;
+    height: 100%;
+    left: 64px;
+    top: 0;
+  }
+  .admin-navigation-list__item:hover .admin-navigation-list__item-label,
+  .admin-navigation-list__item:focus .admin-navigation-list__item-label,
+  .admin-navigation-list__item:active .admin-navigation-list__item-label {
+    display: flex;
+  }
+}
 .admin-navigation-list__item-link:hover,
 .admin-navigation-list__item-link:focus {
   width: fit-content;
-}
-.admin-navigation-list__item-link:hover .admin-navigation-list__item-icon,
-.admin-navigation-list__item-link:focus .admin-navigation-list__item-icon {
-  margin-right: 20px;
 }
 .admin-navigation-list__item-link:hover .admin-navigation-list__item-label,
 .admin-navigation-list__item-link:focus .admin-navigation-list__item-label {
@@ -101,4 +223,28 @@ code {
   display: flex;
   flex-direction: column;
   flex: 0 0 calc(100% - 64px);
+}
+.admin-panel__wrapper {
+  display: flex;
+}
+@media (max-width: 1199px) {
+  .admin-panel__wrapper {
+    flex-direction: column;
+  }
+}
+.note-block {
+  box-sizing: border-box;
+  background-color: var(--common-main-color-2);
+  color: var(--common-main-color-3);
+  font-size: 14px;
+  border-left: 3px solid var(--common-main-color-3);
+  padding: 20px;
+}
+.note-block_blue {
+  background-image: url('../images/note/background_notice_information.svg');
+  background-position: -64px -64px;
+  background-repeat: no-repeat;
+  background-color: var(--common-secondary-color-2);
+  color: var(--common-secondary-color-3);
+  border-left: 3px solid var(--common-secondary-color-3);
 }

@@ -56,7 +56,7 @@ namespace core\PHPLibrary {
     }
 
     public function get_name() : string {
-      return (property_exists($this, 'name')) ? $this->name : '{ERROR:WEB_CHANNEL_DATA_IS_NOT_EXISTS=name}';
+      return (property_exists($this, 'name')) ? $this->name : '';
     }
 
     public function get_type_id() : int {

@@ -10,11 +10,14 @@
 
 namespace core\PHPLibrary {
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
+  use \core\PHPLibrary\Template\Locale as TemplateLocale;
 
   final class Template {
     public SystemCore $system_core;
+    public TemplateLocale $locale;
     public mixed $core;
     private string $path;
     private string $url;
@@ -50,6 +53,21 @@ namespace core\PHPLibrary {
       /** @var SystemCore $this->system_core Объект класса SystemCore */
       $this->system_core = $system_core;
       $this->set_name($template_name);
+
+      $cms_base_locale_setted_name = $system_core->configurator->get_database_entry_value('base_locale');
+      $url_base_locale_setted_name = $system_core->urlp->get_param('locale');
+      $cookie_base_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+
+      $cms_base_locale_name = (!is_null($url_base_locale_setted_name)) ? $url_base_locale_setted_name : $cookie_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cookie_base_locale_setted_name : $cms_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cms_base_locale_name : 'en_US';
+      $cms_base_locale = new TemplateLocale($this, $cms_base_locale_name);
+      if (!$cms_base_locale->exists_file_data_json()) {
+        $cms_base_locale = new TemplateLocale($this, $cms_base_locale_setted_name);
+        $cms_base_locale_name = $cms_base_locale_setted_name;
+      }
+
+      $this->locale = $cms_base_locale;
 
       $template_path = ($template_category != 'default') ? sprintf('%s/templates/%s/%s', CMS_ROOT_DIRECTORY, $template_category, $template_name) : sprintf('%s/templates/%s', CMS_ROOT_DIRECTORY, $template_name);
       $template_url = ($template_category != 'default') ? sprintf('templates/%s/%s', $template_category, $template_name) : sprintf('templates/%s', $template_name);
@@ -296,7 +314,7 @@ namespace core\PHPLibrary {
           $site_charset = 'UTF-8';
         } else {
           $site_title = (empty($this->system_core->configurator->get_meta_title())) ? $this->system_core->configurator->get_site_title() : $this->system_core->configurator->get_meta_title();
-          $site_description = (empty($this->system_core->configurator->get_site_description())) ? $this->system_core->configurator->get_site_description() : $this->system_core->configurator->get_meta_description();
+          $site_description = (empty($this->system_core->configurator->get_meta_description())) ? $this->system_core->configurator->get_site_description() : $this->system_core->configurator->get_meta_description();
           $site_keywords = (empty($this->system_core->configurator->get_meta_keywords())) ? $this->system_core->configurator->get_site_keywords() : $this->system_core->configurator->get_meta_keywords_imploded();
           $site_charset = $this->system_core->configurator->get_site_charset();
         }
@@ -314,8 +332,9 @@ namespace core\PHPLibrary {
           'SITE_CHARSET' => $site_charset,
           'CMS_VERSION' => $this->system_core->get_cms_version()
         ];
-
+        
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);
+        $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->locale);
 
         // Итоговая сборка шаблона веб-страницы
         return TemplateCollector::assembly($this->core->assembled, $template_tags_array);

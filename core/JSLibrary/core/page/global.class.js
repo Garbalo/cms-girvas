@@ -30,6 +30,36 @@ export class PageGlobal {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
+
+      let footerLocalesListContainerElement = document.querySelector('[role="footer-locales-list"]');
+      let footerLocalesListElement = document.createElement('ul');
+
+      footerLocalesListElement.classList.add('locales-list');
+
+      locales.forEach((element, elementIndex) => {
+        let footerLocalesListItemElement = document.createElement('li');
+        let localeImageElement = document.createElement('img');
+
+        footerLocalesListItemElement.classList.add('locales-list__item');
+        footerLocalesListItemElement.classList.add('item');
+        localeImageElement.classList.add('item__image');
+
+        localeImageElement.setAttribute('src', element.iconURL);
+        localeImageElement.setAttribute('alt', element.title);
+        
+        footerLocalesListItemElement.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          document.cookie = `locale=${element.name}; max-age=max-age-in-seconds; path=/`;
+          window.location.reload();
+        });
+
+        footerLocalesListItemElement.append(localeImageElement);
+        footerLocalesListElement.append(footerLocalesListItemElement);
+      });
+
+      footerLocalesListContainerElement.append(footerLocalesListElement);
+
       return window.CMSCore.locales.base.getData();
     }).then((localeData) => {
 

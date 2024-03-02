@@ -42,6 +42,19 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
 
+      $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
+      $url_base_locale_setted_name = $this->system_core->urlp->get_param('locale');
+      $cookie_base_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+      
+      $cms_base_locale_name = (!is_null($url_base_locale_setted_name)) ? $url_base_locale_setted_name : $cookie_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cms_base_locale_name : $cms_base_locale_setted_name;
+      $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_name);
+      if (!$cms_base_locale->exists_file_data_json()) {
+        $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_setted_name);
+        $cms_base_locale_name = $cms_base_locale_setted_name;
+      }
+
+      $this->system_core->locale = $cms_base_locale;
       $locale_data = $this->system_core->locale->get_data();
 
       if (!is_null($this->system_core->urlp->get_path(1))) {
@@ -56,13 +69,6 @@ namespace core\PHPLibrary\Page {
           $this->page->breadcrumbs->add($locale_data['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
           $this->page->breadcrumbs->add($page_static->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), $page_static->get_name());
           $this->page->breadcrumbs->assembly();
-
-          $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
-          $cms_base_locale_name = (!is_null($this->system_core->urlp->get_param('locale'))) ? $this->system_core->urlp->get_param('locale') : $cms_base_locale_setted_name;
-          $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_name);
-          if (!$cms_base_locale->exists_file_data_json()) {
-            $cms_base_locale_name = $cms_base_locale_setted_name;
-          }
 
           $this->system_core->configurator->set_meta_title($page_static->get_title($cms_base_locale_name));
           $this->system_core->configurator->set_meta_description($page_static->get_description($cms_base_locale_name));

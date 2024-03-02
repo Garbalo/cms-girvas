@@ -11,6 +11,13 @@
 <body class="body body_base">
   <div class="admin-panel__wrapper">
     <nav class="admin-panel__navigation admin-navigation">
+      <div class="admin-navigation__burger" role="navagation-burger">
+        <svg class="admin-navigation__burger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 51.49" style="enable-background:new 0 0 64 64;">
+          <rect width="64" height="11.94"/>
+          <rect y="19.78" width="64" height="11.94"/>
+          <rect y="39.56" width="64" height="11.94"/>
+        </svg>
+      </div>
       <ul class="admin-navigation-list list-reset">
         <li class="admin-navigation-list__item">
           <a href="/admin" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_MAIN_LABEL}">

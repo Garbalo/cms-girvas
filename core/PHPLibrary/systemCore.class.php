@@ -15,6 +15,7 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\SystemCore\DatabaseConnector as SystemCoreDatabaseConnector;
   use \core\PHPLibrary\SystemCore\FileConnector as SystemCoreFileConnector;
   use \core\PHPLibrary\SystemCore\Report as SystemCoreReport;
+  use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Client as Client;
   
   /**
@@ -35,7 +36,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.56 Pre-alpha';
+    public const CMS_VERSION = '0.0.57 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -146,6 +147,8 @@ namespace core\PHPLibrary {
       $file_connector->connect_files_recursive('/^([a-zA-Z_0-9]+)\.class\.php$/');
       $file_connector->reset_current_directory();
 
+      $template = null;
+
       $this->init_url_parser();
       $this->configurator = new SystemCoreConfigurator($this);
 
@@ -197,7 +200,7 @@ namespace core\PHPLibrary {
         }
       }
 
-      if ($this->urlp->get_path(0) != 'handler') {
+      if ($this->urlp->get_path(0) != 'handler' && $this->urlp->get_path(0) != 'feed') {
 
         if ($this->urlp->get_param('mode') != 'install') {
 
@@ -233,6 +236,9 @@ namespace core\PHPLibrary {
         foreach ($this->modules as $name => $module_core) {
           $module = new Module($this, $name);
           if ($module->is_installed() && $module->is_enabled()) {
+            if (!is_null($template)) {
+              $template->core->assembled = TemplateCollector::assembly_locale($template->core->assembled, $module->locale);
+            }
             $module_core->init();
           }
 
