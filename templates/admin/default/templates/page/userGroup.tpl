@@ -70,6 +70,15 @@
           </td>
         </tr>
         <tr class="table__row">
+          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_CMS_FEEDS_TITLE}</td>
+          <td class="table__cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308977" name="user_group_permissions[]" type="checkbox" value="admin_feeds_management" {USER_GROUP_PERMISSION_ADMIN_FEEDS_MANAGEMENT_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308977"></label>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_CMS_SETTINGS_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
@@ -88,7 +97,7 @@
           </td>
         </tr>
         <tr class="table__row">
-          <th class="table__cell table__cell_header" colspan="2">Права модерации</th>
+          <th class="table__cell table__cell_header" colspan="2">{LANG:PAGE_USERS_GROUP_PERSMISSIONS_GROUP_MODERATOR_TITLE}</th>
         </tr>
         <tr class="table__row">
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_BAN_USERS_TITLE}</td>

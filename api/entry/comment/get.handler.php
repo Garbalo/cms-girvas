@@ -16,7 +16,7 @@ if (!defined('IS_NOT_HACKED')) {
 use \core\PHPLibrary\EntryComment as EntryComment;
 use \core\PHPLibrary\EntryComments as EntryComments;
 
-if ($system_core->client->is_logged(1)) {
+if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
   $comment_id = (is_numeric($system_core->urlp->get_path(3))) ? (int)$system_core->urlp->get_path(3) : 0;
 
   if (EntryComment::exists_by_id($system_core, $comment_id)) {
@@ -42,6 +42,9 @@ if ($system_core->client->is_logged(1)) {
     $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_COMMENT_ERROR_NOT_FOUND'));
     $handler_status_code = 0;
   }
+} else {
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
+  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 
 ?>

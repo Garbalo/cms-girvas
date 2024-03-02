@@ -29,6 +29,7 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
     $handler_output_data['usersGroup']['permissions']['admin_users_groups_management'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT);
     $handler_output_data['usersGroup']['permissions']['admin_modules_management'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT);
     $handler_output_data['usersGroup']['permissions']['admin_templates_management'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT);
+    $handler_output_data['usersGroup']['permissions']['admin_feeds_management'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_FEEDS_MANAGEMENT);
     $handler_output_data['usersGroup']['permissions']['admin_settings_management'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT);
     $handler_output_data['usersGroup']['permissions']['admin_viewing_logs'] = $users_group->permission_check(UserGroup::PERMISSION_ADMIN_VIEWING_LOGS);
     $handler_output_data['usersGroup']['permissions']['moder_users_ban'] = $users_group->permission_check(UserGroup::PERMISSION_MODER_USERS_BAN);

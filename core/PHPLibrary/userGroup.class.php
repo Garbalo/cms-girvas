@@ -21,6 +21,7 @@ namespace core\PHPLibrary {
     public const PERMISSION_ADMIN_TEMPLATES_MANAGEMENT          = 1 << 4;
     public const PERMISSION_ADMIN_SETTINGS_MANAGEMENT           = 1 << 5;
     public const PERMISSION_ADMIN_VIEWING_LOGS                  = 1 << 6;
+    public const PERMISSION_ADMIN_FEEDS_MANAGEMENT              = 1 << 17;
     // Права модерации
     public const PERMISSION_MODER_USERS_BAN                     = 1 << 7;
     public const PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT   = 1 << 8;

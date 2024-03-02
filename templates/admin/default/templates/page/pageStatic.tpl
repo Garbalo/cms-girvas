@@ -73,6 +73,10 @@
   </div>
 </article>
 <aside class="main__page-aside page-aside">
+  <article id="SYSTEM_E3754926184" class="page-aside__block">
+    <h2 class="page-aside__block-title">{LANG:PAGE_STATIC_PAGE_SIDEBAR_BLOCK_COVER_TITLE}</h2>
+    <div class="page-aside__block-content block-content"></div>
+  </article>
   <article class="page-aside__block">
     <h2 class="page-aside__block-title">{LANG:PAGE_STATIC_PAGE_SIDEBAR_BLOCK_ABOUT_TITLE}</h2>
     <div class="page-aside__block-content block-content">

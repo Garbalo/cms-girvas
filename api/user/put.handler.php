@@ -17,96 +17,106 @@ use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
 
 if ($system_core->client->is_logged(2)) {
-  $user_creation_allowed = true;
+  $client_user = $system_core->client->get_user(2);
+  $client_user->init_data(['metadata_json']);
+  $client_user_group = $client_user->get_group();
+  $client_user_group->init_data(['permissions']);
 
-  $user_login = isset($_PUT['user_login']) ? $_PUT['user_login'] : '';
-  $user_email = isset($_PUT['user_email']) ? $_PUT['user_email'] : '';
-  $user_group_id = isset($_PUT['user_group_id']) ? (int)$_PUT['user_group_id'] : 4;
-  $user_password = isset($_PUT['user_password']) ? $_PUT['user_password'] : '';
-  $user_password_repeat = isset($_PUT['user_password_repeat']) ? $_PUT['user_password_repeat'] : '';
+  if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
+    $user_creation_allowed = true;
 
-  if (User::exists_by_login($system_core, $user_login)) {
-    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
-    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
-    $user_creation_allowed = false;
-  }
+    $user_login = isset($_PUT['user_login']) ? $_PUT['user_login'] : '';
+    $user_email = isset($_PUT['user_email']) ? $_PUT['user_email'] : '';
+    $user_group_id = isset($_PUT['user_group_id']) ? (int)$_PUT['user_group_id'] : 4;
+    $user_password = isset($_PUT['user_password']) ? $_PUT['user_password'] : '';
+    $user_password_repeat = isset($_PUT['user_password_repeat']) ? $_PUT['user_password_repeat'] : '';
 
-  if (User::exists_by_email($system_core, $user_email)) {
-    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
-    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
-    $user_creation_allowed = false;
-  }
+    if (User::exists_by_login($system_core, $user_login)) {
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      $user_creation_allowed = false;
+    }
 
-  if (isset($user_password) && isset($user_password_repeat)) {
-    if (!empty($user_password) || !empty($user_password_repeat)) {
-      if ($user_password != $user_password_repeat) {
-        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_REPEAT_PASSWORD')) : $handler_message;
+    if (User::exists_by_email($system_core, $user_email)) {
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      $user_creation_allowed = false;
+    }
+
+    if (isset($user_password) && isset($user_password_repeat)) {
+      if (!empty($user_password) || !empty($user_password_repeat)) {
+        if ($user_password != $user_password_repeat) {
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_REPEAT_PASSWORD')) : $handler_message;
+          $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+          $user_creation_allowed = false;
+        }
+      } else {
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         $user_creation_allowed = false;
       }
-    } else {
-      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
-      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
-      $user_creation_allowed = false;
     }
-  }
 
-  if (isset($user_email)) {
-    if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
-      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
-      $user_creation_allowed = false;
+    if (isset($user_email)) {
+      if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+        $user_creation_allowed = false;
+      }
     }
-  }
 
-  if (isset($user_group_id)) {
-    if (!isset($user_data)) $user_data = [];
-    if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
-
-    $user_data['metadata_json']['group_id'] = $user_group_id;
-  }
-
-  foreach ($_PUT as $key => $value) {
-    if (preg_match('/^user\_additional\_field\_([a-z0-9\_]+)$/i', $key, $key_matches, PREG_OFFSET_CAPTURE) && !empty($value)) {
+    if (isset($user_group_id)) {
       if (!isset($user_data)) $user_data = [];
       if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
-      if (!isset($user_data['metadata_json']['additionalFields'])) $user_data['metadata_json']['additionalFields'] = [];
-      
-      $value_name_parts = explode('_', $key_matches[1][0]);
-      foreach ($value_name_parts as $part_index => $part) {
-        if ($part_index > 0) {
-          $value_name_parts[$part_index] = ucfirst($part);
-        }
-      }
 
-      if (is_bool($value)) $value = (int)$value;
-
-      $user_data['metadata_json']['additionalFields'][implode($value_name_parts)] = $value;
+      $user_data['metadata_json']['group_id'] = $user_group_id;
     }
-  }
 
-  if ($user_creation_allowed) {
-    $user = User::create($system_core, $user_login, $user_email, $user_password);
-    
-    if (!is_null($user)) {
-      $user->init_data(['metadata_json']);
+    foreach ($_PUT as $key => $value) {
+      if (preg_match('/^user\_additional\_field\_([a-z0-9\_]+)$/i', $key, $key_matches, PREG_OFFSET_CAPTURE) && !empty($value)) {
+        if (!isset($user_data)) $user_data = [];
+        if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
+        if (!isset($user_data['metadata_json']['additionalFields'])) $user_data['metadata_json']['additionalFields'] = [];
+        
+        $value_name_parts = explode('_', $key_matches[1][0]);
+        foreach ($value_name_parts as $part_index => $part) {
+          if ($part_index > 0) {
+            $value_name_parts[$part_index] = ucfirst($part);
+          }
+        }
 
-      if (isset($user_data)) {
-        $user->update($user_data);
+        if (is_bool($value)) $value = (int)$value;
+
+        $user_data['metadata_json']['additionalFields'][implode($value_name_parts)] = $value;
       }
+    }
 
-      $handler_output_data['user'] = [];
-      $handler_output_data['user']['id'] = $user->get_id();
+    if ($user_creation_allowed) {
+      $user = User::create($system_core, $user_login, $user_email, $user_password);
+      
+      if (!is_null($user)) {
+        $user->init_data(['metadata_json']);
 
-      $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS') : $handler_message;
-      $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
+        if (isset($user_data)) {
+          $user->update($user_data);
+        }
+
+        $handler_output_data['user'] = [];
+        $handler_output_data['user']['id'] = $user->get_id();
+
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PUT_DATA_SUCCESS') : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
+      } else {
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      }
     } else {
       $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   } else {
-    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
-    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS'));
+    $handler_status_code = 0;
   }
 } else {
   $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;

@@ -16,25 +16,35 @@ if (!defined('IS_NOT_HACKED')) {
 use \core\PHPLibrary\Template as Template;
 
 if ($system_core->client->is_logged(2)) {
-  $template_name = $_DELETE['template_name'];
-  $template_category = $_DELETE['template_category'];
-  $template = new Template($system_core, $template_name, $template_category);
+  $client_user = $system_core->client->get_user(2);
+  $client_user->init_data(['metadata_json']);
+  $client_user_group = $client_user->get_group();
+  $client_user_group->init_data(['permissions']);
 
-  if ($template->exists_core_file()) {
-    $system_core::recursive_files_remove($template->get_path());
+  if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT)) {
+    $template_name = $_DELETE['template_name'];
+    $template_category = $_DELETE['template_category'];
+    $template = new Template($system_core, $template_name, $template_category);
 
-    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
-    $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
-  } else {
-    if (file_exists($template->get_path())) {
+    if ($template->exists_core_file()) {
       $system_core::recursive_files_remove($template->get_path());
 
       $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
     } else {
-      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_TEMPLATE_ERROR_NOT_FOUND')) : $handler_message;
-      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      if (file_exists($template->get_path())) {
+        $system_core::recursive_files_remove($template->get_path());
+
+        $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
+      } else {
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_TEMPLATE_ERROR_NOT_FOUND')) : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      }
     }
+  } else {
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS'));
+    $handler_status_code = 0;
   }
 } else {
   $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;

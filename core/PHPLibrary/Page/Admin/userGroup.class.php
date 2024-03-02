@@ -70,6 +70,7 @@ namespace core\PHPLibrary\Page\Admin {
         'USER_GROUP_PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_MODULES_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_MODULES_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_TEMPLATES_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_TEMPLATES_MANAGEMENT)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_ADMIN_FEEDS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_FEEDS_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_SETTINGS_MANAGEMENT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_SETTINGS_MANAGEMENT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_ADMIN_VIEWING_LOGS_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_ADMIN_VIEWING_LOGS)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_MODER_USERS_BAN_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_MODER_USERS_BAN)) ? 'checked' : ''),

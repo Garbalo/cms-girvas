@@ -230,110 +230,117 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
 
       if (!is_null($user)) {
         // Инициализация данных пользователя
-        $user->init_data(['password_hash', 'security_hash']);
+        $user->init_data(['password_hash', 'security_hash', 'metadata_json']);
+        $user_group = $user->get_group();
+        $user_group->init_data(['permissions']);
         
-        $admin_access_codes_is_valid = true;
-        foreach ($admin_access_codes as $admin_access_code_index => $admin_access_code) {
-          switch ($admin_access_code_index) {
-            case 0: $code_char = 'a'; break;
-            case 1: $code_char = 'b'; break;
-            case 2: $code_char = 'c'; break;
-            case 3: $code_char = 'd'; break;
+        if ($user_group->permission_check($user_group::PERMISSION_ADMIN_PANEL_AUTH)) {
+          $admin_access_codes_is_valid = true;
+          foreach ($admin_access_codes as $admin_access_code_index => $admin_access_code) {
+            switch ($admin_access_code_index) {
+              case 0: $code_char = 'a'; break;
+              case 1: $code_char = 'b'; break;
+              case 2: $code_char = 'c'; break;
+              case 3: $code_char = 'd'; break;
+            }
+
+            if (!password_verify($admin_access_code, $system_core->configurator->get_database_entry_value(sprintf('security_admin_code_%s', $code_char)))) {
+              $admin_access_codes_is_valid = false; break;
+            }
           }
 
-          if (!password_verify($admin_access_code, $system_core->configurator->get_database_entry_value(sprintf('security_admin_code_%s', $code_char)))) {
-            $admin_access_codes_is_valid = false; break;
-          }
-        }
+          // Проверяем правильность пароля
+          if ($user->password_verify($user_password) && $admin_access_codes_is_valid) {
+            /** @var string $user_ip */
+            $user_ip = $_SERVER['REMOTE_ADDR'];
+            /** @var string $user_token */
+            $user_token_base = ClientSession::generate_token();
+            $user_token_admin = ClientSession::generate_token();
 
-        // Проверяем правильность пароля
-        if ($user->password_verify($user_password) && $admin_access_codes_is_valid) {
-          /** @var string $user_ip */
-          $user_ip = $_SERVER['REMOTE_ADDR'];
-          /** @var string $user_token */
-          $user_token_base = ClientSession::generate_token();
-          $user_token_admin = ClientSession::generate_token();
+            $user_session_base = null;
+            $user_session_admin = null;
 
-          $user_session_base = null;
-          $user_session_admin = null;
+            // Если сессия не была найдена, то создаем новую.
+            if (!ClientSession::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1)) {
+              /** @var ClientSession|null $user_session */
+              $user_session_base = ClientSession::create($system_core, [
+                'user_id' => $user->get_id(),
+                'token' => $user_token_base,
+                'user_ip' => $user_ip,
+                'type_id' => 1
+              ]);
+            } else {
+              $user_session_base = ClientSession::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1);
+              $user_session_base->update([]);
+            }
 
-          // Если сессия не была найдена, то создаем новую.
-          if (!ClientSession::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1)) {
-            /** @var ClientSession|null $user_session */
-            $user_session_base = ClientSession::create($system_core, [
-              'user_id' => $user->get_id(),
-              'token' => $user_token_base,
-              'user_ip' => $user_ip,
-              'type_id' => 1
-            ]);
+            // Если сессия не была найдена, то создаем новую.
+            if (!ClientSession::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2)) {
+              /** @var ClientSession|null $user_session */
+              $user_session_admin = ClientSession::create($system_core, [
+                'user_id' => $user->get_id(),
+                'token' => $user_token_admin,
+                'user_ip' => $user_ip,
+                'type_id' => 2
+              ]);
+            } else {
+              $user_session_admin = ClientSession::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2);
+              $user_session_admin->update([]);
+            }
+
+            if (!is_null($user_session_base)) {
+              $user_session_base->init_data(['updated_unix_timestamp', 'token']);
+              $user_session_base_expires = $user_session_base->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
+
+              setcookie('_grv_utoken', $user_session_base->get_token(), [
+                'expires' => $user_session_base_expires,
+                'path' => '/',
+                'domain' => $system_core->configurator->get('domain_cookies'),
+                'secure' => true,
+                'httponly' => true
+              ]);
+            }
+
+            if (!is_null($user_session_admin)) {
+              $user_session_admin->init_data(['updated_unix_timestamp', 'token']);
+              $user_session_admin_expires = $user_session_admin->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
+
+              setcookie('_grv_atoken', $user_session_admin->get_token(), [
+                'expires' => $user_session_admin_expires,
+                'path' => '/',
+                'domain' => $system_core->configurator->get('domain_cookies'),
+                'secure' => true,
+                'httponly' => true
+              ]);
+
+              $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS, [
+                'clientIP' => $system_core->client->get_ip_address(),
+                'date' => date('Y/m/d H:i:s', time())
+              ]);
+
+              $handler_output_data['reload'] = true;
+
+              /** @var string $handler_message Сообщение обработчика */
+              $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_SUCCESS') : $handler_message;
+              $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
+            } else {
+              /** @var string $handler_message Сообщение обработчика */
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
+              $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+            }
+
           } else {
-            $user_session_base = ClientSession::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 1);
-            $user_session_base->update([]);
-          }
-
-          // Если сессия не была найдена, то создаем новую.
-          if (!ClientSession::exists_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2)) {
-            /** @var ClientSession|null $user_session */
-            $user_session_admin = ClientSession::create($system_core, [
-              'user_id' => $user->get_id(),
-              'token' => $user_token_admin,
-              'user_ip' => $user_ip,
-              'type_id' => 2
-            ]);
-          } else {
-            $user_session_admin = ClientSession::get_by_ip_and_user_id($system_core, $user_ip, $user->get_id(), 2);
-            $user_session_admin->update([]);
-          }
-
-          if (!is_null($user_session_base)) {
-            $user_session_base->init_data(['updated_unix_timestamp', 'token']);
-            $user_session_base_expires = $user_session_base->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
-
-            setcookie('_grv_utoken', $user_session_base->get_token(), [
-              'expires' => $user_session_base_expires,
-              'path' => '/',
-              'domain' => $system_core->configurator->get('domain_cookies'),
-              'secure' => true,
-              'httponly' => true
-            ]);
-          }
-
-          if (!is_null($user_session_admin)) {
-            $user_session_admin->init_data(['updated_unix_timestamp', 'token']);
-            $user_session_admin_expires = $user_session_admin->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
-
-            setcookie('_grv_atoken', $user_session_admin->get_token(), [
-              'expires' => $user_session_admin_expires,
-              'path' => '/',
-              'domain' => $system_core->configurator->get('domain_cookies'),
-              'secure' => true,
-              'httponly' => true
-            ]);
-
-            $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS, [
+            $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL, [
               'clientIP' => $system_core->client->get_ip_address(),
               'date' => date('Y/m/d H:i:s', time())
             ]);
 
-            $handler_output_data['reload'] = true;
-
             /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_SUCCESS') : $handler_message;
-            $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
-          } else {
-            /** @var string $handler_message Сообщение обработчика */
-            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
-
         } else {
-          $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL, [
-            'clientIP' => $system_core->client->get_ip_address(),
-            'date' => date('Y/m/d H:i:s', time())
-          ]);
-
-          /** @var string $handler_message Сообщение обработчика */
-          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_UTILS_USER_AUTHORIZATION_ERROR_USER_NOT_FOUND')) : $handler_message;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS')) : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
