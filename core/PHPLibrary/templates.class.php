@@ -25,7 +25,17 @@ namespace core\PHPLibrary {
     }
 
     public static function get_installed_templates_array() : array {
-      return array_diff(scandir(self::get_absolute_templates_path()), ['.', '..']);
+      $templates_array = array_diff(scandir(self::get_absolute_templates_path()), ['.', '..']);
+      if (!empty($templates_array)) {
+        foreach ($templates_array as $template_name) {
+          $template_path = sprintf('%s/%s', self::get_absolute_templates_path(), $template_name);
+          if (!file_exists(sprintf('%s/installed', $template_path))) {
+            $templates_array = array_diff($templates_array, [$template_name]);
+          }
+        }
+      }
+
+      return $templates_array;
     }
   }
 }

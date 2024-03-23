@@ -17,7 +17,7 @@ use \core\PHPLibrary\WebChannel as WebChannel;
 
 if ($system_core->client->is_logged(2)) {
   $client_user = $system_core->client->get_user(2);
-  $client_user->init_data(['metadata_json']);
+  $client_user->init_data(['metadata']);
   $client_user_group = $client_user->get_group();
   $client_user_group->init_data(['permissions']);
 

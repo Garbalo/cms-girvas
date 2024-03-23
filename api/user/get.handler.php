@@ -21,7 +21,7 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
   $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
 
   if (!is_null($user)) {
-    $user->init_data(['metadata_json']);
+    $user->init_data(['metadata']);
 
     $user_group = $user->get_group();
     
@@ -60,7 +60,7 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
   $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
 
   if (!is_null($user)) {
-    $user->init_data(['login','metadata_json']);
+    $user->init_data(['login','metadata']);
     
     $template_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
     $template = new \core\PHPLibrary\Template($system_core, $template_name);

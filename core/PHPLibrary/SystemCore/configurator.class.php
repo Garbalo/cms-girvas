@@ -32,10 +32,6 @@ namespace core\PHPLibrary\SystemCore {
 
       if (file_exists(sprintf('%s/%s', CMS_ROOT_DIRECTORY, self::FILE_PATH))) {
         $this->merge($this->get_file_data());
-      } else {
-        if ($this->system_core->urlp->get_param('mode') != 'install') {
-          die('Configurations CMS file is not exists!');
-        }
       }
     }
 
@@ -117,13 +113,18 @@ namespace core\PHPLibrary\SystemCore {
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 
-      $database_connection = $this->system_core->database_connector->database->connection;
-      $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
-			$database_query->execute();
+      $database_connection = (!is_null($this->system_core->database_connector)) ? $this->system_core->database_connector->database->connection : null;
+      
+      if (!is_null($database_connection)) {
+        $database_query = $database_connection->prepare($query_builder->statement->assembled);
+        $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+        $database_query->execute();
 
-      $result = $database_query->fetch(\PDO::FETCH_ASSOC);
-      return ($result) ? $result['value'] : null;
+        $result = $database_query->fetch(\PDO::FETCH_ASSOC);
+        return ($result) ? $result['value'] : null;
+      }
+
+      return null;
     }
 
     public function exists_database_entry_value(string $name) : bool {
@@ -139,12 +140,17 @@ namespace core\PHPLibrary\SystemCore {
       $query_builder->statement->set_clause_limit(1);
       $query_builder->statement->assembly();
 
-      $database_connection = $this->system_core->database_connector->database->connection;
-      $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
-			$database_query->execute();
+      $database_connection = (!is_null($this->system_core->database_connector)) ? $this->system_core->database_connector->database->connection : null;
+      
+      if (!is_null($database_connection)) {
+        $database_query = $database_connection->prepare($query_builder->statement->assembled);
+        $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+        $database_query->execute();
 
-      return ($database_query->fetchColumn()) ? true : false;
+        return ($database_query->fetchColumn()) ? true : false;
+      }
+
+      return false;
     }
 
     public function insert_database_entry_value(string $name, string $value) : bool {
@@ -155,13 +161,18 @@ namespace core\PHPLibrary\SystemCore {
       $query_builder->statement->add_column('value');
       $query_builder->statement->assembly();
 
-      $database_connection = $this->system_core->database_connector->database->connection;
-      $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
-      $database_query->bindParam(':value', $value, \PDO::PARAM_STR);
-      $execute = $database_query->execute();
+      $database_connection = (!is_null($this->system_core->database_connector)) ? $this->system_core->database_connector->database->connection : null;
+      
+      if (!is_null($database_connection)) {
+        $database_query = $database_connection->prepare($query_builder->statement->assembled);
+        $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+        $database_query->bindParam(':value', $value, \PDO::PARAM_STR);
+        $execute = $database_query->execute();
 
-      return ($execute) ? true : false;
+        return ($execute) ? true : false;
+      }
+
+      return false;
     }
 
     public function update_database_entry_value(string $name, string|int $value) : mixed {
@@ -176,13 +187,18 @@ namespace core\PHPLibrary\SystemCore {
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 
-      $database_connection = $this->system_core->database_connector->database->connection;
-      $database_query = $database_connection->prepare($query_builder->statement->assembled);
-      $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
-      $database_query->bindParam(':value', $value, \PDO::PARAM_STR);
-			$execute = $database_query->execute();
+      $database_connection = (!is_null($this->system_core->database_connector)) ? $this->system_core->database_connector->database->connection : null;
+      
+      if (!is_null($database_connection)) {
+        $database_query = $database_connection->prepare($query_builder->statement->assembled);
+        $database_query->bindParam(':name', $name, \PDO::PARAM_STR);
+        $database_query->bindParam(':value', $value, \PDO::PARAM_STR);
+        $execute = $database_query->execute();
 
-      return ($execute) ? true : false;
+        return ($execute) ? true : false;
+      }
+
+      return false;
     }
     
     /**

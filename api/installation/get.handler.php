@@ -334,20 +334,15 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     }
 
     if (!file_exists($config_file_path)) {
+      $domain_ssl_status = (isset($_GET['domain_ssl_status'])) ? 'true' : 'false';
+      
       $file = fopen($config_file_path, 'w+');
       fwrite($file, '<?php' . PHP_EOL);
-      fwrite($file, '/**' . PHP_EOL);
-      fwrite($file, ' * ВНИМАНИЕ! Файл "configuration.sample.php" является образцом конфигурационного файла.' . PHP_EOL);
-      fwrite($file, ' * Вы можете сюда подставить Ваши данные и переименовать файл в "configuration.php".' . PHP_EOL);
-      fwrite($file, ' *' . PHP_EOL);
-      fwrite($file, ' * РЕКОМЕНДАЦИЯ: Не следует удалять файл "configuration.sample.php", поскольку конфигурационный' . PHP_EOL);
-      fwrite($file, ' * файл всегда можно будет вернуть в исходное состояние.' . PHP_EOL);
-      fwrite($file, ' */' . PHP_EOL);
       fwrite($file, PHP_EOL);
       fwrite($file, '$configuration = [' . PHP_EOL);
-      fwrite($file, '  \'domain\' => \'www.cms-girvas.ru\',' . PHP_EOL);
-      fwrite($file, '  \'domain_cookies\' => \'www.cms-girvas.ru\',' . PHP_EOL);
-      fwrite($file, '  \'ssl_is_enabled\' => true,' . PHP_EOL);
+      fwrite($file, sprintf('  \'domain\' => \'%s\',', $_GET['domain']) . PHP_EOL);
+      fwrite($file, sprintf('  \'domain_cookies\' => \'%s\',', $_GET['domain']) . PHP_EOL);
+      fwrite($file, sprintf('  \'ssl_is_enabled\' => %s,', $domain_ssl_status) . PHP_EOL);
       fwrite($file, '  \'database\' => [' . PHP_EOL);
       fwrite($file, sprintf('    \'prefix\' => \'%s\',', $_GET['database_prefix']) . PHP_EOL);
       fwrite($file, sprintf('    \'scheme\' => \'%s\',', $_GET['database_scheme']) . PHP_EOL);
@@ -356,13 +351,15 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       fwrite($file, sprintf('    \'password\' => \'%s\',', $_GET['database_pass']) . PHP_EOL);
       fwrite($file, sprintf('    \'name\' => \'%s\',', $_GET['database_name']) . PHP_EOL);
       fwrite($file, '  ],' . PHP_EOL);
-      fwrite($file, '  \'system_salt\' => \'?Q59DL+(/W29tM(aLij3D/X8\',' . PHP_EOL);
+      fwrite($file, sprintf('  \'system_salt\' => \'%s\',', $system_salt) . PHP_EOL);
       fwrite($file, '  \'password_hashing_algorithm\' => PASSWORD_ARGON2ID,' . PHP_EOL);
       fwrite($file, '  \'session_expires\' => 86400,' . PHP_EOL);
       fwrite($file, '  \'session_admin_expires\' => 86400,' . PHP_EOL);
       fwrite($file, '];' . PHP_EOL);
+      fwrite($file, PHP_EOL);
       fwrite($file, '?>');
       fclose($file);
+      chmod($config_file_path, 0664);
     }
 
     //$db_connector_test = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator, true);
@@ -668,7 +665,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       'title' => 'User'
     ];
 
-    $first_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'admin', $first_users_group_texts, 80887);
+    $first_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'admin', $first_users_group_texts, 211959);
     $second_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'moder', $second_users_group_texts, 66433);
     $thirty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'editor', $thirty_users_group_texts, 79873);
     $fourty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'user', $fourty_users_group_texts, 65536);

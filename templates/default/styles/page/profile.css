@@ -1,0 +1,125 @@
+.page__article {
+  position: relative;
+  flex-grow: 1;
+  padding: 24px;
+  min-height: 520px;
+}
+
+.page__article-header {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  padding-top: 130px;
+}
+
+.page__article .article__title {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-right: 24px;
+  padding-left: 200px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.page__article .article__content {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  padding-top: 56px;
+}
+
+.page__article .article__content > p {
+  margin-top: 0;
+}
+
+.page__article .article__content > h1,
+.page__article .article__content > h2 {
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.page__article .article__content > h3 {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.page__article .article__content > h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.page__article .article__content > h5,
+.page__article .article__content > h6 {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.page__article .article__content > h1,
+.page__article .article__content > h2,
+.page__article .article__content > h3,
+.page__article .article__content > h4,
+.page__article .article__content > h5,
+.page__article .article__content > h6  {
+  padding-top: 10px;
+}
+
+.page__article .article__content > p {
+  font-size: 14px;
+}
+
+.page__article .article__content > * {
+  margin-bottom: 10px;
+}
+
+.page__article .article__content > *:last-child {
+  margin-bottom: 0;
+}
+
+.page__article .profile__information-table {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.page__article .profile__information-table .table__cell:nth-child(1) {
+  text-transform: uppercase;
+  text-align: left;
+  width: 200px;
+}
+
+.page__article .profile__information-table .table__cell:nth-child(2) {
+  width: calc(100% - 200px);
+}
+
+.page__article .profile__form-panel {
+  display: flex;
+  justify-content: end;
+}
+
+.profile__avatar-container {
+  background-color: var(--primary-color-4);
+  position: absolute;
+  padding: 12px;
+  left: 48px;
+  top: 96px;
+}
+
+.profile_edit .profile__avatar {
+  transition: filter .2s;
+}
+
+.profile_edit .profile__avatar:hover,
+.profile_edit .profile__avatar:focus {
+  filter: brightness(50%);
+  cursor: pointer;
+}
+
+.profile__avatar {
+  filter: brightness(100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: center center;
+  width: 128px;
+  height: 128px;
+}

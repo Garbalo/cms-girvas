@@ -14,6 +14,7 @@ namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\Page as Page;
   use \core\PHPLibrary\Parsedown as Parsedown;
   use \core\PHPLibrary\User as User;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
   class PageProfile implements InterfacePage {
@@ -67,10 +68,10 @@ namespace core\PHPLibrary\Page {
       $locale_data = $this->system_core->locale->get_data();
 
       if ($this->system_core->client->is_logged(1)) {
-        /**
-         * @var string Логин пользователя
-         */
-        $profile_user_login = (!is_null($this->system_core->urlp->get_path(1))) ? $this->system_core->urlp->get_path(1) : null;
+        $user = $this->system_core->client->get_user(1);
+        $user->init_data(['login']);
+        
+        $profile_user_login = (!is_null($this->system_core->urlp->get_path(1))) ? $this->system_core->urlp->get_path(1) : $user->get_login();
         
         /**
          * @var User Объект пользователя
@@ -79,7 +80,7 @@ namespace core\PHPLibrary\Page {
         if (User::exists_by_login($this->system_core, $profile_user_login)) {
           $profile_user = User::get_by_login($this->system_core, $profile_user_login);
           // Инициализация данных пользователя
-          $profile_user->init_data(['login', 'email', 'metadata_json']);
+          $profile_user->init_data(['login', 'email', 'metadata']);
         }
         
         if (!is_null($profile_user)) {
@@ -117,13 +118,14 @@ namespace core\PHPLibrary\Page {
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
               'PAGE_NAME' => 'profile-editor',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile/editor.tpl', [
+                'USER_ID' => $profile_user->get_id(),
                 'USER_LOGIN' => $profile_user->get_login(),
-                'USER_AVATAR_URL' => $profile_user->get_avatar_url(96),
+                'USER_AVATAR_URL' => $profile_user->get_avatar_url(128),
                 'USER_EMAIL' => $profile_user->get_email(),
                 'USER_NAME' => $profile_user->get_name(),
                 'USER_SURNAME' => $profile_user->get_surname(),
                 'USER_PATRONYMIC' => $profile_user->get_patronymic(),
-                'USER_BIRTHDATE' => date('d.m.Y', $profile_user->get_birthdate_unix_timestamp()),
+                'USER_BIRTHDATE' => date('Y-m-d', $profile_user->get_birthdate_unix_timestamp()),
                 'PROFILE_ADDITIONAL_FIELDS' => implode($additional_fields_elements)
               ])
             ]);
@@ -131,8 +133,9 @@ namespace core\PHPLibrary\Page {
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
               'PAGE_NAME' => 'profile',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile.tpl', [
+                'USER_ID' => $profile_user->get_id(),
                 'USER_LOGIN' => $profile_user->get_login(),
-                'USER_AVATAR_URL' => $profile_user->get_avatar_url(96),
+                'USER_AVATAR_URL' => $profile_user->get_avatar_url(128),
                 'USER_EMAIL' => $profile_user->get_email(),
                 'USER_NAME' => $profile_user->get_name(),
                 'USER_SURNAME' => $profile_user->get_surname(),

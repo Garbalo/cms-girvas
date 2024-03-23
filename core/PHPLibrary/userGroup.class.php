@@ -162,7 +162,7 @@ namespace core\PHPLibrary {
      *
      * @return string
      */
-    public function get_title($locale_name = 'ru_RU') : string {
+    public function get_title($locale_name = 'en_US') : string {
       if (property_exists($this, 'texts')) {
         $texts_array = json_decode($this->texts, true);
         if (isset($texts_array[$locale_name]['title'])) {

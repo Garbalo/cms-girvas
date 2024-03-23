@@ -57,7 +57,7 @@ namespace core\PHPLibrary\Page\Admin {
         
         if (!is_null($user)) {
           // Инициализация набора данных пользователя
-          $user->init_data(['id', 'login', 'email', 'metadata_json']);
+          $user->init_data(['id', 'login', 'email', 'metadata']);
         }
       }
 

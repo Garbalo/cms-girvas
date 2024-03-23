@@ -1,0 +1,24 @@
+.table, .table__row, .table__cell {
+  border-width: 1px;
+  border-style: solid;
+}
+.table {
+  background-color: var(--primary-color-4);
+  font-size: 14px;
+  color: var(--primary-color-2);
+  border-collapse: collapse;
+  width: 100%;
+}
+.table__row {
+  border-color: var(--primary-color-3);
+}
+.table__cell {
+  border-color: var(--primary-color-3);
+  padding: 10px;
+}
+.table__cell .cell__block-phar {
+  margin-bottom: 10px;
+}
+.table__cell .cell__block-phar:last-child {
+  margin-bottom: 0;
+}

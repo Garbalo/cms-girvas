@@ -15,14 +15,14 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\User as User;
 
-if ($system_core->client->is_logged(2)) {
-  $client_user = $system_core->client->get_user(2);
-  $client_user->init_data(['metadata_json']);
+if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
+  $client_user = $system_core->client->get_user(1);
+  $client_user->init_data(['metadata']);
   $client_user_group = $client_user->get_group();
   $client_user_group->init_data(['permissions']);
 
-  if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
-    if (isset($_PATCH['user_id'])) {
+  if (isset($_PATCH['user_id'])) {
+    if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT) || $client_user->get_id() == (int)$_PATCH['user_id']) {
       $user_id = (is_numeric($_PATCH['user_id'])) ? (int)$_PATCH['user_id'] : 0;
 
       if (User::exists_by_id($system_core, $user_id)) {
@@ -32,8 +32,8 @@ if ($system_core->client->is_logged(2)) {
         $user_data = [];
 
         if (isset($_PATCH['user_is_block'])) {
-          if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
-          $user_data['metadata_json']['isBlocked'] = (int)$_PATCH['user_is_block'];
+          if (!isset($user_data['metadata'])) $user_data['metadata'] = [];
+          $user_data['metadata']['isBlocked'] = (int)$_PATCH['user_is_block'];
         }
 
         if (isset($_PATCH['user_login'])) $user_data['login'] = $_PATCH['user_login'];
@@ -64,9 +64,9 @@ if ($system_core->client->is_logged(2)) {
 
         if (isset($user_group_id)) {
           if (!isset($user_data)) $user_data = [];
-          if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
+          if (!isset($user_data['metadata'])) $user_data['metadata'] = [];
     
-          $user_data['metadata_json']['group_id'] = $user_group_id;
+          $user_data['metadata']['group_id'] = $user_group_id;
         }
 
         $user_is_updated = $user->update($user_data);
@@ -78,11 +78,11 @@ if ($system_core->client->is_logged(2)) {
           $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
-        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND')) : $handler_message;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     } else {
-      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND')) : $handler_message;
       $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   }

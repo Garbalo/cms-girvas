@@ -8,6 +8,7 @@
 
 'use strict';
 
+import {PageProfile as PageDefaultProfile} from './page/profile.class.js';
 import {PageEntry as PageDefaultEntry} from './page/entry.class.js';
 import {PageEntry as PageAdminEntry} from './page/admin/entry.class.js';
 import {PageEntries as PageAdminEntries} from './page/admin/entries.class.js';
@@ -39,6 +40,7 @@ export class Page {
       switch (pageName) {
         case 'entry': this.target = new PageDefaultEntry(params); break;
         case 'global': this.target = new PageDefaultGlobal(params); break;
+        case 'profile': this.target = new PageDefaultProfile(params); break;
       }
     }
 

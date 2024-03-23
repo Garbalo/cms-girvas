@@ -69,13 +69,14 @@ namespace core\PHPLibrary\Database\QueryBuilder {
       $database_configurations = $this->query_builder->system_core->configurator->get('database');
       
       $table_fullname = '';
-      if ($database_configurations['scheme'] != '') {
-        $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
+      if (!is_null($database_configurations)) {
+        if ($database_configurations['scheme'] != '') {
+          $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
+        }
+        if ($database_configurations['prefix'] != '') {
+          $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
+        }
       }
-      if ($database_configurations['prefix'] != '') {
-        $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
-      }
-
       $table_fullname .= $this->table_name;
 
       return $table_fullname;

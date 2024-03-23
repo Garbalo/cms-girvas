@@ -89,8 +89,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_name() : string {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['name'])) {
           return $metadata_array['name'];
         }
@@ -105,8 +105,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_surname() : string {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['surname'])) {
           return $metadata_array['surname'];
         }
@@ -121,8 +121,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_patronymic() : string {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['patronymic'])) {
           return $metadata_array['patronymic'];
         }
@@ -137,8 +137,8 @@ namespace core\PHPLibrary {
      * @return int
      */
     public function get_group_id() : int {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['group_id'])) {
           return $metadata_array['group_id'];
         }
@@ -153,8 +153,8 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function is_blocked() : bool {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['isBlocked'])) {
           return (bool)$metadata_array['isBlocked'];
         }
@@ -184,8 +184,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_password_reset_created_unix_timestamp() : int {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['passwordResetTokenCreatedUnixTimestamp'])) {
           return $metadata_array['passwordResetTokenCreatedUnixTimestamp'];
         }
@@ -200,8 +200,8 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_password_reset_token() : string {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['passwordResetToken'])) {
           return $metadata_array['passwordResetToken'];
         }
@@ -216,8 +216,8 @@ namespace core\PHPLibrary {
      * @return int
      */
     public function get_birthdate_unix_timestamp() : int {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['birthdate_unix_timestamp'])) {
           return $metadata_array['birthdate_unix_timestamp'];
         }
@@ -227,8 +227,8 @@ namespace core\PHPLibrary {
     }
 
     public function get_additional_field_data(string $field_name) : mixed {
-      if (property_exists($this, 'metadata_json')) {
-        $metadata_array = json_decode($this->metadata_json, true);
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
         if (isset($metadata_array['additionalFields'])) {
           return (isset($metadata_array['additionalFields'][$field_name])) ? $metadata_array['additionalFields'][$field_name] : null;
         }
@@ -244,9 +244,11 @@ namespace core\PHPLibrary {
      * @return string
      */
     public function get_avatar_url(int $size) : string {
-      $avatar_url = sprintf('%s/uploads/avatars/%d/%d.png', CMS_ROOT_DIRECTORY, $this->id, $size);
-      if (file_exists($avatar_url)) {
-        return $avatar_url;
+      $file_path = sprintf('%s/uploads/avatars/%d/%d.webp', CMS_ROOT_DIRECTORY, $this->id, $size);
+      $file_url = sprintf('/uploads/avatars/%d/%d.webp', $this->id, $size);
+      
+      if (file_exists($file_path)) {
+        return $file_url;
       }
 
       return self::get_avatar_default_url($this->system_core, $size);
@@ -488,7 +490,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->add_column('security_hash');
       $query_builder->statement->add_column('created_unix_timestamp');
       $query_builder->statement->add_column('updated_unix_timestamp');
-      $query_builder->statement->add_column('metadata_json');
+      $query_builder->statement->add_column('metadata');
       $query_builder->statement->add_column('email_is_submitted');
       $query_builder->statement->set_clause_returning();
       $query_builder->statement->clause_returning->add_column('id');
@@ -519,7 +521,7 @@ namespace core\PHPLibrary {
       $database_query->bindParam(':security_hash', $user_security_hash, \PDO::PARAM_STR);
       $database_query->bindParam(':created_unix_timestamp', $user_created_unix_timestamp, \PDO::PARAM_INT);
       $database_query->bindParam(':updated_unix_timestamp', $user_updated_unix_timestamp, \PDO::PARAM_INT);
-      $database_query->bindParam(':metadata_json', $user_metadata_json, \PDO::PARAM_STR);
+      $database_query->bindParam(':metadata', $user_metadata_json, \PDO::PARAM_STR);
       $database_query->bindParam(':email_is_submitted', $email_is_submitted, \PDO::PARAM_BOOL);
 			$execute = $database_query->execute();
 
@@ -544,15 +546,18 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_set();
 
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata_json'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata'])) {
           $query_builder->statement->clause_set->add_column($data_name);
         }
       }
       
       // Обновление значений для колонки с метаданными
-      if (array_key_exists('metadata_json', $data)) {
-        $query_builder->statement->clause_set->add_column('metadata_json', sprintf('metadata_json::jsonb || \'%s\'', json_encode($data['metadata_json'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+      if (array_key_exists('metadata', $data)) {
+        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        }
       }
+
 
       $query_builder->statement->clause_set->add_column('updated_unix_timestamp');
       $query_builder->statement->clause_set->assembly();
@@ -568,7 +573,7 @@ namespace core\PHPLibrary {
       $database_query = $database_connection->prepare($query_builder->statement->assembled);
       
       foreach ($data as $data_name => $data_value) {
-        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata_json'])) {
+        if (!in_array($data_name, ['id', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata'])) {
           switch (gettype($data_value)) {
             case 'boolean': $data_value_type = \PDO::PARAM_INT; break;
             case 'integer': $data_value_type = \PDO::PARAM_INT; break;

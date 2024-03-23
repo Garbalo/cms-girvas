@@ -50,11 +50,13 @@ namespace core\PHPLibrary\Database\QueryBuilder\StatementDelete {
 
       foreach ($this->tables as $table) {
         $table_fullname = '';
-        if ($database_configurations['scheme'] != '') {
-          $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
-        }
-        if ($database_configurations['prefix'] != '') {
-          $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
+        if (!is_null($database_configurations)) {
+          if ($database_configurations['scheme'] != '') {
+            $table_fullname .= sprintf('%s.', $database_configurations['scheme']);
+          }
+          if ($database_configurations['prefix'] != '') {
+            $table_fullname .= sprintf('%s_', $database_configurations['prefix']);
+          }
         }
 
         $table_fullname .= $table->get_name();

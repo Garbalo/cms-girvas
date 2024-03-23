@@ -1,0 +1,178 @@
+.page__entries-wrapper {
+  flex-grow: 1;
+  padding: 24px;
+  min-height: 520px;
+}
+
+.page__entries-container {
+  margin-bottom: 20px;
+}
+
+.page__entries-list-container {
+  flex-grow: 1;
+  padding: 24px;
+}
+
+.page__entries-list {
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.page__entries-list .entries-list__item {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  position: relative;
+  width: 383px;
+}
+
+.page__entries-list .entries-list__item .item__article {
+  padding-top: 177px;
+  height: 217px;
+}
+
+.page__entries-list .entries-list__item .article__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: inherit;
+  text-transform: uppercase;
+}
+
+.page__entries-list .entries-list__item .article__description {
+  opacity: 0;
+  visibility: hidden;
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: inherit;
+}
+
+.page__entries-list .entries-list__item .article__metadata {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  padding-left: 27px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--dark-gray-color);
+}
+
+.page__entries-list .entries-list__item .article .metadata__icon {
+  margin-right: 6px;
+}
+
+.page__entries-list .entries-list__item .article .metadata__datetime {
+  align-items: center;
+  flex-grow: 1;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--container-and-text-white-color);
+}
+
+.page__entries-list .entries-list__item .article .article__group-link {
+  width: fit-content;
+  height: 100%;
+  padding: 12px 25px;
+  font-size: 14px;
+  font-weight: 400;
+  transition: var(--transistion);
+  text-transform: uppercase;
+  color: var(--container-and-text-white-color);
+  background-color: var(--grey-color);
+}
+
+.page__entries-list .entries-list__item .article .article__group-link:focus-visible {
+  outline: none;
+}
+
+.page__entries-list .entries-list__item .article .article__group-link:focus {
+  color: var(--footer-black-color);
+  background-color: var(--bcg-body-color);
+}
+
+.page__entries-list .entries-list__item .article .article__group-link:hover {
+  color: var(--container-and-text-white-color);
+  background-color: var(--dark-gray-color);
+}
+
+.page__entries-list .entries-list__item .article .article__group-link:active {
+  background-color: var(--grey-color);
+}
+
+@keyframes entries-group-animation-block {
+  from {
+      height: 47px;
+      top: 130px;
+  }
+
+  to {
+      height: 177px;
+      top: 0;
+  }
+}
+
+@keyframes entries-group-hidden-text {
+  from {
+      opacity: 0;
+  }
+
+  to {
+      visibility: visible;
+      opacity: 1;
+  }
+}
+
+.article__interactive-block {
+  position: absolute;
+  width: 100%;
+  height: 47px;
+  top: 130px;
+  padding: 17px 15px;
+  opacity: 0.85;
+  color: var(--primary-color-2);
+  transition: var(--transistion);
+  background-color: var(--container-and-text-white-color);
+  cursor: pointer;
+}
+
+.page__entries-list .entries-list__item:focus-within {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.article__interactive-block:focus-visible {
+  transform: var(--transistion);
+  outline: none;
+}
+
+.article__interactive-block:focus-visible .article__description {
+  animation: entries-group-hidden-text .7s ease-in-out 1 forwards
+}
+
+.article__interactive-block:focus {
+  animation: entries-group-animation-block .2s linear 1 forwards;
+  opacity: 1;
+  background-color: var(--dark-gray-color);
+  color: var(--container-and-text-white-color);
+}
+
+.article__interactive-block:focus .article__description {
+  visibility: visible;
+  opacity: 1;
+}
+
+.article__interactive-block:hover {
+  animation: entries-group-animation-block .2s linear 1 forwards;
+}
+
+.page__entries-list .entries-list__item:hover {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.article__interactive-block:hover .article__description {
+  animation: entries-group-hidden-text .7s ease-in-out 1 forwards
+}
+
+.article__interactive-block:active {
+  color: var(--dark-gray-color);
+  background-color: var(--container-and-text-white-color);
+}

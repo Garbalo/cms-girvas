@@ -23,7 +23,7 @@ namespace core\PHPLibrary {
     private string $database_host;
     private EnumDatabaseManagementSystem $database_management_system;
     private DatabaseQueryBuilder $query_builder;
-    public PDO $connection;
+    public PDO|null $connection = null;
 
 
     /**

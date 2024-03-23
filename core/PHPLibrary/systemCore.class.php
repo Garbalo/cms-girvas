@@ -36,7 +36,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.58 Pre-alpha';
+    public const CMS_VERSION = '0.0.59 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -152,13 +152,13 @@ namespace core\PHPLibrary {
       $this->init_url_parser();
       $this->configurator = new SystemCoreConfigurator($this);
 
-      if ($this->urlp->get_param('mode') != 'install') {
+      if ($this->urlp->get_path(0) != 'install' && $this->urlp->get_path(1) != 'install') {
         $this->database_connector = new SystemCoreDatabaseConnector($this, $this->configurator);
       }
 
       $this->client = new Client($this);
 
-      if ($this->urlp->get_param('mode') != 'install') {
+      if ($this->urlp->get_path(0) == 'install' && $this->urlp->get_path(1) != 'install') {
         $install_locale = (!is_null($this->urlp->get_param('locale'))) ? $this->urlp->get_param('locale') : 'en_US';
       }
 
@@ -202,7 +202,7 @@ namespace core\PHPLibrary {
 
       if ($this->urlp->get_path(0) != 'handler' && $this->urlp->get_path(0) != 'feed') {
 
-        if ($this->urlp->get_param('mode') != 'install') {
+        if ($this->urlp->get_path(0) != 'install') {
 
           $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
           $cms_base_locale_name = ($this->configurator->exists_database_entry_value('base_locale')) ? $this->configurator->get_database_entry_value('base_locale') : 'en_US';
@@ -218,6 +218,7 @@ namespace core\PHPLibrary {
         } else {
           switch ($this->urlp->get_path(0)) {
             case 'admin': $this->set_template(new Template($this, 'default', 'admin')); $this->locale = new SystemCoreLocale($this, $cms_admin_locale_name, 'admin'); break;
+            case 'install': die('CMS is already installed.');
             default: $this->set_template(new Template($this, $template_base_name)); $this->locale = new SystemCoreLocale($this, $cms_base_locale_name, 'base'); break;
           }
         }

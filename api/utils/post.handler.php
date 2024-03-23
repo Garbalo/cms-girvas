@@ -230,7 +230,7 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
 
       if (!is_null($user)) {
         // Инициализация данных пользователя
-        $user->init_data(['password_hash', 'security_hash', 'metadata_json']);
+        $user->init_data(['password_hash', 'security_hash', 'metadata']);
         $user_group = $user->get_group();
         $user_group->init_data(['permissions']);
         
@@ -248,9 +248,11 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
               $admin_access_codes_is_valid = false; break;
             }
           }
+          error_log(1);
 
           // Проверяем правильность пароля
           if ($user->password_verify($user_password) && $admin_access_codes_is_valid) {
+            error_log(2);
             /** @var string $user_ip */
             $user_ip = $_SERVER['REMOTE_ADDR'];
             /** @var string $user_token */

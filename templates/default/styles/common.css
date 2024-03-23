@@ -1,0 +1,54 @@
+* {
+  box-sizing: border-box;
+}
+
+ul, li {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  padding-top: 61px;
+  background-color: var(--bcg-body-color);
+  font-family: Roboto;
+}
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  background-color: var(--container-and-text-white-color);
+}
+
+.flex {
+  display: flex;
+}
+
+.display-block {
+  display: block;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.btn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+:root {
+  --transistion: .2s ease-in-out;
+}

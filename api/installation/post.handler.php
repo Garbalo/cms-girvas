@@ -18,7 +18,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $dom_document = new \DOMDocument();
     $tip_block = $dom_document->createElement('div');
     
-    $database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+    $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
 
     if ($system_core->configurator->exists_database_entry_value('base_locale')) {
       $system_core->configurator->update_database_entry_value('base_locale', $_POST['setting_base_locale']);
@@ -52,7 +52,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $dom_document = new \DOMDocument();
     $tip_block = $dom_document->createElement('div');
     
-    $database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+    $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
 
     if ($system_core->configurator->exists_database_entry_value('base_title')) {
       $system_core->configurator->update_database_entry_value('base_title', $_POST['site_title']);
@@ -86,7 +86,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $dom_document = new \DOMDocument();
     $tip_block = $dom_document->createElement('div');
     
-    $database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+    $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
 
     $admin_login = $_POST['admin_login'];
     $admin_email = $_POST['admin_email'];
@@ -102,7 +102,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
                 $admin = \core\PHPLibrary\User::create($system_core, $admin_login, $admin_email, $admin_password);
 
                 if (!is_null($admin)) {
-                  $admin->update(['email_is_submitted' => true, 'metadata_json' => json_encode(['group_id' => 1])]);
+                  $admin->update(['email_is_submitted' => true, 'metadata' => ['group_id' => 1]]);
 
                   $tip_block->setAttribute('class', 'tip tip_green');
                   $tip_block->nodeValue = $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS');
@@ -143,6 +143,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
   }
 
   if ($system_core->urlp->get_path(2) == 'generate-secret-key') {
+    $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
+    
     $dom_document = new \DOMDocument();
     $tip_block = $dom_document->createElement('div');
 

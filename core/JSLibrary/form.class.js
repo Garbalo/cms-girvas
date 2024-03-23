@@ -64,7 +64,7 @@ class Form {
       method: this.getFormMethod(submitEvent),
       body: formData
     }).then((response) => {
-      return response.json();
+      return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       console.debug('Response by form: ' + data);
       if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
@@ -102,7 +102,7 @@ class Form {
         }, 10);
       }
     }).catch((error) => {
-      console.error(error);
+      console.error('Error: ' + error);
     });
   }
 }

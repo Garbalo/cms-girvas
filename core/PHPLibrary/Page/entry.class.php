@@ -65,7 +65,7 @@ namespace core\PHPLibrary\Page {
           http_response_code(200);
 
           $entry = Entry::get_by_name($this->system_core, $entry_name);
-          $entry->init_data(['id', 'category_id', 'texts', 'name']);
+          $entry->init_data(['id', 'category_id', 'texts', 'name', 'metadata']);
           $entry_category = $entry->get_category();
           $entry_category_title = $entry_category->get_title($cms_base_locale_name);
 
@@ -150,6 +150,7 @@ namespace core\PHPLibrary\Page {
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'ENTRY_TITLE' => $entry_title,
               'ENTRY_CONTENT' => $parsedown->text($entry_content),
+              'ENTRY_PREVIEW_URL' => ($entry->get_preview_url() != '') ? $entry->get_preview_url() : Entry::get_preview_default_url($this->system_core, 1024),
               'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL']
             ])
           ]);

@@ -18,7 +18,7 @@ use \core\PHPLibrary\UserGroup as UserGroup;
 
 if ($system_core->client->is_logged(2)) {
   $client_user = $system_core->client->get_user(2);
-  $client_user->init_data(['metadata_json']);
+  $client_user->init_data(['metadata']);
   $client_user_group = $client_user->get_group();
   $client_user_group->init_data(['permissions']);
 
@@ -67,16 +67,16 @@ if ($system_core->client->is_logged(2)) {
 
     if (isset($user_group_id)) {
       if (!isset($user_data)) $user_data = [];
-      if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
+      if (!isset($user_data['metadata'])) $user_data['metadata'] = [];
 
-      $user_data['metadata_json']['group_id'] = $user_group_id;
+      $user_data['metadata']['group_id'] = $user_group_id;
     }
 
     foreach ($_PUT as $key => $value) {
       if (preg_match('/^user\_additional\_field\_([a-z0-9\_]+)$/i', $key, $key_matches, PREG_OFFSET_CAPTURE) && !empty($value)) {
         if (!isset($user_data)) $user_data = [];
-        if (!isset($user_data['metadata_json'])) $user_data['metadata_json'] = [];
-        if (!isset($user_data['metadata_json']['additionalFields'])) $user_data['metadata_json']['additionalFields'] = [];
+        if (!isset($user_data['metadata'])) $user_data['metadata'] = [];
+        if (!isset($user_data['metadata']['additionalFields'])) $user_data['metadata']['additionalFields'] = [];
         
         $value_name_parts = explode('_', $key_matches[1][0]);
         foreach ($value_name_parts as $part_index => $part) {
@@ -87,7 +87,7 @@ if ($system_core->client->is_logged(2)) {
 
         if (is_bool($value)) $value = (int)$value;
 
-        $user_data['metadata_json']['additionalFields'][implode($value_name_parts)] = $value;
+        $user_data['metadata']['additionalFields'][implode($value_name_parts)] = $value;
       }
     }
 
@@ -95,7 +95,7 @@ if ($system_core->client->is_logged(2)) {
       $user = User::create($system_core, $user_login, $user_email, $user_password);
       
       if (!is_null($user)) {
-        $user->init_data(['metadata_json']);
+        $user->init_data(['metadata']);
 
         if (isset($user_data)) {
           $user->update($user_data);

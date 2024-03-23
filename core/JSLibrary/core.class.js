@@ -31,13 +31,14 @@ export class Core {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       let cookieMatches = document.cookie.match(new RegExp('(^| )locale=([^;]+)'));
-      this.locales.list.forEach(element => {
-        if (element.name == cookieMatches[2]) {
-          this.locales.base = new Locale(element.name, 'base');
-        }
-      });
-
-      if (!cookieMatches) {
+      
+      if (cookieMatches != null) {
+        this.locales.list.forEach(element => {
+          if (element.name == cookieMatches[2]) {
+            this.locales.base = new Locale(element.name, 'base');
+          }
+        });
+      } else {
         this.locales.base = new Locale(data.outputData.locale.name, 'base');
       }
 
@@ -51,9 +52,8 @@ export class Core {
   }
   
   async initPages() {
-    if (this.searchParams.getPathPart(1) == 'entry') {
-      this.pages.default.entry = new Page('default', 'entry');
-    }
+    if (this.searchParams.getPathPart(1) == 'entry') this.pages.default.entry = new Page('default', 'entry');
+    if (this.searchParams.getPathPart(1) == 'profile') this.pages.default.profile = new Page('default', 'profile');
   
     if (this.searchParams.getPathPart(1) == 'admin') {
       if (this.searchParams.getPathPart(2) == 'entry') this.pages.admin.entry = new Page('admin', 'entry');

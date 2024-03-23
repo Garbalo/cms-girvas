@@ -15,7 +15,7 @@ namespace core\PHPLibrary\SystemCore {
 
   final class DatabaseConnector {
     private mixed $system_core = null;
-    public \core\PHPLibrary\Database $database;
+    public \core\PHPLibrary\Database|null $database = null;
     
     /**
      * __construct

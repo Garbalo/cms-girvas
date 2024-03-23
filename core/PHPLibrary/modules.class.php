@@ -25,7 +25,17 @@ namespace core\PHPLibrary {
     }
 
     public static function get_installed_modules_array() : array {
-      return array_diff(scandir(self::get_absolute_modules_path()), ['.', '..']);
+      $modules_array = array_diff(scandir(self::get_absolute_modules_path()), ['.', '..']);
+      if (!empty($modules_array)) {
+        foreach ($modules_array as $module_name) {
+          $module_path = sprintf('%s/%s', self::get_absolute_modules_path(), $module_name);
+          if (!file_exists(sprintf('%s/installed', $module_path))) {
+            $modules_array = array_diff($modules_array, [$module_name]);
+          }
+        }
+      }
+
+      return $modules_array;
     }
   }
 }
