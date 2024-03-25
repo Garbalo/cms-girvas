@@ -122,7 +122,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->add_table('users');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
-      $query_builder->statement->clause_where->add_condition('(metadata_json->>\'group_id\')::int = :group_id');
+      $query_builder->statement->clause_where->add_condition('(metadata->>\'group_id\')::int = :group_id');
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 

@@ -15,6 +15,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\Template as Template;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageTemplates implements InterfacePage {
     public SystemCore $system_core;
@@ -55,6 +56,11 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
+      $templates_count_total = 0;
+
       if ($this->system_core->urlp->get_path(2) == 'repository') {
         
         $ch = curl_init('https://repository.cms-girvas.ru/templates');
@@ -69,6 +75,9 @@ namespace core\PHPLibrary\Page\Admin {
           $templates_list_items_transformed_array = [];
 
           if (count($curl_result['outputData']) > 0) {
+            $templates_count_total = count($curl_result['outputData']);
+            $curl_result['outputData'] = array_slice($curl_result['outputData'], $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
+
             foreach ($curl_result['outputData'] as $template_name => $template_data) {
               $template = new Template($this->system_core, $template_name);
               $template_installed_status = ($template->exists_file_metadata_json()) ? 'installed' : 'not-installed';
@@ -93,7 +102,11 @@ namespace core\PHPLibrary\Page\Admin {
 
         $templates_list_items_transformed_array = [];
         $uploaded_templates_names = $this->system_core->get_array_uploaded_templates_names();
+        $uploaded_templates_names = array_diff($uploaded_templates_names, ['admin', 'install']);
         if (count($uploaded_templates_names) > 0) {
+          $templates_count_total = count($uploaded_templates_names);
+          $uploaded_templates_names = array_slice($uploaded_templates_names, $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
+
           foreach ($uploaded_templates_names as $template_name) {
             $template = new Template($this->system_core, $template_name);
             $template_installed_status = ($template->exists_file_metadata_json()) ? 'installed' : 'not-installed';
@@ -118,9 +131,13 @@ namespace core\PHPLibrary\Page\Admin {
 
       }
 
+      $pagination = new Pagination($this->system_core, $templates_count_total, $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
+        'PAGE_TEMPLATES_PAGINATION' => $pagination->assembled,
         'ADMIN_PANEL_PAGE_NAME' => 'templates',
         'TEMPLATES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/list.tpl', [
           'TEMPLATES_LIST_ITEMS' => implode($templates_list_items_transformed_array)

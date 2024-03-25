@@ -15,6 +15,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\SystemCore\Reports as SystemCoreReports;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   final class PageReports implements InterfacePage {
     public SystemCore $system_core;

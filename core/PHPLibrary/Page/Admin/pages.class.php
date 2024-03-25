@@ -14,6 +14,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\Pages as Pages;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PagePages implements InterfacePage {
     public SystemCore $system_core;
@@ -52,9 +53,18 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
       $pages_static_table_items_assembled_array = [];
       $pages_static = new Pages($this->system_core);
-      $pages_static_array_objects = $pages_static->get_all();
+      $pages_static_array_objects = $pages_static->get_all([
+        'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
+      ]);
+
+      $pagination = new Pagination($this->system_core, $pages_static->get_count_total(), $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       unset($entries);
 
       $page_static_number = 1;
@@ -80,6 +90,7 @@ namespace core\PHPLibrary\Page\Admin {
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
+        'PAGE_PAGES_STATIC_PAGINATION' => $pagination->assembled,
         'ADMIN_PANEL_PAGE_NAME' => 'page_static',
         'ADMIN_PANEL_PAGES_STATIC_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages/table.tpl', [
           'ADMIN_PANEL_PAGES_STATIC_TABLE_ITEMS' => implode($pages_static_table_items_assembled_array)

@@ -37,6 +37,9 @@ namespace core\PHPLibrary {
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('entries_comments');
       $query_builder->statement->clause_from->assembly();
+      $query_builder->statement->set_clause_order_by();
+      $query_builder->statement->clause_order_by->set_column('created_unix_timestamp');
+      $query_builder->statement->clause_order_by->set_sort_type('DESC');
       if (array_key_exists('limit', $params_array)) {
         if (is_array($params_array['limit'])) {
           $limit = (is_integer($params_array['limit'][0])) ? $params_array['limit'][0] : 0;

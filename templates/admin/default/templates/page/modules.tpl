@@ -4,8 +4,14 @@
     <h1 class="page__title">{LANG:PAGE_MODULES_TITLE}</h1>
     <div id="E8548530785" class="page__interactive-container"></div>
   </div>
+  <div class="page__pagination">
+    {PAGE_MODULES_PAGINATION}
+  </div>
   <div class="page__content">
     {MODULES_LIST}
+  </div>
+  <div class="page__pagination">
+    {PAGE_MODULES_PAGINATION}
   </div>
 </article>
 <aside class="main__page-aside page-aside">

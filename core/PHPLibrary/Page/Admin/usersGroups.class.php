@@ -14,6 +14,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\UsersGroups as UsersGroups;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageUsersGroups implements InterfacePage {
     public SystemCore $system_core;
@@ -57,9 +58,18 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
       $users_groups_table_items_assembled_array = [];
       $users_groups = new UsersGroups($this->system_core);
-      $users_groups_array_objects = $users_groups->get_all();
+      $users_groups_array_objects = $users_groups->get_all([
+        'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
+      ]);
+
+      $pagination = new Pagination($this->system_core, $users_groups->get_count_total(), $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       unset($users_groups);
 
       $user_group_number = 1;
@@ -85,6 +95,7 @@ namespace core\PHPLibrary\Page\Admin {
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/usersGroups.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
+        'PAGE_USERS_GROUPS_PAGINATION' => $pagination->assembled,
         'ADMIN_PANEL_PAGE_NAME' => 'users-groups',
         'ADMIN_PANEL_USERS_GROUPS_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/usersGroups/table.tpl', [
           'ADMIN_PANEL_USERS_GROUPS_TABLE_ITEMS' => implode($users_groups_table_items_assembled_array)

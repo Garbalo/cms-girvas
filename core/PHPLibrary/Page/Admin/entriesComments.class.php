@@ -16,6 +16,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\EntryComments as EntryComments;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageEntriesComments implements InterfacePage {
     public SystemCore $system_core;
@@ -64,6 +65,9 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
       $entries_instance = new Entries($this->system_core);
       $entries_array = $entries_instance->get_all();
       
@@ -91,7 +95,12 @@ namespace core\PHPLibrary\Page\Admin {
 
           return 0;
         });
+
+        $entries_comments_array = array_slice($entries_comments_array, $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
       }
+
+      $pagination = new Pagination($this->system_core, count($entries_comments_array), $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
       
       $comments_table_items_assembled = [];
       if (!empty($entries_comments_array)) {
@@ -118,6 +127,7 @@ namespace core\PHPLibrary\Page\Admin {
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesComments.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
+        'PAGE_ENTRIES_COMMENTS_PAGINATION' => $pagination->assembled,
         'ADMIN_PANEL_PAGE_NAME' => 'comments',
         'ADMIN_PANEL_COMMENTS_TABLE' => $template_comments_table
       ]);

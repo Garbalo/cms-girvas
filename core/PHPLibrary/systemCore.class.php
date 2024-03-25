@@ -36,7 +36,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.59 Pre-alpha';
+    public const CMS_VERSION = '0.0.60 Pre-alpha';
     public SystemCoreConfigurator|null $configurator = null;
     public SystemCoreDatabaseConnector|null $database_connector = null;
     public SystemCoreLocale|null $locale = null;
@@ -78,7 +78,9 @@ namespace core\PHPLibrary {
     public function init_page(string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
       $this->page_dir_array = explode('/', $dir);
-      
+      $this->page_dir_array[count($this->page_dir_array) - 1] = explode('?', $this->page_dir_array[count($this->page_dir_array) - 1]);
+      $this->page_dir_array[count($this->page_dir_array) - 1] = $this->page_dir_array[count($this->page_dir_array) - 1][0];
+
       if ($this->page_dir_array[0] == $this->template->get_category()) {
         $this->page_dir_array[0] = ucfirst($this->page_dir_array[0]);
         array_push($this->page_dir_array, 'index');

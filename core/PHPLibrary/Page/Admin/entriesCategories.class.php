@@ -15,6 +15,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\EntriesCategories as EntriesCategories;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageEntriesCategories implements InterfacePage {
     public SystemCore $system_core;
@@ -63,9 +64,18 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
       $entries_categories_table_items_assembled = [];
       $entries_categories = new EntriesCategories($this->system_core);
-      $entries_categories_array_objects = $entries_categories->get_all();
+      $entries_categories_array_objects = $entries_categories->get_all([
+        'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
+      ]);
+
+      $pagination = new Pagination($this->system_core, $entries_categories->get_count_total(), $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       unset($entries_categories);
 
       foreach ($entries_categories_array_objects as $entries_category_index => $entries_category_object) {
@@ -87,6 +97,7 @@ namespace core\PHPLibrary\Page\Admin {
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories.tpl', [
         'PAGE_NAVIGATION' => $page_navigation_transformed,
+        'PAGE_ENTRIES_CATEGORIES_PAGINATION' => $pagination->assembled,
         'ADMIN_PANEL_PAGE_NAME' => 'entries-categories',
         'ADMIN_PANEL_ENTRIES_CATEGORIES_TABLE' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories/table.tpl', [
           'ADMIN_PANEL_ENTRIES_CATEGORIES_TABLE_ITEMS' => implode($entries_categories_table_items_assembled)

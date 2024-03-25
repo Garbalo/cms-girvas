@@ -15,6 +15,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\Module as Module;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageModules implements InterfacePage {
     public SystemCore $system_core;
@@ -64,6 +65,11 @@ namespace core\PHPLibrary\Page\Admin {
         $page_navigation_transformed = '';
       }
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
+      $modules_count_total = 0;
+
       if ($this->system_core->urlp->get_path(2) == 'repository') {
         
         if (is_null($this->system_core->urlp->get_path(3))) {
@@ -76,6 +82,9 @@ namespace core\PHPLibrary\Page\Admin {
             $modules_list_items_transformed_array = [];
 
             if (count($curl_exucute_result['outputData']) > 0) {
+              $modules_count_total = count($curl_exucute_result['outputData']);
+              $curl_exucute_result['outputData'] = array_slice($curl_exucute_result['outputData'], $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
+
               foreach ($curl_exucute_result['outputData'] as $module_name => $module_data) {
                 $module = new Module($this->system_core, $module_name);
                 $module_installed_status = ($module->exists_file_metadata_json()) ? 'installed' : 'not-installed';
@@ -103,6 +112,9 @@ namespace core\PHPLibrary\Page\Admin {
         $modules_list_items_transformed_array = [];
         $uploaded_modules_names = $this->system_core->get_array_uploaded_modules_names();
         if (count($uploaded_modules_names) > 0) {
+          $modules_count_total = count($uploaded_modules_names);
+          $uploaded_modules_names = array_slice($uploaded_modules_names, $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
+
           foreach ($uploaded_modules_names as $module_name) {
             $module = new Module($this->system_core, $module_name);
             $module_installed_status = ($module->exists_file_metadata_json()) ? 'installed' : 'not-installed';
@@ -128,6 +140,9 @@ namespace core\PHPLibrary\Page\Admin {
 
       }
 
+      $pagination = new Pagination($this->system_core, $modules_count_total, $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       if ($this->system_core->urlp->get_path(2) == 'repository' && !is_null($this->system_core->urlp->get_path(3))) {
         $module_name = $this->system_core->urlp->get_path(3);
         $module_page = new PageModule($this->system_core, $this->page);
@@ -138,6 +153,7 @@ namespace core\PHPLibrary\Page\Admin {
         /** @var string $assembled Содержимое шаблона страницы */
         $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/modules.tpl', [
           'PAGE_NAVIGATION' => $page_navigation_transformed,
+          'PAGE_MODULES_PAGINATION' => $pagination->assembled,
           'ADMIN_PANEL_PAGE_NAME' => 'modules',
           'MODULES_LIST' => (!empty($modules_list_items_transformed_array)) ? TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/modules/list.tpl', [
             'MODULES_LIST_ITEMS' => implode($modules_list_items_transformed_array)

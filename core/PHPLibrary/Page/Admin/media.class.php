@@ -15,6 +15,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\Template as Template;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
+  use \core\PHPLibrary\Pagination as Pagination;
 
   class PageMedia implements InterfacePage {
     public SystemCore $system_core;
@@ -32,6 +33,11 @@ namespace core\PHPLibrary\Page\Admin {
       $media_files_path = sprintf('%s/uploads/media', $this->system_core->get_cms_path());
       $media_files = array_diff(scandir($media_files_path), ['.', '..']);
 
+      $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
+      $pagination_items_on_page = 2;
+
+      $media_files = array_slice($media_files, $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
+
       $media_files_transformed = [];
       foreach ($media_files as $media_file) {
         $media_file_url = sprintf('/uploads/media/%s', $media_file);
@@ -41,9 +47,13 @@ namespace core\PHPLibrary\Page\Admin {
         ]));
       }
 
+      $pagination = new Pagination($this->system_core, count($media_files), $pagination_items_on_page, $pagination_item_current);
+      $pagination->assembly();
+
       /** @var string $site_page Содержимое шаблона страницы */
       $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/media.tpl', [
         'ADMIN_PANEL_PAGE_NAME' => 'media',
+        'PAGE_MEDIA_PAGINATION' => $pagination->assembled,
         'MEDIA_LIST_ITEMS' => implode($media_files_transformed)
       ]);
     }
