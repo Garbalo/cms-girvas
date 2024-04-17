@@ -19,7 +19,7 @@
 $configuration = [
   'domain' => 'www.example.com',
   'domain_cookies' => 'www.example.com',
-  'database' => ['host' => '', 'user' => '', 'password' => '', 'name' => ''],
+  'database' => ['host' => '', 'user' => '', 'password' => '', 'name' => '', 'scheme' => '', 'prefix' => ''],
   // Системная соль (необходима для хеширования некоторых данных)
   // Пример: ?d7R(TF1f30br7tl=!PeIrk) <== (НЕ ИСПОЛЬЗУЙТЕ ЭТУ СОЛЬ)
   'system_salt' => '',

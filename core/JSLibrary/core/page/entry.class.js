@@ -32,9 +32,15 @@ export class PageEntry {
     this.postLoadComments = [];
     this.comments = [];
 
-    let locales;
+    let locales, clientIsLogged = false;
 
-    fetch('/handler/locales', {method: 'GET'}).then((response) => {
+    fetch('/handler/client/is-logged', {method: 'GET'}).then((response) => {
+      return (response.ok) ? response.json() : Promise.reject(response);
+    }).then((data) => {
+      clientIsLogged = data.outputData.result;
+      console.log(clientIsLogged);
+      return fetch('/handler/locales', {method: 'GET'});
+    }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       locales = data.outputData.locales;
@@ -137,19 +143,22 @@ export class PageEntry {
           role: 'comment-form-button-send'
         });
 
-        // Assembly form
-        commentForm.target.element.setAttribute('id', 'E7443753064');
-        commentForm.target.element.firstChild.append(formInputParentID.element);
-        commentForm.target.element.firstChild.append(formInputEntryID.element);
-        commentForm.target.element.firstChild.append(formTextarea.element);
-        commentForm.target.element.firstChild.append(formButton.element);
-        commentForm.assembly();
-
-        this.commentForm = commentForm;
-
-        // Append form to container
         let commentFormContainerElement = document.querySelector('[role="entry-comment-form-container"]');
-        commentFormContainerElement.append(this.commentForm.target.element);
+
+        if (commentFormContainerElement != null) {
+          // Assembly form
+          commentForm.target.element.setAttribute('id', 'E7443753064');
+          commentForm.target.element.firstChild.append(formInputParentID.element);
+          commentForm.target.element.firstChild.append(formInputEntryID.element);
+          commentForm.target.element.firstChild.append(formTextarea.element);
+          commentForm.target.element.firstChild.append(formButton.element);
+          commentForm.assembly();
+
+          this.commentForm = commentForm;
+
+          // Append form to container
+          commentFormContainerElement.append(this.commentForm.target.element);
+        }
       }
 
       return fetch(`/handler/entry/${entryID}/comments?localeMessage=${window.CMSCore.locales.base.name}&limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'});
@@ -166,35 +175,38 @@ export class PageEntry {
           return (response.ok) ? response.json() : Promise.reject(response);
         }).then((commentsLoadedData) => {
           let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
-          let appendComment = (commentData) => {
-            fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'}).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((authorLoadedData) => {
-              let authorData = authorLoadedData.outputData.user;
-              
-              commentData.index = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length + 1;
-              commentData.entryID = entryID;
-              commentData.answersLoadingLimit = 4;
-
-              let entryComment = new EntryComment(this, commentData);
-              entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
-                commentLoadedIndex++;
-                this.commentsOffset++;
-                entryCommentsListElement.append(commentElement);
-                entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
-                if (commentLoadedIndex < comments.length) {
-                  appendComment(comments[commentLoadedIndex]);
-                }
+          
+          if (typeof(comments) != 'undefined') {
+            let appendComment = (commentData) => {
+              fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'}).then((response) => {
+                return (response.ok) ? response.json() : Promise.reject(response);
+              }).then((authorLoadedData) => {
+                let authorData = authorLoadedData.outputData.user;
                 
-                if (commentData.answersCount > 0) {
-                  entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
-                }
-              });
-            });
-          };
+                commentData.index = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length + 1;
+                commentData.entryID = entryID;
+                commentData.answersLoadingLimit = 4;
 
-          if (comments.length > 0) {
-            appendComment(comments[0]);
+                let entryComment = new EntryComment(this, commentData);
+                entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                  commentLoadedIndex++;
+                  this.commentsOffset++;
+                  entryCommentsListElement.append(commentElement);
+                  entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                  if (commentLoadedIndex < comments.length) {
+                    appendComment(comments[commentLoadedIndex]);
+                  }
+                  
+                  if (commentData.answersCount > 0) {
+                    entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
+                  }
+                });
+              });
+            };
+
+            if (comments.length > 0) {
+              appendComment(comments[0]);
+            }
           }
         });
       });
@@ -210,21 +222,23 @@ export class PageEntry {
 
       let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entry-comment"]') : [];
       commentsElements.forEach((comment, commentIndex) => {
-        this.postLoadComments[commentIndex].entryID = entryID;
-        let entryComment = new EntryComment(this, this.postLoadComments[commentIndex]);
-        entryComment.elementAssembled = comment;
-        entryComment.answersLoadingLimit = 4;
-        entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
-        
-        if (entryComment.answersCount > 0) {
-          entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
-        }
-        
-        if (entryComment.isHidden) {
-          comment.classList.add('comment_is-hidden');
-        }
+        if (typeof(this.postLoadComments) != 'undefined') {
+          this.postLoadComments[commentIndex].entryID = entryID;
+          let entryComment = new EntryComment(this, this.postLoadComments[commentIndex]);
+          entryComment.elementAssembled = comment;
+          entryComment.answersLoadingLimit = 4;
+          entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+          
+          if (entryComment.answersCount > 0) {
+            entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
+          }
+          
+          if (entryComment.isHidden) {
+            comment.classList.add('comment_is-hidden');
+          }
 
-        this.commentsOffset++;
+          this.commentsOffset++;
+        }
       });
     });
   }

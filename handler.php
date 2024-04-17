@@ -33,6 +33,12 @@ if (defined('IS_NOT_HACKED')) {
    * Обработчик CMS GIRVAS
    * ==================================================== */
 
+  // Client API
+  if ($system_core->urlp->get_path(1) == 'client') {
+    $api_file_path = sprintf('%s/api/client.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   // Installation API
   if ($system_core->urlp->get_path(1) == 'install') {
     $api_file_path = sprintf('%s/api/installation.api.php', CMS_ROOT_DIRECTORY);
@@ -180,7 +186,7 @@ if (defined('IS_NOT_HACKED')) {
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'locale') {
     if ($system_core->urlp->get_path(2) == 'base') {
-      $cms_locale_setted = $system_core->configurator->get_database_entry_value('base_locale');
+      $cms_locale_setted = (!is_null($system_core->configurator->get_database_entry_value('base_locale'))) ? $system_core->configurator->get_database_entry_value('base_locale') : 'en_US';
       $cms_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_locale_setted);
       $handler_output_data['locale'] = [
         'title' => $cms_locale->get_title(),
@@ -192,7 +198,7 @@ if (defined('IS_NOT_HACKED')) {
     }
 
     if ($system_core->urlp->get_path(2) == 'admin') {
-      $cms_locale_setted = $system_core->configurator->get_database_entry_value('base_admin_locale');
+      $cms_locale_setted = (!is_null($system_core->configurator->get_database_entry_value('base_admin_locale'))) ? $system_core->configurator->get_database_entry_value('base_admin_locale') : 'en_US';
       $cms_locale = new \core\PHPLibrary\SystemCore\Locale($system_core, $cms_locale_setted);
       $handler_output_data['locale'] = [
         'title' => $cms_locale->get_title(),

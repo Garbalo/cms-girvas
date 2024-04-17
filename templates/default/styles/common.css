@@ -17,9 +17,22 @@ a {
 }
 
 body {
-  padding-top: 61px;
   background-color: var(--bcg-body-color);
   font-family: Roboto;
+}
+
+@media (min-width: 670px) {
+  body {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+
+@media (min-width: 670px) and (max-width: 1139px) {
+  body {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 }
 
 .container {

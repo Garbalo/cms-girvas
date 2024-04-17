@@ -27,7 +27,7 @@ namespace core\PHPLibrary\SystemCore {
       $this->system_core = $system_core;
 
       $database_configurations = $configurator->get('database');
-      $this->database = new Database(DatabaseManagementSystem::PostgreSQL);
+      $this->database = new Database($database_configurations['dms']);
       $this->database->set_database_name($database_configurations['name']);
       $this->database->set_database_user($database_configurations['user']);
       $this->database->set_database_host($database_configurations['host']);

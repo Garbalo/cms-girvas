@@ -57,12 +57,11 @@ export class PageProfile {
               if (Object.hasOwn(data.outputData, 'file')) {
                 let fileName, fileURL;
 
-                console.log(data.outputData.file);
-
                 fileName = data.outputData.file.fullname;
                 fileURL = data.outputData.file.url;
 
                 profileAvatarElement.style.backgroundImage = `url('${fileURL}')`;
+                profileAvatarInput.remove();
               }
             });
           }

@@ -43,14 +43,17 @@ namespace templates\install\default {
      * @return string
      */
     public function assembly_main(array $template_replaces = []) : string {
+      $domain_configuration = $this->template->system_core->configurator->get('domain');
       $database_configurations = $this->template->system_core->configurator->get('database');
+      $database_configurations = (is_null($database_configurations)) ? [] : $database_configurations;
 
-      $template_replaces['CONFIGURATION_DATABASE_SCHEME'] = $database_configurations['scheme'];
-      $template_replaces['CONFIGURATION_DATABASE_PREFIX'] = $database_configurations['prefix'];
-      $template_replaces['CONFIGURATION_DATABASE_HOST'] = $database_configurations['host'];
-      $template_replaces['CONFIGURATION_DATABASE_PASSWORD'] = $database_configurations['password'];
-      $template_replaces['CONFIGURATION_DATABASE_NAME'] = $database_configurations['name'];
-      $template_replaces['CONFIGURATION_DATABASE_USER'] = $database_configurations['user'];
+      $template_replaces['CONFIGURATION_DATABASE_DOMAIN'] = ($domain_configuration != null) ? $domain_configuration : '';
+      $template_replaces['CONFIGURATION_DATABASE_SCHEME'] = (array_key_exists('scheme', $database_configurations)) ? $database_configurations['scheme'] : '';
+      $template_replaces['CONFIGURATION_DATABASE_PREFIX'] = (array_key_exists('prefix', $database_configurations)) ? $database_configurations['prefix'] : '';
+      $template_replaces['CONFIGURATION_DATABASE_HOST'] = (array_key_exists('host', $database_configurations)) ? $database_configurations['host'] : '';
+      $template_replaces['CONFIGURATION_DATABASE_PASSWORD'] = (array_key_exists('password', $database_configurations)) ? $database_configurations['password'] : '';
+      $template_replaces['CONFIGURATION_DATABASE_NAME'] = (array_key_exists('name', $database_configurations)) ? $database_configurations['name'] : '';
+      $template_replaces['CONFIGURATION_DATABASE_USER'] = (array_key_exists('user', $database_configurations)) ? $database_configurations['user'] : '';
 
       $template_replaces['SITE_TITLE_VALUE'] = ($this->template->system_core->configurator->exists_database_entry_value('base_title')) ? $this->template->system_core->configurator->get_database_entry_value('base_title') : '';
       $template_replaces['SITE_DESCRIPTION_VALUE'] = ($this->template->system_core->configurator->exists_database_entry_value('seo_site_description')) ? $this->template->system_core->configurator->get_database_entry_value('seo_site_description') : '';
@@ -85,15 +88,8 @@ namespace templates\install\default {
      * @return void
      */
     public function assembly() : void {
-      $this->template->add_style(['href' => 'styles/normalize.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/fonts.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/colors.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/common.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/table.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/form.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/modal.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/interactive.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/notification.css', 'rel' => 'stylesheet']);
       
       $this->template->add_script(['src' => 'interactive.class.js', 'type' => 'module'], true);
       $this->template->add_script(['src' => 'install/common.js', 'type' => 'module'], true);

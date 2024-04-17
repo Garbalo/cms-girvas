@@ -81,6 +81,14 @@ namespace core\PHPLibrary {
      * @return mixed
      */
     public function init() : mixed {
+      $this->add_style(['href' => 'normalize.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-colors-scheme.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-fonts.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-forms.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-tables.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-interactive.css', 'rel' => 'stylesheet', 'is_core' => true]);
+      $this->add_style(['href' => 'default-notifications.css', 'rel' => 'stylesheet', 'is_core' => true]);
+
       /** @var string $core_path Путь до файла ядра шаблона */
       $core_path = $this->get_core_path();
       /** @var string $core_class Класс ядра шаблона */

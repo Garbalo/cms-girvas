@@ -26,6 +26,13 @@ export class PageGlobal {
   init() {
     let locales;
 
+    let navigationBurgerElement = document.querySelector('[role="navagation-burger"]');
+    if (navigationBurgerElement != null) {
+      navigationBurgerElement.addEventListener('click', (event) => {
+        navigationBurgerElement.classList.toggle('is-active');
+      });
+    }
+
     fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {

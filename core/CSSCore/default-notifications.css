@@ -6,6 +6,7 @@
   padding: 20px;
   margin-bottom: 20px;
 }
+
 .notification-wrapper.notification-wrapper_is-popup {
   position: fixed;
   padding: 20px;
@@ -15,10 +16,12 @@
   z-index: 200;
   transition: left 1s, opacity 1s;
 }
+
 .notification-wrapper.notification-wrapper_is-popup.notification-wrapper_is-showed {
   left: 0;
   opacity: 1;
 }
+
 .notification-wrapper.notification-wrapper_is-popup .notification {
   box-sizing: border-box;
   background-color: var(--primary-color-2);

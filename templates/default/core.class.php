@@ -79,14 +79,8 @@ namespace templates\default {
      * @return void
      */
     public function assembly() : void {
-      $this->template->add_style(['href' => 'styles/normalize.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/fonts.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/form.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/table.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/colors.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/common.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/interactive.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/notification.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);

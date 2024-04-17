@@ -169,6 +169,11 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     
     $php_loaded_extensions = get_loaded_extensions();
 
+    if (!file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/backups', CMS_ROOT_DIRECTORY), 0755);
+    if (!file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/modules', CMS_ROOT_DIRECTORY), 0755);
+    if (!file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/templates', CMS_ROOT_DIRECTORY), 0755);
+    if (!file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/uploads', CMS_ROOT_DIRECTORY), 0755);
+
     $table_data = [
       ['./backups/', '0755', file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/backups', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
       ['./modules/', '0755', file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/modules', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
@@ -339,11 +344,14 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       $file = fopen($config_file_path, 'w+');
       fwrite($file, '<?php' . PHP_EOL);
       fwrite($file, PHP_EOL);
+      fwrite($file, 'use \core\PHPLibrary\Database\DatabaseManagementSystem as DMS;' . PHP_EOL);
+      fwrite($file, PHP_EOL);
       fwrite($file, '$configuration = [' . PHP_EOL);
       fwrite($file, sprintf('  \'domain\' => \'%s\',', $_GET['domain']) . PHP_EOL);
       fwrite($file, sprintf('  \'domain_cookies\' => \'%s\',', $_GET['domain']) . PHP_EOL);
       fwrite($file, sprintf('  \'ssl_is_enabled\' => %s,', $domain_ssl_status) . PHP_EOL);
       fwrite($file, '  \'database\' => [' . PHP_EOL);
+      fwrite($file, sprintf('    \'dms\' => %s,', $_GET['database_dms']) . PHP_EOL);
       fwrite($file, sprintf('    \'prefix\' => \'%s\',', $_GET['database_prefix']) . PHP_EOL);
       fwrite($file, sprintf('    \'scheme\' => \'%s\',', $_GET['database_scheme']) . PHP_EOL);
       fwrite($file, sprintf('    \'host\' => \'%s\',', $_GET['database_host']) . PHP_EOL);

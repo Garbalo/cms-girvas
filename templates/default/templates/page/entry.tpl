@@ -1,4 +1,4 @@
-<article class="page__article article" data-id="{ENTRY_ID}">
+<article class="page__article article" data-entry-id="{ENTRY_ID}" role="entry">
   <div class="page__article-header" style="background-image: url('{ENTRY_PREVIEW_URL}');">
     <h2 class="article__title">{ENTRY_TITLE}</h2>
     <div class="article__metadata metadata">
@@ -26,7 +26,10 @@
     <div class="comments__header">
       <h3 class="comments__title">Комментарии</h3>
     </div>
-    {ENTRY_COMMENTS_LIST}
+    <div role="entry-comment-form-container"></div>
+    <div role="entry-comments-container">
+      {ENTRY_COMMENTS_LIST}
+    </div>
   </div>
 </article>
 <aside class="sidebar">

@@ -1,0 +1,35 @@
+/**
+ * CMS GIRVAS (https://www.cms-girvas.ru/)
+ * 
+ * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2021 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ */
+
+:root {
+	--primary-color-1: #000000;
+	--primary-color-1--opacity-0-8: rgba(0, 0, 0, .8);
+	--primary-color-1--opacity-0-4: rgba(0, 0, 0, .4);
+	--primary-color-1--opacity-0-2: rgba(0, 0, 0, .2);
+	--primary-color-2: #232323;
+	--primary-color-2--opacity-0-8: rgba(35, 35, 35, .8);
+	--primary-color-2--opacity-0-4: rgba(35, 35, 35, .4);
+	--primary-color-2--opacity-0-2: rgba(35, 35, 35, .2);
+	--primary-color-3: #EAEAEA;
+	--primary-color-3--opacity-0-8: rgba(234, 234, 234, .8);
+	--primary-color-3--opacity-0-4: rgba(234, 234, 234, .4);
+	--primary-color-3--opacity-0-2: rgba(234, 234, 234, .2);
+	--primary-color-4: #FFFFFF;
+	--primary-color-4--opacity-0-8: rgba(255, 255, 255, .8);
+	--primary-color-4--opacity-0-4: rgba(255, 255, 255, .4);
+	--primary-color-4--opacity-0-2: rgba(255, 255, 255, .2);
+	--secondary-color-1: #EEF7FF;
+	--secondary-color-2: #C4E4FF;
+	--secondary-color-3: #285E8E;
+	--secondary-color-4: #FFEEEE;
+	--secondary-color-5: #FFC4C4;
+	--secondary-color-6: #932929;
+	--secondary-color-7: #F0FFEE;
+	--secondary-color-8: #C6FFC4;
+	--secondary-color-9: #2B9432;
+}

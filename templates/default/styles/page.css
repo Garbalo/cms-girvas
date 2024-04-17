@@ -6,6 +6,12 @@
   display: flex;
 }
 
+@media (max-width: 669px) {
+  .main__page {
+    flex-direction: column;
+  }
+}
+
 .page__title {
   font-size: 16px;
   font-weight: 700;
@@ -74,9 +80,13 @@
 }
 
 .sidebar {
-  flex: 0 0 300px;
-  min-height: 509px;
   background-color: var(--sidebar-bcg-color);
+}
+
+@media (min-width: 670px) {
+  .sidebar {
+    flex: 0 0 300px;
+  }
 }
 
 .sidebar__title {
@@ -90,10 +100,15 @@
 
 .sidebar__text-block {
   width: 100%;
-  min-height: 151px;
   padding: 11px 13px 13px 15px;
   font-size: 14px;
   font-weight: 700;
   background-color: var(--container-and-text-white-color);
   border-left: 6px solid #717171;
+}
+
+@media (min-width: 670px) {
+  .sidebar__text-block {
+    min-height: 151px;
+  }
 }

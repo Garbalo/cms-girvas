@@ -37,9 +37,21 @@ namespace core\PHPLibrary\Template {
 
       foreach ($styles_array as $style) {
         if (array_key_exists('href', $style) && array_key_exists('rel', $style)) {
+          $style_is_core = false;
+          if (array_key_exists('is_core', $style)) {
+            if ($style['is_core'] == true) {
+              $style_is_core = true;
+              $style_href = sprintf('/core/CSSCore/%s', $style['href']);
+            }
+          }
+
+          if (!$style_is_core) {
+            $style_href = ($template->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $style['href']) : sprintf('/templates/%s/%s', $template->get_name(), $style['href']);
+          }
+
           /** @var string $style_assembled Собранный DOM-элемент LINK для добавления стиля */
           $style_assembled = self::assembly('<link href="{STYLE_HREF}" rel="{STYLE_RELATIONSHIP}">', [
-            'STYLE_HREF' => ($template->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $template->get_category(), $template->get_name(), $style['href']) : sprintf('/templates/%s/%s', $template->get_name(), $style['href']),
+            'STYLE_HREF' => $style_href,
             'STYLE_RELATIONSHIP' => $style['rel']
           ]);
 

@@ -32,6 +32,7 @@ namespace core\PHPLibrary\Page\Admin {
       
       $media_files_path = sprintf('%s/uploads/media', $this->system_core->get_cms_path());
       $media_files = array_diff(scandir($media_files_path), ['.', '..']);
+      $media_files_count_total = count($media_files);
 
       $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
       $pagination_items_on_page = 2;
@@ -47,7 +48,7 @@ namespace core\PHPLibrary\Page\Admin {
         ]));
       }
 
-      $pagination = new Pagination($this->system_core, count($media_files), $pagination_items_on_page, $pagination_item_current);
+      $pagination = new Pagination($this->system_core, $media_files_count_total, $pagination_items_on_page, $pagination_item_current);
       $pagination->assembly();
 
       /** @var string $site_page Содержимое шаблона страницы */

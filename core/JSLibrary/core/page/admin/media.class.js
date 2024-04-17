@@ -19,9 +19,10 @@ export class PageMedia {
 
   constructor(params = {}) {
     this.buttons = {upload: null};
+    this.localeData = null;
   }
 
-  initMediaElement(localeData, element) {
+  initMediaElement(element) {
     let buttons = {};
     let fileName, fileURL;
 
@@ -33,8 +34,8 @@ export class PageMedia {
     buttons.delete.target.setCallback((event) => {
       event.preventDefault();
       
-      let interactiveModal = new Interactive('modal', {title: localeData.MODAL_MEDIA_DELETE_TITLE, content: localeData.MODAL_MEDIA_DELETE_DESCRIPTION});
-      interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
+      let interactiveModal = new Interactive('modal', {title: this.localeData.MODAL_MEDIA_DELETE_TITLE, content: this.localeData.MODAL_MEDIA_DELETE_DESCRIPTION});
+      interactiveModal.target.addButton(this.localeData.BUTTON_DELETE_LABEL, () => {
         let formData = new FormData();
         formData.append('media_file_fullname', fileName);
 
@@ -53,7 +54,7 @@ export class PageMedia {
         });
       });
 
-      interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
+      interactiveModal.target.addButton(this.localeData.BUTTON_CANCEL_LABEL, () => {
         interactiveModal.target.close();
       });
 
@@ -70,7 +71,7 @@ export class PageMedia {
       
       navigator.clipboard.writeText(fileURL);
       
-      let notification = new PopupNotification(localeData.POPUP_SLIDE_RELATIVE_LINK_COPIED, document.body, true);
+      let notification = new PopupNotification(this.localeData.POPUP_SLIDE_RELATIVE_LINK_COPIED, document.body, true);
       notification.show();
     });
     buttons.link.assembly();
@@ -146,13 +147,15 @@ export class PageMedia {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      this.localeData = localeData;
+
       let listElements = document.querySelectorAll('.media-list__item');
       for (let listElement of listElements) {
-        this.initMediaElement(localeData, listElement);
+        this.initMediaElement(listElement);
       }
 
       this.buttons.upload = new Interactive('button');
-      this.buttons.upload.target.setLabel(localeData.BUTTON_UPLOAD_LABEL);
+      this.buttons.upload.target.setLabel(this.localeData.BUTTON_UPLOAD_LABEL);
       this.buttons.upload.target.setCallback((event) => {
         event.preventDefault();
         mediaUploaderInput.click();

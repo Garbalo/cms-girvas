@@ -99,184 +99,70 @@ export class EntryComment {
 
     if (this.elementAssembled != null) {
       let commentPanel = this.elementAssembled.querySelector('[id^=E7453975856\_]');
-      // Edit comment
-      if (clientUserData.id == this.authorID) {
-        let interactiveButtonEdit = new Interactive('button');
-        interactiveButtonEdit.target.setLabel(this.entry.localeBaseData.BUTTON_EDIT_LABEL);
-        interactiveButtonEdit.target.setCallback((event) => {
-          let form = elementEntry.querySelector('[role="entry-comment-form"]');
-          form.setAttribute('method', 'PATCH');
-          let formTextarea = elementEntry.querySelector('[name="comment_content"]');
-          formTextarea.value = this.content;
-          formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
-          formTextarea.focus();
-
-          /** @type {ElementInput} */
-          let formInputID = this.entry.commentForm.target.createElementInput();
-          formInputID.init({
-            name: 'comment_id',
-            type: 'hidden',
-          });
-
-          form.prepend(formInputID.element);
-          formInputID.element.value = this.id;
-
-          /** @type {ElementButton} */
-          let formButtonReset = this.entry.commentForm.target.createElementButton();
-          formButtonReset.setStringLabel('Сброс');
-          formButtonReset.setClickEvent((event) => {
-            event.preventDefault();
-            form.setAttribute('method', 'PUT');
-            formTextarea.value = '';
-            formButtonReset.element.remove();
-            formInputID.element.remove();
-          });
-          formButtonReset.init({
-            role: 'comment-form-button-reset'
-          });
-
-          form.append(formButtonReset.element);
-        });
-        interactiveButtonEdit.assembly();
-        commentPanel.append(interactiveButtonEdit.target.element);
-      }
-
-      // Hide comment with reason
-      if (clientUserPermissions.moder_entries_comments_management) {
-        let interactiveButtonHide = new Interactive('button');
-        interactiveButtonHide.target.setLabel('Скрыть');
-        interactiveButtonHide.target.setCallback((event) => {
-          let elementForm = document.createElement('form');
-          elementForm.classList.add('form');
-          let elementTextarea = document.createElement('textarea');
-          elementTextarea.classList.add('form__textarea');
-          elementTextarea.style.width = '300px';
-          elementTextarea.setAttribute('name', 'comment_hidden_reason');
-          elementTextarea.setAttribute('placeholder', 'Укажите причину...');
-          elementForm.append(elementTextarea);
-          
-          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_HIDE_TITLE, content: elementForm});
-          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_SUBMIT_LABEL, () => {
-            let formData = new FormData();
-            formData.append('comment_id', this.id);
-            formData.append('comment_is_hidden', 'on');
-            formData.append('comment_hidden_reason', elementTextarea.value);
-
-            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
-              method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
-              interactiveModal.target.close();
-    
-              if (data.statusCode == 1) {
-                window.location.reload();
-              }
-    
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
-            });
-          });
-
-          interactiveModal.target.addButton('Отмена', () => {
-            interactiveModal.target.close();
-          });
-
-          interactiveModal.assembly();
-          document.body.appendChild(interactiveModal.target.element);
-          interactiveModal.target.show();
-        });
-
-        interactiveButtonHide.assembly();
-        commentPanel.append(interactiveButtonHide.target.element);
-
-        if (this.isHidden) {
-          interactiveButtonHide.target.element.style.display = 'none';
-        }
-      }
-
-      // Show comment
-      if (clientUserPermissions.moder_entries_comments_management) {
-        let interactiveButtonPublish = new Interactive('button');
-        interactiveButtonPublish.target.setLabel(this.entry.localeBaseData.BUTTON_SHOW_LABEL);
-        interactiveButtonPublish.target.setCallback((event) => {
-          event.preventDefault();
-
-          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_SHOW_TITLE, content: this.entry.localeBaseData.MODAL_COMMENT_SHOW_DESCRIPTION});
-          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
-            let formData = new FormData();
-            formData.append('comment_id', this.id);
-            formData.append('comment_is_hidden', 'off');
-            formData.append('comment_hidden_reason', '');
-
-            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
-              method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
-              interactiveModal.target.close();
-    
-              if (data.statusCode == 1) {
-                window.location.reload();
-              }
-    
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
-            });
-          });
-
-          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
-            interactiveModal.target.close();
-          });
-
-          interactiveModal.assembly();
-          document.body.appendChild(interactiveModal.target.element);
-          interactiveModal.target.show();
-        });
-        interactiveButtonPublish.assembly();
-        commentPanel.append(interactiveButtonPublish.target.element);
-
-        if (!this.isHidden) {
-          interactiveButtonPublish.target.element.style.display = 'none';
-        }
-      }
-
-      // Delete comment
-      if (clientUserPermissions.moder_entries_comments_management) {
-        let interactiveButtonDelete = new Interactive('button');
-        interactiveButtonDelete.target.setLabel(this.entry.localeBaseData.BUTTON_DELETE_LABEL);
-        interactiveButtonDelete.target.setCallback((event) => {
-          let formData = new FormData();
-          formData.append('comment_id', this.id);
-
-          let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_TITLE, content: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_DESCRIPTION});
-          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
-            if (this.answersCount == 0) {
-              let formData = new FormData();
-              formData.append('comment_id', this.id);
-
-              fetch('/handler/entry/comment', {
-                method: 'DELETE',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                interactiveModal.target.close();
       
-                if (data.statusCode == 1) {
-                  this.elementAssembled.remove();
-                }
-      
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
-              });
-            } else {
+      if (clientIsLogged) {
+        // Edit comment
+        if (clientUserData.id == this.authorID) {
+          let interactiveButtonEdit = new Interactive('button');
+          interactiveButtonEdit.target.setLabel(this.entry.localeBaseData.BUTTON_EDIT_LABEL);
+          interactiveButtonEdit.target.setCallback((event) => {
+            let form = elementEntry.querySelector('[role="entry-comment-form"]');
+            form.setAttribute('method', 'PATCH');
+            let formTextarea = elementEntry.querySelector('[name="comment_content"]');
+            formTextarea.value = this.content;
+            formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
+            formTextarea.focus();
+
+            /** @type {ElementInput} */
+            let formInputID = this.entry.commentForm.target.createElementInput();
+            formInputID.init({
+              name: 'comment_id',
+              type: 'hidden',
+            });
+
+            form.prepend(formInputID.element);
+            formInputID.element.value = this.id;
+
+            /** @type {ElementButton} */
+            let formButtonReset = this.entry.commentForm.target.createElementButton();
+            formButtonReset.setStringLabel('Сброс');
+            formButtonReset.setClickEvent((event) => {
+              event.preventDefault();
+              form.setAttribute('method', 'PUT');
+              formTextarea.value = '';
+              formButtonReset.element.remove();
+              formInputID.element.remove();
+            });
+            formButtonReset.init({
+              role: 'comment-form-button-reset'
+            });
+
+            form.append(formButtonReset.element);
+          });
+          interactiveButtonEdit.assembly();
+          commentPanel.append(interactiveButtonEdit.target.element);
+        }
+
+        // Hide comment with reason
+        if (clientUserPermissions.moder_entries_comments_management) {
+          let interactiveButtonHide = new Interactive('button');
+          interactiveButtonHide.target.setLabel('Скрыть');
+          interactiveButtonHide.target.setCallback((event) => {
+            let elementForm = document.createElement('form');
+            elementForm.classList.add('form');
+            let elementTextarea = document.createElement('textarea');
+            elementTextarea.classList.add('form__textarea');
+            elementTextarea.style.width = '300px';
+            elementTextarea.setAttribute('name', 'comment_hidden_reason');
+            elementTextarea.setAttribute('placeholder', 'Укажите причину...');
+            elementForm.append(elementTextarea);
+            
+            let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_HIDE_TITLE, content: elementForm});
+            interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_SUBMIT_LABEL, () => {
               let formData = new FormData();
               formData.append('comment_id', this.id);
               formData.append('comment_is_hidden', 'on');
-              formData.append('comment_hidden_reason', this.entry.localeBaseData.MODAL_COMMENT_HIDEN_REASON_DELETED);
+              formData.append('comment_hidden_reason', elementTextarea.value);
 
               fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
                 method: 'PATCH',
@@ -293,19 +179,136 @@ export class EntryComment {
                 let notification = new PopupNotification(data.message, document.body, true);
                 notification.show();
               });
-            }
+            });
+
+            interactiveModal.target.addButton('Отмена', () => {
+              interactiveModal.target.close();
+            });
+
+            interactiveModal.assembly();
+            document.body.appendChild(interactiveModal.target.element);
+            interactiveModal.target.show();
           });
 
-          interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
-            interactiveModal.target.close();
-          });
+          interactiveButtonHide.assembly();
+          commentPanel.append(interactiveButtonHide.target.element);
 
-          interactiveModal.assembly();
-          document.body.appendChild(interactiveModal.target.element);
-          interactiveModal.target.show();
-        });
-        interactiveButtonDelete.assembly();
-        commentPanel.append(interactiveButtonDelete.target.element);
+          if (this.isHidden) {
+            interactiveButtonHide.target.element.style.display = 'none';
+          }
+        }
+
+        // Show comment
+        if (clientUserPermissions.moder_entries_comments_management) {
+          let interactiveButtonPublish = new Interactive('button');
+          interactiveButtonPublish.target.setLabel(this.entry.localeBaseData.BUTTON_SHOW_LABEL);
+          interactiveButtonPublish.target.setCallback((event) => {
+            event.preventDefault();
+
+            let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_COMMENT_SHOW_TITLE, content: this.entry.localeBaseData.MODAL_COMMENT_SHOW_DESCRIPTION});
+            interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
+              let formData = new FormData();
+              formData.append('comment_id', this.id);
+              formData.append('comment_is_hidden', 'off');
+              formData.append('comment_hidden_reason', '');
+
+              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+                method: 'PATCH',
+                body: formData
+              }).then((response) => {
+                return response.json();
+              }).then((data) => {
+                interactiveModal.target.close();
+      
+                if (data.statusCode == 1) {
+                  window.location.reload();
+                }
+      
+                let notification = new PopupNotification(data.message, document.body, true);
+                notification.show();
+              });
+            });
+
+            interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
+              interactiveModal.target.close();
+            });
+
+            interactiveModal.assembly();
+            document.body.appendChild(interactiveModal.target.element);
+            interactiveModal.target.show();
+          });
+          interactiveButtonPublish.assembly();
+          commentPanel.append(interactiveButtonPublish.target.element);
+
+          if (!this.isHidden) {
+            interactiveButtonPublish.target.element.style.display = 'none';
+          }
+        }
+
+        // Delete comment
+        if (clientUserPermissions.moder_entries_comments_management) {
+          let interactiveButtonDelete = new Interactive('button');
+          interactiveButtonDelete.target.setLabel(this.entry.localeBaseData.BUTTON_DELETE_LABEL);
+          interactiveButtonDelete.target.setCallback((event) => {
+            let formData = new FormData();
+            formData.append('comment_id', this.id);
+
+            let interactiveModal = new Interactive('modal', {title: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_TITLE, content: this.entry.localeBaseData.MODAL_ENTRY_COMMENT_DELETE_DESCRIPTION});
+            interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_YES_LABEL, () => {
+              if (this.answersCount == 0) {
+                let formData = new FormData();
+                formData.append('comment_id', this.id);
+
+                fetch('/handler/entry/comment', {
+                  method: 'DELETE',
+                  body: formData
+                }).then((response) => {
+                  return response.json();
+                }).then((data) => {
+                  interactiveModal.target.close();
+        
+                  if (data.statusCode == 1) {
+                    this.elementAssembled.remove();
+                  }
+        
+                  let notification = new PopupNotification(data.message, document.body, true);
+                  notification.show();
+                });
+              } else {
+                let formData = new FormData();
+                formData.append('comment_id', this.id);
+                formData.append('comment_is_hidden', 'on');
+                formData.append('comment_hidden_reason', this.entry.localeBaseData.MODAL_COMMENT_HIDEN_REASON_DELETED);
+
+                fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+                  method: 'PATCH',
+                  body: formData
+                }).then((response) => {
+                  return response.json();
+                }).then((data) => {
+                  interactiveModal.target.close();
+        
+                  if (data.statusCode == 1) {
+                    window.location.reload();
+                  }
+        
+                  let notification = new PopupNotification(data.message, document.body, true);
+                  notification.show();
+                });
+              }
+            });
+
+            interactiveModal.target.addButton(this.entry.localeBaseData.BUTTON_NO_LABEL, () => {
+              interactiveModal.target.close();
+            });
+
+            interactiveModal.assembly();
+            document.body.appendChild(interactiveModal.target.element);
+            interactiveModal.target.show();
+          });
+          interactiveButtonDelete.assembly();
+          commentPanel.append(interactiveButtonDelete.target.element);
+        }
       }
 
       if (!this.isHidden) {
@@ -327,69 +330,73 @@ export class EntryComment {
         let rateCountElement = document.createElement('div');
         rateCountElement.classList.add('comment__rating-count');
 
-        // Rate comment
-        if (clientUserPermissions.base_entry_comment_rate) {
-          let interactiveButtonRateUp = new Interactive('button');
-          interactiveButtonRateUp.target.setLabel('🡅');
-          interactiveButtonRateUp.target.setCallback((event) => {
-            let formData = new FormData();
-            formData.append('comment_id', this.id);
-            formData.append('comment_rating_vote', 'up');
+        if (clientIsLogged) {
+          // Rate comment
+          if (clientUserPermissions.base_entry_comment_rate) {
+            let interactiveButtonRateUp = new Interactive('button');
+            interactiveButtonRateUp.target.setLabel('🡅');
+            interactiveButtonRateUp.target.setCallback((event) => {
+              let formData = new FormData();
+              formData.append('comment_id', this.id);
+              formData.append('comment_rating_vote', 'up');
 
-            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
-              method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
-              console.log(this.index);
-              let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
-              let rateCountElement = commentElement.querySelector('.comment__rating-count');
-              rateCountElement.innerHTML = data.outputData.comment.rating;
+              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+                method: 'PATCH',
+                body: formData
+              }).then((response) => {
+                return response.json();
+              }).then((data) => {
+                console.log(this.index);
+                let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
+                let rateCountElement = commentElement.querySelector('.comment__rating-count');
+                rateCountElement.innerHTML = data.outputData.comment.rating;
 
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
+                let notification = new PopupNotification(data.message, document.body, true);
+                notification.show();
+              });
             });
-          });
-          interactiveButtonRateUp.assembly();
+            interactiveButtonRateUp.assembly();
 
-          let interactiveButtonElement = interactiveButtonRateUp.target.element.querySelector('button');
-          interactiveButtonElement.classList.add('interactive__button_green');
-
-          commentRatePanel.append(interactiveButtonRateUp.target.element);
+            let interactiveButtonElement = interactiveButtonRateUp.target.element.querySelector('button');
+            interactiveButtonElement.classList.add('interactive__button_green');
+            
+            commentRatePanel.append(interactiveButtonRateUp.target.element);
+          }
         }
 
         rateCountElement.append(this.rating);
         commentRatePanel.append(rateCountElement);
 
-        if (clientUserPermissions.base_entry_comment_rate) {
-          let interactiveButtonRateDown = new Interactive('button');
-          interactiveButtonRateDown.target.setLabel('🡇');
-          interactiveButtonRateDown.target.setCallback((event) => {
-            let formData = new FormData();
-            formData.append('comment_id', this.id);
-            formData.append('comment_rating_vote', 'down');
+        if (clientIsLogged) {
+          if (clientUserPermissions.base_entry_comment_rate) {
+            let interactiveButtonRateDown = new Interactive('button');
+            interactiveButtonRateDown.target.setLabel('🡇');
+            interactiveButtonRateDown.target.setCallback((event) => {
+              let formData = new FormData();
+              formData.append('comment_id', this.id);
+              formData.append('comment_rating_vote', 'down');
 
-            fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
-              method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
-              let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
-              let rateCountElement = commentElement.querySelector('.comment__rating-count');
-              rateCountElement.innerHTML = data.outputData.comment.rating;
-              
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
+              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+                method: 'PATCH',
+                body: formData
+              }).then((response) => {
+                return response.json();
+              }).then((data) => {
+                let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
+                let rateCountElement = commentElement.querySelector('.comment__rating-count');
+                rateCountElement.innerHTML = data.outputData.comment.rating;
+                
+                let notification = new PopupNotification(data.message, document.body, true);
+                notification.show();
+              });
             });
-          });
-          interactiveButtonRateDown.assembly();
+            interactiveButtonRateDown.assembly();
 
-          let interactiveButtonElement = interactiveButtonRateDown.target.element.querySelector('button');
-          interactiveButtonElement.classList.add('interactive__button_red');
+            let interactiveButtonElement = interactiveButtonRateDown.target.element.querySelector('button');
+            interactiveButtonElement.classList.add('interactive__button_red');
 
-          commentRatePanel.append(interactiveButtonRateDown.target.element);
+            commentRatePanel.append(interactiveButtonRateDown.target.element);
+          }
         }
       }
     }

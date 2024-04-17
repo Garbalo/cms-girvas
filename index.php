@@ -88,6 +88,9 @@ if ($system_core->urlp->get_path(0) == 'handler') {
       ]));
 
       $email_sender->send();
+
+      
+
       echo 'Your password reseted!';
     
     } else {

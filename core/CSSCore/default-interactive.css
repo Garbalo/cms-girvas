@@ -86,37 +86,37 @@
   cursor: pointer;
 }
 .interactive .interactive__button:hover {
-  background-color: var(--common-secondary-color-2);
+  background-color: var(--secondary-color-2);
 }
 .interactive .interactive__button:focus {
-  background-color: var(--common-secondary-color-2);
+  background-color: var(--secondary-color-2);
 }
 .interactive .interactive__button:active {
-  background-color: var(--common-secondary-color-3);
+  background-color: var(--secondary-color-3);
 }
 .interactive .interactive__button_red {
-  background-color: var(--common-secondary-color-5);
+  background-color: var(--secondary-color-5);
 }
 .interactive .interactive__button_red:hover {
-  background-color: var(--common-secondary-color-6);
+  background-color: var(--secondary-color-6);
 }
 .interactive .interactive__button_red:focus {
-  background-color: var(--common-secondary-color-6);
+  background-color: var(--secondary-color-6);
 }
 .interactive .interactive__button_red:active {
-  background-color: var(--common-secondary-color-5);
+  background-color: var(--secondary-color-5);
 }
 .interactive .interactive__button_green {
-  background-color: var(--common-secondary-color-8);
+  background-color: var(--secondary-color-8);
 }
 .interactive .interactive__button_green:hover {
-  background-color: var(--common-secondary-color-9);
+  background-color: var(--secondary-color-9);
 }
 .interactive .interactive__button_green:focus {
-  background-color: var(--common-secondary-color-9);
+  background-color: var(--secondary-color-9);
 }
 .interactive .interactive__button_green:active {
-  background-color: var(--common-secondary-color-8);
+  background-color: var(--secondary-color-8);
 }
 .interactive .interactive__button-icon {
   margin-right: 10px;
@@ -128,16 +128,16 @@
   color: var(--interactive-button-font-color);
 }
 .interactive .interactive__button:hover .interactive__button-label {
-  color: var(--common-secondary-color-3);
+  color: var(--secondary-color-3);
 }
 .interactive .interactive__button:focus .interactive__button-label {
-  color: var(--common-secondary-color-3);
+  color: var(--secondary-color-3);
 }
 .interactive .interactive__button:active .interactive__button-label {
   color: var(--primary-color-3);
 }
 .interactive .interactive__button_red .interactive__button-label {
-  color: var(--common-secondary-color-6);
+  color: var(--secondary-color-6);
 }
 .interactive .interactive__button_red:hover .interactive__button-label {
   color: var(--primary-color-4);
@@ -146,10 +146,10 @@
   color: var(--primary-color-4);
 }
 .interactive .interactive__button_red:active .interactive__button-label {
-  color: var(--common-secondary-color-6);
+  color: var(--secondary-color-6);
 }
 .interactive .interactive__button_green .interactive__button-label {
-  color: var(--common-secondary-color-9);
+  color: var(--secondary-color-9);
 }
 .interactive .interactive__button_green:hover .interactive__button-label {
   color: var(--primary-color-4);
@@ -158,7 +158,7 @@
   color: var(--primary-color-4);
 }
 .interactive .interactive__button_green:active .interactive__button-label {
-  color: var(--common-secondary-color-9);
+  color: var(--secondary-color-9);
 }
 .interactive .interactive__modal-wrapper {
   position: fixed;
@@ -193,7 +193,7 @@
 .interactive .interactive__modal .modal__header-button {
   display: flex;
   align-items: center;
-  background-color: var(--common-secondary-color-6);
+  background-color: var(--secondary-color-6);
   color: var(--primary-color-3);
   font-size: 14px;
   font-weight: 700;
@@ -247,7 +247,7 @@
     }
 
     &:hover, &:focus {
-      outline: 1px solid var(--common-secondary-color-2);
+      outline: 1px solid var(--secondary-color-2);
       filter: brightness(120%);
     }
   }

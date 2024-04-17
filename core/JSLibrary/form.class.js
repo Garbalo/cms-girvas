@@ -101,8 +101,6 @@ class Form {
           window.location.href = data.outputData.href;
         }, 10);
       }
-    }).catch((error) => {
-      console.error('Error: ' + error);
     });
   }
 }

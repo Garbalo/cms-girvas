@@ -28,10 +28,52 @@
           <p class="page__phar">Мастер-установщик проанализировал установленные СУБД и вывел результат в таблице. Если в таблице указана отрицательная оценка (помечена красным цветом) по отношению к предпочитаемой, то данная СУБД не была идентифицирована на Вашем сервере. Установите необходимую СУБД или выберите в следующем шаге доступную.</p>
         </div>
         <div class="main__page page" data-page-index="5">
-          <p class="page__phar">Перед началом работы с базой данных, необходимо настроить CMS для работы с ней. Заполните все необходимые данные в форме ниже, после чего нажмите на кнопку "Создать конфигурации".</p>
+          <p class="page__phar">Данная страница позволит правильно настроить работу базой данных и доменом в целом. Заполните все необходимые данные в форме ниже, после чего нажмите на кнопку "Создать конфигурации".</p>
           <p class="page__phar">
             <form class="form" role="form-database">
               <table class="table">
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Доменное имя</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Укажите доменное имя, с которым будет работать Ваш веб-сайт. Это необходимо для правильной переадресации и генерации Cookie.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <input name="domain" type="text" class="form__input" value="{CONFIGURATION_DATABASE_DOMAIN}" placeholder="www.example.ru">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Использование SSL</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Включите этот параметр, если Ваш домен работает с SSL-сертификатом.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <div class="page__phar-block">
+                      <div class="form__checkbox-container checkbox-container">
+                        <input type="hidden" name="domain_ssl" id="I1474308110" value="off">
+                        <input class="checkbox-container__input form__input form__input_checkbox" id="I1474301200" name="domain_ssl_status" type="checkbox" data-status-block="I1474308110">
+                        <label class="checkbox-container__label form__label" for="I1474301200"></label>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Система управления базами данных</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Выберите подходящую для Вас систему управления базами данных (СУБД), с которой будет работать CMS.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <select name="database_dms">
+                      <option value="DMS::PostgreSQL">PostgreSQL (рекомендуется)</option>
+                      <option value="DMS::MySQL">MySQL</option>
+                    </select>
+                  </td>
+                </tr>
                 <tr class="table__row">
                   <td class="table__cell cell">
                     <div class="cell__title">Префикс базы данных</div>
