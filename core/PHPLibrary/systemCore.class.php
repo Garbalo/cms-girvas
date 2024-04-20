@@ -36,13 +36,21 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.59 Pre-alpha';
+    public const CMS_VERSION = '0.0.62 Pre-alpha';
+
+    /** @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы */
     public SystemCoreConfigurator|null $configurator = null;
+    /** @var \core\PHPLibrary\SystemCore\DatabaseConnector Класс системы подключения к БД */
     public SystemCoreDatabaseConnector|null $database_connector = null;
+    /** @var \core\PHPLibrary\SystemCore\Locale Класс локализации ядра */
     public SystemCoreLocale|null $locale = null;
+    /** @var \core\PHPLibrary\URLParser Класс парсера адресной строки */
     public URLParser|null $urlp = null;
+    /** @var \core\PHPLibrary\Client Класс клиента */
     public Client|null $client = null;
+    /** @var \core\PHPLibrary\Template Класс шаблона системы */
     public Template|null $template = null;
+
     public array $modules = [];
     public array $page_dir_array = [];
     
@@ -55,32 +63,66 @@ namespace core\PHPLibrary {
       $this->init();
     }
 
+    /**
+     * Получить наименование системы
+     * 
+     * @return string
+     */
     public function get_cms_title() : string {
       return self::CMS_TITLE;
     }
 
+    /**
+     * Получить текущую версию системы
+     * 
+     * @return string
+     */
     public function get_cms_version() : string {
       return self::CMS_VERSION;
     }
 
+    /**
+     * Установить шаблон для системы
+     * 
+     * @param Template $template
+     * 
+     * @return void
+     */
     public function set_template(Template $template) : void {
       $this->template = $template;
     }
 
+    /**
+     * Получить текущий шаблон
+     * 
+     * @return Template
+     */
     public function get_template() : Template {
       return $this->template;
     }
 
+    /**
+     * Получить инициализированную страницу
+     * 
+     * @return InterfacePage
+     */
     public function get_inited_page() : InterfacePage {
       return $this->page_dir_array[array_key_last($this->page_dir_array)];
     }
 
+    /**
+     * Инициализация страницы
+     * 
+     * @param string $dir
+     * 
+     * @return bool
+     */
     public function init_page(string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
       $this->page_dir_array = explode('/', $dir);
       $this->page_dir_array[count($this->page_dir_array) - 1] = explode('?', $this->page_dir_array[count($this->page_dir_array) - 1]);
       $this->page_dir_array[count($this->page_dir_array) - 1] = $this->page_dir_array[count($this->page_dir_array) - 1][0];
-
+      
       if ($this->page_dir_array[0] == $this->template->get_category()) {
         $this->page_dir_array[0] = ucfirst($this->page_dir_array[0]);
         array_push($this->page_dir_array, 'index');
@@ -128,7 +170,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Инициализация ядра CMS
+     * Инициализация ядра системы
      *
      * @return void
      */
@@ -205,7 +247,7 @@ namespace core\PHPLibrary {
       if ($this->urlp->get_path(0) != 'handler' && $this->urlp->get_path(0) != 'feed') {
 
         if ($this->urlp->get_path(0) != 'install') {
-
+          
           $template_base_name = ($this->configurator->exists_database_entry_value('base_template')) ? $this->configurator->get_database_entry_value('base_template') : 'default';
           $cms_base_locale_name = ($this->configurator->exists_database_entry_value('base_locale')) ? $this->configurator->get_database_entry_value('base_locale') : 'en_US';
           $cms_admin_locale_name = ($this->configurator->exists_database_entry_value('base_admin_locale')) ? $this->configurator->get_database_entry_value('base_admin_locale') : 'en_US';
@@ -251,7 +293,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить путь до корня CMS
+     * Получить путь до корня ситемы
      *
      * @return string
      */

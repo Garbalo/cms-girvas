@@ -6,5 +6,5 @@
 /OLD/
 /core/configuration.php
 /templates/official
-/.htaccess
 /robots.txt
+/.gitignore
