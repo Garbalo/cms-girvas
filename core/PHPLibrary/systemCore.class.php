@@ -3,9 +3,14 @@
 /**
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
- * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
- * @copyright   Copyright (c) 2022 - 2023, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
- * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ * Класс системного ядра является главным классом в CMS GIRVAS, поскольку он управляет
+ * подключением всех необходимых файлов для работы системы, а также проводит иницилизацию
+ * необходимых объектов, таких как: шаблон системы, локализация системы, парсер адресной строки,
+ * сборщик шаблона, клиент и так далее.
+ * 
+ * @link        https://github.com/Garbalo/cms-girvas Путь до репозитория системы
+ * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
+ * @license     https://github.com/Garbalo/cms-girvas/LICENSE.md
  */
 
 namespace core\PHPLibrary {
@@ -36,22 +41,40 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.62 Pre-alpha';
+    public const CMS_VERSION = '0.0.63 Pre-alpha';
 
-    /** @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы */
+    /** 
+     * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
+     */
     public SystemCoreConfigurator|null $configurator = null;
-    /** @var \core\PHPLibrary\SystemCore\DatabaseConnector Класс системы подключения к БД */
+    /** 
+     * @var \core\PHPLibrary\SystemCore\DatabaseConnector Класс системы подключения к БД 
+     */
     public SystemCoreDatabaseConnector|null $database_connector = null;
-    /** @var \core\PHPLibrary\SystemCore\Locale Класс локализации ядра */
+    /** 
+     * @var \core\PHPLibrary\SystemCore\Locale Класс локализации ядра 
+     */
     public SystemCoreLocale|null $locale = null;
-    /** @var \core\PHPLibrary\URLParser Класс парсера адресной строки */
+    /**
+     * @var \core\PHPLibrary\URLParser Класс парсера адресной строки 
+     */
     public URLParser|null $urlp = null;
-    /** @var \core\PHPLibrary\Client Класс клиента */
+    /** 
+     * @var \core\PHPLibrary\Client Класс клиента
+     */
     public Client|null $client = null;
-    /** @var \core\PHPLibrary\Template Класс шаблона системы */
+    /** 
+     * @var \core\PHPLibrary\Template Класс шаблона системы 
+     */
     public Template|null $template = null;
 
+    /**
+     *  @var array Массив активированных модулей
+     * */
     public array $modules = [];
+    /**
+     * @var array Массив элементов пути до инициализированной страницы
+     */
     public array $page_dir_array = [];
     
     /**
@@ -60,6 +83,7 @@ namespace core\PHPLibrary {
      * @return void
      */
     public function __construct() {
+      // Инициализация ядра системы
       $this->init();
     }
 
@@ -170,7 +194,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Инициализация ядра системы
+     * Инициализация ядра системы и всех необходимых ее компонентов
      *
      * @return void
      */

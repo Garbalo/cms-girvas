@@ -341,6 +341,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     if (!file_exists($config_file_path)) {
       $domain_ssl_status = (isset($_GET['domain_ssl_status'])) ? 'true' : 'false';
       
+      $system_salt = bin2hex(openssl_random_pseudo_bytes(10));
+
       $file = fopen($config_file_path, 'w+');
       fwrite($file, '<?php' . PHP_EOL);
       fwrite($file, PHP_EOL);
