@@ -70,6 +70,15 @@
           </td>
         </tr>
         <tr class="table__row">
+          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_CMS_MODULES_TITLE}</td>
+          <td class="table__cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308453" name="user_group_permissions[]" type="checkbox" value="admin_modules_management" {USER_GROUP_PERMISSION_ADMIN_MODULES_MANAGEMENT_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308453"></label>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_CMS_FEEDS_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
@@ -118,15 +127,6 @@
           </td>
         </tr>
         <tr class="table__row">
-          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_MEDIA_FILES_TITLE}</td>
-          <td class="table__cell">
-            <div class="form__checkbox-container checkbox-container">
-              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308979" name="user_group_permissions[]" type="checkbox" value="editor_media_files_management" {USER_GROUP_PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT_VALUE}>
-              <label class="checkbox-container__label form__label" for="I1474308979"></label>
-            </div>
-          </td>
-        </tr>
-        <tr class="table__row">
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_GIVE_WARNINGS_FROM_USERS_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
@@ -162,6 +162,15 @@
             <div class="form__checkbox-container checkbox-container">
               <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308981" name="user_group_permissions[]" type="checkbox" value="editor_pages_static_edit" {USER_GROUP_PERMISSION_EDITOR_PAGES_STATIC_EDIT_VALUE}>
               <label class="checkbox-container__label form__label" for="I1474308981"></label>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_MEDIA_FILES_TITLE}</td>
+          <td class="table__cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308979" name="user_group_permissions[]" type="checkbox" value="editor_media_files_management" {USER_GROUP_PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308979"></label>
             </div>
           </td>
         </tr>

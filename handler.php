@@ -174,8 +174,8 @@ if (defined('IS_NOT_HACKED')) {
       foreach ($fields_types as $field_index => $field_type) {
         array_push($fields, [
           'type' => $field_type,
-          'title' => $fields_titles[$fields_locale][$field_index],
-          'description' => $fields_descriptions[$fields_locale][$field_index],
+          'title' => isset($fields_titles[$fields_locale]) ? $fields_titles[$fields_locale][$field_index] : '',
+          'description' => isset($fields_descriptions[$fields_locale]) ? $fields_descriptions[$fields_locale][$field_index] : '',
           'name' => $fields_names[$field_index]
         ]);
       }

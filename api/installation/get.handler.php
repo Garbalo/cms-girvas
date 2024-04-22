@@ -14,6 +14,8 @@ if (!defined('IS_NOT_HACKED')) {
 }
 
 if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
+  $json_data_type_dms = 'json';
+
   if ($system_core->urlp->get_param('stepIndex') == 1) {
     $dom_document = new \DOMDocument();
     
@@ -23,6 +25,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       [$system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_VERSION_LABEL'), '>= 8.2.6', phpversion()],
       [sprintf('%s SimpleXML', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('SimpleXML', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s PDO', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('PDO', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s openssl', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('openssl', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s curl', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('curl', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s dom', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('dom', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s mbstring', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('mbstring', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
@@ -33,6 +36,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       '',
       (in_array('SimpleXML', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('PDO', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
+      (in_array('openssl', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('curl', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('dom', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('mbstring', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
@@ -166,13 +170,6 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
   if ($system_core->urlp->get_param('stepIndex') == 3) {
     $dom_document = new \DOMDocument();
-    
-    $php_loaded_extensions = get_loaded_extensions();
-
-    if (!file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/backups', CMS_ROOT_DIRECTORY), 0755);
-    if (!file_exists(sprintf('%s/modules', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/modules', CMS_ROOT_DIRECTORY), 0755);
-    if (!file_exists(sprintf('%s/templates', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/templates', CMS_ROOT_DIRECTORY), 0755);
-    if (!file_exists(sprintf('%s/uploads', CMS_ROOT_DIRECTORY))) mkdir(sprintf('%s/uploads', CMS_ROOT_DIRECTORY), 0755);
 
     $table_data = [
       ['./backups/', '0755', file_exists(sprintf('%s/backups', CMS_ROOT_DIRECTORY)) ? substr(sprintf('%o', fileperms(sprintf('%s/backups', CMS_ROOT_DIRECTORY))), -4) : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DIRECTORY_NOT_FOUND_LABEL')],
@@ -372,6 +369,11 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       chmod($config_file_path, 0664);
     }
 
+    switch ($_GET['database_dms']) {
+      case 'DMS::PostgreSQL': $json_data_type_dms = 'jsonb'; break;
+      default: $json_data_type_dms = 'json';
+    }
+
     //$db_connector_test = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator, true);
 
     if (file_exists($config_file_path)) {
@@ -412,7 +414,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
     $query_builder->statement->add_column('value', 'text');
-    $query_builder->statement->add_column('texts', 'json');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
@@ -433,8 +435,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
     $query_builder->statement->add_column('category_id', 'bigint', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('author_id', 'bigint', 'NOT NULL DEFAULT 0');
-    $query_builder->statement->add_column('texts', 'jsonb');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
@@ -455,8 +457,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->set_table_name('entries_categories');
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
     $query_builder->statement->add_column('parent_id', 'bigint', 'NOT NULL DEFAULT 0');
-    $query_builder->statement->add_column('texts', 'jsonb');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
@@ -479,7 +481,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('entry_id', 'bigint', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('author_id', 'bigint', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('content', 'text');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
@@ -499,9 +501,9 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->set_table_name('pages_static');
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
-    $query_builder->statement->add_column('texts', 'jsonb');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
     $query_builder->statement->add_column('author_id', 'bigint');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
@@ -520,8 +522,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->set_check_exists(true);
     $query_builder->statement->set_table_name('reports');
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
-    $query_builder->statement->add_column('variables', 'jsonb');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('variables', $json_data_type_dms);
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
 
@@ -543,7 +545,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('email', 'text', 'NOT NULL');
     $query_builder->statement->add_column('password_hash', 'text', 'NOT NULL');
     $query_builder->statement->add_column('security_hash', 'text', 'NOT NULL');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('email_is_submitted', 'boolean', 'NOT NULL DEFAULT false');
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
@@ -564,9 +566,9 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->set_table_name('users_groups');
     $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
-    $query_builder->statement->add_column('texts', 'jsonb');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
     $query_builder->statement->add_column('permissions', 'integer', 'NOT NULL DEFAULT 0');
-    $query_builder->statement->add_column('metadata', 'jsonb');
+    $query_builder->statement->add_column('metadata', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
@@ -630,7 +632,7 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('name', 'text', 'NOT NULL');
     $query_builder->statement->add_column('entries_category_id', 'bigint', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('type_id', 'integer', 'NOT NULL DEFAULT 1');
-    $query_builder->statement->add_column('texts', 'jsonb');
+    $query_builder->statement->add_column('texts', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();
@@ -646,43 +648,77 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
 
     $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
 
-    $first_entry_texts = [];
-    $first_entry_texts['en_US'] = [
-      'title' => 'Hello, World!',
-      'content' => 'Welcome to &nbsp; **CMS &laquo;GIRVAS&raquo;**! Here is the first published entry &nbsp;&mdash; It was generated automatically when installing a control system. If you&nbsp;it&nbsp;you see, then &nbsp; then the installation has passed well.<br><br>## What is next?<br>You need <a href="/admin">to configure</a> the installed system. To do this, go to&nbsp;the administrative panel and&nbsp;start following the six blocks that will be displayed on&nbsp;the start page.<br><br>Thanks for&nbsp;what you selected **CMS&laquo;GIRVAS&raquo;**, good luck!'
+    $first_entries_category_texts = [
+      'en_US' => [
+        'title' => 'News',
+        'description' => 'All news'
+      ],
+      'ru_RU' => [
+        'title' => 'Новости',
+        'content' => 'Все новости'
+      ]
+    ];
+
+    $second_entries_category_texts = [
+      'en_US' => [
+        'title' => 'Articles',
+        'description' => 'All articles'
+      ],
+      'ru_RU' => [
+        'title' => 'Статьи',
+        'content' => 'Все статьи'
+      ]
+    ];
+
+    $first_entries_category = \core\PHPLibrary\EntryCategory::create($system_core, 'news', 0, $first_entries_category_texts);
+    $second_entries_category = \core\PHPLibrary\EntryCategory::create($system_core, 'articles', 0, $second_entries_category_texts);
+
+    $first_entries_category->update(['metadata' => ['isShowedOnIndexPage' => true]]);
+    $second_entries_category->update(['metadata' => ['isShowedOnIndexPage' => true]]);
+
+    $first_entry_texts = [
+      'en_US' => [
+        'title' => 'Hello, World!',
+        'content' => "Welcome to the \"GIRVAS\" Content Management System! This is a simple example of an entry on your website that does not contain anything important, but we would like to tell you a little about the system and the developer company. In the future, you can delete or change this entry, or just keep it as a keepsake!\r\n\r\n##Briefly about the system\r\nContent management system \"GIRVAS\" is a technically complex software, but easy to use, through which you can manage content on a website, as well as change its appearance using templates or expand functionality using a modular system. On our YouTube channel we have collected several examples demonstrating the functionality of the CMS \"GIRVAS\".\r\n\r\n##First release of the system\r\nThe control system is currently undergoing the first stage of its post-release review, so we need to collect feedback on its performance. If something does not work or does not work as it should, then feel free to report it via one of the contacts: https://www.garbalo.com/page/contacts."
+      ],
+      'ru_RU' => [
+        'title' => 'Привет, Мир!',
+        'content' => "Добро пожаловать в Систему управления содержимым \"ГИРВАС\"! Это простой пример записи на Вашем сайте, которая не несет в себе ничего важного, однако хотели бы немного рассказать о системе и компании-разработчике. В дальнейшем Вы сможете удалить или изменить эту запись, или же просто оставить себе на память!\r\n\r\n##Кратко о системе\r\nСистема управления содержимым \"ГИРВАС\" представляет собой сложное в техническом плане программное обеспечение, но легкое в плане использования, через которое Вы можете управлять содержимым на веб-сайте, а также изменять его внешний вид при помощи шаблонов или расширять функционал при помощи модульной системы. На нашем YouTube-канале мы собрали несколько примеров с демонстрацией функционала СУС \"ГИРВАС\"\r\n\r\n##Первый выпуск системы\r\nСейчас система управления проходит первый этап своей проверки после выпуска, поэтому нам необходимо собирать обратную связь по ее работе. Если что-то будет не работать или работать не так как надо, то смело сообщайте по одному из контактов: https://www.garbalo.com/page/contacts."
+      ]
     ];
 
     $first_entry = \core\PHPLibrary\Entry::create($system_core, 'hello-world', 1, 1, $first_entry_texts);
-    $first_entry->update(['metadata' => ['is_publish' => true]]);
+    $first_entry->update(['metadata' => ['is_published' => true]]);
+    $first_entry->update(['metadata' => ['preview_url' => '/uploads/media/example.webp']]);
 
-    $first_users_group_texts = [];
-    $first_users_group_texts['en_US'] = [
-      'title' => 'Administrator'
+    $first_users_group_texts = [
+      'en_US' => ['title' => 'Administrator'],
+      'ru_RU' => ['title' => 'Администратор']
     ];
 
-    $second_users_group_texts = [];
-    $second_users_group_texts['en_US'] = [
-      'title' => 'Moderator'
+    $second_users_group_texts = [
+      'en_US' => ['title' => 'Moderator'],
+      'ru_RU' => ['title' => 'Модератор']
     ];
 
-    $thirty_users_group_texts = [];
-    $thirty_users_group_texts['en_US'] = [
-      'title' => 'Editor'
+    $thirty_users_group_texts = [
+      'en_US' => ['title' => 'Editor'],
+      'ru_RU' => ['title' => 'Редактор']
     ];
 
-    $fourty_users_group_texts = [];
-    $fourty_users_group_texts['en_US'] = [
-      'title' => 'User'
+    $fourty_users_group_texts = [
+      'en_US' => ['title' => 'User'],
+      'ru_RU' => ['title' => 'Пользователь']
     ];
 
     $first_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'admin', $first_users_group_texts, 211959);
     $second_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'moder', $second_users_group_texts, 66433);
-    $thirty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'editor', $thirty_users_group_texts, 79873);
+    $thirty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'editor', $thirty_users_group_texts, 80897);
     $fourty_users_group = \core\PHPLibrary\UserGroup::create($system_core, 'user', $fourty_users_group_texts, 65536);
 
     $system_core->configurator->insert_database_entry_value('base_template', 'default');
     $system_core->configurator->insert_database_entry_value('base_site_title', 'CMS GIRVAS');
-    $system_core->configurator->insert_database_entry_value('base_engineering_works', 'off');
+    $system_core->configurator->insert_database_entry_value('base_engineering_works_status', 'off');
     $system_core->configurator->insert_database_entry_value('base_engineering_works_text', '');
     $system_core->configurator->insert_database_entry_value('seo_site_description', 'CMS GIRVAS - a multidisciplinary free contents control system from the Garbalo Karelian developers.');
     $system_core->configurator->insert_database_entry_value('seo_site_keywords', '["CMS GIRVAS","Free Content Management System","Free CMS","Garbalo"]');

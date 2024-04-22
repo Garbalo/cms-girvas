@@ -48,5 +48,6 @@
   "PAGE_ERROR_503_TITLE": "Доступ запрещен",
   "PAGE_ERROR_503_DESCRIPTION": "К сожалению, доступ к данной странице ограничен. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>.",
   "PAGE_ERROR_UNKNOWN_TITLE": "Неизвестная ошибка",
-  "PAGE_ERROR_UNKNOWN_DESCRIPTION": "К сожалению, что-то пошло не так. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>."
+  "PAGE_ERROR_UNKNOWN_DESCRIPTION": "К сожалению, что-то пошло не так. Рекомендуем вернуться на <a href=\"/\" title=\"{SITE_TITLE}\">главную страницу</a>.",
+  "SITE_TECHNICAL_WORKS_TITLE": "Веб-сайт закрыт на технические работы"
 }

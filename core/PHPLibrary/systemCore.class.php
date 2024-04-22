@@ -41,7 +41,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.63 Pre-alpha';
+    public const CMS_VERSION = '0.0.64 Pre-alpha';
 
     /** 
      * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
@@ -218,6 +218,13 @@ namespace core\PHPLibrary {
       $template = null;
 
       $this->init_url_parser();
+
+      // Если настройка системы не была произведена и пользователь не находится на странице инсталлятора,
+      // то его необходимо перенаправить на страницу инсталлятора.
+      if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY)) && $this->urlp->get_path(0) != 'install' && $this->urlp->get_path(0) != 'handler') {
+        header('location: /install');
+      }
+
       $this->configurator = new SystemCoreConfigurator($this);
 
       if ($this->urlp->get_path(0) != 'install' && $this->urlp->get_path(1) != 'install') {

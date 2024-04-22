@@ -56,3 +56,12 @@
 .form.form_settings .form__bottom-panel > *[cmsg-interactive-uid]:not(:last-child) {
   margin-right: 10px;
 }
+.form.form_settings [role="additional-field"] *[cmsg-interactive-uid] {
+  margin: 0 auto;
+  width: fit-content;
+}
+.form.form_settings [role="additional-field"] .button__icon {
+  fill: var(--common-secondary-color-6);
+  width: 16px;
+  height: 16px;
+}

@@ -12,6 +12,10 @@ import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
 
 export class PageSettings {
+  static buttonIcons = {
+    trash: '<svg version="1.1" class="button__icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve"><rect x="13.9" y="16.1" width="37.3" height="47.9"></rect><path d="M41.4,10l1-7.3L24.7,0.3l-1,7.3L10.2,5.7l-1,7.3l44.6,6.2l1-7.3L41.4,10z M25.6,7.8l0.7-5l13.8,1.9l-0.7,5L25.6,7.8z"></path></svg>',
+  };
+
   constructor(params = {}) {
     this.buttons = {save: null};
   }
@@ -27,26 +31,6 @@ export class PageSettings {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
-
-      this.buttons.save = new Interactive('button');
-      this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
-      this.buttons.save.target.setCallback((event) => {
-        event.preventDefault();
-        
-        let formData = new FormData(elementForm);
-
-        fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: 'POST',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data) => {
-          let notification = new PopupNotification(data.message, document.body, true);
-          notification.show();
-        });
-      });
-      this.buttons.save.assembly();
-
       if (searchParams.getPathPart(3) == 'security') {
         let logicBlocks = document.querySelectorAll('[type="checkbox"]');
         logicBlocks.forEach((element, elementIndex) => {
@@ -323,6 +307,25 @@ export class PageSettings {
         tableAdditionalFieldsButtonContainer.append(buttons.addField.target.element);
       }
 
+      this.buttons.save = new Interactive('button');
+      this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
+      this.buttons.save.target.setCallback((event) => {
+        event.preventDefault();
+        
+        let formData = new FormData(elementForm);
+
+        fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
+          method: 'POST',
+          body: formData
+        }).then((response) => {
+          return (response.ok) ? response.json() : Promise.reject(response);
+        }).then((data) => {
+          let notification = new PopupNotification(data.message, document.body, true);
+          notification.show();
+        });
+      });
+      this.buttons.save.assembly();
+
       let interactiveFormPanelContainer = document.querySelector('#SYSTEM_E3724126170');
       interactiveFormPanelContainer.append(this.buttons.save.target.element);
     });
@@ -334,6 +337,7 @@ export class PageSettings {
     let tableCellTitleField = document.createElement('td');
     let tableCellNameField = document.createElement('td');
     let tableCellDescriptionField = document.createElement('td');
+    let tableCellEventField = document.createElement('td');
     let additionalFieldInputTitle = document.createElement('input');
     let additionalFieldInputName = document.createElement('input');
     let additionalFieldInputDescription = document.createElement('textarea');
@@ -377,6 +381,16 @@ export class PageSettings {
       }
     }
 
+    let buttons = {delete: null};
+    buttons.delete = new Interactive('button');
+    buttons.delete.target.setLabel(PageSettings.buttonIcons.trash);
+    buttons.delete.target.setCallback((event) => {
+      event.preventDefault();
+      tableRow.remove();
+    });
+
+    buttons.delete.assembly();
+
     interactiveChoicesTypeField.assembly();
 
     if (typeof data.title != 'undefined') {
@@ -395,10 +409,13 @@ export class PageSettings {
     tableCellTitleField.append(additionalFieldInputTitle);
     tableCellNameField.append(additionalFieldInputName);
     tableCellDescriptionField.append(additionalFieldInputDescription);
+    tableCellEventField.append(buttons.delete.target.element);
+
     tableRow.append(tableCellTypeField);
     tableRow.append(tableCellTitleField);
     tableRow.append(tableCellNameField);
     tableRow.append(tableCellDescriptionField);
+    tableRow.append(tableCellEventField);
 
     container.parentElement.before(tableRow);
   }

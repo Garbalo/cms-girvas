@@ -51,5 +51,6 @@
   "PAGE_ERROR_503_TITLE": "Access is denied",
   "PAGE_ERROR_503_DESCRIPTION": "Unfortunately, access to this page is limited. We recommend returning to the <a href=\"/\" title=\"{SITE_TITLE}\">main page</a>.",
   "PAGE_ERROR_UNKNOWN_TITLE": "Unknown error",
-  "PAGE_ERROR_UNKNOWN_DESCRIPTION": "Unfortunately, something went wrong. We recommend returning to the <a href=\"/\" title=\"{SITE_TITLE}\">main page</a>."
+  "PAGE_ERROR_UNKNOWN_DESCRIPTION": "Unfortunately, something went wrong. We recommend returning to the <a href=\"/\" title=\"{SITE_TITLE}\">main page</a>.",
+  "SITE_TECHNICAL_WORKS_TITLE": "Website is closed for maintenance"
 }

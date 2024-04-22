@@ -30,12 +30,21 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/templates.css', 'rel' => 'stylesheet']);
       
+      $locale_data = $this->system_core->locale->get_data();
+
       $parsedown = new Parsedown();
 
       $subpage_name = (!is_null($this->system_core->urlp->get_path(2))) ? $this->system_core->urlp->get_path(2) : 'local';
 
       $navigations_items_transformed = [];
       $navigations_items = ['local', 'repository'];
+
+      array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
+        'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_TEMPLATES_NAVIGATION_INDEX_LABEL']),
+        'NAVIGATION_ITEM_URL' => '/admin',
+        'NAVIGATION_ITEM_LINK_CLASS_IS_ACTIVE' => ''
+      ]));
+
       foreach ($navigations_items as $navigation_item) {
         $item_class_is_active = ($subpage_name == $navigation_item) ? 'navigation-item__link_is-active' : '';
 
@@ -57,18 +66,14 @@ namespace core\PHPLibrary\Page\Admin {
       }
 
       $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
-      $pagination_items_on_page = 2;
+      $pagination_items_on_page = 12;
 
       $templates_count_total = 0;
 
       if ($this->system_core->urlp->get_path(2) == 'repository') {
-        
         $ch = curl_init('https://repository.cms-girvas.ru/templates');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $curl_result = curl_exec($ch);
-        $curl_result = json_decode($curl_result, true);
-
+        $curl_result = json_decode(curl_exec($ch), true);
         curl_close($ch);
 
         if (isset($curl_result['outputData'])) {
@@ -134,15 +139,23 @@ namespace core\PHPLibrary\Page\Admin {
       $pagination = new Pagination($this->system_core, $templates_count_total, $pagination_items_on_page, $pagination_item_current);
       $pagination->assembly();
 
-      /** @var string $site_page Содержимое шаблона страницы */
-      $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates.tpl', [
-        'PAGE_NAVIGATION' => $page_navigation_transformed,
-        'PAGE_TEMPLATES_PAGINATION' => $pagination->assembled,
-        'ADMIN_PANEL_PAGE_NAME' => 'templates',
-        'TEMPLATES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/list.tpl', [
-          'TEMPLATES_LIST_ITEMS' => implode($templates_list_items_transformed_array)
-        ])
-      ]);
+      if ($this->system_core->urlp->get_path(2) == 'repository' && !is_null($this->system_core->urlp->get_path(3))) {
+        $template_name = $this->system_core->urlp->get_path(3);
+        $template_page = new PageTemplate($this->system_core, $this->page);
+        
+        $template_page->assembly();
+        $this->assembled = $template_page->assembled;
+      } else {
+        /** @var string $site_page Содержимое шаблона страницы */
+        $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates.tpl', [
+          'PAGE_NAVIGATION' => $page_navigation_transformed,
+          'PAGE_TEMPLATES_PAGINATION' => $pagination->assembled,
+          'ADMIN_PANEL_PAGE_NAME' => 'templates',
+          'TEMPLATES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/templates/list.tpl', [
+            'TEMPLATES_LIST_ITEMS' => implode($templates_list_items_transformed_array)
+          ])
+        ]);
+      }
     }
   }
 }

@@ -25,6 +25,16 @@ namespace templates\default {
     }
     
     /**
+     * Сборка заглушки сайта
+     *
+     * @param  mixed $template_replaces Массив тегами шаблона и их значениями
+     * @return string
+     */
+    public function assembly_plug(array $template_replaces = []) : string {
+      return TemplateCollector::assembly_file_content($this->template, 'templates/plug.tpl', $template_replaces);
+    }
+    
+    /**
      * Сборка шапки сайта
      *
      * @param  mixed $template_replaces Массив тегами шаблона и их значениями
@@ -81,26 +91,37 @@ namespace templates\default {
     public function assembly() : void {
       $this->template->add_style(['href' => 'styles/colors.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/common.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);
-      $this->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
-      
-      $this->template->add_script(['src' => 'popupNotification.class.js'], true);
-      $this->template->add_script(['src' => 'form.class.js'], true);
-      $this->template->add_script(['src' => 'common.js'], true);
-      $this->template->add_script(['src' => 'core.class.js', 'type' => 'module'], true);
 
-      $profile_link = ($this->template->system_core->client->is_logged(1)) ? '<a class="header__nav-link display-block" href="/profile"><span class="header__nav-span">Профиль</span></a>' : '<a id="SYSTEM_GE_IMC_00000001" class="header__nav-link display-block" href="#"><span class="header__nav-span">Войти</span></a>';
+      if ($this->template->system_core->configurator->get_database_entry_value('base_engineering_works_status') == 'off') {
+        $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
+        $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
+        $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);
+        $this->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
+        
+        $this->template->add_script(['src' => 'popupNotification.class.js'], true);
+        $this->template->add_script(['src' => 'form.class.js'], true);
+        $this->template->add_script(['src' => 'common.js'], true);
+        $this->template->add_script(['src' => 'core.class.js', 'type' => 'module'], true);
 
-      /** @var string $this->assembled Итоговый шаблон в виде строки */
-      $this->assembled = TemplateCollector::assembly($this->assembly_document(), [
-        'SITE_HEADER' => $this->assembly_header([
-          'NAVIGATION_PROFILE_LINK' => $profile_link
-        ]),
-        'SITE_MAIN' => $this->assembly_main(),
-        'SITE_FOOTER' => $this->assembly_footer()
-      ]);
+        $profile_link = ($this->template->system_core->client->is_logged(1)) ? '<a class="header__nav-link display-block" href="/profile"><span class="header__nav-span">Профиль</span></a>' : '<a id="SYSTEM_GE_IMC_00000001" class="header__nav-link display-block" href="#"><span class="header__nav-span">Войти</span></a>';
+
+        /** @var string $this->assembled Итоговый шаблон в виде строки */
+        $this->assembled = TemplateCollector::assembly($this->assembly_document(), [
+          'SITE_HEADER' => $this->assembly_header([
+            'NAVIGATION_PROFILE_LINK' => $profile_link
+          ]),
+          'SITE_MAIN' => $this->assembly_main(),
+          'SITE_FOOTER' => $this->assembly_footer()
+        ]);
+      } else {
+        $this->assembled = TemplateCollector::assembly($this->assembly_document(), [
+          'SITE_HEADER' => '',
+          'SITE_MAIN' => TemplateCollector::assembly($this->assembly_plug(), [
+            'SITE_CLOSED_REASON' => $this->template->system_core->configurator->get_database_entry_value('base_engineering_works_text')
+          ]),
+          'SITE_FOOTER' => ''
+        ]);
+      }
     }
 
   }

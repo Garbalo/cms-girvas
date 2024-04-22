@@ -35,7 +35,7 @@ namespace core\PHPLibrary\Page\Admin {
       $media_files_count_total = count($media_files);
 
       $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
-      $pagination_items_on_page = 2;
+      $pagination_items_on_page = 12;
 
       $media_files = array_slice($media_files, $pagination_item_current * $pagination_items_on_page, $pagination_items_on_page);
 

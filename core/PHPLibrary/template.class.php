@@ -414,6 +414,18 @@ namespace core\PHPLibrary {
 
       return json_decode($file_content, true);
     }
+
+    public function get_file_readme_md_path() : string {
+      return sprintf('%s/README.md', $this->get_path());
+    }
+
+    public function get_content_file_readme_md() : string {
+      return ($this->exists_file_readme_md()) ? file_get_contents($this->get_file_readme_md_path()) : '';
+    }
+
+    public function exists_file_readme_md() : bool {
+      return file_exists($this->get_file_readme_md_path());
+    }
   }
 
 }

@@ -60,7 +60,7 @@ namespace core\PHPLibrary\Page\Admin {
       }
 
       $pagination_item_current = (!is_null($this->system_core->urlp->get_param('pageNumber'))) ? (int)$this->system_core->urlp->get_param('pageNumber') : 0;
-      $pagination_items_on_page = 2;
+      $pagination_items_on_page = 12;
 
       $users_table_items_assembled_array = [];
       $users = new Users($this->system_core);
