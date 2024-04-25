@@ -416,13 +416,13 @@ namespace core\PHPLibrary {
 
       if (array_key_exists('texts', $data)) {
         foreach ($data['texts'] as $lang_name => $data_texts) {
-          $query_builder->statement->clause_set->add_column('texts', sprintf('texts || \'{"%s": %s}\'::jsonb', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+          $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 
       if (array_key_exists('metadata', $data)) {
         foreach ($data['metadata'] as $lang_name => $data_metadata) {
-          $query_builder->statement->clause_set->add_column('metadata', sprintf('metadata || \'{"%s": %s}\'::jsonb', $lang_name, json_encode($data_metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
       }
 

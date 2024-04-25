@@ -41,7 +41,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.64 Pre-alpha';
+    public const CMS_VERSION = '0.0.65 Pre-alpha';
 
     /** 
      * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
@@ -103,6 +103,27 @@ namespace core\PHPLibrary {
      */
     public function get_cms_version() : string {
       return self::CMS_VERSION;
+    }
+
+    /**
+     * Получить объект локализации ядра
+     * 
+     * Стандартный набор:
+     * base - базовая локализация (веб-сайт)
+     * admin - административная локализация (АП)
+     * 
+     * @param string $locale_type
+     * 
+     * @return SystemCoreLocale
+     */
+    public function get_cms_locale(string $locale_type = 'base') : SystemCoreLocale {
+      switch ($locale_type) {
+        case 'base': $locale_name = (!is_null($this->configurator->get_database_entry_value('base_locale'))) ? $this->configurator->get_database_entry_value('base_locale') : SystemCoreLocale::DEFAULT_LOCALE_NAME; break;
+        case 'admin': $locale_name = (!is_null($this->configurator->get_database_entry_value('base_admin_locale'))) ? $this->configurator->get_database_entry_value('base_admin_locale') : SystemCoreLocale::DEFAULT_LOCALE_NAME; break;
+        default: $locale_name = (!is_null($this->configurator->get_database_entry_value($locale_type . '_locale'))) ? $this->configurator->get_database_entry_value($locale_type . '_locale') : SystemCoreLocale::DEFAULT_LOCALE_NAME;
+      }
+
+      return new SystemCoreLocale($this, $locale_name, $locale_type);
     }
 
     /**

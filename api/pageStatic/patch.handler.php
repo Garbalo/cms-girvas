@@ -68,28 +68,63 @@ if ($system_core->client->is_logged(2)) {
           }
         }
 
-        $page_static_is_updated = $page_static->update($page_static_data);
+        $page_static_is_published = isset($page_static_data['metadata']['is_published']) ? $page_static_data['metadata']['is_published'] : 0;
+
+        // Если происходит публикация страницы, то необходимо удостовериться, что
+        // в странице присутствует стандартная локализация, в противном случае
+        // система не даст сохранить ее.
+        if ($page_static_is_published) {
+          /** @var \core\PHPLibrary\SystemCore\Locale */
+          $base_locale = $system_core->get_cms_locale();
+          /** @var string */
+          $base_locale_name = $base_locale->get_name();
+
+          $page_static->init_data(['texts']);
+
+          /** @var string Заголовок записи */
+          $page_static_title_default = $page_static->get_title($base_locale_name);
+          /** @var string описание записи */
+          $page_static_description_default = $page_static->get_description($base_locale_name);
+          /** @var string содержимое записи */
+          $page_static_content_default = $page_static->get_content($base_locale_name);
+
+          // Если заголовок, описание или содержимое стандартной локализации не задано, то
+          // запись не будет обновлена.
+          if (empty($page_static_title_default) || empty($page_static_description_default) || empty($page_static_content_default)) {
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', sprintf($system_core->locale->get_single_value_by_key('API_PAGE_STATIC_EMPTY_LOCALE_DEFAULT_PUBLISHED_ERROR'), $base_locale_name)) : $handler_message;
+            $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+          } else {
+            /** @var bool Обновление записи */
+            $page_static_is_updated = $page_static->update($page_static_data);
+          }
+        } else {
+          /** @var bool Обновление записи */
+          $page_static_is_updated = $page_static->update($page_static_data);
+        }
+
+        /** @var bool Костыль */
+        $page_static_is_updated = isset($page_static_is_updated) ? $page_static_is_updated : false;
 
         if ($page_static_is_updated) {
-          $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
-          $handler_status_code = 1;
+          $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
+          $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
         } else {
-          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
-          $handler_status_code = 0;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
+          $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       } else {
-        $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_STATIC_PAGE_ERROR_NOT_FOUND'));
-        $handler_status_code = 0;
+        $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_STATIC_PAGE_ERROR_NOT_FOUND')) : $handler_message;
+        $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
       }
     }
   } else {
-    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS'));
-    $handler_status_code = 0;
+    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS')) : $handler_message;
+    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
   }
 } else {
   http_response_code(401);
-  $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION'));
-  $handler_status_code = 0;
+  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_AUTHORIZATION')) : $handler_message;
+  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
 }
 
 ?>

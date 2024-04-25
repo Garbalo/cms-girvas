@@ -16,21 +16,38 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\Page as Page;
   use \core\PHPLibrary\Pagination as Pagination;
 
+/**
+ * Страница со списком записей
+ */
   class PageEntries implements InterfacePage {
     public SystemCore $system_core;
     public Page $page;
     public string $assembled = '';
 
+    /**
+     * __construct
+     * 
+     * @param SystemCore $system_core
+     * @param Page $page
+     */
     public function __construct(SystemCore $system_core, Page $page) {
       $this->system_core = $system_core;
       $this->page = $page;
     }
 
+    /**
+     * Сборка
+     * 
+     * @return void
+     */
     public function assembly() : void {
+      // Добавление таблицы стилей для страницы
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
       
+      /** @var array Данные локализации */
       $locale_data = $this->system_core->locale->get_data();
 
+      /** @var array Преобразованные элементы навигации */
       $navigations_items_transformed = [];
       array_push($navigations_items_transformed, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/navigationHorizontal/item.tpl', [
         'NAVIGATION_ITEM_TITLE' => sprintf('< %s', $locale_data['PAGE_ENTRIES_NAVIGATION_INDEX_LABEL']),
@@ -67,7 +84,10 @@ namespace core\PHPLibrary\Page\Admin {
       $pagination_items_on_page = 12;
 
       $entries_table_items_assembled_array = [];
+
       $entries = new Entries($this->system_core);
+      $entries_locale_default = $this->system_core->get_cms_locale('base');
+      
       $entries_array_objects = $entries->get_all([
         'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
       ]);
@@ -87,8 +107,8 @@ namespace core\PHPLibrary\Page\Admin {
         array_push($entries_table_items_assembled_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/tableItem.tpl', [
           'ENTRY_ID' => $entry_object->get_id(),
           'ENTRY_INDEX' => $entry_number,
-          'ENTRY_TITLE' => $entry_object->get_title(),
-          'ENTRY_DESCRIPTION' => $entry_object->get_description(),
+          'ENTRY_TITLE' => $entry_object->get_title($entries_locale_default->get_name()),
+          'ENTRY_DESCRIPTION' => $entry_object->get_description($entries_locale_default->get_name()),
           'ENTRY_URL' => $entry_object->get_url(),
           'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
           'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp

@@ -45,7 +45,6 @@ namespace core\PHPLibrary\Page {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
-      $this->system_core->template->add_style(['href' => 'styles/pagination.css', 'rel' => 'stylesheet']);
 
       $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
       $url_base_locale_setted_name = $this->system_core->urlp->get_param('locale');

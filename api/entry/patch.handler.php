@@ -78,9 +78,7 @@ if ($system_core->client->is_logged(2)) {
         }
       }
     }
-  }
-
-  if ($system_core->urlp->get_path(2) == null) {
+  } else {
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       if (isset($_PATCH['entry_id'])) {
         $entry_id = (is_numeric($_PATCH['entry_id'])) ? (int)$_PATCH['entry_id'] : 0;
@@ -127,31 +125,68 @@ if ($system_core->client->is_logged(2)) {
             }
           }
 
-          $entry_is_updated = $entry->update($entry_data);
+          $entry_is_published = isset($entry_data['metadata']['is_published']) ? $entry_data['metadata']['is_published'] : 0;
+
+          // Если происходит публикация записи, то необходимо удостовериться, что
+          // в записи присутствует стандартная локализация, в противном случае
+          // система не даст сохранить ее.
+          if ($entry_is_published) {
+            /** @var \core\PHPLibrary\SystemCore\Locale */
+            $base_locale = $system_core->get_cms_locale();
+            /** @var string */
+            $base_locale_name = $base_locale->get_name();
+
+            $entry->init_data(['texts']);
+
+            /** @var string Заголовок записи */
+            $entry_title_default = $entry->get_title($base_locale_name);
+            /** @var string описание записи */
+            $entry_description_default = $entry->get_description($base_locale_name);
+            /** @var string содержимое записи */
+            $entry_content_default = $entry->get_content($base_locale_name);
+
+            // Если заголовок, описание или содержимое стандартной локализации не задано, то
+            // запись не будет обновлена.
+            if (empty($entry_title_default) || empty($entry_description_default) || empty($entry_content_default)) {
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', sprintf($system_core->locale->get_single_value_by_key('API_ENTRY_EMPTY_LOCALE_DEFAULT_PUBLISHED_ERROR'), $base_locale_name)) : $handler_message;
+              $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+            } else {
+              /** @var bool Обновление записи */
+              $entry_is_updated = $entry->update($entry_data);
+            }
+          } else {
+            /** @var bool Обновление записи */
+            $entry_is_updated = $entry->update($entry_data);
+          }
+
+          /** @var bool Костыль */
+          $entry_is_updated = isset($entry_is_updated) ? $entry_is_updated : false;
 
           if ($entry_is_updated) {
+            // Инициализация данных с текстом записи
             $entry->init_data(['texts']);
-      
+            
+            /** @var \core\PHPLibrary\SystemCore\Report Новый отчет */
             $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_ENTRY_EDITED, [
               'clientIP' => $system_core->client->get_ip_address(),
               'entryTitle' => $entry->get_title(),
               'date' => date('Y/m/d H:i:s', time())
             ]);
 
-            $handler_message = $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS');
-            $handler_status_code = 1;
+            $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
+            $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
           } else {
-            $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN'));
-            $handler_status_code = 0;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_UNKNOWN')) : $handler_message;
+            $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
         } else {
-          $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND'));
-          $handler_status_code = 0;
+          $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ENTRY_ERROR_NOT_FOUND')) : $handler_message;
+          $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         }
       }
     } else {
-      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS'));
-      $handler_status_code = 0;
+      $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS')) : $handler_message;
+      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
     }
   }
 } else {

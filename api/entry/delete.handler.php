@@ -42,9 +42,7 @@ if ($system_core->client->is_logged(2)) {
       $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_DONT_HAVE_PERMISSIONS'));
       $handler_status_code = 0;
     }
-  }
-
-  if ($system_core->urlp->get_path(2) == null) {
+  } else {
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       if (isset($_DELETE['entry_id'])) {
         $entry_id = (is_numeric($_DELETE['entry_id'])) ? (int)$_DELETE['entry_id'] : 0;

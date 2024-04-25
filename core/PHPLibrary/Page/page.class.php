@@ -93,7 +93,8 @@ namespace core\PHPLibrary\Page {
             'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/static.tpl', [
               'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
               'PAGE_TITLE' => $page_static_title,
-              'PAGE_CONTENT' => $parsedown->text($page_static_content)
+              'PAGE_CONTENT' => $parsedown->text($page_static_content),
+              'PAGE_PREVIEW_URL' => ($page_static->get_preview_url() != '') ? $page_static->get_preview_url() : PageStatic::get_preview_default_url($this->system_core, 1024),
             ])
           ]);
         } else {

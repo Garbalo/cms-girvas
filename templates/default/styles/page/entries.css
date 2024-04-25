@@ -24,12 +24,12 @@
   background-size: cover;
   background-position: center center;
   position: relative;
-  flex: 0 0 calc(50% - (24px / 2));
+  height: 217px;
 }
 
 @media (min-width: 1200px) {
   .page__entries-list .entries-list__item {
-    flex: 0 0 calc(50% - (24px / 2));
+    flex: 0 0 calc((100% / 2) - 25px);
   }
 }
 

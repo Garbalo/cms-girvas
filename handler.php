@@ -132,7 +132,7 @@ if (defined('IS_NOT_HACKED')) {
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'ew-status') {
     $ew_status = ($system_core->configurator->exists_database_entry_value('base_engineering_works_status')) ? $system_core->configurator->get_database_entry_value('base_engineering_works_status') : 'off';
-    $handler_output_data['status'] = ($ew_status == 'on') ? true : false;
+    $handler_output_data['status'] = ($ew_status == 'on') ? 'on' : 'off';
   }
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET' && $system_core->urlp->get_path(1) == 'timezone') {
