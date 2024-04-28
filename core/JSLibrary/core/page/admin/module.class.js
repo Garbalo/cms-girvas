@@ -143,25 +143,18 @@ export class PageModule {
         });
         buttons.delete.assembly();
     
-        if (moduleInstalledStatus == 'installed') {
-          if (moduleEnabledStatus == 'enabled') {
-            buttons.enable.target.element.style.display = 'none';
-            buttons.disable.target.element.style.display = 'flex';
-          }
-    
-          if (moduleEnabledStatus == 'disabled') {
-            buttons.enable.target.element.style.display = 'flex';
-            buttons.disable.target.element.style.display = 'none';
-          }
-    
-          buttons.install.target.element.style.display = 'none';
-          buttons.delete.target.element.style.display = 'flex';
-        } else {
-          buttons.install.target.element.style.display = 'flex';
-          buttons.delete.target.element.style.display = 'none';
+        if (moduleEnabledStatus == 'enabled') {
           buttons.enable.target.element.style.display = 'none';
+          buttons.disable.target.element.style.display = 'flex';
+        }
+  
+        if (moduleEnabledStatus == 'disabled') {
+          buttons.enable.target.element.style.display = 'flex';
           buttons.disable.target.element.style.display = 'none';
         }
+  
+        buttons.install.target.element.style.display = 'none';
+        buttons.delete.target.element.style.display = 'flex';
     
         interactiveContainerElement.append(buttons.enable.target.element);
         interactiveContainerElement.append(buttons.disable.target.element);

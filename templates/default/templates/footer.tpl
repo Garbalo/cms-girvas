@@ -5,52 +5,49 @@
         <ul class="footer__nav-list">
           <li class="footer__nav-item">
             <a class="footer__nav-link" href="/entries/news">
-              <span class="footer__nav-span">Новости</span>
+              <span class="footer__nav-span">{LANG:DEFAULT_TEXT_NEWS}</span>
             </a>
           </li>
           <li class="footer__nav-item">
             <a class="footer__nav-link" href="/entries/articles">
-              <span class="footer__nav-span">Статьи</span>
+              <span class="footer__nav-span">{LANG:DEFAULT_TEXT_ARTICLES}</span>
             </a>
           </li>
           <li class="footer__nav-item">
             <a class="footer__nav-link" href="/page/reviews">
-              <span class="footer__nav-span">Отзывы</span>
+              <span class="footer__nav-span">{LANG:DEFAULT_TEXT_REVIEWS}</span>
             </a>
           </li>
           <li class="footer__nav-item">
             <a class="footer__nav-link" href="/page/about">
-              <span class="footer__nav-span">О нас</span>
+              <span class="footer__nav-span">{LANG:DEFAULT_TEXT_ABOUT}</span>
             </a>
           </li>
         </ul>
       </nav>
       <div class="footer__text-block">
-          <p class="footer__text">
-              CMS &laquo;GIRVAS&raquo;&nbsp;&mdash; многопрофильная бесплатная система управления содержимым
-              с&nbsp;открытым исходным кодом от&nbsp;карельских разработчиков &laquo;Garbalo&raquo;.
-          </p>
+          <p class="footer__text">{LANG:DEFAULT_FOOTER_CMS_DESCRIPTION}</p>
       </div>
     </div>
     <div class="footer-top__right">
       <a class="footer-top__logo-link display-block" href="/" title="CMS GIRVAS">
         <picture>
-          <img src="{SITE_TEMPLATE_URL}/images/footer-logo.png" alt="Логотип CMS GIRVAS">
+          <img src="{SITE_TEMPLATE_URL}/images/footer-logo.png" alt="CMS GIRVAS">
         </picture>
       </a>
     </div>
   </div>
   <div class="footer__bottom flex">
-    <div class="footer__bottom-left-block">© www.example.ru. 2023. Powered by CMS «GIRVAS».</div>
+    <div class="footer__bottom-left-block">© <a href="{CMS_DEVELOPER_SITE_LINK}" target="_blank">{CMS_DEVELOPER_TITLE}</a>. 2023. {CMS_COPYRIGHT}.</div>
     <ul class="information-list footer__bottom-information-list flex">
       <li class="information-list__item">
-        <a class="information-list__link" href="#">Лицензионное соглашение</a>
+        <a class="information-list__link" href="#">{LANG:DEFAULT_FOOTER_META_LINK_LICENSE_AGREEMENT}</a>
       </li>
       <li class="information-list__item">
-        <a class="information-list__link" href="#">Пользовательское соглашение</a>
+        <a class="information-list__link" href="#">{LANG:DEFAULT_FOOTER_META_LINK_TERMS_OF_USE}</a>
       </li>
       <li class="information-list__item">
-        <a class="information-list__link" href="#">О Cookie</a>
+        <a class="information-list__link" href="#">{LANG:DEFAULT_FOOTER_META_LINK_COOKIE_ABOUT}</a>
       </li>
     </ul>
   </div>

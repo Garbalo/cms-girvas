@@ -41,7 +41,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.65 Pre-alpha';
+    public const CMS_VERSION = '0.0.66 Pre-alpha';
 
     /** 
      * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
@@ -124,6 +124,15 @@ namespace core\PHPLibrary {
       }
 
       return new SystemCoreLocale($this, $locale_name, $locale_type);
+    }
+
+    /**
+     * Получить домен из конфигурации
+     * 
+     * @return string
+     */
+    public function get_cms_domain() : string {
+      return (!is_null($this->configurator->get('domain'))) ? $this->configurator->get('domain') : 'www.garbalo.com';
     }
 
     /**

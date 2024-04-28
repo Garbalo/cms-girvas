@@ -16,6 +16,7 @@
 .page__entries-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 25px;
 }
 
@@ -29,7 +30,7 @@
 
 @media (min-width: 1200px) {
   .page__entries-list .entries-list__item {
-    flex: 0 0 calc((100% / 2) - 25px);
+    flex: 0 0 calc(50% - 13px);
   }
 }
 
@@ -40,9 +41,8 @@
 }
 
 @media (min-width: 1200px) {
-  .page__entries-list .entries-list__item:not(:nth-child(2n)),
+  .page__entries-list .entries-list__item:not(:nth-last-child(2)),
   .page__entries-list .entries-list__item:not(:last-child) {
-    margin-right: 24px;
     margin-bottom: 24px;
   }
 }

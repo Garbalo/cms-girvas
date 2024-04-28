@@ -65,7 +65,7 @@ namespace core\PHPLibrary\Page {
           http_response_code(200);
 
           $entry = Entry::get_by_name($this->system_core, $entry_name);
-          $entry->init_data(['id', 'category_id', 'texts', 'name', 'metadata']);
+          $entry->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
           $entry_category = $entry->get_category();
           $entry_category_title = $entry_category->get_title($cms_base_locale_name);
 
@@ -105,7 +105,7 @@ namespace core\PHPLibrary\Page {
           $entry_comments_transformed_array = [];
           $entry_comment_index = 1;
           foreach ($entry_comments_array as $entry_comment) {
-            $entry_comment->init_data(['entry_id', 'author_id', 'content', 'metadata']);
+            $entry_comment->init_data(['entry_id', 'author_id', 'content', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
             $entry_comment_author = $entry_comment->get_author();
             $entry_comment_author->init_data(['login']);
             array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
@@ -140,6 +140,14 @@ namespace core\PHPLibrary\Page {
            */
           $entry_content = (!empty($entry->get_content($cms_base_locale_name))) ? $entry->get_content($cms_base_locale_name) : $entry->get_content($cms_base_locale_setted_name);
 
+          $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry->get_created_unix_timestamp());
+          $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry->get_published_unix_timestamp());
+          $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry->get_updated_unix_timestamp());
+
+          $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_created_unix_timestamp());
+          $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_published_unix_timestamp());
+          $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_updated_unix_timestamp());
+
           /**
            * @property string Собранный шаблон в виде строки
            */
@@ -151,7 +159,15 @@ namespace core\PHPLibrary\Page {
               'ENTRY_TITLE' => $entry_title,
               'ENTRY_CONTENT' => $parsedown->text($entry_content),
               'ENTRY_PREVIEW_URL' => ($entry->get_preview_url() != '') ? $entry->get_preview_url() : Entry::get_preview_default_url($this->system_core, 1024),
-              'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL']
+              'ENTRY_CATEGORY_TITLE' => $entry_category_title,
+              'ENTRY_CATEGORY_URL' => $entry_category->get_url(),
+              'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL'],
+              'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
+              'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
+              'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+              'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
+              'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
+              'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
             ])
           ]);
         } else {

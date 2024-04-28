@@ -14,9 +14,9 @@
             </clipPath>
           </defs>
         </svg>
-        <time class="metadata__value" datetime="2023-10-31">31.10.2023</time>
+        <time class="metadata__value" datetime="{ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601}">{ENTRY_CREATED_DATE_TIMESTAMP}</time>
       </div>
-      <a class="article__group-link" href="#">Новости</a>
+      <a class="article__group-link" href="{ENTRY_CATEGORY_URL}">{ENTRY_CATEGORY_TITLE}</a>
     </div>
   </div>
   <div class="article__content">
@@ -24,7 +24,7 @@
   </div>
   <div class="article__comments comments">
     <div class="comments__header">
-      <h3 class="comments__title">Комментарии</h3>
+      <h3 class="comments__title">{LANG:DEFAULT_TEXT_COMMENTS}</h3>
     </div>
     <div role="entry-comment-form-container"></div>
     <div role="entry-comments-container">

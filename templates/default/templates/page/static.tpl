@@ -14,7 +14,7 @@
             </clipPath>
           </defs>
         </svg>
-        <time class="metadata__value" datetime="2023-10-31">31.10.2023</time>
+        <time class="metadata__value" datetime="{PAGE_CREATED_DATE_TIMESTAMP_ISO_8601}">{PAGE_CREATED_DATE_TIMESTAMP}</time>
       </div>
     </div>
   </div>

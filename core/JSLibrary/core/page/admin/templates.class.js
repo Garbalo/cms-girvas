@@ -44,7 +44,10 @@ export class PageTemplates {
         let itemFooterContainer = listItem.querySelector('[role="item-footer-panel"]');
 
         buttons.more.target.setCallback((event) => {
-          window.location.href = (searchParams.getPathPart(3) == null) ? `./template/${templateName}` : `../template/${templateName}`;
+          switch (searchParams.getPathPart(3)) {
+            case 'repository': window.location.href = `/admin/templates/repository/${templateName}`; break;
+            default: window.location.href = `/admin/template/${templateName}`;
+          }
         });
 
         buttons.delete.target.setCallback((event) => {

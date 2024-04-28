@@ -146,6 +146,11 @@
   --admin-panel-main-page-templates-list-item-border-color: var(--common-main-color-2);
   --admin-panel-main-page-templates-list-item-preview-button-background-color: var(--common-main-color-1--opacity-0-8);
   --admin-panel-main-page-templates-list-item-preview-button-icon-color: var(--common-main-color-4);
+  --admin-panel-main-page-module-gallery-controller-background-color: var(--common-main-color-2--opacity-0-8);
+  --admin-panel-main-page-module-gallery-controller-background-color--hover: var(--common-main-color-2);
+  --admin-panel-main-page-module-gallery-controller-background-color--focus: var(--common-main-color-2);
+  --admin-panel-main-page-module-gallery-controller-background-color--active: var(--common-main-color-2--opacity-0-8);
+  --admin-panel-main-page-module-gallery-controller-icon-color: var(--common-main-color-4);
   --admin-panel-main-page-modules-list-item--preview-background-color: var(--common-main-color-3);
   --admin-panel-main-page-modules-list-item-border-color: var(--common-main-color-2);
   --admin-panel-main-page-modules-list-item-preview-button-background-color: var(--common-main-color-1--opacity-0-8);

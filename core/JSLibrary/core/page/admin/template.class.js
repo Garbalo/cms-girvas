@@ -18,6 +18,13 @@ export class PageTemplate {
 
   init() {
     let searchParams = new URLParser(), locales;
+    let buttons = {install: null, download: null, delete: null};
+
+    let templateBlock = document.querySelector('.template');
+    let templateName = templateBlock.getAttribute('data-template-name');
+    let templateDownloadedStatus = templateBlock.getAttribute('data-template-dowloaded-status');
+    let templateInstalledStatus = templateBlock.getAttribute('data-template-installed-status');
+    let interactiveContainerElement = document.querySelector('#E8548530785');
     
     fetch('/handler/locales', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
@@ -25,7 +32,103 @@ export class PageTemplate {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
-      //
+      if (searchParams.getPathPart(2) != null) {
+        buttons.install = new Interactive('button');
+        buttons.install.target.setLabel(localeData.BUTTON_INSTALL_LABEL);
+        buttons.install.target.setCallback(() => {
+          let formData = new FormData();
+          formData.append('setting_base_template', templateName);
+
+          fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: 'POST',
+            body: formData
+          }).then((response) => {
+            return response.json();
+          }).then((data) => {
+            if (data.statusCode == 1) {
+              buttons.install.target.element.style.display = 'none';
+              buttons.delete.target.element.style.display = 'none';
+              buttons.download.target.element.style.display = 'none';
+
+              templateBlock.setAttribute('data-template-installed-status', 'installed');
+            }
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        });
+
+        buttons.delete = new Interactive('button');
+        buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
+        buttons.delete.target.setCallback(() => {
+          let formData = new FormData();
+          formData.append('template_name', templateName);
+          formData.append('template_category', 'default');
+
+          fetch('/handler/template?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: 'DELETE',
+            body: formData
+          }).then((response) => {
+            return response.json();
+          }).then((data) => {
+            if (data.statusCode == 1) {
+              buttons.download.target.element.style.display = 'flex';
+              buttons.delete.target.element.style.display = 'none';
+              buttons.install.target.element.style.display = 'none';
+
+              templateBlock.setAttribute('data-template-installed-status', 'not-installed');
+              templateBlock.setAttribute('data-template-dowloaded-status', 'not-dowloaded');
+            }
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        });
+
+        buttons.download = new Interactive('button');
+        buttons.download.target.setLabel(localeData.BUTTON_DOWNLOAD_LABEL);
+        buttons.download.target.setCallback(() => {
+          let formData = new FormData();
+          formData.append('template_name', templateName);
+
+          fetch('/handler/template?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: 'POST',
+            body: formData
+          }).then((response) => {
+            return response.json();
+          }).then((data) => {
+            if (data.statusCode == 1) {
+              buttons.download.target.element.style.display = 'none';
+              buttons.delete.target.element.style.display = 'flex';
+              buttons.install.target.element.style.display = 'flex';
+
+              templateBlock.setAttribute('data-template-installed-status', 'not-installed');
+              templateBlock.setAttribute('data-template-dowloaded-status', 'dowloaded');
+            }
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        });
+
+        buttons.delete.assembly();
+        buttons.install.assembly();
+        buttons.download.assembly();
+    
+        if (templateInstalledStatus == 'installed') {
+          buttons.download.target.element.style.display = 'none';
+          buttons.delete.target.element.style.display = 'none';
+          buttons.install.target.element.style.display = 'none';
+        } else {
+          buttons.download.target.element.style.display = (templateDownloadedStatus == 'downloaded') ? 'none' : 'flex';
+          buttons.delete.target.element.style.display = (templateDownloadedStatus == 'downloaded') ? 'flex' : 'none';
+          buttons.install.target.element.style.display = (templateDownloadedStatus == 'downloaded') ? 'flex' : 'none';
+        }
+    
+        interactiveContainerElement.append(buttons.download.target.element);
+        interactiveContainerElement.append(buttons.install.target.element);
+        interactiveContainerElement.append(buttons.delete.target.element);
+      }
     });
   }
 }

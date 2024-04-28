@@ -2,6 +2,7 @@
   <td class="table__cell" rowspan="2" style="width: fit-content;">#{PAGE_STATIC_INDEX}</td>
   <td class="table__cell">{PAGE_STATIC_TITLE}</td>
   <td class="table__cell" rowspan="2">{PAGE_STATIC_CREATED_DATE_TIMESTAMP}</td>
+  <td class="table__cell" rowspan="2">{PAGE_STATIC_PUBLISHED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">{PAGE_STATIC_UPDATED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">
     <ul class="table-pages-static__item-buttons-list buttons-list list-reset">

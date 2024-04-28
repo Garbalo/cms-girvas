@@ -2,9 +2,10 @@
   {PAGE_NAVIGATION}
   <div class="page__title-container">
     <h1 class="page__title">{LANG:PAGE_TEMPLATE_TITLE}: {TEMPLATE_TITLE}</h1>
+    <div id="E8548530785" class="page__interactive-container"></div>
   </div>
   <div class="page__content">
-    <div class="template">
+    <div class="template" data-template-name="{TEMPLATE_NAME}" data-template-dowloaded-status="{TEMPLATE_DOWNLOADED_STATUS}" data-template-installed-status="{TEMPLATE_INSTALLED_STATUS}">
       <div class="template__left-block">
         <div class="template__gallary-container">
           <div class="gallery__controllers-list">

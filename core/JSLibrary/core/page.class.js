@@ -31,10 +31,13 @@ import {PageWebChannel as PageAdminWebChannel} from './page/admin/webChannel.cla
 import {PageWebChannels as PageAdminWebChannels} from './page/admin/webChannels.class.js';
 import {PageGlobal as PageAdminGlobal} from './page/admin/global.class.js';
 import {PageGlobal as PageDefaultGlobal} from './page/global.class.js';
+import {URLParser} from "../urlParser.class.js";
 
 export class Page {
   constructor(pageCategory, pageName, params = {}) {
     this.target = null;
+
+    let searchParams = new URLParser();
 
     if (pageCategory == 'default') {
       switch (pageName) {
@@ -58,7 +61,7 @@ export class Page {
         case 'modules': this.target = new PageAdminModules(params); break;
         case 'settings': this.target = new PageAdminSettings(params); break;
         case 'template': this.target = new PageAdminTemplate(params); break;
-        case 'templates': this.target = new PageAdminTemplates(params); break;
+        case 'templates': this.target = (searchParams.getPathPart(4) != null) ? new PageAdminTemplate(params) : new PageAdminTemplates(params); break;
         case 'user': this.target = new PageAdminUser(params); break;
         case 'users': this.target = new PageAdminUsers(params); break;
         case 'usersGroup': this.target = new PageAdminUsersGroup(params); break;

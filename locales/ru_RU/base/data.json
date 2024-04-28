@@ -1,4 +1,12 @@
 {
+  "DEFAULT_TEXT_COMMENTS": "Комментарии",
+  "DEFAULT_TEXT_MAIN": "Главная",
+  "DEFAULT_TEXT_ENTRIES": "Записи",
+  "DEFAULT_TEXT_NEWS": "Новости",
+  "DEFAULT_TEXT_ARTICLES": "Статьи",
+  "DEFAULT_TEXT_REVIEWS": "Отзывы",
+  "DEFAULT_TEXT_ABOUT": "О нас",
+  "DEFAULT_TEXT_PROFILE": "Профиль",
   "BUTTON_SEND_LABEL": "Отправить",
   "BUTTON_LOAD_MORE_COMMENTS_LABEL": "Загрузить еще комментарии",
   "BUTTON_LOAD_ANSWERS_COMMENTS_LABEL": "Загрузить ответы",

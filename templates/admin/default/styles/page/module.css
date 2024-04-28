@@ -22,12 +22,69 @@
   padding-left: 10px;
 }
 .page.page_module .module__gallary-container {
+  background-image: url('../../images/pages/module/screenshots-not-found.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
   position: relative;
   display: flex;
   overflow: hidden;
   margin-bottom: 20px;
   width: 100%;
   height: fit-content;
+  min-height: 250px;
+}
+.page.page_module .module__gallary-container:hover .gallery__controllers-list {
+  opacity: 1;
+}
+.page.page_module .gallery__controllers-list {
+  box-sizing: border-box;
+  position: absolute;
+  display: flex;
+  align-self: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  width: 100%;
+  height: 48px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.page.page_module .module__gallary-container .gallery__controller {
+  box-sizing: border-box;
+  background-color: var(--admin-panel-main-page-module-gallery-controller-background-color);
+  border: 0;
+  border-radius: 48px;
+  padding: 12px;
+  width: 48px;
+  height: 48px;
+  transition: background-color .2s;
+  cursor: pointer;
+}
+.page.page_module .module__gallary-container .gallery__controller:hover {
+  background-color: var(--admin-panel-main-page-module-gallery-controller-background-color--hover);
+}
+.page.page_module .module__gallary-container .gallery__controller:focus {
+  background-color: var(--admin-panel-main-page-module-gallery-controller-background-color--focus);
+}
+.page.page_module .module__gallary-container .gallery__controller:active {
+  background-color: var(--admin-panel-main-page-module-gallery-controller-background-color--active);
+}
+.page.page_module .module__gallary-container .gallery__controller-icon {
+  fill: var(--admin-panel-main-page-module-gallery-controller-icon-color);
+  width: 100%;
+}
+.page.page_module .gallery__list {
+  display: flex;
+  font-size: 0;
+  width: 100%;
+}
+.page.page_module .gallery__item {
+  height: fit-content;
+  flex: 0 0 100%;
+  transition: margin-left .2s;
+}
+.page.page_module .gallery__item-image {
+  width: 100%;
 }
 .page.page_module .module__metadata-label,
 .page.page_module .module__description-label {

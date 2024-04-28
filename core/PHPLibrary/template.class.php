@@ -337,7 +337,13 @@ namespace core\PHPLibrary {
           'SITE_DESCRIPTION' => $site_description,
           'SITE_KEYWORDS' => $site_keywords,
           'SITE_CHARSET' => $site_charset,
-          'CMS_VERSION' => $this->system_core->get_cms_version()
+          'CMS_VERSION' => $this->system_core->get_cms_version(),
+          'CMS_TITLE' => $this->system_core->get_cms_title(),
+          'CMS_DOMAIN' => $this->system_core->get_cms_domain(),
+          'CMS_PRODUCT_SITE_LINK' => 'https://www.cms-girvas.ru',
+          'CMS_DEVELOPER_SITE_LINK' => 'https://www.garbalo.com',
+          'CMS_DEVELOPER_TITLE' => 'Garbalo (ИП Шестаков А.Р.)',
+          'CMS_COPYRIGHT' => 'Powered by CMS «GIRVAS»'
         ];
         
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);

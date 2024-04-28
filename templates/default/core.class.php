@@ -1,10 +1,12 @@
 <?php
 
 namespace templates\default {
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
 
   final class Core implements \core\PHPLibrary\Template\InterfaceCore {
     private \core\PHPLibrary\Template $template;
+    private SystemCoreLocale $locale;
     public string $assembled;
     
     /**
@@ -92,6 +94,8 @@ namespace templates\default {
       $this->template->add_style(['href' => 'styles/colors.css', 'rel' => 'stylesheet']);
       $this->template->add_style(['href' => 'styles/common.css', 'rel' => 'stylesheet']);
 
+      $locale_data = $this->template->locale->get_data();
+
       if ($this->template->system_core->configurator->get_database_entry_value('base_engineering_works_status') == 'off') {
         $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
         $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
@@ -103,12 +107,14 @@ namespace templates\default {
         $this->template->add_script(['src' => 'common.js'], true);
         $this->template->add_script(['src' => 'core.class.js', 'type' => 'module'], true);
 
-        $profile_link = ($this->template->system_core->client->is_logged(1)) ? '<a class="header__nav-link display-block" href="/profile"><span class="header__nav-span">Профиль</span></a>' : '<a id="SYSTEM_GE_IMC_00000001" class="header__nav-link display-block" href="#"><span class="header__nav-span">Войти</span></a>';
+        $profile_link = ($this->template->system_core->client->is_logged(1)) ? sprintf('<a class="header__nav-link display-block" href="/profile"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_PROFILE']) : sprintf('<a id="SYSTEM_GE_IMC_00000001" class="header__nav-link display-block" href="#"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_LOGIN']);
+        $registration_link = (!$this->template->system_core->client->is_logged(1)) ? sprintf('<a class="header__nav-link display-block" href="/registration"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_REGISTRATION']) : '';
 
         /** @var string $this->assembled Итоговый шаблон в виде строки */
         $this->assembled = TemplateCollector::assembly($this->assembly_document(), [
           'SITE_HEADER' => $this->assembly_header([
-            'NAVIGATION_PROFILE_LINK' => $profile_link
+            'NAVIGATION_PROFILE_LINK' => $profile_link,
+            'NAVIGATION_REGISTRATION_LINK' => $registration_link
           ]),
           'SITE_MAIN' => $this->assembly_main(),
           'SITE_FOOTER' => $this->assembly_footer()

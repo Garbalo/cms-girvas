@@ -1,0 +1,11 @@
+.form.form_registration {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+}
+.form.form_registration > *:not(:last-child) {
+  margin-bottom: 24px;
+}
+.form.form_registration .form__input_submit {
+  width: fit-content;
+}

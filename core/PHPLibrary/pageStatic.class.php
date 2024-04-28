@@ -187,6 +187,17 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    public function get_published_unix_timestamp() : int {
+      if (property_exists($this, 'metadata')) {
+        $metadata_array = json_decode($this->metadata, true);
+        if (isset($metadata_array['publishedUnixTimestamp'])) {
+          return $metadata_array['publishedUnixTimestamp'];
+        }
+      }
+
+      return 0;
+    }
+
     public static function get_preview_default_url(SystemCore $system_core, int $size) : string {
       return sprintf('/%s/images/pageStatic/default_%d.png', $system_core->template->get_url(), $size);
     }
@@ -415,15 +426,23 @@ namespace core\PHPLibrary {
       }
 
       if (array_key_exists('texts', $data)) {
-        foreach ($data['texts'] as $lang_name => $data_texts) {
-          $query_builder->statement->clause_set->add_column('texts', sprintf('jsonb_set(texts::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        $json_fields = [];
+
+        foreach ($data['texts'] as $metadata_name => $metadata_value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
+
+        $query_builder->statement->clause_set->add_column('texts', 'texts::jsonb || ' . implode(' || ', $json_fields));
       }
 
       if (array_key_exists('metadata', $data)) {
-        foreach ($data['metadata'] as $lang_name => $data_metadata) {
-          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $lang_name, json_encode($data_metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        $json_fields = [];
+
+        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
+
+        $query_builder->statement->clause_set->add_column('metadata', 'metadata::jsonb || ' . implode(' || ', $json_fields));
       }
 
       $query_builder->statement->clause_set->add_column('updated_unix_timestamp');

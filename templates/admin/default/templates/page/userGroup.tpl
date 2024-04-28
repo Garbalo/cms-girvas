@@ -122,7 +122,7 @@
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
               <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308980" name="user_group_permissions[]" type="checkbox" value="moder_entries_comments_management" {USER_GROUP_PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT_VALUE}>
-              <label class="checkbox-container__label form__label" for="I1474308981"></label>
+              <label class="checkbox-container__label form__label" for="I1474308980"></label>
             </div>
           </td>
         </tr>
@@ -151,8 +151,8 @@
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_ENTRIES_CATEGORIES_EDITING_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
-              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308980" name="user_group_permissions[]" type="checkbox" value="editor_entries_categories_edit" {USER_GROUP_PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT_VALUE}>
-              <label class="checkbox-container__label form__label" for="I1474308980"></label>
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308983" name="user_group_permissions[]" type="checkbox" value="editor_entries_categories_edit" {USER_GROUP_PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308983"></label>
             </div>
           </td>
         </tr>
@@ -169,8 +169,8 @@
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_MANAGE_MEDIA_FILES_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
-              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308979" name="user_group_permissions[]" type="checkbox" value="editor_media_files_management" {USER_GROUP_PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT_VALUE}>
-              <label class="checkbox-container__label form__label" for="I1474308979"></label>
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308985" name="user_group_permissions[]" type="checkbox" value="editor_media_files_management" {USER_GROUP_PERMISSION_EDITOR_MEDIA_FILES_MANAGEMENT_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308985"></label>
             </div>
           </td>
         </tr>

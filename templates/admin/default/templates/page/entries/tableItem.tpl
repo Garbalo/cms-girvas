@@ -2,6 +2,7 @@
   <td class="table__cell" rowspan="2" style="width: fit-content;">#{ENTRY_INDEX}</td>
   <td class="table__cell">{ENTRY_TITLE}</td>
   <td class="table__cell" rowspan="2">{ENTRY_CREATED_DATE_TIMESTAMP}</td>
+  <td class="table__cell" rowspan="2">{ENTRY_PUBLISHED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">{ENTRY_UPDATED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">
     <ul class="table-entries__item-buttons-list buttons-list list-reset">

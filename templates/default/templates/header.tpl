@@ -14,21 +14,24 @@
       <ul class="header__nav-list">
         <li class="header__nav-item">
           <a class="header__nav-link display-block" href="/">
-            <span class="header__nav-span">Главная</span>
+            <span class="header__nav-span">{LANG:DEFAULT_TEXT_MAIN}</span>
           </a>
         </li>
         <li class="header__nav-item">
           <a class="header__nav-link display-block" href="/entries">
-            <span class="header__nav-span">Записи</span>
+            <span class="header__nav-span">{LANG:DEFAULT_TEXT_ENTRIES}</span>
           </a>
         </li>
         <li class="header__nav-item">
           <a class="header__nav-link display-block" href="/page/about">
-            <span class="header__nav-span">О нас</span>
+            <span class="header__nav-span">{LANG:DEFAULT_TEXT_ABOUT}</span>
           </a>
         </li>
         <li class="header__nav-item">
           {NAVIGATION_PROFILE_LINK}
+        </li>
+        <li class="header__nav-item">
+          {NAVIGATION_REGISTRATION_LINK}
         </li>
       </ul>
     </nav>

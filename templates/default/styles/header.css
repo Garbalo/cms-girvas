@@ -98,8 +98,8 @@
     transition: var(--transistion);
 }
 
-.header__nav-item:last-child {
-  margin-left: auto;
+.header__nav-item:nth-child(3) {
+  margin-right: auto;
 }
 
 .header__nav-link {

@@ -58,6 +58,8 @@ namespace core\PHPLibrary\Page\Admin {
 
       $pages_static_table_items_assembled_array = [];
       $pages_static = new Pages($this->system_core);
+      $pages_static_locale_default = $this->system_core->get_cms_locale('base');
+
       $pages_static_array_objects = $pages_static->get_all([
         'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
       ]);
@@ -69,18 +71,23 @@ namespace core\PHPLibrary\Page\Admin {
 
       $page_static_number = 1;
       foreach ($pages_static_array_objects as $page_static_object) {
-        $page_static_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp']);
+        $page_static_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
 
         $page_static_created_date_timestamp = date('d.m.Y H:i:s', $page_static_object->get_created_unix_timestamp());
+        $page_static_published_date_timestamp = date('d.m.Y H:i:s', $page_static_object->get_published_unix_timestamp());
         $page_static_updated_date_timestamp = date('d.m.Y H:i:s', $page_static_object->get_updated_unix_timestamp());
+
+        $page_static_title = $page_static_object->get_title($pages_static_locale_default->get_name());
+        $page_static_description = $page_static_object->get_description($pages_static_locale_default->get_name());
 
         array_push($pages_static_table_items_assembled_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages/tableItem.tpl', [
           'PAGE_STATIC_ID' => $page_static_object->get_id(),
           'PAGE_STATIC_INDEX' => $page_static_number,
-          'PAGE_STATIC_TITLE' => $page_static_object->get_title(),
-          'PAGE_STATIC_DESCRIPTION' => $page_static_object->get_description(),
+          'PAGE_STATIC_TITLE' => (!empty($page_static_title)) ? $page_static_title : sprintf('[ TITLE NOT FOUND IN LOCALE %s ]', $pages_static_locale_default->get_name()),
+          'PAGE_STATIC_DESCRIPTION' => (!empty($page_static_description)) ? $page_static_description : sprintf('[ DESCRIPTION NOT FOUND IN LOCALE %s ]', $pages_static_locale_default->get_name()),
           'PAGE_STATIC_URL' => $page_static_object->get_url(),
           'PAGE_STATIC_CREATED_DATE_TIMESTAMP' => $page_static_created_date_timestamp,
+          'PAGE_STATIC_PUBLISHED_DATE_TIMESTAMP' => ($page_static_object->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp : '-',
           'PAGE_STATIC_UPDATED_DATE_TIMESTAMP' => $page_static_updated_date_timestamp
         ]));
 

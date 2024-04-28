@@ -22,12 +22,17 @@
   padding-left: 10px;
 }
 .page.page_template .template__gallary-container {
+  background-image: url('../../images/pages/template/screenshots-not-found.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
   position: relative;
   display: flex;
   overflow: hidden;
   margin-bottom: 20px;
   width: 100%;
   height: fit-content;
+  min-height: 250px;
 }
 .page.page_template .template__gallary-container:hover .gallery__controllers-list {
   opacity: 1;
@@ -71,6 +76,7 @@
 .page.page_template .gallery__list {
   display: flex;
   font-size: 0;
+  width: 100%;
 }
 .page.page_template .gallery__item {
   height: fit-content;

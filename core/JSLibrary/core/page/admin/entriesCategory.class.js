@@ -30,6 +30,8 @@ export class PageEntriesCategory {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      let descriptionTextareaElement = document.querySelector('[role="entriesCategoryDescription"]');
+      let titleInputElement = document.querySelector('[role="entriesCategoryTitle"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -55,8 +57,23 @@ export class PageEntriesCategory {
         if (locale.name === window.CMSCore.locales.admin.name) {
           interactiveLocaleChoices.target.setItemSelectedIndex(localeIndex);
         }
-      });
 
+        if (locale.name === window.CMSCore.locales.admin.name) {
+          descriptionTextareaElement.setAttribute('name', 'entries_category_description_' + locale.iso639_2);
+          titleInputElement.setAttribute('name', 'entries_category_title_' + locale.iso639_2);
+
+          if (searchParams.getPathPart(3) != null) {
+            fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
+              method: 'GET'
+            }).then((response) => {
+              return (response.ok) ? response.json() : Promise.reject(response);
+            }).then((data1) => {
+              descriptionTextareaElement.value = data1.outputData.entriesCategory.description;
+              titleInputElement.value = data1.outputData.entriesCategory.title;
+            });
+          }
+        }
+      });
       interactiveLocaleChoices.assembly();
 
       let interactiveContainerElement = document.querySelector('#E8548530785');

@@ -51,6 +51,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       $module_name = ($this->system_core->urlp->get_path(2) == 'repository') ? $this->system_core->urlp->get_path(3) : $this->system_core->urlp->get_path(2);
       $module = new Module($this->system_core, $module_name);
+      $module_screenshots_list_items = [];
 
       $module_exists = false;
       if ($this->system_core->urlp->get_path(2) == 'repository') {
@@ -72,6 +73,14 @@ namespace core\PHPLibrary\Page\Admin {
           $module_title = $module_metadata['title'];
           $module_description = file_get_contents($module_data['readme_url']);
           $module_description = $parsedown->text($module_description);
+
+          if (count($module_data['previews']) > 0) {
+            foreach ($module_data['previews'] as $screenshot_url) {
+              array_push($module_screenshots_list_items, TemplateCollector::assembly('<li class="gallery__item"><img class="gallery__item-image" src="{MODULE_SCREENSHOT_URL}"></li>', [
+                'MODULE_SCREENSHOT_URL' => $screenshot_url
+              ]));
+            }
+          }
         }
       } else {
         if ($module->exists_core_file()) {
@@ -86,7 +95,17 @@ namespace core\PHPLibrary\Page\Admin {
           $module_metadata = $module->get_metadata();
           $module_title = $module->get_title();
           $module_description = $module->get_content_file_readme_md();
-          $module_description = $parsedown->text($module_description);
+          $module_description = (!empty($module_description)) ? $parsedown->text($module_description) : $locale_data['DEFAULT_TEXT_DESCRIPTION_NOT_FOUND'];
+
+          $module_screenshots_files_array = $module->get_screenshots_array();
+          if (count($module_screenshots_files_array) > 0) {
+            $module_screenshots_url = $template->get_screenshots_url();
+            foreach ($module_screenshots_files_array as $screenshot_file) {
+              array_push($module_screenshots_list_items, TemplateCollector::assembly('<li class="gallery__item"><img class="gallery__item-image" src="{MODULE_SCREENSHOT_URL}"></li>', [
+                'MODULE_SCREENSHOT_URL' => sprintf('%s/%s', $module_screenshots_url, $screenshot_file)
+              ]));
+            }
+          }
         }
       }
 
@@ -99,6 +118,7 @@ namespace core\PHPLibrary\Page\Admin {
         $document = new \DOMDocument();
         $element_ul = $document->createElement('ul');
         $element_ul->setAttribute('class', 'metadata-list list-reset');
+        
         foreach ($module_metadata as $metadata_name => $metadata_value) {
           if (in_array($metadata_name, $allowed_metadata)) {
             $metadata_title = $metadata_name;
@@ -113,10 +133,20 @@ namespace core\PHPLibrary\Page\Admin {
             $element_ul->appendChild($element_li);
           }
         }
+
         $document->appendChild($element_ul);
         $document->formatOutput = true;
+
         $metadata_list_transformed = $document->saveHTML();
         unset($document);
+
+        if (count($module_screenshots_list_items) > 0) {
+          $module_gallery_list = TemplateCollector::assembly('<ul class="gallery__list list-reset">{MODULE_GALLARY_LIST_ITEMS}</ul>', [
+            'MODULE_GALLARY_LIST_ITEMS' => implode($module_screenshots_list_items)
+          ]);
+        } else {
+          $module_gallery_list = '';
+        }
 
         $parsedown = new Parsedown();
 
@@ -126,6 +156,7 @@ namespace core\PHPLibrary\Page\Admin {
           'MODULE_NAME' => $module_name,
           'MODULE_TITLE' => $module_title,
           'MODULE_DESCRIPTION' => $parsedown->text($module_description),
+          'MODULE_GALLARY_LIST' => $module_gallery_list,
           'MODULE_METADATA_LIST' => $metadata_list_transformed,
           'MODULE_ENABLED_STATUS' => ($module_is_enabled) ? 'enabled' : 'disabled',
           'MODULE_INSTALLED_STATUS' => ($module_is_installed) ? 'installed' : 'not-installed'

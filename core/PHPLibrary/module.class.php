@@ -12,23 +12,23 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\Module\Locale as ModuleLocale;
 
   /**
-   * Module
-   * 
    * Модуль CMS
    * 
    * @author Andrey Shestakov <drelagas.new@gmail.com>
-   * @version 0.0.1
+   * @version 0.0.2
    */
   #[\AllowDynamicProperties]
   final class Module {
-    /** @var SystemCore|null $system_core Объект системного ядра */
+    /** @var SystemCore|null Объект системного ядра */
     public SystemCore|null $system_core = null;
-    /** @var ModuleLocale|null $locale Объект локализации */
+    /** @var ModuleLocale|null Объект локализации */
     public ModuleLocale|null $locale = null;
-    /** @var string|null $name Техническое наименование модуля */
+    /** @var string|null Техническое наименование модуля */
     private string|null $name = null;
-    /** @var string|null $path Абсолютный путь до файлов модуля */
+    /** @var string|null Абсолютный путь до файлов модуля */
     private string|null $path = null;
+    /** @var string|null URL до файлов модуля */
+    private string|null $url = null;
     
     /**
      * __construct
@@ -55,8 +55,11 @@ namespace core\PHPLibrary {
 
       $this->locale = $cms_base_locale;
 
-      $path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $name);
-      $this->set_path($path);
+      $module_path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $name);
+      $module_url = sprintf('modules/%s', CMS_ROOT_DIRECTORY, $name);
+
+      $this->set_path($module_path);
+      $this->set_url($module_url);
     }
     
     /**
@@ -70,12 +73,68 @@ namespace core\PHPLibrary {
     }
     
     /**
+     * Назначить URL до модуля
+     *
+     * @param  string Путь до шаблона
+     * @return void
+     */
+    public function set_url(string $url) : void {
+      $this->url = $url;
+    }
+
+    /**
+     * Получить URL до изображения-превью модуля
+     * 
+     * @return string
+     */
+    public function get_preview_url() : string {
+      return sprintf('/%s/preview.png', $this->get_url());
+    }
+
+    /**
+     * Получить абсолютный путь до скриншотов модуля
+     * 
+     * @return string
+     */
+    public function get_screenshots_path() : string {
+      return sprintf('%s/screenshots', $this->get_path());
+    }
+
+    /**
+     * Получить URL до скриншотов модуля
+     * 
+     * @return string
+     */
+    public function get_screenshots_url() : string {
+      return sprintf('/%s/screenshots', $this->get_url());
+    }
+
+    /**
+     * Получить массив со скриншотами модуля
+     * 
+     * @return array
+     */
+    public function get_screenshots_array() : array {
+      $screenshots_path = $this->get_screenshots_path();
+      return (file_exists($screenshots_path)) ? array_diff(scandir($screenshots_path), ['.', '..']) : [];
+    }
+    
+    /**
      * Получение абсолютного пути до файлов модуля
      *
      * @return string
      */
     public function get_path() : string {
       return $this->path;
+    }
+    
+    /**
+     * Получить URL до модуля
+     *
+     * @return string
+     */
+    public function get_url() : string {
+      return $this->url;
     }
     
     /**
@@ -149,7 +208,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Проверка наличия пустого файла "enabled"
+     * Проверить включение модуля
      *
      * @return bool
      */
@@ -158,11 +217,21 @@ namespace core\PHPLibrary {
       return file_exists($file_path);
     }
 
+    /**
+     * Проверить установку модуля
+     * 
+     * @return bool
+     */
     public function is_installed() : bool {
       $file_path = sprintf('%s/modules/%s/installed', CMS_ROOT_DIRECTORY, $this->get_name());
       return file_exists($file_path);
     }
 
+    /**
+     * Установить модуля
+     * 
+     * @return bool
+     */
     public function install() : bool {
       if (!$this->is_installed()) {
         $file_path = sprintf('%s/modules/%s/installed', CMS_ROOT_DIRECTORY, $this->get_name());
@@ -174,6 +243,11 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    /**
+     * Удаленить модуль
+     * 
+     * @return bool
+     */
     public function delete() : bool {
       if (!$this->is_installed()) {
         $path = sprintf('%s/modules/%s', CMS_ROOT_DIRECTORY, $this->get_name());
@@ -185,6 +259,11 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    /**
+     * Включить модуль
+     * 
+     * @return bool
+     */
     public function enable() : bool {
       if (!$this->is_enabled()) {
         $file_path = sprintf('%s/modules/%s/enabled', CMS_ROOT_DIRECTORY, $this->get_name());
@@ -196,6 +275,11 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    /**
+     * Отключить модуль
+     * 
+     * @return bool
+     */
     public function disable() : bool {
       if ($this->is_enabled()) {
         $file_path = sprintf('%s/modules/%s/enabled', CMS_ROOT_DIRECTORY, $this->get_name());
@@ -275,14 +359,29 @@ namespace core\PHPLibrary {
       return json_decode($file_content, true);
     }
 
+    /**
+     * Получить абсолютный путь до файла README.md
+     * 
+     * @return string
+     */
     public function get_file_readme_md_path() : string {
       return sprintf('%s/README.md', $this->get_path());
     }
 
+    /**
+     * Получить содержимое файла README.md
+     * 
+     * @return string
+     */
     public function get_content_file_readme_md() : string {
       return ($this->exists_file_readme_md()) ? file_get_contents($this->get_file_readme_md_path()) : '';
     }
 
+    /**
+     * Проверить наличие файла README.md
+     * 
+     * @return bool
+     */
     public function exists_file_readme_md() : bool {
       return file_exists($this->get_file_readme_md_path());
     }

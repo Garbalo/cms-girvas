@@ -6,6 +6,7 @@
 .entries-list-container__list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 25px;
 }
 
@@ -14,12 +15,12 @@
   background-size: cover;
   background-position: center center;
   position: relative;
-  flex: 0 0 calc(50% - (24px / 2));
+  height: 217px;
 }
 
 @media (min-width: 1200px) {
   .entries-list-container__list-item {
-    flex: 0 0 calc(50% - (24px / 2));
+    flex: 0 0 calc(50% - 13px);
   }
 }
 
@@ -30,9 +31,8 @@
 }
 
 @media (min-width: 1200px) {
-  .entries-list-container__list-item:not(:nth-child(2n)),
+  .entries-list-container__list-item:not(:nth-last-child(2))
   .entries-list-container__list-item:not(:last-child) {
-    margin-right: 24px;
     margin-bottom: 24px;
   }
 }

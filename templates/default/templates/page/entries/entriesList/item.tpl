@@ -19,7 +19,7 @@
         </svg>
         <time class="metadata__value" datetime="{ENTRY_CREATED_DATE_TIMESTAMP}">{ENTRY_CREATED_DATE_TIMESTAMP}</time>
       </div>
-      <a class="article__group-link" href="#">Категория</a>
+      <a class="article__group-link" href="{ENTRY_CATEGORY_URL}">{ENTRY_CATEGORY_TITLE}</a>
     </div>
   </article>
 </li>

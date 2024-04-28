@@ -144,7 +144,7 @@
 .page__article .article__metadata .metadata__datetime {
   display: flex;
   align-items: center;
-  width: 95px;
+  width: fit-content;
   font-size: 14px;
   font-weight: 400;
   color: var(--container-and-text-white-color);
@@ -155,7 +155,7 @@
 }
 
 .page__article .article__group-link {
-  width: 115px;
+  width: fit-content;
   height: 100%;
   padding: 12px 25px;
   font-size: 14px;

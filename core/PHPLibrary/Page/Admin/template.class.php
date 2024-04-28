@@ -73,7 +73,7 @@ namespace core\PHPLibrary\Page\Admin {
           $template_metadata = $template_data['metadata'];
           $template_title = $template_metadata['title'];
           $template_description = file_get_contents($template_data['readme_url']);
-          $template_description = $parsedown->text($template_description);
+          $template_description = (!empty($template_description)) ? $parsedown->text($template_description) : $locale_data['DEFAULT_TEXT_DESCRIPTION_NOT_FOUND'];
 
           if (count($template_data['previews']) > 0) {
             foreach ($template_data['previews'] as $screenshot_url) {
@@ -146,10 +146,13 @@ namespace core\PHPLibrary\Page\Admin {
         $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/template.tpl', [
           'PAGE_NAVIGATION' => $page_navigation_transformed,
           'ADMIN_PANEL_PAGE_NAME' => 'template',
+          'TEMPLATE_NAME' => $template_name,
           'TEMPLATE_TITLE' => $template_title,
           'TEMPLATE_DESCRIPTION' => $template_description,
           'TEMPLATE_GALLARY_LIST' => $template_gallery_list,
-          'TEMPLATE_METADATA_LIST' => $template_metadata_list_transformed
+          'TEMPLATE_METADATA_LIST' => $template_metadata_list_transformed,
+          'TEMPLATE_DOWNLOADED_STATUS' => ($template->exists_file_metadata_json()) ? 'downloaded' : 'not-downloaded',
+          'TEMPLATE_INSTALLED_STATUS' => ($template->get_name() == $this->system_core->configurator->get_database_entry_value('base_template')) ? 'installed' : 'not-installed'
         ]);
       } else {
         http_response_code(404);

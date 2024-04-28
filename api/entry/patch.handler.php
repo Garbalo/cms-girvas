@@ -144,6 +144,8 @@ if ($system_core->client->is_logged(2)) {
             $entry_description_default = $entry->get_description($base_locale_name);
             /** @var string содержимое записи */
             $entry_content_default = $entry->get_content($base_locale_name);
+            /** @var int дата обновления страницы в формате UNIX */
+            $entry_data['metadata']['publishedUnixTimestamp'] = time();
 
             // Если заголовок, описание или содержимое стандартной локализации не задано, то
             // запись не будет обновлена.

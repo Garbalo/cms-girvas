@@ -40,7 +40,10 @@ export class PageModules {
         buttons.more = new Interactive('button');
         buttons.more.target.setLabel(localeData.BUTTON_MORE_DETAILS_LABEL);
         buttons.more.target.setCallback(() => {
-          window.location.href = (searchParams.getPathPart(3) == null) ? `./module/${moduleName}` : `./repository/${moduleName}`;
+          switch (searchParams.getPathPart(3)) {
+            case 'repository': window.location.href = `/admin/modules/repository/${moduleName}`; break;
+            default: window.location.href = `/admin/module/${moduleName}`;
+          }
         });
         buttons.more.assembly();
 
