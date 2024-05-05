@@ -13,11 +13,11 @@
           <table class="table profile__information-table">
             <tr class="table__row">
               <th class="table__cell table__cell_header">Логин</th>
-              <td class="table__cell"><input name="user_login" type="text" class="form__input" value="{USER_LOGIN}" placeholder="User3425"></td>
+              <td class="table__cell"><input name="user_login" type="text" class="form__input" value="{USER_LOGIN}" placeholder="User3425" required></td>
             </tr>
             <tr class="table__row">
               <th class="table__cell table__cell_header">E-Mail</th>
-              <td class="table__cell"><input name="user_email" type="email" class="form__input" value="{USER_EMAIL}" placeholder="user3425@mail.com"></td>
+              <td class="table__cell"><input name="user_email" type="email" class="form__input" value="{USER_EMAIL}" placeholder="user3425@mail.com" required></td>
             </tr>
             <tr class="table__row">
               <th class="table__cell table__cell_header">Дата рождения</th>

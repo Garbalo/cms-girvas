@@ -5,7 +5,7 @@
   </div>
   <div class="page__content">
     <form class="form form_user" action="/handler/user">
-      <input name="user_id" type="hidden" value="{USER_ID}">
+      <input name="user_id" type="hidden" value="{USER_ID}" required>
       <table id="SYSTEM_F0648538231" class="table table_user">
         <tr class="table__row">
           <td class="table__cell cell">
@@ -15,7 +15,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311"></div>
+            <div class="page__phar-block"><input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -26,7 +26,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.ru"></div>
+            <div class="page__phar-block"><input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.ru" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -37,7 +37,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+            <div class="page__phar-block"><input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -48,7 +48,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+            <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required></div>
           </td>
         </tr>
         <tr class="table__row">

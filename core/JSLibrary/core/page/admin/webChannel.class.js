@@ -10,6 +10,7 @@
 
 import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
+import {Utils} from "../../../utils.class.js";
 
 export class PageWebChannel {
   constructor(params = {}) {
@@ -29,6 +30,7 @@ export class PageWebChannel {
       locales = data.outputData.locales;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      let urlInputElement = document.querySelector('[role="feedURL"]');
 
       this.buttons.delete = new Interactive('button');
       this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
@@ -70,23 +72,31 @@ export class PageWebChannel {
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
-        let formData = new FormData(elementForm);
-  
-        fetch('/handler/webChannel?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          console.log(data1);
-          if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-            let webChannelData = data1.outputData.webChannel;
-            window.location.href = '/admin/webChannel/' + webChannelData.id;
-          }
-  
-          let notification = new PopupNotification(data1.message, document.body, true);
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
+        
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
+
+          fetch('/handler/webChannel?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
+            body: formData
+          }).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data1) => {
+            console.log(data1);
+            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let webChannelData = data1.outputData.webChannel;
+              window.location.href = '/admin/webChannel/' + webChannelData.id;
+            }
+    
+            let notification = new PopupNotification(data1.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
 
@@ -194,6 +204,18 @@ export class PageWebChannel {
 
         let interactiveContainerElement = document.querySelector('#E8548530785');
         interactiveContainerElement.append(interactiveLocalesChoices.target.element);
+
+        urlInputElement.addEventListener('input', (event) => {
+          /** @var {String} */
+          let inputValue = event.target.value;
+  
+          /** @var {Utils} */
+          let utils = new Utils();
+          /** @var {UString} */
+          let uString = utils.createString(inputValue);
+  
+          event.target.value = uString.translitToEN(true);
+        });
 
         let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
         interactiveChoicesSelectElement.addEventListener('change', (event) => {

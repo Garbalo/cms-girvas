@@ -40,7 +40,7 @@ if ($system_core->urlp->get_path(2) == 'registration') {
         $user_password_repeat = $_POST['user_password_repeat'];
 
         if (preg_match('/^[a-z0-9\_]{4,}$/i', $user_login)) {
-          if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+          if (preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $user_email)) {
             if (preg_match('/^[a-z0-9\_\$\%\&\#\@\?]{6,}$/i', $user_password)) {
               if ($user_password == $user_password_repeat) {
                 if (!User::exists_by_login($system_core, $user_login)) {

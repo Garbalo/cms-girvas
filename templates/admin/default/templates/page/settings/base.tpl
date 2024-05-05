@@ -8,7 +8,7 @@
         </div>
       </td>
       <td class="table__cell cell">
-        <div class="page__phar-block"><input name="setting_{SETTINGS_NAME}_site_title" type="text" class="form__input form__input_text" placeholder="{LANG:PAGE_SETTINGS_SETTING_BASE_TITLE_PLACEHOLDER}" value="{SETTING_SITE_TITLE_VALUE}"></div>
+        <div class="page__phar-block"><input name="setting_{SETTINGS_NAME}_site_title" type="text" class="form__input form__input_text" placeholder="{LANG:PAGE_SETTINGS_SETTING_BASE_TITLE_PLACEHOLDER}" value="{SETTING_SITE_TITLE_VALUE}" required></div>
       </td>
     </tr>
     <tr class="table__row">

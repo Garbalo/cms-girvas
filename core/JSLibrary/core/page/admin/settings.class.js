@@ -312,17 +312,26 @@ export class PageSettings {
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
-        let formData = new FormData(elementForm);
+        let elementForm = document.querySelector('.form_settings');
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
 
-        fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: 'POST',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data) => {
-          let notification = new PopupNotification(data.message, document.body, true);
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
+
+          fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: 'POST',
+            body: formData
+          }).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data) => {
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
 
@@ -346,10 +355,12 @@ export class PageSettings {
     additionalFieldInputTitle.setAttribute('type', 'text');
     additionalFieldInputTitle.setAttribute('name', 'setting_users_additional_field_title[]');
     additionalFieldInputTitle.setAttribute('placeholder', 'My field');
+    additionalFieldInputTitle.setAttribute('required', 'required');
     additionalFieldInputName.setAttribute('pattern', '[a-z0-9_]+');
     additionalFieldInputName.setAttribute('type', 'text');
     additionalFieldInputName.setAttribute('name', 'setting_users_additional_field_name[]');
     additionalFieldInputName.setAttribute('placeholder', 'my_field');
+    additionalFieldInputName.setAttribute('required', 'required');
     additionalFieldInputDescription.setAttribute('name', 'setting_users_additional_field_description[]');
     additionalFieldInputDescription.setAttribute('placeholder', localeData.SETTINGS_PAGE_SETTING_USERS_ADDITIONAL_FIELD_DESCRIPTION_PLACEHOLDER);
     

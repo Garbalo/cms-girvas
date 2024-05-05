@@ -11,6 +11,7 @@
 namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Entries as Entries;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
@@ -44,7 +45,19 @@ namespace core\PHPLibrary\Page\Admin {
       // Добавление таблицы стилей для страницы
       $this->system_core->template->add_style(['href' => 'styles/page/entries.css', 'rel' => 'stylesheet']);
       
-      /** @var array Данные локализации */
+      $cms_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_admin_locale');
+      $url_locale_setted_name = $this->system_core->urlp->get_param('locale');
+      $cookie_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+      
+      $cms_locale_name = (!is_null($url_locale_setted_name)) ? $url_locale_setted_name : $cookie_locale_setted_name;
+      $cms_locale_name = (!is_null($cms_locale_name)) ? $cms_locale_name : $cms_locale_setted_name;
+      $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_name, 'admin');
+      if (!$cms_locale->exists_file_data_json()) {
+        $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_setted_name, 'admin');
+        $cms_locale_name = $cms_locale_setted_name;
+      }
+
+      $this->system_core->locale = $cms_locale;
       $locale_data = $this->system_core->locale->get_data();
 
       /** @var array Преобразованные элементы навигации */

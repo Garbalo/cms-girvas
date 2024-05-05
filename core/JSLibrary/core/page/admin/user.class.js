@@ -59,22 +59,30 @@ export class PageUser {
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
-        let formData = new FormData(elementForm);
-  
-        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-            let userData = data1.outputData.user;
-            window.location.href = '/admin/user/' + userData.id;
-          }
-  
-          let notification = new PopupNotification(data1.message, document.body, true);
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
+
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
+    
+          fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
+            body: formData
+          }).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data1) => {
+            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let userData = data1.outputData.user;
+              window.location.href = '/admin/user/' + userData.id;
+            }
+    
+            let notification = new PopupNotification(data1.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
   

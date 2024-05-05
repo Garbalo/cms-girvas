@@ -6,7 +6,7 @@
   </div>
   <div class="page__content">
     <form class="form form_user-group" action="/handler/usersGroup">
-      <input name="user_group_id" type="hidden" value="{USER_GROUP_ID}">
+      <input name="user_group_id" type="hidden" value="{USER_GROUP_ID}" required>
       <table class="table">
         <tr class="table__row">
           <td class="table__cell cell">
@@ -16,7 +16,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_group_title_rus" typde="text" class="form__input form__input_text" value="{USER_GROUP_TITLE}" placeholder="My Group" role="usersGroupTitle"></div>
+            <div class="page__phar-block"><input name="user_group_title_rus" typde="text" class="form__input form__input_text" value="{USER_GROUP_TITLE}" placeholder="My Group" role="usersGroupTitle" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -27,7 +27,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_group_name" typde="text" class="form__input form__input_text" value="{USER_GROUP_NAME}" placeholder="my-group" role="usersGroupName"></div>
+            <div class="page__phar-block"><input name="user_group_name" typde="text" class="form__input form__input_text" value="{USER_GROUP_NAME}" placeholder="my-group" role="usersGroupName" required></div>
           </td>
         </tr>
         <tr class="table__row">

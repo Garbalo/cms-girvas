@@ -11,6 +11,7 @@
 namespace core\PHPLibrary\Page {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\Entries as Entries;
   use \core\PHPLibrary\Entry as Entry;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
@@ -42,6 +43,21 @@ namespace core\PHPLibrary\Page {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
       $this->system_core->template->add_style(['href' => 'styles/page/index.css', 'rel' => 'stylesheet']);
 
+      $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
+      $url_base_locale_setted_name = $this->system_core->urlp->get_param('locale');
+      $cookie_base_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+      
+      $cms_base_locale_name = (!is_null($url_base_locale_setted_name)) ? $url_base_locale_setted_name : $cookie_base_locale_setted_name;
+      $cms_base_locale_name = (!is_null($cms_base_locale_name)) ? $cms_base_locale_name : $cms_base_locale_setted_name;
+      $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_name);
+      if (!$cms_base_locale->exists_file_data_json()) {
+        $cms_base_locale = new SystemCoreLocale($this->system_core, $cms_base_locale_setted_name);
+        $cms_base_locale_name = $cms_base_locale_setted_name;
+      }
+
+      $this->system_core->locale = $cms_base_locale;
+      $locale_data = $this->system_core->locale->get_data();
+
       /** @var Entries $entries Объект класса Entries */
       $entries = new Entries($this->system_core);
       $entries_array_objects = $entries->get_all(['limit' => [6, 0]]);
@@ -49,17 +65,39 @@ namespace core\PHPLibrary\Page {
 
       $entries_array_templates = [];
       foreach ($entries_array_objects as $entry_object) {
-        $entry_object->init_data(['id', 'texts', 'metadata', 'name', 'created_unix_timestamp', 'category_id']);
-        $entry_category_object = $entry_object->get_category(['metadata']);
+        $entry_object->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
+        $entry_category_object = $entry_object->get_category(['texts', 'name', 'metadata']);
         
+        /** @var string Заголовок записи */
+        $entry_title = (!empty($entry_object->get_title($cms_base_locale_name))) ? $entry_object->get_title($cms_base_locale_name) : $entry_object->get_title($cms_base_locale_setted_name);
+        /** @var string Описание записи */
+        $entry_description = (!empty($entry_object->get_description($cms_base_locale_name))) ? $entry_object->get_description($cms_base_locale_name) : $entry_object->get_description($cms_base_locale_setted_name);
+
+        $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_updated_unix_timestamp());
+
+        $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_updated_unix_timestamp());
+
+        $entry_category_title = $entry_category_object->get_title($cms_base_locale_name);
+
         if ($entry_object->is_published() && $entry_category_object->is_showed_on_index_page()) {
           array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/index/entriesList/item.tpl', [
             'ENTRY_ID' => $entry_object->get_id(),
-            'ENTRY_TITLE' => $entry_object->get_title(),
-            'ENTRY_DESCRIPTION' => $entry_object->get_description(),
+            'ENTRY_TITLE' => $entry_title,
+            'ENTRY_DESCRIPTION' => $entry_description,
             'ENTRY_URL' => $entry_object->get_url(),
             'ENTRY_PREVIEW_URL' => ($entry_object->get_preview_url() != '') ? $entry_object->get_preview_url() : Entry::get_preview_default_url($this->system_core, 512),
-            'ENTRY_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i', $entry_object->get_created_unix_timestamp())
+            'ENTRY_CATEGORY_TITLE' => $entry_category_title,
+            'ENTRY_CATEGORY_URL' => $entry_category_object->get_url(),
+            'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
+            'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+            'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
+            'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
           ]));
         }
 

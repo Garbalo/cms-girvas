@@ -21,6 +21,9 @@ if ($system_core->client->is_logged(2)) {
 
   if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_SETTINGS_MANAGEMENT)) {
     if (!empty($_POST)) {
+
+      $users_additional_fields_count = 0;
+
       foreach ($_POST as $setting_name => $setting_value) {
         if (preg_match('/^setting_([a-z0-9_]+)$/', $setting_name, $matches, PREG_OFFSET_CAPTURE)) {
           $setting_name = $matches[1][0];
@@ -30,7 +33,11 @@ if ($system_core->client->is_logged(2)) {
               $fields_titles = json_decode($system_core->configurator->get_database_entry_value($setting_name), true);
               $fields_titles[$_POST['_users_additional_fields_locale']] = $setting_value;
               $setting_value = $fields_titles;
+            } else {
+              $setting_value = [$_POST['_users_additional_fields_locale'] => $setting_value];
             }
+
+            $users_additional_fields_count += 1;
           }
 
           if ($setting_name == 'users_additional_field_description' && isset($_POST['_users_additional_fields_locale'])) {
@@ -38,7 +45,11 @@ if ($system_core->client->is_logged(2)) {
               $fields_descriptions = json_decode($system_core->configurator->get_database_entry_value($setting_name), true);
               $fields_descriptions[$_POST['_users_additional_fields_locale']] = $setting_value;
               $setting_value = $fields_descriptions;
+            } else {
+              $setting_value = [$_POST['_users_additional_fields_locale'] => $setting_value];
             }
+
+            $users_additional_fields_count += 1;
           }
 
           if (is_array($setting_value)) $setting_value = json_encode($setting_value);
@@ -54,6 +65,14 @@ if ($system_core->client->is_logged(2)) {
             $system_core->configurator->update_database_entry_value($setting_name, $setting_value);
           } else {
             $system_core->configurator->insert_database_entry_value($setting_name, $setting_value);
+          }
+        }
+      }
+
+      if ($users_additional_fields_count == 0 && isset($_POST['_users_additional_fields_locale'])) {
+        foreach (['users_additional_field_title', 'users_additional_field_description', 'users_additional_field_name', 'users_additional_field_type'] as $index => $name) {
+          if ($system_core->configurator->exists_database_entry_value('users_additional_field_title')) {
+            $system_core->configurator->update_database_entry_value($name, json_encode([]));
           }
         }
       }

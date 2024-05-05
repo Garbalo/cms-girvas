@@ -400,6 +400,7 @@
   "POPUP_SLIDE_INSTALL_TEMPLATE": "Installing a template...",
   "POPUP_SLIDE_ACTIVATION_MODULE": "Activation a module...",
   "POPUP_SLIDE_DEACTIVATION_MODULE": "Dectivation a module...",
+  "FORM_REQUIRED_FIELDS_IS_EMPTY": "Required fields were not filled in",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL": "An attempt to authenticate with IP {CLIENT_IP} failed.",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS": "Authorization was successful with IP {CLIENT_IP}.",
   "REPORT_TYPE_ID_AP_ENTRY_CREATED": "New entry created: '{ENTRY_TITLE}' by user [IP: {CLIENT_IP}].",

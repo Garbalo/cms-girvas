@@ -17,7 +17,7 @@
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <input name="page_static_name" typde="text" class="form__input page-static-form__input" value="{PAGE_STATIC_NAME}" placeholder="my-first-page">
+              <input name="page_static_name" typde="text" class="form__input page-static-form__input" value="{PAGE_STATIC_NAME}" placeholder="my-first-page" role="pageStaticURL">
             </div>
           </td>
         </tr>

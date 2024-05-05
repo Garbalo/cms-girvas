@@ -14,6 +14,7 @@ if (!defined('IS_NOT_HACKED')) {
 }
 
 use \core\PHPLibrary\WebChannel as WebChannel;
+use \core\PHPLibrary\SystemCore\Locale as Locale;
 
 if ($system_core->client->is_logged(2)) {
   $client_user = $system_core->client->get_user(2);
@@ -29,20 +30,22 @@ if ($system_core->client->is_logged(2)) {
       $web_channel = new WebChannel($system_core, $web_channel_id);
       $web_channel_data = [];
 
-      if (array_key_exists('web_channel_title_rus', $_PATCH) || array_key_exists('web_channel_description_rus', $_PATCH)) {
-        if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
-        if (!array_key_exists('ru_RU', $web_channel_data['texts'])) $web_channel_data['texts']['ru_RU'] = [];
+      $cms_locales_names = $system_core->get_array_locales_names();
+      if (count($cms_locales_names) > 0) {
+        foreach ($cms_locales_names as $index => $cms_locale_name) {
+          $cms_locale = new Locale($system_core, $cms_locale_name);
 
-        if (array_key_exists('web_channel_title_rus', $_PATCH)) $web_channel_data['texts']['ru_RU']['title'] = $_PATCH['web_channel_title_rus'];
-        if (array_key_exists('web_channel_description_rus', $_PATCH)) $web_channel_data['texts']['ru_RU']['description'] = $_PATCH['web_channel_description_rus'];
-      }
+          $feed_title_input_name = sprintf('web_channel_title_%s', $cms_locale->get_iso_639_2());
+          $feed_description_textarea_name = sprintf('web_channel_description_%s', $cms_locale->get_iso_639_2());
 
-      if (array_key_exists('web_channel_title_eng', $_PATCH) || array_key_exists('web_channel_description_eng', $_PATCH)) {
-        if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
-        if (!array_key_exists('en_US', $web_channel_data['texts'])) $web_channel_data['texts']['en_US'] = [];
+          if (array_key_exists($feed_title_input_name, $_PATCH) || array_key_exists($feed_description_textarea_name, $_PATCH)) {
+            if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
+            if (!array_key_exists($cms_locale->get_name(), $web_channel_data['texts'])) $web_channel_data['texts'][$cms_locale->get_name()] = [];
 
-        if (array_key_exists('web_channel_title_eng', $_PATCH)) $web_channel_data['texts']['en_US']['title'] = $_PATCH['web_channel_title_eng'];
-        if (array_key_exists('web_channel_description_eng', $_PATCH)) $web_channel_data['texts']['en_US']['description'] = $_PATCH['web_channel_description_eng'];
+            if (array_key_exists($feed_title_input_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars($_PATCH[$feed_title_input_name]);
+            if (array_key_exists($feed_description_textarea_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars($_PATCH[$feed_description_textarea_name]);
+          }
+        }
       }
 
       if (isset($_PATCH['web_channel_name'])) $web_channel_data['name'] = $_PATCH['web_channel_name'];

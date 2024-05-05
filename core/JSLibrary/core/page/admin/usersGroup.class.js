@@ -10,6 +10,7 @@
 
 import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
+import {Utils} from "../../../utils.class.js";
 
 export class PageUsersGroup {
   constructor(params = {}) {
@@ -28,6 +29,7 @@ export class PageUsersGroup {
     }).then((localeData) => {
       let interactiveChoicesLocales = new Interactive('choices');
       let usersGroupTitleInputElement = document.querySelector('[role="usersGroupTitle"]');
+      let urlInputElement = document.querySelector('[role="usersGroupName"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -73,6 +75,18 @@ export class PageUsersGroup {
       let interactiveContainerElement = document.querySelector('#E8548530785');
       interactiveContainerElement.append(interactiveChoicesLocales.target.element);
 
+      urlInputElement.addEventListener('input', (event) => {
+        /** @var {String} */
+        let inputValue = event.target.value;
+
+        /** @var {Utils} */
+        let utils = new Utils();
+        /** @var {UString} */
+        let uString = utils.createString(inputValue);
+
+        event.target.value = uString.translitToEN(true);
+      });
+
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
         locales.forEach((locale, localeIndex) => {
@@ -99,22 +113,30 @@ export class PageUsersGroup {
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
         
-        let formData = new FormData(elementForm);
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
 
-        fetch('/handler/usersGroup?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-            let usersGroupData = data1.outputData.usersGroup;
-            window.location.href = '/admin/userGroup/' + usersGroupData.id;
-          }
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
 
-          let notification = new PopupNotification(data1.message, document.body, true);
+          fetch('/handler/usersGroup?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
+            body: formData
+          }).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data1) => {
+            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let usersGroupData = data1.outputData.usersGroup;
+              window.location.href = '/admin/userGroup/' + usersGroupData.id;
+            }
+
+            let notification = new PopupNotification(data1.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
 

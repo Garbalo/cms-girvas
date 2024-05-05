@@ -12,6 +12,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \DOMDocument as DOMDocument;
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
+  use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
   use \core\PHPLibrary\EntriesCategories as EntriesCategories;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
@@ -30,6 +31,19 @@ namespace core\PHPLibrary\Page\Admin {
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page/entriesCategories.css', 'rel' => 'stylesheet']);
       
+      $cms_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_admin_locale');
+      $url_locale_setted_name = $this->system_core->urlp->get_param('locale');
+      $cookie_locale_setted_name = (isset($_COOKIE['locale'])) ? $_COOKIE['locale'] : null;
+      
+      $cms_locale_name = (!is_null($url_locale_setted_name)) ? $url_locale_setted_name : $cookie_locale_setted_name;
+      $cms_locale_name = (!is_null($cms_locale_name)) ? $cms_locale_name : $cms_locale_setted_name;
+      $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_name, 'admin');
+      if (!$cms_locale->exists_file_data_json()) {
+        $cms_locale = new SystemCoreLocale($this->system_core, $cms_locale_setted_name, 'admin');
+        $cms_locale_name = $cms_locale_setted_name;
+      }
+
+      $this->system_core->locale = $cms_locale;
       $locale_data = $this->system_core->locale->get_data();
 
       $navigations_items_transformed = [];
@@ -69,6 +83,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       $entries_categories_table_items_assembled = [];
       $entries_categories = new EntriesCategories($this->system_core);
+      $entries_categories_locale_default = $this->system_core->get_cms_locale('base');
       $entries_categories_array_objects = $entries_categories->get_all([
         'limit' => [$pagination_items_on_page, $pagination_item_current * $pagination_items_on_page]
       ]);
@@ -84,10 +99,12 @@ namespace core\PHPLibrary\Page\Admin {
         $created_date_timestamp = date('d.m.Y H:i:s', $entries_category_object->get_created_unix_timestamp());
         $updated_date_timestamp = date('d.m.Y H:i:s', $entries_category_object->get_updated_unix_timestamp());
 
+        $entries_category_title = $entries_category_object->get_title($entries_categories_locale_default->get_name());
+
         array_push($entries_categories_table_items_assembled, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entriesCategories/tableItem.tpl', [
           'ENTRIES_CATEGORY_ID' => $entries_category_object->get_id(),
           'ENTRIES_CATEGORY_INDEX' => $entries_category_index + 1,
-          'ENTRIES_CATEGORY_TITLE' => $entries_category_object->get_title(),
+          'ENTRIES_CATEGORY_TITLE' => (!empty($entries_category_title)) ? $entries_category_title : sprintf('[ TITLE NOT FOUND IN LOCALE %s ]', $entries_categories_locale_default->get_name()),
           'ENTRIES_CATEGORY_URL' => $entries_category_object->get_url(),
           'ENTRIES_CATEGORY_CREATED_DATE_TIMESTAMP' => $created_date_timestamp,
           'ENTRIES_CATEGORY_UPDATED_DATE_TIMESTAMP' => $updated_date_timestamp

@@ -400,6 +400,7 @@
   "POPUP_SLIDE_INSTALL_TEMPLATE": "Установка шаблона...",
   "POPUP_SLIDE_ACTIVATION_MODULE": "Активация модуля...",
   "POPUP_SLIDE_DEACTIVATION_MODULE": "Деактивация модуля...",
+  "FORM_REQUIRED_FIELDS_IS_EMPTY": "Обязательные поля не были заполнены",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL": "Была совершена неудачная попытка авторизации с IP {CLIENT_IP}.",
   "REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS": "Была совершена успешная авторизации с IP {CLIENT_IP}.",
   "REPORT_TYPE_ID_AP_ENTRY_CREATED": "Создана новая запись: &laquo;{ENTRY_TITLE}&raquo; пользователем [IP: {CLIENT_IP}].",

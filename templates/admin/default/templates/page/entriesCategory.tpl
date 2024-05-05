@@ -17,7 +17,7 @@
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <input name="entries_category_name" typde="text" class="form__input entries-category-form__input" value="{ENTRIES_CATEGORY_NAME}" placeholder="news">
+              <input name="entries_category_name" typde="text" class="form__input entries-category-form__input" value="{ENTRIES_CATEGORY_NAME}" placeholder="news" role="entriesCategoryURL">
             </div>
           </td>
         </tr>

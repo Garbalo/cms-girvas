@@ -428,21 +428,25 @@ namespace core\PHPLibrary {
       if (array_key_exists('texts', $data)) {
         $json_fields = [];
 
-        foreach ($data['texts'] as $metadata_name => $metadata_value) {
-          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        foreach ($data['texts'] as $name => $value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $name, json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
 
-        $query_builder->statement->clause_set->add_column('texts', 'texts::jsonb || ' . implode(' || ', $json_fields));
+        if (!empty($data['texts'])) {
+          $query_builder->statement->clause_set->add_column('texts', 'texts::jsonb || ' . implode(' || ', $json_fields));
+        }
       }
 
       if (array_key_exists('metadata', $data)) {
         $json_fields = [];
 
-        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
-          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        foreach ($data['metadata'] as $name => $value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $name, json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
         }
 
-        $query_builder->statement->clause_set->add_column('metadata', 'metadata::jsonb || ' . implode(' || ', $json_fields));
+        if (!empty($data['metadata'])) {
+          $query_builder->statement->clause_set->add_column('metadata', 'metadata::jsonb || ' . implode(' || ', $json_fields));
+        }
       }
 
       $query_builder->statement->clause_set->add_column('updated_unix_timestamp');

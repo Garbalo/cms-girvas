@@ -551,13 +551,17 @@ namespace core\PHPLibrary {
         }
       }
       
-      // Обновление значений для колонки с метаданными
       if (array_key_exists('metadata', $data)) {
-        foreach ($data['metadata'] as $metadata_name => $metadata_value) {
-          $query_builder->statement->clause_set->add_column('metadata', sprintf('jsonb_set(metadata::jsonb, \'{"%s"}\', \'%s\')', $metadata_name, json_encode($metadata_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        $json_fields = [];
+
+        foreach ($data['metadata'] as $name => $value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $name, json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        }
+
+        if (!empty($data['metadata'])) {
+          $query_builder->statement->clause_set->add_column('metadata', 'metadata::jsonb || ' . implode(' || ', $json_fields));
         }
       }
-
 
       $query_builder->statement->clause_set->add_column('updated_unix_timestamp');
       $query_builder->statement->clause_set->assembly();

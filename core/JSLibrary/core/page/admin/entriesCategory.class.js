@@ -10,6 +10,7 @@
 
 import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
+import {Utils} from "../../../utils.class.js";
 
 export class PageEntriesCategory {
   constructor(params = {}) {
@@ -32,6 +33,7 @@ export class PageEntriesCategory {
     }).then((localeData) => {
       let descriptionTextareaElement = document.querySelector('[role="entriesCategoryDescription"]');
       let titleInputElement = document.querySelector('[role="entriesCategoryTitle"]');
+      let urlInputElement = document.querySelector('[role="entriesCategoryURL"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -78,6 +80,18 @@ export class PageEntriesCategory {
 
       let interactiveContainerElement = document.querySelector('#E8548530785');
       interactiveContainerElement.append(interactiveLocaleChoices.target.element);
+
+      urlInputElement.addEventListener('input', (event) => {
+        /** @var {String} */
+        let inputValue = event.target.value;
+
+        /** @var {Utils} */
+        let utils = new Utils();
+        /** @var {UString} */
+        let uString = utils.createString(inputValue);
+
+        event.target.value = uString.translitToEN(true);
+      });
       
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
@@ -143,22 +157,30 @@ export class PageEntriesCategory {
       this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
+
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
         
-        let formData = new FormData(elementForm);
-        let fetchLink = (searchParams.getPathPart(3) == null) ? '/handler/entry/category?localeMessage=' + window.CMSCore.locales.admin.name : '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name;
-        let fetchMethod = (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH';
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
+          let fetchLink = (searchParams.getPathPart(3) == null) ? '/handler/entry/category?localeMessage=' + window.CMSCore.locales.admin.name : '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name;
+          let fetchMethod = (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH';
 
-        fetch(fetchLink, {method: fetchMethod, body: formData}).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-            let entriesCategoryData = data1.outputData.entriesCategory;
-            window.location.href = '/admin/entriesCategory/' + entriesCategoryData.id;
-          }
+          fetch(fetchLink, {method: fetchMethod, body: formData}).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data1) => {
+            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let entriesCategoryData = data1.outputData.entriesCategory;
+              window.location.href = '/admin/entriesCategory/' + entriesCategoryData.id;
+            }
 
-          let notification = new PopupNotification(data1.message, document.body, true);
+            let notification = new PopupNotification(data1.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
 

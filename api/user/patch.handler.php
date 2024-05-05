@@ -54,10 +54,10 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
         }
 
         if (isset($user_email)) {
-          if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+          if (preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $user_email)) {
             $user_data['email'] = $user_email;
           } else {
-            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND')) : $handler_message;
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
           }
         }

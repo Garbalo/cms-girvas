@@ -104,7 +104,7 @@ namespace core\PHPLibrary\Page {
 
         $entries_array_templates = [];
         foreach ($entries_array_objects as $entry_object) {
-          $entry_object->init_data(['id', 'category_id', 'texts', 'metadata', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
+          $entry_object->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
           
           /** @var string Заголовок записи */
           $entry_title = (!empty($entry_object->get_title($cms_base_locale_name))) ? $entry_object->get_title($cms_base_locale_name) : $entry_object->get_title($cms_base_locale_setted_name);
@@ -154,7 +154,7 @@ namespace core\PHPLibrary\Page {
           'PAGE_NAME' => 'entries',
           'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries.tpl', [
             'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
-            'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? $locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'] : $entries_category->get_title(),
+            'ENTRIES_CATEGORY_TITLE' => ($entries_category_name == 'all') ? $locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'] : $entries_category->get_title($cms_base_locale_name),
             'ENTRIES_LIST' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/list.tpl', [
               'ENTRIES_LIST_ITEMS' => implode($entries_array_templates)
             ]),

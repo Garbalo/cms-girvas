@@ -16,7 +16,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="web_channel_name" typde="text" class="form__input web-channel-editor-form__input" value="{WEB_CHANNEL_NAME}" placeholder="my-channel"></div>
+            <div class="page__phar-block"><input name="web_channel_name" typde="text" class="form__input web-channel-editor-form__input" value="{WEB_CHANNEL_NAME}" placeholder="my-channel" role="feedURL" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -27,7 +27,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="web_channel_title_rus" role="webChannelTitle" type="text" class="form__input form__input_text" placeholder="Мой канал" value="{WEB_CHANNEL_TITLE}"></div>
+            <div class="page__phar-block"><input name="web_channel_title_rus" role="webChannelTitle" type="text" class="form__input form__input_text" placeholder="Мой канал" value="{WEB_CHANNEL_TITLE}" required></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -39,7 +39,7 @@
           </td>
           <td class="table__cell cell">
             <div class="page__phar-block">
-              <textarea class="form__textarea" name="web_channel_description_rus" role="webChannelDescription" cols="30" rows="10" placeholder="Канал последних новостей">{WEB_CHANNEL_DESCRIPTION}</textarea>
+              <textarea class="form__textarea" name="web_channel_description_rus" role="webChannelDescription" cols="30" rows="10" placeholder="Канал последних новостей" required>{WEB_CHANNEL_DESCRIPTION}</textarea>
             </div>
           </td>
         </tr>

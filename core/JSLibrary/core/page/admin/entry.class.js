@@ -8,9 +8,9 @@
 
 'use strict';
 
-import {Locale} from '../../locale.class.js';
 import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
+import {Utils} from "../../../utils.class.js";
 
 export class PageEntry {
   constructor(params = {}) {
@@ -35,6 +35,7 @@ export class PageEntry {
       let descriptionTextareaElement = document.querySelector('[role="entryDescription"]');
       let titleInputElement = document.querySelector('[role="entryTitle"]');
       let keywordsInputElement = document.querySelector('[role="entryKeywords"]');
+      let urlInputElement = document.querySelector('[role="entryURL"]');
 
       locales.forEach((locale, localeIndex) => {
         let localeTitle = locale.title;
@@ -87,6 +88,18 @@ export class PageEntry {
       let interactiveContainerElement = document.querySelector('#E8548530785');
       interactiveContainerElement.append(interactiveLocaleChoices.target.element);
 
+      urlInputElement.addEventListener('input', (event) => {
+        /** @var {String} */
+        let inputValue = event.target.value;
+
+        /** @var {Utils} */
+        let utils = new Utils();
+        /** @var {UString} */
+        let uString = utils.createString(inputValue);
+
+        event.target.value = uString.translitToEN(true);
+      });
+
       let interactiveChoicesSelectElement = interactiveContainerElement.querySelector('select');
       interactiveChoicesSelectElement.addEventListener('change', (event) => {
         locales.forEach((locale, localeIndex) => {
@@ -116,23 +129,31 @@ export class PageEntry {
       this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.save.target.setCallback((event) => {
         event.preventDefault();
+
+        let form = new Interactive('form');
+        form.target.replaceElement(elementForm);
         
-        let formData = new FormData(elementForm);
+        if (form.target.checkRequiredFields()) {
+          let formData = new FormData(elementForm);
 
-        fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-            let entryData = data1.outputData.entry;
-            window.location.href = '/admin/entry/' + entryData.id;
-          }
+          fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
+            method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
+            body: formData
+          }).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data1) => {
+            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let entryData = data1.outputData.entry;
+              window.location.href = '/admin/entry/' + entryData.id;
+            }
 
-          let notification = new PopupNotification(data1.message, document.body, true);
+            let notification = new PopupNotification(data1.message, document.body, true);
+            notification.show();
+          });
+        } else {
+          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
           notification.show();
-        });
+        }
       });
       this.buttons.save.assembly();
 

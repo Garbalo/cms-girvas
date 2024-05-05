@@ -272,8 +272,14 @@ namespace core\PHPLibrary {
       }
 
       if (array_key_exists('texts', $data)) {
-        foreach ($data['texts'] as $lang_name => $data_texts) {
-          $query_builder->statement->clause_set->add_column('texts', sprintf('texts || \'{"%s": %s}\'::jsonb', $lang_name, json_encode($data_texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        $json_fields = [];
+
+        foreach ($data['texts'] as $name => $value) {
+          array_push($json_fields, sprintf('\'{"%s": %s}\'::jsonb', $name, json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+        }
+
+        if (!empty($data['texts'])) {
+          $query_builder->statement->clause_set->add_column('texts', 'texts::jsonb || ' . implode(' || ', $json_fields));
         }
       }
 
