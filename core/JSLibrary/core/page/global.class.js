@@ -9,9 +9,6 @@
 'use strict';
 
 import {Interactive} from "../../interactive.class.js";
-import {ElementButton} from "../../interactive/form/elementButton.class.js";
-import {ElementTextarea} from "../../interactive/form/elementTextarea.class.js";
-import {EntryComment} from "./entry/comment.class.js";
 
 export class PageGlobal {
   constructor(params = {}) {
@@ -23,9 +20,13 @@ export class PageGlobal {
    * SYSTEM_GE_IMC_00000002 | 
    */
 
+  /**
+   * Глобальная инициализация страницы
+   */
   init() {
     let locales;
 
+    /** @var {HTMLElement} */
     let navigationBurgerElement = document.querySelector('[role="navagation-burger"]');
     if (navigationBurgerElement != null) {
       navigationBurgerElement.addEventListener('click', (event) => {
@@ -109,26 +110,36 @@ export class PageGlobal {
               authForm.target.send();
             });
 
+            // Добавление кнопки "Восстановление пароля/Забыл пароль"
             interactiveModal.target.addButton(localeData.BUTTON_RECOVERY_LABEL, () => {
-              /** @type {Interactive} */
+              /** Форма для создания запроса на восстановление пароля 
+               * @type {Interactive}
+               */
               let requestForm = new Interactive('form');
               requestForm.target.init({
                 method: 'POST',
                 action: `/handler/user/request-password-reset`
               });
               
-              /** @type {Interactive} */
+              /** Модальное окно для создания запроса на восстановление пароля
+               * @type {Interactive}
+               */
               let interactiveSubModal = new Interactive('modal', {title: localeData.MODAL_AUTHORIZATION_RECOVERY_TITLE, content: localeData.MODAL_AUTHORIZATION_RECOVERY_DESCRIPTION, width: 300});
               interactiveSubModal.target.addButton(localeData.BUTTON_SEND_LABEL, () => {
+                // Отправка формы запроса на восстановление пароля
                 requestForm.target.send();
-
+                // Закрытие текущего модального окна
                 interactiveSubModal.target.close();
+                // Восстановление родительского модального окна
                 interactiveModal.target.show();
               });
 
-              requestForm.target.successCallback = (data) => {
-
+              // Открытие родительского модального окна при закрытии текущего
+              interactiveSubModal.target.onCloseCallbackFunction = () => {
+                interactiveModal.target.show();
               };
+              
+              requestForm.target.successCallback = (data) => {};
 
               /** @type {ElementInput} */
               let requestFormInput = requestForm.target.createElementInput();
@@ -136,8 +147,8 @@ export class PageGlobal {
                 name: 'user_login_or_email',
                 type: 'text'
               });
-              requestFormInput.element.placeholder = localeData.MODAL_AUTHORIZATION_INPUT_PASSWORD_OR_LOGIN_PLACEHOLDER;
 
+              requestFormInput.element.placeholder = localeData.MODAL_AUTHORIZATION_INPUT_PASSWORD_OR_LOGIN_PLACEHOLDER;
               requestForm.target.element.firstChild.append(requestFormInput.element);
 
               interactiveModal.target.hide();

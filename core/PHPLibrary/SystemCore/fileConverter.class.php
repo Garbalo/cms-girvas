@@ -107,6 +107,10 @@ namespace core\PHPLibrary\SystemCore {
           if ($file_extension == 'png' && $convert_to_extension == 'webp') {
             $converted_result = $this->convert_png_to_webp($file_source_path, $file_output_path, $delete_old_file);
           }
+
+          if (($file_extension == $file_extension)) {
+            if (file_exists($file_source_path)) rename($file_source_path, $file_output_path);
+          }
         }
 
         if ($converted_result == true) {

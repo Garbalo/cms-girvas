@@ -82,6 +82,10 @@
   width: 100%;
 }
 
+.page__article .profile__information-table .table__cell {
+  word-break: break-all;
+}
+
 .page__article .profile__information-table .table__cell:nth-child(1) {
   text-transform: uppercase;
   text-align: left;
