@@ -7,6 +7,7 @@
   "DEFAULT_TEXT_REVIEWS": "Отзывы",
   "DEFAULT_TEXT_ABOUT": "О нас",
   "DEFAULT_TEXT_PROFILE": "Профиль",
+  "DEFAULT_TEXT_EXIT": "Выход",
   "BUTTON_SEND_LABEL": "Отправить",
   "BUTTON_LOAD_MORE_COMMENTS_LABEL": "Загрузить еще комментарии",
   "BUTTON_LOAD_ANSWERS_COMMENTS_LABEL": "Загрузить ответы",

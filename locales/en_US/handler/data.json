@@ -5,6 +5,8 @@
   "API_ERROR_INVALID_INPUT_DATA_SET": "Invalid input data set.",
   "API_ERROR_UNZIPPING_NOT_POSSIBLE": "Unzipping is not possible.",
   "API_ERROR_AUTHORIZATION": "Authorisation error.",
+  "API_ERROR_SESSION_UNKNOWN": "Session not found.",
+  "API_ERROR_SESSION_NOT_DELETED": "The session was not deleted.",
   "API_POST_DATA_SUCCESS": "The data has been successfully processed.",
   "API_GET_DATA_SUCCESS": "Data received successfully.",
   "API_PATCH_DATA_SUCCESS": "Data saved successfully.",

@@ -5,5 +5,6 @@
   "DEFAULT_TEXT_PROFILE": "Профиль",
   "DEFAULT_TEXT_LOGIN": "Войти",
   "DEFAULT_TEXT_REGISTRATION": "Регистрация",
+  "DEFAULT_TEXT_EXIT": "Выход",
   "DEFAULT_FOOTER_CMS_DESCRIPTION": "CMS «GIRVAS» — многопрофильная мультиязычная бесплатная система управления содержимым с открытым исходным кодом от карельских разработчиков «Garbalo»."
 }

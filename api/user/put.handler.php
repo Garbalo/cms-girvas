@@ -96,6 +96,8 @@ if ($system_core->client->is_logged(2)) {
       
       if (!is_null($user)) {
         $user->init_data(['metadata']);
+        // Подтверждение E-Mail у пользователя
+        $user_data['email_is_submitted'] = true;
 
         if (isset($user_data)) {
           $user->update($user_data);

@@ -79,7 +79,7 @@ code {
 }
 .admin-navigation__burger {
   display: flex;
-  background-color: var(--admin-panel-navigation-item-link-background-color);
+  background-color: var(--common-main-color-4);
   justify-content: center;
   align-items: center;
   height: 64px;
@@ -148,7 +148,7 @@ code {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  background-color: var(--admin-panel-navigation-item-link-background-color);
+  background-color: var(--common-main-color-4);
   text-decoration: none;
   outline: 0;
   padding: calc((64px - 32px) / 2);
@@ -160,20 +160,26 @@ code {
 .admin-navigation-list__item-link:active {
   background-color: var(--common-main-color-5);
 }
+.admin-navigation-list__item[role="mainNavigationExit"] .admin-navigation-list__item-link:hover,
+.admin-navigation-list__item[role="mainNavigationExit"] .admin-navigation-list__item-link:focus,
+.admin-navigation-list__item[role="mainNavigationExit"] .admin-navigation-list__item-link:active,
+.admin-navigation-list__item[role="mainNavigationExit"] .admin-navigation-list__item-label {
+  background-color: var(--common-secondary-color-6) !important;
+}
 .admin-navigation-list__item-icon,
 .admin-navigation__burger-icon {
   box-sizing: border-box;
-  fill: var(--admin-panel-navigation-icon-color);
+  fill: var(--common-main-color-2);
   width: 32px;
   height: 32px;
 }
 .admin-navigation-list__item-label {
   display: none;
   box-sizing: border-box;
-  background-color: var(--admin-panel-navigation-item-link-background-color);
+  background-color: var(--common-main-color-4);
   font-size: 16px;
   font-weight: 700;
-  color: var(--admin-panel-navigation-item-label-font-color);
+  color: var(--common-main-color-2);
   text-transform: uppercase;
   width: 0;
   height: fit-content;
@@ -210,6 +216,7 @@ code {
     display: flex;
   }
 }
+
 .admin-navigation-list__item-link:hover,
 .admin-navigation-list__item-link:focus {
   width: fit-content;

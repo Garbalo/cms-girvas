@@ -7,6 +7,7 @@
   "DEFAULT_TEXT_REVIEWS": "Reviews",
   "DEFAULT_TEXT_ABOUT": "About",
   "DEFAULT_TEXT_PROFILE": "Profile",
+  "DEFAULT_TEXT_EXIT": "Exit",
   "BUTTON_SEND_LABEL": "Send",
   "BUTTON_LOAD_MORE_COMMENTS_LABEL": "Load more comments",
   "BUTTON_LOAD_ANSWERS_COMMENTS_LABEL": "Load answers",

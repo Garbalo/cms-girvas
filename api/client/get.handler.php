@@ -8,6 +8,8 @@
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
+use \core\PHPLibrary\Client\Session as ClientSession;
+
 if (!defined('IS_NOT_HACKED')) {
   http_response_code(503);
   die('An attempted hacker attack has been detected.');

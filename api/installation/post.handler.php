@@ -54,10 +54,10 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     
     $system_core->database_connector = new \core\PHPLibrary\SystemCore\DatabaseConnector($system_core, $system_core->configurator);
 
-    if ($system_core->configurator->exists_database_entry_value('base_title')) {
-      $system_core->configurator->update_database_entry_value('base_title', $_POST['site_title']);
+    if ($system_core->configurator->exists_database_entry_value('base_site_title')) {
+      $system_core->configurator->update_database_entry_value('base_site_title', $_POST['site_title']);
     } else {
-      $system_core->configurator->insert_database_entry_value('base_title', $_POST['site_title']);
+      $system_core->configurator->insert_database_entry_value('base_site_title', $_POST['site_title']);
     }
 
     if ($system_core->configurator->exists_database_entry_value('seo_site_description')) {

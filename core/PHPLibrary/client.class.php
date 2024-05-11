@@ -50,7 +50,7 @@ namespace core\PHPLibrary {
      * @param  array $data_init
      * @return ClientSession
      */
-    public function get_session(int $session_type_id, array $data_init) : ClientSession {
+    public function get_session(int $session_type_id, array $data_init = ['*']) : ClientSession {
       $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
       $session->init_data($data_init);
       return $session;

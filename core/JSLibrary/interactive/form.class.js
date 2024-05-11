@@ -163,17 +163,19 @@ export class Form {
       return response.json();
     }).then((data) => {
       console.log('Interactive form getted data: ' + data);
+
+      let notificationContainerTarget = document.body;
       
       // Переписать эту дичь
       if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
-        let notificationContainerTarget, notificationIsPopup = false;
+        let notificationIsPopup = false;
+        
         if (typeof(data.outputData.notificationContainerTargetID) == 'undefined') {
-          notificationContainerTarget = document.body;
           notificationIsPopup = true;
         } else {
           notificationContainerTarget = document.querySelector('#' + data.outputData.notificationContainerTargetID);
+          
           if (Object.is(notificationContainerTarget, null)) {
-            notificationContainerTarget = document.body;
             notificationIsPopup = true;
           }
         }

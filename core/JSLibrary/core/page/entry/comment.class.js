@@ -32,7 +32,7 @@ export class EntryComment {
 
   initAnswersPanel(clientUserData = {}, clientUserPermissions = {}) {
     let elementEntry = document.querySelector('[role="entry"]');
-    let entryCommentsListElement = elementEntry.querySelector('[role="entry-comments-list"]');
+    let entryCommentsListElement = elementEntry.querySelector('[role="entryCommentsList"]');
 
     let interactivePanelButtonContainerElement = document.createElement('div');
     interactivePanelButtonContainerElement.classList.add('comment__answers-container');
@@ -57,7 +57,7 @@ export class EntryComment {
           }).then((authorLoadedData) => {
             let authorData = authorLoadedData.outputData.user;
             
-            commentData.index = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length + entryCommentsListElement.querySelectorAll('[role="entry-comment-answer"]').length + 1;
+            commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComments"]').length + entryCommentsListElement.querySelectorAll('[role="entryCommentAnswer"]').length + 1;
             
             let entryComment = new EntryComment(this.entry, commentData);
             entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
@@ -73,7 +73,7 @@ export class EntryComment {
                 entryComment.initAnswersPanel(clientUserData, clientUserPermissions);
               }
 
-              entryComment.elementAssembled.setAttribute('role', 'entry-comment-answer');
+              entryComment.elementAssembled.setAttribute('role', 'entryCommentsAnswer');
               entryComment.elementAssembled.classList.add('comment_answer');
             });
           });
@@ -88,7 +88,7 @@ export class EntryComment {
     });
 
     interactivePanelButton.assembly();
-    interactivePanelButton.target.element.setAttribute('role', 'entry-comment-load-asnwers');
+    interactivePanelButton.target.element.setAttribute('role', 'entryCommentLoadAnswers');
     interactivePanelButtonContainerElement.append(interactivePanelButton.target.element);
     
     this.elementAssembled.append(interactivePanelButtonContainerElement);
@@ -96,17 +96,17 @@ export class EntryComment {
 
   initPanel(clientUserData = {}, clientUserPermissions = {}) {
     let elementEntry = document.querySelector('[role="entry"]');
-
+    
     if (this.elementAssembled != null) {
       let commentPanel = this.elementAssembled.querySelector('[id^=E7453975856\_]');
       
-      if (clientIsLogged) {
+      if (clientUserData.isLogged) {
         // Edit comment
         if (clientUserData.id == this.authorID) {
           let interactiveButtonEdit = new Interactive('button');
           interactiveButtonEdit.target.setLabel(this.entry.localeBaseData.BUTTON_EDIT_LABEL);
           interactiveButtonEdit.target.setCallback((event) => {
-            let form = elementEntry.querySelector('[role="entry-comment-form"]');
+            let form = elementEntry.querySelector('[role="entryCommentForm"]');
             form.setAttribute('method', 'PATCH');
             let formTextarea = elementEntry.querySelector('[name="comment_content"]');
             formTextarea.value = this.content;
@@ -316,7 +316,7 @@ export class EntryComment {
         let interactiveButtonAnswer = new Interactive('button');
         interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
         interactiveButtonAnswer.target.setCallback((event) => {
-          let form = elementEntry.querySelector('[role="entry-comment-form"]');
+          let form = elementEntry.querySelector('[role="entryCommentForm"]');
           let formTextarea = elementEntry.querySelector('[name="comment_content"]');
           let formInputCommentParentIDElement = form.querySelector('[name="comment_parent_id"]');
           formInputCommentParentIDElement.value = this.id;
@@ -326,11 +326,11 @@ export class EntryComment {
         interactiveButtonAnswer.assembly();
         commentPanel.append(interactiveButtonAnswer.target.element);
           
-        let commentRatePanel = this.elementAssembled.querySelector('[role="entry-comment-rate"]');
+        let commentRatePanel = this.elementAssembled.querySelector('[role="entryCommentRate"]');
         let rateCountElement = document.createElement('div');
         rateCountElement.classList.add('comment__rating-count');
 
-        if (clientIsLogged) {
+        if (clientUserData.isLogged) {
           // Rate comment
           if (clientUserPermissions.base_entry_comment_rate) {
             let interactiveButtonRateUp = new Interactive('button');
@@ -367,7 +367,7 @@ export class EntryComment {
         rateCountElement.append(this.rating);
         commentRatePanel.append(rateCountElement);
 
-        if (clientIsLogged) {
+        if (clientUserData.isLogged) {
           if (clientUserPermissions.base_entry_comment_rate) {
             let interactiveButtonRateDown = new Interactive('button');
             interactiveButtonRateDown.target.setLabel('🡇');

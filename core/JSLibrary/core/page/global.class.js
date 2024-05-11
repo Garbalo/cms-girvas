@@ -72,6 +72,25 @@ export class PageGlobal {
 
       return window.CMSCore.locales.base.getData();
     }).then((localeData) => {
+      let profileNavigationItemExitElement = document.querySelector('[role="profileNavigationExit"]');
+      if (profileNavigationItemExitElement != null) {
+        profileNavigationItemExitElement.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          fetch('/handler/client/session-end?level=1', {method: 'POST'}).then((response) => {
+            return (response.ok) ? response.json() : Promise.reject(response);
+          }).then((data) => {
+            let result = data.outputData.result;
+
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
+
+            if (result == true) {
+              window.location.reload();
+            }
+          });
+        });
+      }
 
       let systemGlobalElements = document.querySelectorAll('[id^=SYSTEM_GE_]');
       systemGlobalElements.forEach((element, elementIndex) => {

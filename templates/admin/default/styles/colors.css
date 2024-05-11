@@ -98,9 +98,6 @@
   --main-admin-auth-form-input-submit-font-color--active: var(--common-secondary-color-1);
   --main-admin-auth-footer-font-color: var(--common-main-color-6);
   --admin-panel-navigation-background-color: var(--common-main-color-4);
-  --admin-panel-navigation-icon-color: var(--common-main-color-2);
-  --admin-panel-navigation-item-link-background-color: var(--common-main-color-4);
-  --admin-panel-navigation-item-label-font-color: var(--common-main-color-2);
   --admin-panel-header-background-color: var(--common-main-color-1);
   --admin-panel-header-border-color: var(--common-main-color-2);
   --admin-panel-header-shadow-color: var(--common-main-color-4--opacity-0-2);

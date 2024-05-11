@@ -11,7 +11,7 @@
 <body class="body body_base">
   <div class="admin-panel__wrapper">
     <nav class="admin-panel__navigation admin-navigation">
-      <div class="admin-navigation__burger" role="navagation-burger">
+      <div class="admin-navigation__burger" role="mainNavigationBurger">
         <svg class="admin-navigation__burger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 51.49" style="enable-background:new 0 0 64 64;">
           <rect width="64" height="11.94"/>
           <rect y="19.78" width="64" height="11.94"/>
@@ -19,7 +19,7 @@
         </svg>
       </div>
       <ul class="admin-navigation-list list-reset">
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_index" role="mainNavigationIndex">
           <a href="/admin" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_MAIN_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect width="25.9" height="25.9"/>
@@ -31,7 +31,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MAIN_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_entries" role="mainNavigationEntries">
           <a href="/admin/entries" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
@@ -40,7 +40,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_pages" role="mainNavigationPages">
           <a href="/admin/pages" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_PAGES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
@@ -49,7 +49,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_PAGES_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_media" role="mainNavigationMedia">
           <a href="/admin/media" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
@@ -58,7 +58,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MEDIA_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_users" role="mainNavigationUsers">
           <a href="/admin/users" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_USERS_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16.933332 16.933281" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <circle cx="8.4666662" cy="6.0901923" r="6" />
@@ -67,7 +67,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_USERS_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_feeds" role="mainNavigationFeeds">
           <a href="/admin/webChannels" class="admin-navigation-list__item-link" title="Веб-каналы">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <path d="M9.3,64H0C0,31.7,31.7,2,64,2v9.3C36.9,11.3,9.3,36.9,9.3,64z"/>
@@ -78,7 +78,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_WEB_CHANNELS_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_modules" role="mainNavigationModules">
           <a href="/admin/modules" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_MODULES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect x="8.2" y="48.5" width="15.5" height="15.5"/>
@@ -92,7 +92,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MODULES_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_templates" role="mainNavigationTemplates">
           <a href="/admin/templates" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_TEMPLATES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <rect y="6.7" width="24" height="50.7"/>
@@ -103,7 +103,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_TEMPLATES_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item">
+        <li class="admin-navigation-list__item item item_settings" role="mainNavigationSettings">
           <a href="/admin/settings" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_SETTINGS_CMS_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <path d="M64,38.9V25.1h-6.9c-0.6-2.1-1.4-4.1-2.5-6l4.8-4.8l-9.8-9.8l-4.8,4.8c-1.9-1.1-3.9-1.9-6-2.5V0H25.1v6.8
@@ -113,6 +113,15 @@
               <circle cx="32" cy="32" r="12.8"/>
             </svg>
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_SETTINGS_CMS_LABEL}</div>
+          </a>
+        </li>
+        <li class="admin-navigation-list__item item item_exit" role="mainNavigationExit">
+          <a href="#" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_EXIT_CMS_LABEL}">
+            <svg class="admin-navigation-list__item-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+              <polygon points="50.93 45.04 57.89 38.07 57.92 38.11 64 32.03 63.97 32 64 31.96 57.92 25.89 57.89 25.92 50.93 18.96 44.85 25.04 47.52 27.7 14.93 27.7 14.93 36.29 47.52 36.29 44.85 38.96 50.93 45.04"/>
+              <polygon points="37.44 16.23 43.81 0 0 0 0 64 43.81 64 37.44 47.87 11.36 40.89 11.36 23.11 37.44 16.23"/>
+            </svg>
+            <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_EXIT_CMS_LABEL}</div>
           </a>
         </li>
       </ul>

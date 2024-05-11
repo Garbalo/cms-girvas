@@ -22,23 +22,24 @@ export class PageEntry {
 
   init() {
     let elementEntry = document.querySelector('[role="entry"]');
-    let entryCommentsListElement = elementEntry.querySelector('[role="entry-comments-list"]');
+    let entryCommentsListElement = elementEntry.querySelector('[role="entryCommentsList"]');
     let entryID = elementEntry.getAttribute('data-entry-id');
     this.clientUserPermissions = {};
     this.clientUserData = {};
 
-    this.commentsLimit = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length : 0;
+    this.commentsLimit = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entryComment"]').length : 0;
     this.commentsOffset = 0;
     this.postLoadComments = [];
     this.comments = [];
 
-    let locales, clientIsLogged = false;
+    let locales;
+    
+    this.clientUserData.isLogged = false;
 
     fetch('/handler/client/is-logged', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      clientIsLogged = data.outputData.result;
-      console.log(clientIsLogged);
+      this.clientUserData.isLogged = data.outputData.result;
       return fetch('/handler/locales', {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
@@ -60,7 +61,7 @@ export class PageEntry {
           id: 'E7429674077',
           method: 'PUT',
           action: `/handler/entry/comment`,
-          role: 'entry-comment-form'
+          role: 'entryCommentForm'
         });
 
         commentForm.target.successCallback = (data) => {
@@ -91,7 +92,7 @@ export class PageEntry {
             let commentContent = data.outputData.comment.content;
             let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
             if (commentElement != null) {
-              let commentContentElement = commentElement.querySelector('[role="entry-comment-content"]');
+              let commentContentElement = commentElement.querySelector('[role="entryCommentContent"]');
               commentContentElement.innerHTML = commentContent;
             }
           }
@@ -143,7 +144,7 @@ export class PageEntry {
           role: 'comment-form-button-send'
         });
 
-        let commentFormContainerElement = document.querySelector('[role="entry-comment-form-container"]');
+        let commentFormContainerElement = document.querySelector('[role="entryCommentFormContainer"]');
 
         if (commentFormContainerElement != null) {
           // Assembly form
@@ -167,7 +168,7 @@ export class PageEntry {
     }).then((data) => {
       this.postLoadComments = data.outputData.comments;
       
-      let entryCommentsContainerElement = elementEntry.querySelector('[role="entry-comments-container"]');
+      let entryCommentsContainerElement = elementEntry.querySelector('[role="entryCommentsContainer"]');
       let interactiveButtonCommentsLoad = new Interactive('button');
       interactiveButtonCommentsLoad.target.setLabel(this.localeBaseData.BUTTON_LOAD_MORE_COMMENTS_LABEL);
       interactiveButtonCommentsLoad.target.setCallback((event) => {
@@ -183,7 +184,7 @@ export class PageEntry {
               }).then((authorLoadedData) => {
                 let authorData = authorLoadedData.outputData.user;
                 
-                commentData.index = entryCommentsListElement.querySelectorAll('[role="entry-comment"]').length + 1;
+                commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComment"]').length + 1;
                 commentData.entryID = entryID;
                 commentData.answersLoadingLimit = 4;
 
@@ -220,7 +221,7 @@ export class PageEntry {
     }).then((data) => {
       this.clientUserData = data.outputData.user;
 
-      let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entry-comment"]') : [];
+      let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entryComment"]') : [];
       commentsElements.forEach((comment, commentIndex) => {
         if (typeof(this.postLoadComments) != 'undefined') {
           this.postLoadComments[commentIndex].entryID = entryID;

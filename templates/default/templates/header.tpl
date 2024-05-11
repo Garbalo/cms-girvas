@@ -33,6 +33,9 @@
         <li class="header__nav-item">
           {NAVIGATION_REGISTRATION_LINK}
         </li>
+        <li class="header__nav-item">
+          {NAVIGATION_EXIT_LINK}
+        </li>
       </ul>
     </nav>
   </div>

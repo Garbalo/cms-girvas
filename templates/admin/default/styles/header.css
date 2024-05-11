@@ -37,3 +37,12 @@
 .header__brand-image {
   height: 100%;
 }
+.header__buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+}
+.header__buttons-container > *:not(:last-child) {
+  margin-right: 10px;
+}

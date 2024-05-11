@@ -5,5 +5,6 @@
   "DEFAULT_TEXT_PROFILE": "Profile",
   "DEFAULT_TEXT_LOGIN": "Log in",
   "DEFAULT_TEXT_REGISTRATION": "Registration",
+  "DEFAULT_TEXT_EXIT": "Exit",
   "DEFAULT_FOOTER_CMS_DESCRIPTION": "CMS GIRVAS is a multidisciplinary, multilingual, free, open source content management system from Karelian developers Garbalo."
 }

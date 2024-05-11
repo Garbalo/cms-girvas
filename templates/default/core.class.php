@@ -109,12 +109,14 @@ namespace templates\default {
 
         $profile_link = ($this->template->system_core->client->is_logged(1)) ? sprintf('<a class="header__nav-link display-block" href="/profile"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_PROFILE']) : sprintf('<a id="SYSTEM_GE_IMC_00000001" class="header__nav-link display-block" href="#"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_LOGIN']);
         $registration_link = (!$this->template->system_core->client->is_logged(1)) ? sprintf('<a class="header__nav-link display-block" href="/registration"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_REGISTRATION']) : '';
+        $exit_link = ($this->template->system_core->client->is_logged(1)) ? sprintf('<a class="header__nav-link display-block" href="#" role="profileNavigationExit"><span class="header__nav-span">%s</span></a>', $locale_data['DEFAULT_TEXT_EXIT']) : '';
 
         /** @var string $this->assembled Итоговый шаблон в виде строки */
         $this->assembled = TemplateCollector::assembly($this->assembly_document(), [
           'SITE_HEADER' => $this->assembly_header([
             'NAVIGATION_PROFILE_LINK' => $profile_link,
-            'NAVIGATION_REGISTRATION_LINK' => $registration_link
+            'NAVIGATION_REGISTRATION_LINK' => $registration_link,
+            'NAVIGATION_EXIT_LINK' => $exit_link
           ]),
           'SITE_MAIN' => $this->assembly_main(),
           'SITE_FOOTER' => $this->assembly_footer()
