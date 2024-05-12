@@ -51,7 +51,11 @@ export class PageModules {
         buttons.delete = new Interactive('button');
         buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
         buttons.delete.target.setCallback(() => {
-          let interactiveModal = new Interactive('modal', {title: localeData.MODAL_MODULE_DELETE_TITLE, content: localeData.MODAL_MODULE_DELETE_DESCRIPTION});
+          let interactiveModal = new Interactive('modal', {
+            title: localeData.MODAL_MODULE_DELETE_TITLE,
+            content: localeData.MODAL_MODULE_DELETE_DESCRIPTION
+          });
+          
           interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
             let formData = new FormData();
             formData.append('module_name', moduleName);

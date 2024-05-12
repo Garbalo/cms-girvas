@@ -49,7 +49,11 @@ export class PagePages {
             }
 
             if (button.getAttribute('role') == 'page-static-remove') {
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_PAGE_DELETE_TITLE, content: localeData.MODAL_PAGE_DELETE_DESCRIPTION});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_PAGE_DELETE_TITLE,
+                content: localeData.MODAL_PAGE_DELETE_DESCRIPTION
+              });
+              
               interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
                 let formData = new FormData();
                 formData.append('page_static_id', pageStaticID);

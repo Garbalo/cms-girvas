@@ -51,7 +51,11 @@ export class PageTemplates {
         });
 
         buttons.delete.target.setCallback((event) => {
-          let interactiveModal = new Interactive('modal', {title: localeData.MODAL_TEMPLATE_DELETE_TITLE, content: localeData.MODAL_TEMPLATE_DELETE_DESCRIPTION});
+          let interactiveModal = new Interactive('modal', {
+            title: localeData.MODAL_TEMPLATE_DELETE_TITLE,
+            content: localeData.MODAL_TEMPLATE_DELETE_DESCRIPTION
+          });
+          
           interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
             let formData = new FormData();
             formData.append('template_name', templateName);

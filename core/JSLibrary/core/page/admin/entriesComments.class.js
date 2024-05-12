@@ -42,7 +42,11 @@ export class PageEntriesComments {
 
           button.addEventListener('click', (event) => {
             if (button.getAttribute('role') == 'comment-show') {
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_COMMENT_SHOW_TITLE, content: localeData.MODAL_COMMENT_SHOW_DESCRIPTION});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_COMMENT_SHOW_TITLE,
+                content: localeData.MODAL_COMMENT_SHOW_DESCRIPTION
+              });
+
               interactiveModal.target.addButton(localeData.BUTTON_YES_LABEL, () => {
                 let formData = new FormData();
                 formData.append('comment_id', commentID);
@@ -85,7 +89,11 @@ export class PageEntriesComments {
               elementTextarea.setAttribute('placeholder', localeData.MODAL_COMMENT_HIDE_REASON_PLACEHOLDER);
               elementForm.append(elementTextarea);
               
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_COMMENT_HIDE_TITLE, content: elementForm});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_COMMENT_HIDE_TITLE,
+                content: elementForm
+              });
+
               interactiveModal.target.addButton(localeData.BUTTON_SUBMIT_LABEL, () => {
                 let formData = new FormData();
                 formData.append('comment_id', commentID);
@@ -119,7 +127,11 @@ export class PageEntriesComments {
             }
 
             if (button.getAttribute('role') == 'comment-delete') {
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_ENTRY_COMMENT_DELETE_TITLE, content: localeData.MODAL_ENTRY_COMMENT_DELETE_DESCRIPTION});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_ENTRY_COMMENT_DELETE_TITLE,
+                content: localeData.MODAL_ENTRY_COMMENT_DELETE_DESCRIPTION
+              });
+              
               interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
                 let formData = new FormData();
                 formData.append('comment_id', commentID);

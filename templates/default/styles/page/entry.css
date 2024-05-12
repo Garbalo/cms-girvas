@@ -137,6 +137,7 @@
 
 .page__article .article__comments .comment__container {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .page__article .article__comments .comment__avatar-container {
@@ -160,6 +161,37 @@
   padding: 10px;
 }
 
+.page__article .article__comments .comment__panel-interactive {
+  display: flex;
+  padding-top: 10px;
+  flex: 0 0 100%;
+}
+
+.page__article .article__comments .comment__panel-interactive > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+.page__article .article__comments .comment__panel-interactive .comment__rate-block {
+  display: flex;
+}
+
+.page__article .article__comments .comment__panel-interactive .comment__rate-block > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+.page__article .article__comments .comment__panel-interactive .comment__rate-block .comment__rating-count {
+  display: flex;
+  align-items: center;
+}
+
+.page__article .article__comments .form__panel-container {
+  display: flex;
+}
+
+.page__article .article__comments .form__panel-container > *:not(:last-child) {
+  margin-right: 10px;
+}
+
 .page__article .article__comments .form[role="entryCommentForm"] {
   display: flex;
   flex-direction: column;
@@ -169,6 +201,7 @@
 .page__article .article__comments .form[role="entryCommentForm"] textarea {
   margin-bottom: 10px;
   width: 100%;
+  resize: none;
 }
 
 .page__article .article__comments .form[role="entryCommentForm"] button {

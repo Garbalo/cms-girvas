@@ -49,7 +49,11 @@ export class PageUsersGroups {
             }
 
             if (button.getAttribute('role') == 'user-group-remove') {
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_USERS_GROUP_DELETE_TITLE, content: localeData.MODAL_USERS_GROUP_DELETE_DESCRIPTION});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_USERS_GROUP_DELETE_TITLE,
+                content: localeData.MODAL_USERS_GROUP_DELETE_DESCRIPTION
+              });
+              
               interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
                 let formData = new FormData();
                 formData.append('user_group_id', userGroupID);

@@ -39,6 +39,7 @@
   position: sticky;
   width: 100%;
   background-color: var(--dark-gray-color);
+  z-index: 1;
 }
 
 @media (max-width: 669px) {

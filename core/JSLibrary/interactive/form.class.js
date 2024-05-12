@@ -204,7 +204,7 @@ export class Form {
 
       this.successCallback(data);
     }).catch((error) => {
-      let notification = new PopupNotification('Interactive form getted error: ' + error, notificationContainerTarget, notificationIsPopup);
+      let notification = new PopupNotification('Interactive form getted error: ' + error, document.body, true);
       notification.show();
       
       this.failCallback(error);

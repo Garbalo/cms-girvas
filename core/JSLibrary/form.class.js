@@ -8,6 +8,9 @@
 
 'use strict';
 
+/**
+ * Форма (устаревшее)
+ */
 class Form {
   /**
    * constructor

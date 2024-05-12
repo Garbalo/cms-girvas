@@ -124,7 +124,15 @@ export class PageGlobal {
             authForm.target.element.firstChild.append(authFormInputLogin.element);
             authForm.target.element.firstChild.append(authFormInputPassword.element);
 
-            let interactiveModal = new Interactive('modal', {title: localeData.MODAL_AUTHORIZATION_IN_SYSTEM_TITLE, content: localeData.MODAL_AUTHORIZATION_IN_SYSTEM_DESCRIPTION, width: 300});
+            /** Модальное окно для создания запроса на авторизацию
+             * @type {Interactive}
+             */
+            let interactiveModal = new Interactive('modal', {
+              title: localeData.MODAL_AUTHORIZATION_IN_SYSTEM_TITLE,
+              content: localeData.MODAL_AUTHORIZATION_IN_SYSTEM_DESCRIPTION,
+              width: 300
+            });
+
             interactiveModal.target.addButton(localeData.BUTTON_AUTHORIZATION_LABEL, () => {
               authForm.target.send();
             });
@@ -143,7 +151,12 @@ export class PageGlobal {
               /** Модальное окно для создания запроса на восстановление пароля
                * @type {Interactive}
                */
-              let interactiveSubModal = new Interactive('modal', {title: localeData.MODAL_AUTHORIZATION_RECOVERY_TITLE, content: localeData.MODAL_AUTHORIZATION_RECOVERY_DESCRIPTION, width: 300});
+              let interactiveSubModal = new Interactive('modal', {
+                title: localeData.MODAL_AUTHORIZATION_RECOVERY_TITLE,
+                content: localeData.MODAL_AUTHORIZATION_RECOVERY_DESCRIPTION,
+                width: 300
+              });
+
               interactiveSubModal.target.addButton(localeData.BUTTON_SEND_LABEL, () => {
                 // Отправка формы запроса на восстановление пароля
                 requestForm.target.send();

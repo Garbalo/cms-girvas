@@ -84,6 +84,10 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
     $handler_output_data['user']['isBlocked'] = $user->is_blocked();
     $handler_output_data['user']['groupID'] = $user->get_group_id();
 
+    if ($system_core->urlp->get_path(2) == '@me') {
+      $handler_output_data['user']['isLogged'] = ($system_core->client->is_logged(1)) ? true : false;
+    }
+
     $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');
     $handler_status_code = 1;
   } else {

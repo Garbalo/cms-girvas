@@ -11,8 +11,9 @@
 import {Interactive} from "../interactive.class.js";
 
 export class Modal {
-  constructor(modalTitle, modalContent, modalWidth) {
+  constructor(modalTitle, modalDescription, modalContent, modalWidth) {
     this.title = modalTitle;
+    this.description = modalDescription;
     this.content = modalContent;
     this.width = modalWidth;
     this.opacity = 0;
@@ -76,7 +77,7 @@ export class Modal {
     this.buttons.push(interactiveButton);
   }
 
-  assemblyHeader(modalTitle = 'Modal window') {
+  assemblyHeaderContainer(modalTitle = 'Modal window') {
     let elementHeader = document.createElement('div');
     elementHeader.classList.add('modal__header-container');
 
@@ -100,7 +101,7 @@ export class Modal {
     return elementHeader;
   }
 
-  assemblyBody(modalContent = 'Modal body content') {
+  assemblyContentContainer(modalContent = 'Modal body content') {
     let elementBody = document.createElement('div');
     elementBody.append(modalContent);
     elementBody.classList.add('modal__body-container');
@@ -108,7 +109,15 @@ export class Modal {
     return elementBody;
   }
 
-  assemblyFooter() {
+  assemblyDescriptionContainer(string = '') {
+    let element = document.createElement('div');
+    element.append(string);
+    element.classList.add('modal__description-container');
+
+    return element;
+  }
+
+  assemblyFooterContainer() {
     let elementFooter = document.createElement('div');
     elementFooter.classList.add('modal__footer-container');
 
@@ -128,21 +137,30 @@ export class Modal {
   }
 
   assembly() {
-    let elementHeader = this.assemblyHeader(this.title);
-    let elementBody = this.assemblyBody(this.content);
-    let elementFooter = this.assemblyFooter();
-    let elementWrapper = this.assemblyWrapper();
+    let childrenElements = {
+      header: this.assemblyHeaderContainer(this.title),
+      description: this.assemblyDescriptionContainer(this.description),
+      content: this.assemblyContentContainer(this.content),
+      footer: this.assemblyFooterContainer(),
+      wrapper: this.assemblyWrapper()
+    };
+
+    let modalElement = document.createElement('div');
+    modalElement.classList.add('interactive__modal');
+    modalElement.style.width = this.width + 'px';
+
+    modalElement.appendChild(childrenElements.header);
+
+    if (this.description != null && this.description != '') {
+      childrenElements.content.appendChild(childrenElements.description);
+    }
+
+    modalElement.appendChild(childrenElements.content);
+    modalElement.appendChild(childrenElements.footer);
+    childrenElements.wrapper.appendChild(modalElement);
+    
     let element = document.createElement('div');
-
-    let elementModal = document.createElement('div');
-    elementModal.classList.add('interactive__modal');
-    elementModal.style.width = this.width + 'px';
-
-    elementModal.appendChild(elementHeader);
-    elementModal.appendChild(elementBody);
-    elementModal.appendChild(elementFooter);
-    elementWrapper.appendChild(elementModal);
-    element.appendChild(elementWrapper);
+    element.appendChild(childrenElements.wrapper);
 
     this.element = element;
   }

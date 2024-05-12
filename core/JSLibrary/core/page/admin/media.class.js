@@ -34,7 +34,11 @@ export class PageMedia {
     buttons.delete.target.setCallback((event) => {
       event.preventDefault();
       
-      let interactiveModal = new Interactive('modal', {title: this.localeData.MODAL_MEDIA_DELETE_TITLE, content: this.localeData.MODAL_MEDIA_DELETE_DESCRIPTION});
+      let interactiveModal = new Interactive('modal', {
+        title: this.localeData.MODAL_MEDIA_DELETE_TITLE,
+        content: this.localeData.MODAL_MEDIA_DELETE_DESCRIPTION
+      });
+      
       interactiveModal.target.addButton(this.localeData.BUTTON_DELETE_LABEL, () => {
         let formData = new FormData();
         formData.append('media_file_fullname', fileName);

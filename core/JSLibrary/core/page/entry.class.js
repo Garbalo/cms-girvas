@@ -33,13 +33,10 @@ export class PageEntry {
     this.comments = [];
 
     let locales;
-    
-    this.clientUserData.isLogged = false;
 
     fetch('/handler/client/is-logged', {method: 'GET'}).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      this.clientUserData.isLogged = data.outputData.result;
       return fetch('/handler/locales', {method: 'GET'});
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
@@ -64,37 +61,46 @@ export class PageEntry {
           role: 'entryCommentForm'
         });
 
+        let commentFormElement = commentForm.target.element.querySelector('form');
+        commentFormElement.classList.add('form_entry-comment');
+        commentFormElement.setAttribute('readonly', '');
+
         commentForm.target.successCallback = (data) => {
-          if (commentForm.target.element.firstChild.getAttribute('method') == 'PUT') {
-            let commentID = data.outputData.comment.id;
-            let commentData = {}, authorData = {};
+          if (data.outputData.hasOwnProperty('comment')) {
+            if (commentForm.target.element.firstChild.getAttribute('method') == 'PUT') {
+              let commentID = data.outputData.comment.id;
+              let commentData = {}, authorData = {};
+              
+              fetch(`/handler/entry/comment/${commentID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
+                return (response.ok) ? response.json() : Promise.reject(response);
+              }).then((commentCreatedData) => {
+                commentData = commentCreatedData.outputData.comment;
+                return fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
+              }).then((response) => {
+                return (response.ok) ? response.json() : Promise.reject(response);
+              }).then((authorCommentCreatedData) => {
+                authorData = authorCommentCreatedData.outputData.user;
 
-            fetch(`/handler/entry/comment/${commentID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((commentCreatedData) => {
-              commentData = commentCreatedData.outputData.comment;
-              return fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((authorCommentCreatedData) => {
-              authorData = authorCommentCreatedData.outputData.user;
-
-              let newEntryComment = new EntryComment(this, commentData);
-              newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
-                entryCommentsListElement.prepend(commentElement);
-                newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                let newEntryComment = new EntryComment(this, commentData);
+                newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                  entryCommentsListElement.prepend(commentElement);
+                  newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                });
               });
-            });
-          }
-
-          if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
-            let commentID = data.outputData.comment.id;
-            let commentContent = data.outputData.comment.content;
-            let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
-            if (commentElement != null) {
-              let commentContentElement = commentElement.querySelector('[role="entryCommentContent"]');
-              commentContentElement.innerHTML = commentContent;
             }
+
+            if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
+              let commentID = data.outputData.comment.id;
+              let commentContent = data.outputData.comment.content;
+              let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
+              if (commentElement != null) {
+                let commentContentElement = commentElement.querySelector('[role="entryCommentContent"]');
+                commentContentElement.innerHTML = commentContent;
+              }
+            }
+          } else {
+            let notification = new PopupNotification(data.message, document.body, true);
+            notification.show();
           }
         };
         
@@ -127,7 +133,11 @@ export class PageEntry {
         formButton.setStringLabel(this.localeBaseData.BUTTON_SEND_LABEL);
         formButton.setClickEvent((event) => {
           event.preventDefault();
-          commentForm.target.send();
+
+          if (formTextarea.element.value != '') {
+            commentForm.target.send();
+          }
+
           formTextarea.element.value = '';
 
           let formInputCommentID = commentForm.target.element.querySelector('[name="comment_id"]');
@@ -135,6 +145,12 @@ export class PageEntry {
             let commentTargetElement = elementEntry.querySelector(`[data-comment-id="${formInputCommentID.value}"]`);
             commentTargetElement.scrollIntoView({block: "center", behavior: "smooth"});
             formInputCommentID.remove();
+
+            if (commentForm.target.element.firstChild.hasAttribute('method')) {
+              if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
+                commentForm.target.element.firstChild.setAttribute('method', 'PUT');
+              }
+            }
           }
 
           let formButtonRest = commentForm.target.element.querySelector('[role="comment-form-button-reset"]');
@@ -147,12 +163,16 @@ export class PageEntry {
         let commentFormContainerElement = document.querySelector('[role="entryCommentFormContainer"]');
 
         if (commentFormContainerElement != null) {
+          let commentFormPanelElement = document.createElement('div');
+          commentFormPanelElement.classList.add('form__panel-container');
+          commentFormPanelElement.append(formButton.element);
+
           // Assembly form
           commentForm.target.element.setAttribute('id', 'E7443753064');
           commentForm.target.element.firstChild.append(formInputParentID.element);
           commentForm.target.element.firstChild.append(formInputEntryID.element);
           commentForm.target.element.firstChild.append(formTextarea.element);
-          commentForm.target.element.firstChild.append(formButton.element);
+          commentForm.target.element.firstChild.append(commentFormPanelElement);
           commentForm.assembly();
 
           this.commentForm = commentForm;
@@ -219,7 +239,7 @@ export class PageEntry {
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      this.clientUserData = data.outputData.user;
+      this.clientUserData = Object.assign(data.outputData.user);
 
       let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entryComment"]') : [];
       commentsElements.forEach((comment, commentIndex) => {
@@ -242,5 +262,12 @@ export class PageEntry {
         }
       });
     });
+
+    let commentFormElement = document.querySelector('[role="entryCommentForm"]');
+    if (commentFormElement != null) {
+      if (commentFormElement.hasAttribute('readonly')) {
+        commentFormElement.removeAttribute('readonly');
+      }
+    }
   }
 }

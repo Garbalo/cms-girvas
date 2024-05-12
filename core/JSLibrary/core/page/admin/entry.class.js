@@ -162,7 +162,11 @@ export class PageEntry {
       this.buttons.delete.target.setCallback((event) => {
         event.preventDefault();
 
-        let interactiveModal = new Interactive('modal', {title: localeData.MODAL_ENTRY_DELETE_TITLE, content: localeData.MODAL_ENTRY_DELETE_DESCRIPTION});
+        let interactiveModal = new Interactive('modal', {
+          title: localeData.MODAL_ENTRY_DELETE_TITLE,
+          content: localeData.MODAL_ENTRY_DELETE_DESCRIPTION
+        });
+        
         interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('entry_id', searchParams.getPathPart(3));

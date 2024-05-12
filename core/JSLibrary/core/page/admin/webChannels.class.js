@@ -49,7 +49,11 @@ export class PageWebChannels {
             }
 
             if (button.getAttribute('role') == 'web-channel-remove') {
-              let interactiveModal = new Interactive('modal', {title: localeData.MODAL_WEB_CHANNEL_DELETE_TITLE, content: localeData.MODAL_WEB_CHANNEL_DELETE_DESCRIPTION});
+              let interactiveModal = new Interactive('modal', {
+                title: localeData.MODAL_WEB_CHANNEL_DELETE_TITLE,
+                content: localeData.MODAL_WEB_CHANNEL_DELETE_DESCRIPTION
+              });
+              
               interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
                 let formData = new FormData();
                 formData.append('web_channel_id', webChannelID);

@@ -89,7 +89,9 @@ export class EntryComment {
 
     interactivePanelButton.assembly();
     interactivePanelButton.target.element.setAttribute('role', 'entryCommentLoadAnswers');
-    interactivePanelButtonContainerElement.append(interactivePanelButton.target.element);
+
+    let commentPanel = this.elementAssembled.querySelector('[id^=E7453975856\_]');
+    commentPanel.append(interactivePanelButton.target.element);
     
     this.elementAssembled.append(interactivePanelButtonContainerElement);
   }
@@ -108,6 +110,7 @@ export class EntryComment {
           interactiveButtonEdit.target.setCallback((event) => {
             let form = elementEntry.querySelector('[role="entryCommentForm"]');
             form.setAttribute('method', 'PATCH');
+            
             let formTextarea = elementEntry.querySelector('[name="comment_content"]');
             formTextarea.value = this.content;
             formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
@@ -125,7 +128,7 @@ export class EntryComment {
 
             /** @type {ElementButton} */
             let formButtonReset = this.entry.commentForm.target.createElementButton();
-            formButtonReset.setStringLabel('Сброс');
+            formButtonReset.setStringLabel(this.entry.localeBaseData.BUTTON_RESET_LABEL);
             formButtonReset.setClickEvent((event) => {
               event.preventDefault();
               form.setAttribute('method', 'PUT');
@@ -137,7 +140,8 @@ export class EntryComment {
               role: 'comment-form-button-reset'
             });
 
-            form.append(formButtonReset.element);
+            let formPanelElement = form.querySelector('.form__panel-container');
+            formPanelElement.append(formButtonReset.element);
           });
           interactiveButtonEdit.assembly();
           commentPanel.append(interactiveButtonEdit.target.element);
@@ -146,7 +150,7 @@ export class EntryComment {
         // Hide comment with reason
         if (clientUserPermissions.moder_entries_comments_management) {
           let interactiveButtonHide = new Interactive('button');
-          interactiveButtonHide.target.setLabel('Скрыть');
+          interactiveButtonHide.target.setLabel(this.entry.localeBaseData.BUTTON_HIDE_LABEL);
           interactiveButtonHide.target.setCallback((event) => {
             let elementForm = document.createElement('form');
             elementForm.classList.add('form');
@@ -163,6 +167,8 @@ export class EntryComment {
               formData.append('comment_id', this.id);
               formData.append('comment_is_hidden', 'on');
               formData.append('comment_hidden_reason', elementTextarea.value);
+
+              console.log(this.entry.commentForm.target.element);
 
               fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
                 method: 'PATCH',

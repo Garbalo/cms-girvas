@@ -15,11 +15,20 @@ import {Form} from './interactive/form.class.js';
 
 export class Interactive {
   constructor(interactiveName, interactiveParams = {}) {
+    let modalData = {};
+
+    if (interactiveName == 'modal') {
+      modalData.title = (Object.hasOwn(interactiveParams, 'title')) ? interactiveParams.title : 'Anonymous modal';
+      modalData.description = (Object.hasOwn(interactiveParams, 'description')) ? interactiveParams.description : '';
+      modalData.content = (Object.hasOwn(interactiveParams, 'content')) ? interactiveParams.content : '';
+      modalData.width = (Object.hasOwn(interactiveParams, 'width')) ? interactiveParams.width : 300;
+    }
+
     switch (interactiveName) {
       case 'choices': this.target = new Choices(); break;
       case 'button': this.target = new Button(); break;
       case 'form': this.target = new Form(); break;
-      case 'modal': this.target = new Modal(interactiveParams.title, interactiveParams.content, interactiveParams.width); break;
+      case 'modal': this.target = new Modal(modalData.title, modalData.content, modalData.description, modalData.width); break;
     }
   }
 
