@@ -3,14 +3,17 @@
 /**
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
- * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @link        https://github.com/Garbalo/cms-girvas Путь до репозитория системы
  * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
- * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ * @license     https://github.com/Garbalo/cms-girvas/LICENSE.md
  */
 
 namespace core\PHPLibrary {
   use \core\PHPLibrary\Client\Session as ClientSession;
 
+  /**
+   * Клиент
+   */
   class Client {
     private readonly SystemCore $system_core;
     private string $ip_address;
@@ -25,7 +28,8 @@ namespace core\PHPLibrary {
       $this->system_core = $system_core;
 
       $this->set_ip_address($_SERVER['REMOTE_ADDR']);
-    }    
+    }
+
     /**
      * Назначить IP-адрес клиенту
      *
@@ -34,7 +38,8 @@ namespace core\PHPLibrary {
      */
     private function set_ip_address(string $value) : void {
       $this->ip_address = $value;
-    }    
+    }
+
     /**
      * Получить IP-адрес клиента
      *
@@ -42,7 +47,8 @@ namespace core\PHPLibrary {
      */
     public function get_ip_address() : string {
       return $this->ip_address;
-    }    
+    }
+
     /**
      * Получить объект сессии
      *
@@ -54,7 +60,8 @@ namespace core\PHPLibrary {
       $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
       $session->init_data($data_init);
       return $session;
-    }    
+    }
+
     /**
      * Получить объект пользователя, к которому привязана сессия
      *
@@ -63,7 +70,8 @@ namespace core\PHPLibrary {
     public function get_user(int $session_type_id) : User|null {
       $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
       return (!is_null($session)) ? $session->get_user() : null;
-    }    
+    }
+
     /**
      * Проверка статуса авторизации клиента по типу сессии
      *
@@ -88,6 +96,48 @@ namespace core\PHPLibrary {
             }
           }
         }
+      }
+
+      return false;
+    }
+
+    /**
+     * Создать Cookie
+     * 
+     * @param SystemCore $system_core
+     * @param string $name
+     * @param ClientSession $session
+     * @param int $expires
+     * 
+     * @return bool
+     */
+    public static function create_cookie(SystemCore $system_core, string $name, ClientSession $session, int $expires) : bool {
+      $domain_for_cookies = $system_core->configurator->get('domain_cookies');
+      
+      if (!is_null($domain_for_cookies)) {
+        return setcookie($name, $session->get_token(), [
+          'expires' => $expires,
+          'path' => '/',
+          'domain' => $domain_for_cookies,
+          'secure' => true,
+          'httponly' => true
+        ]);
+      }
+
+      return false;
+    }
+    
+    /**
+     * Удалить Cookie
+     * 
+     * @param string $name
+     * 
+     * @return bool
+     */
+    public static function remove_cookie(string $name) : bool {
+      if (isset($_COOKIE[$name])) {
+        unset($_COOKIE[$name]);
+        return setcookie($name, '', time() - 3600, '/');
       }
 
       return false;

@@ -3,9 +3,9 @@
 /**
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
- * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @link        https://github.com/Garbalo/cms-girvas Путь до репозитория системы
  * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
- * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ * @license     https://github.com/Garbalo/cms-girvas/LICENSE.md
  */
 
 if (!defined('IS_NOT_HACKED')) {
@@ -294,26 +294,14 @@ if ($system_core->urlp->get_path(2) == 'authorization' && $system_core->urlp->ge
               $user_session_base->init_data(['updated_unix_timestamp', 'token']);
               $user_session_base_expires = $user_session_base->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
 
-              setcookie('_grv_utoken', $user_session_base->get_token(), [
-                'expires' => $user_session_base_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain_cookies'),
-                'secure' => true,
-                'httponly' => true
-              ]);
+              $system_core->client::create_cookie($system_core, '_grv_utoken', $user_session_base, $user_session_base_expires);
             }
 
             if (!is_null($user_session_admin)) {
               $user_session_admin->init_data(['updated_unix_timestamp', 'token']);
               $user_session_admin_expires = $user_session_admin->get_updated_unix_timestamp() + $system_core->configurator->get('session_expires');
 
-              setcookie('_grv_atoken', $user_session_admin->get_token(), [
-                'expires' => $user_session_admin_expires,
-                'path' => '/',
-                'domain' => $system_core->configurator->get('domain_cookies'),
-                'secure' => true,
-                'httponly' => true
-              ]);
+              $system_core->client::create_cookie($system_core, '_grv_atoken', $user_session_admin, $user_session_admin_expires);
 
               $sc_report = \core\PHPLibrary\SystemCore\Report::create($system_core, \core\PHPLibrary\SystemCore\Report::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS, [
                 'clientIP' => $system_core->client->get_ip_address(),

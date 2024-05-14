@@ -1,9 +1,9 @@
 /**
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
- * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @link        https://github.com/Garbalo/cms-girvas Путь до репозитория системы
  * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
- * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ * @license     https://github.com/Garbalo/cms-girvas/LICENSE.md
  */
 
 'use strict';
@@ -15,6 +15,8 @@ import {Form} from './interactive/form.class.js';
 
 export class Interactive {
   constructor(interactiveName, interactiveParams = {}) {
+    this.id = this.generateUniqueID();
+
     let modalData = {};
 
     if (interactiveName == 'modal') {
@@ -30,6 +32,8 @@ export class Interactive {
       case 'form': this.target = new Form(); break;
       case 'modal': this.target = new Modal(modalData.title, modalData.content, modalData.description, modalData.width); break;
     }
+
+    window.CMSCore.debugLog(2, 'CMSInteractive', `Element "${interactiveName}" (ID: ${this.id}) created!`, true);
   }
 
   generateRandomInt(min, max) {
@@ -54,7 +58,7 @@ export class Interactive {
 
   assembly() {
     this.target.assembly();
-    this.target.element.setAttribute('cmsg-interactive-uid', this.generateUniqueID());
+    this.target.element.setAttribute('cmsg-interactive-uid', this.id);
 
     this.target.element.classList.add(`interactive`);
     this.target.element.classList.add(`interactive_${this.target.constructor.name.toLocaleLowerCase()}`);

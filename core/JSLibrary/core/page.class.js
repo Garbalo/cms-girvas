@@ -1,9 +1,9 @@
 /**
  * CMS GIRVAS (https://www.cms-girvas.ru/)
  * 
- * @link        https://github.com/Andrey-Shestakov/cms-girvas Путь до репозитория системы
+ * @link        https://github.com/Garbalo/cms-girvas Путь до репозитория системы
  * @copyright   Copyright (c) 2022 - 2024, Andrey Shestakov & Garbalo (https://www.garbalo.com/)
- * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
+ * @license     https://github.com/Garbalo/cms-girvas/LICENSE.md
  */
 
 'use strict';
@@ -34,8 +34,9 @@ import {PageGlobal as PageDefaultGlobal} from './page/global.class.js';
 import {URLParser} from "../urlParser.class.js";
 
 export class Page {
-  constructor(pageCategory, pageName, params = {}) {
+  constructor(core, pageCategory, pageName, params = {}) {
     this.target = null;
+    this.core = core;
 
     let searchParams = new URLParser();
 
@@ -79,6 +80,7 @@ export class Page {
 
   init() {
     this.target.init();
-    console.log(`Page "${this.target.constructor.name} inited!"`);
+
+    window.CMSCore.debugLog(1, 'CMSCore', `Page "${this.target.constructor.name} inited!"`, true);
   }
 }
