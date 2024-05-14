@@ -27,6 +27,10 @@ if ($system_core->client->is_logged(2)) {
 
     $user_login = isset($_PUT['user_login']) ? $_PUT['user_login'] : '';
     $user_email = isset($_PUT['user_email']) ? $_PUT['user_email'] : '';
+    $user_name = isset($_PUT['user_name']) ? $_PUT['user_name'] : '';
+    $user_surname = isset($_PUT['user_surname']) ? $_PUT['user_surname'] : '';
+    $user_patronymic = isset($_PUT['user_patronymic']) ? $_PUT['user_patronymic'] : '';
+    $user_birthdate = isset($_PUT['user_birthdate']) ? $_PUT['user_birthdate'] : 0;
     $user_group_id = isset($_PUT['user_group_id']) ? (int)$_PUT['user_group_id'] : 4;
     $user_password = isset($_PUT['user_password']) ? $_PUT['user_password'] : '';
     $user_password_repeat = isset($_PUT['user_password_repeat']) ? $_PUT['user_password_repeat'] : '';
@@ -63,6 +67,22 @@ if ($system_core->client->is_logged(2)) {
         $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
         $user_creation_allowed = false;
       }
+    }
+
+    if (isset($user_birthdate)) {
+      $user_data['metadata']['birthdateUnixTimestamp'] = $user_birthdate;
+    }
+
+    if (isset($user_name)) {
+      $user_data['metadata']['name'] = $user_name;
+    }
+
+    if (isset($user_surname)) {
+      $user_data['metadata']['surname'] = $user_surname;
+    }
+
+    if (isset($user_patronymic)) {
+      $user_data['metadata']['patronymic'] = $user_patronymic;
     }
 
     if (isset($user_group_id)) {
