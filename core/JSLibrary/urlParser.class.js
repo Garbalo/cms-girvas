@@ -28,7 +28,7 @@ export class URLParser {
   getPathPart(index) {
     let string = (typeof(this.path[index]) != 'undefined') ? this.path[index] : null;
     string = (string != null) ? string.split('?') : null;
-    return string[0];
+    return (string != null) ? string[0] : null;
   }
 
   /**

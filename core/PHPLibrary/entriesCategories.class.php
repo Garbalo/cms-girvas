@@ -36,7 +36,7 @@ namespace core\PHPLibrary {
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
-      $query_builder->statement->clause_from->add_table('id');
+      $query_builder->statement->clause_from->add_table('entries_categories');
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_order_by();
       $query_builder->statement->clause_order_by->set_column('created_unix_timestamp');

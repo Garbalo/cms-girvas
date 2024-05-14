@@ -115,7 +115,7 @@ if ($system_core->client->is_logged(2)) {
       $user = User::create($system_core, $user_login, $user_email, $user_password);
       
       if (!is_null($user)) {
-        $user->init_data(['metadata']);
+        $user->init_data(['*']);
         // Подтверждение E-Mail у пользователя
         $user_data['email_is_submitted'] = true;
 
