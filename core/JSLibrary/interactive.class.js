@@ -33,7 +33,9 @@ export class Interactive {
       case 'modal': this.target = new Modal(modalData.title, modalData.content, modalData.description, modalData.width); break;
     }
 
-    window.CMSCore.debugLog(2, 'CMSInteractive', `Element "${interactiveName}" (ID: ${this.id}) created!`, true);
+    if (typeof(window.CMSCore) != 'undefined') {
+      window.CMSCore.debugLog(2, 'CMSInteractive', `Element "${interactiveName}" (ID: ${this.id}) created!`, true);
+    }
   }
 
   generateRandomInt(min, max) {
