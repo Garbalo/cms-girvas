@@ -23,7 +23,9 @@ export class PageGlobal {
    * 
    * @param {*} params 
    */
-  constructor(params = {}) {
+  constructor(page, params = {}) {
+    this.page = page;
+
     this.buttons = {checkVersion: null, toSite: null};
   }
 

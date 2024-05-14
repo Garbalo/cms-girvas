@@ -13,8 +13,8 @@ import {ElementButton} from "../../interactive/form/elementButton.class.js";
 import {ElementTextarea} from "../../interactive/form/elementTextarea.class.js";
 
 export class PageProfile {
-  constructor(params = {}) {
-
+  constructor(page, params = {}) {
+    this.page = page;
   }
 
   init() {
@@ -34,6 +34,7 @@ export class PageProfile {
         let profileAvatarInput = document.createElement('input');
         profileAvatarInput.setAttribute('type', 'file');
         profileAvatarInput.setAttribute('name', 'user_avatar');
+        profileAvatarInput.setAttribute('role', 'profileFormInputUserAvatar');
 
         profileAvatarInput.style.display = 'none';
 
@@ -70,6 +71,77 @@ export class PageProfile {
         profileAvatarElement.addEventListener('click', (event) => {
           profileAvatarInput.click();
         });
+      }
+
+      let profilePanelButtonsElement = document.querySelector('[role="profilePanelButtons"]');
+      if (profilePanelButtonsElement != null) {
+        if (this.page.core.searchParams.getParam('event') != 'edit') {
+          let interactiveButtonEdit = new Interactive('button');
+          interactiveButtonEdit.target.setLabel(this.localeBaseData.BUTTON_EDIT_LABEL);
+          interactiveButtonEdit.target.setCallback((event) => {
+            window.location.href = '?event=edit';
+          });
+          interactiveButtonEdit.assembly();
+
+          profilePanelButtonsElement.append(interactiveButtonEdit.target.element);
+        }
+
+        if (this.page.core.searchParams.getParam('event') == 'edit') {
+          if (profileAvatarElement != null && profileFormElement != null) {
+            let profileAvatarInput = document.querySelector('[role="profileFormInputUserAvatar"]');
+            let profilePasswordInput = document.querySelector('[role="profileFormInputUserPassword"]');
+            let profilePasswordRepeatInput = document.querySelector('[role="profileFormInputUserPasswordRepeat"]');
+            
+            let interactiveButtonBack = new Interactive('button');
+            interactiveButtonBack.target.setLabel(this.localeBaseData.DEFAULT_TEXT_BACK);
+            interactiveButtonBack.target.setCallback((event) => {
+              window.location.href = '/profile';
+            });
+
+            let interactiveButtonEditAvatar = new Interactive('button');
+            interactiveButtonEditAvatar.target.setLabel(this.localeBaseData.BUTTON_EDIT_AVATAR_LABEL);
+            interactiveButtonEditAvatar.target.setCallback((event) => {
+              if (profileAvatarInput != null) {
+                profileAvatarInput.click();
+              }
+            });
+
+            profilePasswordInput.addEventListener('change', (event) => {
+              event.preventDefault();
+
+              if (event.target.value != '') {
+                profilePasswordInput.setAttribute('required', '');
+                profilePasswordRepeatInput.setAttribute('required', '');
+              } else {
+                if (profilePasswordRepeatInput.value == '') {
+                  profilePasswordInput.removeAttribute('required');
+                  profilePasswordRepeatInput.removeAttribute('required');
+                }
+              }
+            });
+
+            profilePasswordRepeatInput.addEventListener('change', (event) => {
+              event.preventDefault();
+
+              if (event.target.value != '') {
+                profilePasswordInput.setAttribute('required', '');
+                profilePasswordRepeatInput.setAttribute('required', '');
+              } else {
+                if (profilePasswordRepeatInput.value == '') {
+                  profilePasswordInput.removeAttribute('required');
+                  profilePasswordRepeatInput.removeAttribute('required');
+                }
+              }
+            });
+
+            interactiveButtonBack.assembly();
+            interactiveButtonEditAvatar.assembly();
+
+            profilePanelButtonsElement.append(interactiveButtonBack.target.element);
+            profilePanelButtonsElement.append(interactiveButtonEditAvatar.target.element);
+            
+          }
+        }
       }
     });
   }

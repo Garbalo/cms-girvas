@@ -57,7 +57,7 @@ namespace core\PHPLibrary\Page\Admin {
         
         if (!is_null($user)) {
           // Инициализация набора данных пользователя
-          $user->init_data(['id', 'login', 'email', 'metadata']);
+          $user->init_data(['*']);
         }
       }
 
@@ -122,6 +122,10 @@ namespace core\PHPLibrary\Page\Admin {
         'USER_ID' => (!is_null($user)) ? $user->get_id() : 0,
         'USER_LOGIN' => (!is_null($user)) ? $user->get_login() : '',
         'USER_EMAIL' => (!is_null($user)) ? $user->get_email() : '',
+        'USER_NAME' => (!is_null($user)) ? $user->get_name() : '',
+        'USER_SURNAME' => (!is_null($user)) ? $user->get_surname() : '',
+        'USER_PATRONYMIC' => (!is_null($user)) ? $user->get_patronymic() : '',
+        'USER_BIRTHDATE' => (!is_null($user)) ? date('Y-m-d', $user->get_birthdate_unix_timestamp()) : 0,
         'USER_ADDITIONAL_FIELDS' => implode($additional_fields_elements),
         'USER_FORM_METHOD' => (!is_null($user)) ? 'PATCH' : 'PUT'
       ]);

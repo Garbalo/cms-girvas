@@ -42,34 +42,34 @@ export class Page {
 
     if (pageCategory == 'default') {
       switch (pageName) {
-        case 'entry': this.target = new PageDefaultEntry(params); break;
-        case 'global': this.target = new PageDefaultGlobal(params); break;
-        case 'profile': this.target = new PageDefaultProfile(params); break;
+        case 'entry': this.target = new PageDefaultEntry(this, params); break;
+        case 'global': this.target = new PageDefaultGlobal(this, params); break;
+        case 'profile': this.target = new PageDefaultProfile(this, params); break;
       }
     }
 
     if (pageCategory == 'admin') {
       switch (pageName) {
-        case 'entry': this.target = new PageAdminEntry(params); break;
-        case 'entries': this.target = new PageAdminEntries(params); break;
-        case 'entriesCategory': this.target = new PageAdminEntriesCategory(params); break;
-        case 'entriesCategories': this.target = new PageAdminEntriesCategories(params); break;
-        case 'entriesComments': this.target = new PageAdminEntriesComments(params); break;
-        case 'pages': this.target = new PageAdminPages(params); break;
-        case 'pageStatic': this.target = new PageAdminPageStatic(params); break;
-        case 'media': this.target = new PageAdminMedia(params); break;
-        case 'module': this.target = new PageAdminModule(params); break;
-        case 'modules': this.target = new PageAdminModules(params); break;
-        case 'settings': this.target = new PageAdminSettings(params); break;
-        case 'template': this.target = new PageAdminTemplate(params); break;
-        case 'templates': this.target = (searchParams.getPathPart(4) != null) ? new PageAdminTemplate(params) : new PageAdminTemplates(params); break;
-        case 'user': this.target = new PageAdminUser(params); break;
-        case 'users': this.target = new PageAdminUsers(params); break;
-        case 'usersGroup': this.target = new PageAdminUsersGroup(params); break;
-        case 'usersGroups': this.target = new PageAdminUsersGroups(params); break;
-        case 'webChannel': this.target = new PageAdminWebChannel(params); break;
-        case 'webChannels': this.target = new PageAdminWebChannels(params); break;
-        case 'global': this.target = new PageAdminGlobal(params); break;
+        case 'entry': this.target = new PageAdminEntry(this, params); break;
+        case 'entries': this.target = new PageAdminEntries(this, params); break;
+        case 'entriesCategory': this.target = new PageAdminEntriesCategory(this, params); break;
+        case 'entriesCategories': this.target = new PageAdminEntriesCategories(this, params); break;
+        case 'entriesComments': this.target = new PageAdminEntriesComments(this, params); break;
+        case 'pages': this.target = new PageAdminPages(this, params); break;
+        case 'pageStatic': this.target = new PageAdminPageStatic(this, params); break;
+        case 'media': this.target = new PageAdminMedia(this, params); break;
+        case 'module': this.target = new PageAdminModule(this, params); break;
+        case 'modules': this.target = new PageAdminModules(this, params); break;
+        case 'settings': this.target = new PageAdminSettings(this, params); break;
+        case 'template': this.target = new PageAdminTemplate(this, params); break;
+        case 'templates': this.target = (searchParams.getPathPart(4) != null) ? new PageAdminTemplate(this, params) : new PageAdminTemplates(this, params); break;
+        case 'user': this.target = new PageAdminUser(this, params); break;
+        case 'users': this.target = new PageAdminUsers(this, params); break;
+        case 'usersGroup': this.target = new PageAdminUsersGroup(this, params); break;
+        case 'usersGroups': this.target = new PageAdminUsersGroups(this, params); break;
+        case 'webChannel': this.target = new PageAdminWebChannel(this, params); break;
+        case 'webChannels': this.target = new PageAdminWebChannels(this, params); break;
+        case 'global': this.target = new PageAdminGlobal(this, params); break;
       }
     }
 

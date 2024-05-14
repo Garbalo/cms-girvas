@@ -218,8 +218,8 @@ namespace core\PHPLibrary {
     public function get_birthdate_unix_timestamp() : int {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
-        if (isset($metadata_array['birthdate_unix_timestamp'])) {
-          return $metadata_array['birthdate_unix_timestamp'];
+        if (isset($metadata_array['birthdateUnixTimestamp'])) {
+          return $metadata_array['birthdateUnixTimestamp'];
         }
       }
 

@@ -13,7 +13,9 @@ import {URLParser} from "../../../urlParser.class.js";
 import {Utils} from "../../../utils.class.js";
 
 export class PageEntriesCategory {
-  constructor(params = {}) {
+  constructor(page, params = {}) {
+    this.page = page;
+    
     this.buttons = {save: null, delete: null};
   }
 

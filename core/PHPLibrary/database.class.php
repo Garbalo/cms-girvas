@@ -14,6 +14,9 @@ namespace core\PHPLibrary {
   use \PDO as PDO;
   use \PDOException as PDOException;
 
+  /**
+   * База данных
+   */
   final class Database {
     public const SQL_LIBRARY_PATH = 'core/SQLLibrary';
 
@@ -131,6 +134,11 @@ namespace core\PHPLibrary {
       return $this->database_host;
     }
 
+    /**
+     * Подключиться к базе данных
+     * 
+     * @return [type]
+     */
     public function connect() {
       /** @var string $database_name Наименование базы данных */
       $database_name = $this->get_database_name();
@@ -157,6 +165,11 @@ namespace core\PHPLibrary {
       }
     }
 
+    /**
+     * Подключиться к базе данных в тестовом режиме
+     * 
+     * @return bool
+     */
     public function connect_test() : bool {
       /** @var string $database_name Наименование базы данных */
       $database_name = $this->get_database_name();
@@ -184,6 +197,13 @@ namespace core\PHPLibrary {
       }
     }
 
+    /**
+     * Получить содержимое файла формата SQL
+     * 
+     * @param string $file_path
+     * 
+     * @return string
+     */
     public function get_file_sql(string $file_path) : string {
       $file_path_full = sprintf('%s/%s/%s', CMS_ROOT_DIRECTORY, self::SQL_LIBRARY_PATH, $file_path);
       if (file_exists($file_path_full)) {

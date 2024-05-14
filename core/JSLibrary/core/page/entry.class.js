@@ -14,7 +14,9 @@ import {ElementTextarea} from "../../interactive/form/elementTextarea.class.js";
 import {EntryComment} from "./entry/comment.class.js";
 
 export class PageEntry {
-  constructor(params = {}) {
+  constructor(page, params = {}) {
+    this.page = page;
+    
     this.commentsLimit = 0;
     this.commentsData = [];
     this.commentForm = null;

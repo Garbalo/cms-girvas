@@ -6,10 +6,27 @@
 }
 
 .page__article-header {
+  position: relative;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
   padding-top: 130px;
+}
+
+.page__article-header .page__buttons-panel {
+  position: absolute;
+  display: flex;
+  background-color: var(--primary-color-2--opacity-0-4);
+  box-sizing: border-box;
+  justify-content: flex-end;
+  padding: 24px;
+  width: fit-content;
+  top: 0;
+  right: 0;
+}
+
+.page__article-header .page__buttons-panel > *:not(:last-child) {
+  margin-right: 10px;
 }
 
 .page__article .article__title {
@@ -94,6 +111,10 @@
 
 .page__article .profile__information-table .table__cell:nth-child(2) {
   width: calc(100% - 200px);
+}
+
+.page__article .profile__information-table .form__input {
+  width: 300px;
 }
 
 .page__article .profile__form-panel {

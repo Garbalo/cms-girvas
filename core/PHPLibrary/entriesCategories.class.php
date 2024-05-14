@@ -24,6 +24,13 @@ namespace core\PHPLibrary {
       $this->system_core = $system_core;
     }
     
+    /**
+     * Получить массив объектов всех категорий
+     * 
+     * @param array $params_array
+     * 
+     * @return array
+     */
     public function get_all(array $params_array = []) : array {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();

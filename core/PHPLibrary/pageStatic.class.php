@@ -43,7 +43,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Назначить идентификатор записи
+     * Назначить ID страницы
      *
      * @param  mixed $value
      * @return void
@@ -53,7 +53,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить идентификатор записи
+     * Получить ID страницы
      *
      * @param  mixed $value
      * @return int
@@ -62,20 +62,35 @@ namespace core\PHPLibrary {
       return $this->id;
     }
 
+    /**
+     * Получить временную отметку создания страницы в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_created_unix_timestamp() : int {
       return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : 0;
     }
 
+    /**
+     * Получить временную отметку обновления страницы в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_updated_unix_timestamp() : int {
       return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : 0;
     }
 
+    /**
+     * Получить ID автора страницы
+     * 
+     * @return int
+     */
     public function get_author_id() : int|string {
       return (property_exists($this, 'author_id')) ? $this->author_id : 0;
     }
     
     /**
-     * Получить заголовок записи
+     * Получить заголовок страницы
      *
      * @param  mixed $locale_name Наименование локализации
      * @return string
@@ -91,6 +106,13 @@ namespace core\PHPLibrary {
       return '';
     }
 
+    /**
+     * Получить объект автора страницы
+     * 
+     * @param array $init_data
+     * 
+     * @return User
+     */
     public function get_author(array $init_data = ['*']) : User|null {
       $author_id = $this->get_author_id();
 
@@ -105,7 +127,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Получить описание записи
+     * Получить описание страницы
      *
      * @param  mixed $locale_name Наименование локализации
      * @return string
@@ -122,7 +144,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Получить содержимое записи
+     * Получить содержимое страницы
      *
      * @param  mixed $locale_name Наименование локализации
      * @return string
@@ -172,7 +194,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Получить статус публикации записи
+     * Получить статус публикации страницы
      *
      * @return bool
      */
@@ -187,6 +209,11 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    /**
+     * Получить временную отметку публикации страницы в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_published_unix_timestamp() : int {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
@@ -198,12 +225,20 @@ namespace core\PHPLibrary {
       return 0;
     }
 
+    /**
+     * Получить URL дефолтной заставки
+     * 
+     * @param SystemCore $system_core
+     * @param int $size
+     * 
+     * @return string
+     */
     public static function get_preview_default_url(SystemCore $system_core, int $size) : string {
       return sprintf('/%s/images/pageStatic/default_%d.png', $system_core->template->get_url(), $size);
     }
     
     /**
-     * Получить имя записи
+     * Получить имя страницы
      *
      * @return void
      */
@@ -212,7 +247,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить URL до записи
+     * Получить URL до страницы
      *
      * @return void
      */
@@ -221,7 +256,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить данные колонок записи в базе данных
+     * Получить данные колонок страницы в базе данных
      *
      * @param  mixed $columns
      * @return void
@@ -238,7 +273,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
       
-      /** @var int $page_static_id Идентификационный номер записи */
+      /** @var int $page_static_id Идентификационный номер страницы */
       $page_static_id = $this->get_id();
 
       $database_connection = $this->system_core->database_connector->database->connection;
@@ -251,7 +286,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить объект записи по его наименованию
+     * Получить объект страницы по его наименованию
      *
      * @param  mixed $system_core
      * @param  string $page_static_name
@@ -280,7 +315,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Проверка наличия записи
+     * Проверка наличия страницы
      *
      * @param  mixed $system_core
      * @param  string $page_static_name
@@ -308,7 +343,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Проверка наличия записи по идентификационному номеру
+     * Проверка наличия страницы по идентификационному номеру
      *
      * @param  mixed $system_core
      * @param  int $page_static_id
@@ -336,7 +371,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Удаление существующей записи
+     * Удаление существующей страницы
      *
      * @return bool
      */
@@ -360,7 +395,7 @@ namespace core\PHPLibrary {
     }
         
     /**
-     * Создание новой записи
+     * Создание новой страницы
      *
      * @param  mixed $system_core
      * @param  mixed $name
@@ -408,7 +443,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Обновление существующей записи
+     * Обновление существующей страницы
      *
      * @param  array $data Массив данных
      * @return bool

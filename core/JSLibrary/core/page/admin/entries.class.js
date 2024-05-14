@@ -12,8 +12,8 @@ import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
 
 export class PageEntries {
-  constructor(params = {}) {
-    
+  constructor(page, params = {}) {
+    this.page = page;
   }
 
   init() {

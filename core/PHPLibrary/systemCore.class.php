@@ -41,7 +41,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.71 Pre-alpha';
+    public const CMS_VERSION = '0.0.72 Pre-alpha';
 
     /** 
      * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
@@ -410,6 +410,13 @@ namespace core\PHPLibrary {
       $this->urlp = new URLParser();
     }
 
+    /**
+     * Рекурсивно удалить файлы
+     * 
+     * @param string $path
+     * 
+     * @return bool
+     */
     public static function recursive_files_remove(string $path) : bool {
       $files_array_on_path = array_diff(scandir($path), ['..', '.']);
 

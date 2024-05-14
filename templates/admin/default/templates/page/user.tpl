@@ -15,7 +15,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311" required></div>
+            <div class="page__phar-block"><input name="user_login" type="text" class="form__input user-editor-form__input" value="{USER_LOGIN}" placeholder="user2311" required role="userFormInputLogin"></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -26,7 +26,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.ru" required></div>
+            <div class="page__phar-block"><input name="user_email" type="email" class="form__input user-editor-form__input" value="{USER_EMAIL}" placeholder="user@mail.ru" required role="userFormInputEmail"></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -37,7 +37,7 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required></div>
+            <div class="page__phar-block"><input name="user_password" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" role="userFormInputUserPassword"></div>
           </td>
         </tr>
         <tr class="table__row">
@@ -48,7 +48,51 @@
             </div>
           </td>
           <td class="table__cell cell">
-            <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required></div>
+            <div class="page__phar-block"><input name="user_password_repeat" type="password" class="form__input user-editor-form__input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" role="userFormInputUserPasswordRepeat"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:PAGE_USER_USER_NAME_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_NAME_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_name" type="text" class="form__input user-editor-form__input" value="{USER_NAME}" placeholder="Ivan" role="userFormInputName"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:PAGE_USER_USER_SURNAME_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_SURNAME_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_surname" type="text" class="form__input user-editor-form__input" value="{USER_SURNAME}" placeholder="Ivanov" role="userFormInputSurname"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:PAGE_USER_USER_PATRONYMIC_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_PATRONYMIC_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_patronymic" type="text" class="form__input user-editor-form__input" value="{USER_PATRONYMIC}" placeholder="Ivanovich" role="userFormInputPatronymic"></div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell cell">
+            <div class="cell__title">{LANG:PAGE_USER_USER_BIRTHDATE_TITLE}</div>
+            <div class="cell__description">
+              <div class="page__phar-block">{LANG:PAGE_USER_USER_BIRTHDATE_DESCRIPTION}</div>
+            </div>
+          </td>
+          <td class="table__cell cell">
+            <div class="page__phar-block"><input name="user_birthdate" type="date" class="form__input user-editor-form__input" value="{USER_BIRTHDATE}" role="userFormInputBirthdate"></div>
           </td>
         </tr>
         <tr class="table__row">

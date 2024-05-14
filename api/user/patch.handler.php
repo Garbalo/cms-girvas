@@ -27,7 +27,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
 
       if (User::exists_by_id($system_core, $user_id)) {
         $user = new User($system_core, $user_id);
-        $user->init_data(['security_hash']);
+        $user->init_data(['login', 'email', 'security_hash']);
 
         $user_data = [];
 
@@ -36,8 +36,12 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
           $user_data['metadata']['isBlocked'] = (int)$_PATCH['user_is_block'];
         }
 
-        if (isset($_PATCH['user_login'])) $user_data['login'] = $_PATCH['user_login'];
+        if (isset($_PATCH['user_login'])) $user_login = $_PATCH['user_login'];
         if (isset($_PATCH['user_email'])) $user_email = $_PATCH['user_email'];
+        if (isset($_PATCH['user_name'])) $user_name = $_PATCH['user_name'];
+        if (isset($_PATCH['user_surname'])) $user_surname = $_PATCH['user_surname'];
+        if (isset($_PATCH['user_patronymic'])) $user_patronymic = $_PATCH['user_patronymic'];
+        if (isset($_PATCH['user_birthdate'])) $user_birthdate = strtotime($_PATCH['user_birthdate']);
         if (isset($_PATCH['user_group_id'])) $user_group_id = (int)$_PATCH['user_group_id'];
         if (isset($_PATCH['user_password'])) $user_password = $_PATCH['user_password'];
         if (isset($_PATCH['user_password_repeat'])) $user_password_repeat = $_PATCH['user_password_repeat'];
@@ -49,16 +53,77 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
             } else {
               $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_REPEAT_PASSWORD')) : $handler_message;
               $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+              $user_is_updated = false;
+            }
+          }
+        }
+
+        if (isset($user_login)) {
+          if ($user_login != $user->get_login()) {
+            if (!User::exists_by_login($system_core, $user_login)) {
+              $user_data['login'] = $user_login;
+            } else {
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
+              $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+              $user_is_updated = false;
             }
           }
         }
 
         if (isset($user_email)) {
-          if (preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $user_email)) {
-            $user_data['email'] = $user_email;
-          } else {
-            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
-            $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+          if ($user_email != $user->get_email()) {
+            if (preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $user_email)) {
+              if (!User::exists_by_email($system_core, $user_email)) {
+                $user_data['email'] = $user_email;
+              } else {
+                $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
+                $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+                $user_is_updated = false;
+              }
+            } else {
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_EMAIL')) : $handler_message;
+              $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+              $user_is_updated = false;
+            }
+          }
+        }
+
+        if (isset($user_birthdate)) {
+          $user_data['metadata']['birthdateUnixTimestamp'] = $user_birthdate;
+        }
+
+        if (isset($user_name)) {
+          $user_data['metadata']['name'] = $user_name;
+        }
+
+        if (isset($user_surname)) {
+          $user_data['metadata']['surname'] = $user_surname;
+        }
+
+        if (isset($user_patronymic)) {
+          $user_data['metadata']['patronymic'] = $user_patronymic;
+        }
+
+        /**
+         * Обновление данных в дополнительных полях
+         * Обратите внимание, что наименование поля будет преобразовано - система будет
+         * отбрасывать символ "_", а последующий регистр последующего символа будет изменять.
+         * Например, если наименование поля "user_home_address",
+         * то оно примет следующий вид: userHomeAddress.
+         */
+        foreach ($_PATCH as $name => $value) {
+          if (preg_match('/^user_additional_field_([a-z0-9_]+)$/', $name, $matches, PREG_OFFSET_CAPTURE)) {
+            if (!isset($user_data['metadata']['additionalFields'])) $user_data['metadata']['additionalFields'] = [];
+            
+            $field_name = $matches[1][0];
+            $field_name_transformed = '';
+
+            $field_name_parts = explode('_', $field_name);
+            for ($i = 0; $i < count($field_name_parts); $i++) {
+              $field_name_transformed .= ($i > 0) ? ucfirst($field_name_parts[$i]) : $field_name_parts[$i];
+            }
+
+            $user_data['metadata']['additionalFields'][$field_name_transformed] = $value;
           }
         }
 
@@ -69,7 +134,8 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
           $user_data['metadata']['group_id'] = $user_group_id;
         }
 
-        $user_is_updated = $user->update($user_data);
+        $user_is_updated = (!isset($user_is_updated)) ? $user->update($user_data) : $user_is_updated;
+
         if ($user_is_updated) {
           $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_PATCH_DATA_SUCCESS') : $handler_message;
           $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;

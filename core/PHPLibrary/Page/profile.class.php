@@ -84,12 +84,13 @@ namespace core\PHPLibrary\Page {
         }
         
         if (!is_null($profile_user)) {
+          $fields_types = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_type')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_type'), true) : [];
+          $fields_titles = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_title')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_title'), true) : [];
+          $fields_names = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_name')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_name'), true) : [];
+
+          $additional_fields_elements = [];
+
           if ($this->system_core->urlp->get_param('event') == 'edit') {
-            $fields_types = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_type')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_type'), true) : [];
-            $fields_titles = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_title')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_title'), true) : [];
-            $fields_names = ($this->system_core->configurator->exists_database_entry_value('users_additional_field_name')) ? json_decode($this->system_core->configurator->get_database_entry_value('users_additional_field_name'), true) : [];
-            
-            $additional_fields_elements = [];
             foreach ($fields_types as $field_index => $field_type) {
               $field_name_exploded = explode('_', $fields_names[$field_index]);
               foreach ($field_name_exploded as $string_index => $string) {
@@ -130,6 +131,22 @@ namespace core\PHPLibrary\Page {
               ])
             ]);
           } else {
+            foreach ($fields_types as $field_index => $field_type) {
+              $field_name_exploded = explode('_', $fields_names[$field_index]);
+              
+              foreach ($field_name_exploded as $string_index => $string) {
+                if ($string_index > 0) {
+                  $field_name_exploded[$string_index] = ucfirst($string);
+                }
+              }
+              $field_name_transformed = implode($field_name_exploded);
+
+              array_push($additional_fields_elements, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile/additionalField.tpl', [
+                'FIELD_TITLE' => $fields_titles[$cms_base_locale_name][$field_index],
+                'FIELD_VALUE' => (!is_null($profile_user->get_additional_field_data($field_name_transformed))) ? $profile_user->get_additional_field_data($field_name_transformed) : ''
+              ]));
+            }
+
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
               'PAGE_NAME' => 'profile',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/profile.tpl', [
@@ -141,6 +158,7 @@ namespace core\PHPLibrary\Page {
                 'USER_SURNAME' => $profile_user->get_surname(),
                 'USER_PATRONYMIC' => $profile_user->get_patronymic(),
                 'USER_BIRTHDATE' => date('d.m.Y', $profile_user->get_birthdate_unix_timestamp()),
+                'PROFILE_ADDITIONAL_FIELDS' => implode($additional_fields_elements)
               ])
             ]);
           }

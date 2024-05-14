@@ -11,17 +11,35 @@
 namespace core\PHPLibrary {
   use \DOMDocument as DOMDocument;
 
+  /**
+   * Сборщик карты сайта в XML-формате
+   */
   final class SitemapBuilder {
     private DOMDocument $document;
     private SystemCore $system_core;
     private array $urls = [];
     public string $assembled = '';
 
+    /**
+     * __construct
+     * 
+     * @param SystemCore $system_core
+     */
     public function __construct(SystemCore $system_core) {
       $this->system_core = $system_core;
       $this->document = new DOMDocument('1.0', 'UTF-8');
     }
 
+    /**
+     * Добавить URL
+     * 
+     * @param string $loc
+     * @param int $lastmod_unix
+     * @param string $changefreq
+     * @param float $priority
+     * 
+     * @return void
+     */
     public function add_url(string $loc, int $lastmod_unix, string $changefreq, float $priority) : void {
       array_push($this->urls, [
         'loc' => $loc,
@@ -31,6 +49,11 @@ namespace core\PHPLibrary {
       ]);
     }
 
+    /**
+     * Сборка карты сайта
+     * 
+     * @return void
+     */
     public function assembly() : void {
       $element_urlset = $this->document->createElement('urlset');
       $element_urlset_attribute_xmlns = $this->document->createAttribute('xmlns');

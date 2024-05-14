@@ -11,8 +11,8 @@
 import {Interactive} from "../../interactive.class.js";
 
 export class PageGlobal {
-  constructor(params = {}) {
-    // ...
+  constructor(page, params = {}) {
+    this.page = page;
   }
 
   /**

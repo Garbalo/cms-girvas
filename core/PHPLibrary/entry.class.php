@@ -62,22 +62,49 @@ namespace core\PHPLibrary {
       return $this->id;
     }
 
+    /**
+     * Получить ID категории записи
+     * 
+     * @return int
+     */
     public function get_category_id() : int {
       return $this->category_id;
     }
 
+    /**
+     * Получить временную отметку создания записи в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_created_unix_timestamp() : int|string {
       return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : '';
     }
 
+    /**
+     * Получить временную отметку обновления записи в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_updated_unix_timestamp() : int|string {
       return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : '';
     }
 
+    /**
+     * Получить ID автора записи
+     * 
+     * @return int
+     */
     public function get_author_id() : int|string {
       return (property_exists($this, 'author_id')) ? $this->author_id : 0;
     }
 
+    /**
+     * Получить объект категории записи
+     * 
+     * @param array $init_data
+     * 
+     * @return EntryCategory
+     */
     public function get_category(array $init_data = ['*']) : EntryCategory|null {
       $entry_category_id = $this->get_category_id();
 
@@ -91,6 +118,13 @@ namespace core\PHPLibrary {
       return null;
     }
 
+    /**
+     * Получить объект автора записи
+     * 
+     * @param array $init_data
+     * 
+     * @return User
+     */
     public function get_author(array $init_data = ['*']) : User|null {
       $entry_author_id = $this->get_author_id();
 
@@ -204,6 +238,11 @@ namespace core\PHPLibrary {
       return false;
     }
 
+    /**
+     * Получить временную отметку публикации записи в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_published_unix_timestamp() : int {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
@@ -215,6 +254,14 @@ namespace core\PHPLibrary {
       return 0;
     }
 
+    /**
+     * Получить URL дефолтной заставки
+     * 
+     * @param SystemCore $system_core
+     * @param int $size
+     * 
+     * @return string
+     */
     public static function get_preview_default_url(SystemCore $system_core, int $size) : string {
       return sprintf('/%s/images/entry/default_%d.png', $system_core->template->get_url(), $size);
     }

@@ -20,10 +20,20 @@ namespace core\PHPLibrary {
   class Modules {
     const RELATIVE_MODULES_PATH = 'modules';
 
+    /**
+     * Получить абсолютный путь до модулей CMS
+     * 
+     * @return string
+     */
     public static function get_absolute_modules_path() : string {
       return sprintf('%s/%s', CMS_ROOT_DIRECTORY, self::RELATIVE_MODULES_PATH);
     }
 
+    /**
+     * Получить список установленных модулей
+     * 
+     * @return array
+     */
     public static function get_installed_modules_array() : array {
       $modules_array = array_diff(scandir(self::get_absolute_modules_path()), ['.', '..']);
       if (!empty($modules_array)) {

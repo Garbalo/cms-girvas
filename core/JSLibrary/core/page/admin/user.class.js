@@ -12,7 +12,9 @@ import {Interactive} from "../../../interactive.class.js";
 import {URLParser} from "../../../urlParser.class.js";
 
 export class PageUser {
-  constructor(params = {}) {
+  constructor(page, params = {}) {
+    this.page = page;
+
     this.buttons = {save: null, delete: null, block: null, unblock: null};
   }
 
@@ -45,6 +47,36 @@ export class PageUser {
       userData = data.outputData.user;
       return window.CMSCore.locales.admin.getData();
     }).then((localeData) => {
+      let userPasswordInput = document.querySelector('[role="userFormInputUserPassword"]');
+      let userPasswordRepeatInput = document.querySelector('[role="userFormInputUserPasswordRepeat"]');
+
+      userPasswordInput.addEventListener('change', (event) => {
+        event.preventDefault();
+
+        if (event.target.value != '') {
+          userPasswordInput.setAttribute('required', '');
+          userPasswordRepeatInput.setAttribute('required', '');
+        } else {
+          if (userPasswordRepeatInput.value == '') {
+            userPasswordInput.removeAttribute('required');
+            userPasswordRepeatInput.removeAttribute('required');
+          }
+        }
+      });
+
+      userPasswordRepeatInput.addEventListener('change', (event) => {
+        event.preventDefault();
+
+        if (event.target.value != '') {
+          userPasswordInput.setAttribute('required', '');
+          userPasswordRepeatInput.setAttribute('required', '');
+        } else {
+          if (userPasswordRepeatInput.value == '') {
+            userPasswordInput.removeAttribute('required');
+            userPasswordRepeatInput.removeAttribute('required');
+          }
+        }
+      });
 
       if (searchParams.getPathPart(3) != null) {
         usersGroups.forEach((usersGroup, usersGroupIndex) => {
