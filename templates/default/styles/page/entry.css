@@ -146,6 +146,7 @@
 
 .page__article .article__comments .comment__content-container {
   flex-grow: 1;
+  width: min-content;
 }
 
 .page__article .article__comments .comment__author-login {

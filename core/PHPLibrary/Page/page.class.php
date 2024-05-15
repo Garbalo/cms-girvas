@@ -61,56 +61,76 @@ namespace core\PHPLibrary\Page {
         $page_static_name = urldecode($this->system_core->urlp->get_path(1));
 
         if (PageStatic::exists_by_name($this->system_core, $page_static_name)) {
-          http_response_code(200);
-
           $page_static = PageStatic::get_by_name($this->system_core, $page_static_name);
           $page_static->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
 
-          $this->page->breadcrumbs->add($locale_data['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
-          $this->page->breadcrumbs->add($page_static->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), $page_static->get_name());
-          $this->page->breadcrumbs->assembly();
+          $page_is_visible = false;
 
-          $this->system_core->configurator->set_meta_title($page_static->get_title($cms_base_locale_name));
-          $this->system_core->configurator->set_meta_description($page_static->get_description($cms_base_locale_name));
-          $this->system_core->configurator->set_meta_keywrords($page_static->get_keywords($cms_base_locale_name));
+          $client_is_logged = $this->system_core->client->is_logged(1);
+          $client_user = ($client_is_logged) ? $this->system_core->client->get_user() : null;
 
-          /**
-           * @var Parsedown Парсер markdown-разметки
-           */
-          $parsedown = new Parsedown();
+          $page_is_visible = ($page_static->is_published()) ? true : false;
+          if (!$page_is_visible) {
+            if ($client_user != null) {
+              $page_is_visible = ($client_user->get_id() == 1 || $client_user->get_group_id() == 1) ? true : false;
+            }
+          }
 
-          /**
-           * @var string Заголовок статической страницы
-           */
-          $page_static_title = (!empty($page_static->get_title($cms_base_locale_name))) ? $page_static->get_title($cms_base_locale_name) : $page_static->get_title($cms_base_locale_setted_name);
-          /**
-           * @var string Содержание статической страницы
-           */
-          $page_static_content = (!empty($page_static->get_content($cms_base_locale_name))) ? $page_static->get_content($cms_base_locale_name) : $page_static->get_content($cms_base_locale_setted_name);
+          if ($page_is_visible) {
+            http_response_code(200);
 
-          $page_static_created_date_timestamp = date('d.m.Y H:i:s', $page_static->get_created_unix_timestamp());
-          $page_static_published_date_timestamp = date('d.m.Y H:i:s', $page_static->get_published_unix_timestamp());
-          $page_static_updated_date_timestamp = date('d.m.Y H:i:s', $page_static->get_updated_unix_timestamp());
+            $this->page->breadcrumbs->add($locale_data['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
+            $this->page->breadcrumbs->add($page_static->get_title($this->system_core->configurator->get_database_entry_value('base_locale')), $page_static->get_name());
+            $this->page->breadcrumbs->assembly();
 
-          $page_static_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_created_unix_timestamp());
-          $page_static_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_published_unix_timestamp());
-          $page_static_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_updated_unix_timestamp());
+            $this->system_core->configurator->set_meta_title($page_static->get_title($cms_base_locale_name));
+            $this->system_core->configurator->set_meta_description($page_static->get_description($cms_base_locale_name));
+            $this->system_core->configurator->set_meta_keywrords($page_static->get_keywords($cms_base_locale_name));
 
-          $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
-            'PAGE_NAME' => 'static',
-            'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/static.tpl', [
-              'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
-              'PAGE_TITLE' => $page_static_title,
-              'PAGE_CONTENT' => $parsedown->text($page_static_content),
-              'PAGE_PREVIEW_URL' => ($page_static->get_preview_url() != '') ? $page_static->get_preview_url() : PageStatic::get_preview_default_url($this->system_core, 1024),
-              'PAGE_CREATED_DATE_TIMESTAMP' => $page_static_created_date_timestamp,
-              'PAGE_PUBLISHED_DATE_TIMESTAMP' => ($page_static->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp : '-',
-              'PAGE_UPDATED_DATE_TIMESTAMP' => $page_static_updated_date_timestamp,
-              'PAGE_CREATED_DATE_TIMESTAMP_ISO_8601' => $page_static_created_date_timestamp_iso_8601,
-              'PAGE_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $page_static_published_date_timestamp_iso_8601,
-              'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601' => $page_static_updated_date_timestamp_iso_8601
-            ])
-          ]);
+            /**
+             * @var Parsedown Парсер markdown-разметки
+             */
+            $parsedown = new Parsedown();
+
+            /**
+             * @var string Заголовок статической страницы
+             */
+            $page_static_title = (!empty($page_static->get_title($cms_base_locale_name))) ? $page_static->get_title($cms_base_locale_name) : $page_static->get_title($cms_base_locale_setted_name);
+            /**
+             * @var string Содержание статической страницы
+             */
+            $page_static_content = (!empty($page_static->get_content($cms_base_locale_name))) ? $page_static->get_content($cms_base_locale_name) : $page_static->get_content($cms_base_locale_setted_name);
+
+            $page_static_created_date_timestamp = date('d.m.Y H:i:s', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp = date('d.m.Y H:i:s', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp = date('d.m.Y H:i:s', $page_static->get_updated_unix_timestamp());
+
+            $page_static_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_updated_unix_timestamp());
+
+            $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
+              'PAGE_NAME' => 'static',
+              'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/static.tpl', [
+                'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
+                'PAGE_TITLE' => $page_static_title,
+                'PAGE_CONTENT' => $parsedown->text($page_static_content),
+                'PAGE_PREVIEW_URL' => ($page_static->get_preview_url() != '') ? $page_static->get_preview_url() : PageStatic::get_preview_default_url($this->system_core, 1024),
+                'PAGE_CREATED_DATE_TIMESTAMP' => $page_static_created_date_timestamp,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP' => ($page_static->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp : '-',
+                'PAGE_UPDATED_DATE_TIMESTAMP' => $page_static_updated_date_timestamp,
+                'PAGE_CREATED_DATE_TIMESTAMP_ISO_8601' => $page_static_created_date_timestamp_iso_8601,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $page_static_published_date_timestamp_iso_8601,
+                'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601' => $page_static_updated_date_timestamp_iso_8601
+              ])
+            ]);
+          } else {
+            http_response_code(404);
+  
+            $page_error = new PageError($this->system_core, $this->page, 404);
+            $page_error->assembly();
+            $this->assembled = $page_error->assembled;
+          }
         } else {
           http_response_code(404);
 

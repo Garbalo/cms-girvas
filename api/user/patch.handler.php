@@ -60,10 +60,16 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
 
         if (isset($user_login)) {
           if ($user_login != $user->get_login()) {
-            if (!User::exists_by_login($system_core, $user_login)) {
-              $user_data['login'] = $user_login;
+            if (User::login_is_valid($system_core, $user_login)) {
+              if (!User::exists_by_login($system_core, $user_login)) {
+                $user_data['login'] = $user_login;
+              } else {
+                $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
+                $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+                $user_is_updated = false;
+              }
             } else {
-              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMAIL_ALREADY_EXISTS')) : $handler_message;
+              $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_LOGIN')) : $handler_message;
               $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
               $user_is_updated = false;
             }
@@ -72,7 +78,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
 
         if (isset($user_email)) {
           if ($user_email != $user->get_email()) {
-            if (preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $user_email)) {
+            if (User::email_is_valid($system_core, $user_email)) {
               if (!User::exists_by_email($system_core, $user_email)) {
                 $user_data['email'] = $user_email;
               } else {

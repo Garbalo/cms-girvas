@@ -17,8 +17,9 @@
  */
 
 $configuration = [
-  'domain' => 'www.example.com',
-  'domain_cookies' => 'www.example.com',
+  'domain' => 'example.com',
+  'domain_email' => 'example.com',
+  'domain_cookies' => 'example.com',
   'database' => ['host' => '', 'user' => '', 'password' => '', 'name' => '', 'scheme' => '', 'prefix' => ''],
   // Системная соль (необходима для хеширования некоторых данных)
   // Пример: ?d7R(TF1f30br7tl=!PeIrk) <== (НЕ ИСПОЛЬЗУЙТЕ ЭТУ СОЛЬ)

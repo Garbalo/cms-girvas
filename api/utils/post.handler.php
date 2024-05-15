@@ -70,9 +70,10 @@ if ($system_core->urlp->get_path(2) == 'registration') {
                           $site_title = (empty($system_core->configurator->get_meta_title())) ? $system_core->configurator->get_site_title() : $system_core->configurator->get_meta_title();
 
                           $email_sender = new \core\PHPLibrary\EmailSender($system_core);
-                          $email_sender->set_from_user($site_title, 'no-reply@garbalo.com');
+                          $email_sender_system_sender_email = \core\PHPLibrary\EmailSender::get_system_sender_email($system_core);
+                          $email_sender->set_from_user($site_title, $email_sender_system_sender_email);
                           $email_sender->set_to_user_email($user_email);
-                          $email_sender->add_header(sprintf('From: %s <%s>', $site_title, 'no-reply@garbalo.com'));
+                          $email_sender->add_header(sprintf('From: %s <%s>', $site_title, $email_sender_system_sender_email));
                           $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
                           $email_sender->add_header("\r\nMIME-Version: 1.0");
                           $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");

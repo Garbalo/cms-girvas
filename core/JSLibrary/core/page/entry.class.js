@@ -241,7 +241,7 @@ export class PageEntry {
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
-      this.clientUserData = Object.assign(data.outputData.user);
+      this.clientUserData = (data.outputData.hasOwnProperty('user')) ? Object.assign(data.outputData.user) : this.clientUserData;
 
       let commentsElements = (entryCommentsListElement != null) ? entryCommentsListElement.querySelectorAll('[role="entryComment"]') : [];
       commentsElements.forEach((comment, commentIndex) => {

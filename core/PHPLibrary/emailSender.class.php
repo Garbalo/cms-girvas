@@ -139,6 +139,40 @@ namespace core\PHPLibrary {
         implode($this->get_headers())
       );
     }
+
+    /**
+     * Получить доменное имя системного отправителя электронной почты
+     * 
+     * @param SystemCore $system_core
+     * 
+     * @return string
+     */
+    public static function get_system_sender_domain(SystemCore $system_core) : string {
+      return ($system_core->configurator->exists('domain_email')) ? $system_core->configurator->get('domain_email') : 'example.ru';
+    }
+
+    /**
+     * Получить E-Mail системного отправителя электронной почты
+     * 
+     * @param SystemCore $system_core
+     * 
+     * @return string
+     */
+    public static function get_system_sender_email(SystemCore $system_core) : string {
+      $sender_name = EmailSender::get_system_sender_name($system_core);
+      return sprintf('%s@%s', $sender_name, EmailSender::get_system_sender_domain($system_core));
+    }
+
+    /**
+     * Получить имя системного отправителя электронной почты
+     * 
+     * @param SystemCore $system_core
+     * 
+     * @return string
+     */
+    public static function get_system_sender_name(SystemCore $system_core) : string {
+      return 'no-reply';
+    }
   }
 }
 

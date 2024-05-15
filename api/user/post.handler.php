@@ -13,11 +13,17 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
+use \core\PHPLibrary\EmailSender as EmailSender;
+use \core\PHPLibrary\Template as Template;
+use \core\PHPLibrary\Template\Collector as TemplateCollector;
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
 use \core\PHPLibrary\SystemCore\FileConverter as FileConverter;
 use \core\PHPLibrary\SystemCore\FileConverter\EnumFileFormat as EnumFileFormat;
 
+/**
+ * Загрузка аватара для пользователя
+ */
 if ($system_core->urlp->get_path(2) == 'avatar') {
   $user_id = (isset($_POST['user_id'])) ? $_POST['user_id'] : 0;
   $user_id = (is_numeric($user_id)) ? (int)$user_id : 0;
@@ -79,58 +85,80 @@ if ($system_core->urlp->get_path(2) == 'avatar') {
   }
 }
 
+/**
+ * Восстановление пароля
+ * 
+ * Выборка пользователя осуществляется через логин или e-mail. В случае, если
+ * ни логин, ни e-mail не были отправлены, то обработчик вернет ошибку о неполноте
+ * введенных данных.
+ */
 if ($system_core->urlp->get_path(2) == 'request-password-reset') {
-  $user_login_or_email = $_POST['user_login_or_email'];
+  /** @var string Логин или e-mail пользователя */
+  $user_login_or_email = (isset($_POST['user_login_or_email'])) ? $_POST['user_login_or_email'] : '';
 
-  $user = null;
-  if (filter_var($user_login_or_email, FILTER_VALIDATE_EMAIL)) {
-    if (User::exists_by_email($system_core, $user_login_or_email)) {
-      $user = User::get_by_email($system_core, $user_login_or_email);
+  if (!empty($user_login_or_email)) {
+    /** @var User|null Объект пользователя */
+    $user = null;
+
+    if (User::email_is_valid($system_core, $user_login_or_email)) {
+      if (User::exists_by_email($system_core, $user_login_or_email)) {
+        $user = User::get_by_email($system_core, $user_login_or_email);
+      }
+    } else {
+      if (User::exists_by_login($system_core, $user_login_or_email)) {
+        $user = User::get_by_login($system_core, $user_login_or_email);
+      }
+    }
+
+    if (!is_null($user)) {
+      $user->init_data(['login', 'email', 'metadata']);
+      /** @var string Заголовок веб-сайта */
+      $site_title = (empty($system_core->configurator->get_meta_title())) ? $system_core->configurator->get_site_title() : $system_core->configurator->get_meta_title();
+      /** @var string E-Mail получателя */
+      $user_email = $user->get_email();
+      /** @var string Логин получателя */
+      $user_login = $user->get_login();
+
+      /** @var Template Объект шаблона */
+      $template = new Template($system_core, 'official');
+
+      /** @var EmailSender Объект отправителя E-Mail */
+      $email_sender = new EmailSender($system_core);
+      $email_sender_system_sender_email = EmailSender::get_system_sender_email($system_core);
+      $email_sender->set_from_user($site_title, $email_sender_system_sender_email);
+      $email_sender->set_to_user_email($user_email);
+      $email_sender->add_header(sprintf("From: %s <%s>", $site_title, $email_sender_system_sender_email));
+      $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
+      $email_sender->add_header("\r\nMIME-Version: 1.0");
+      $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
+      $email_sender->add_header("\r\n");
+
+      /** @var int Временная отметка в UNIX-формате создания заявки на сброс пароля */
+      $reset_password_created_unix_timestamp = time();
+      /** @var string Токен сброса пароля */
+      $reset_password_token = md5($reset_password_created_unix_timestamp . $system_core::CMS_VERSION);
+
+      $email_sender->set_subject($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_SUBJECT'));
+      $email_sender->set_content(TemplateCollector::assembly_file_content($template, 'templates/email/default.tpl', [
+        'EMAIL_TITLE' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_TITLE'),
+        'EMAIL_CONTENT' => sprintf($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_CONTENT'), $user_login, sprintf('%s/password-reset?token=%s', $system_core->get_site_url(), $reset_password_token)),
+        'EMAIL_COPYRIGHT' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_COPYRIGHT')
+      ]));
+
+      $email_sender->send();
+
+      /** @var int Временная отметка в UNIX-формате создания заявки на сброс пароля */
+      $reset_password_created_unix_timestamp = time();
+      $user->update(['metadata' => ['passwordResetToken' => $reset_password_token, 'passwordResetTokenCreatedUnixTimestamp' => $reset_password_created_unix_timestamp]]);
+
+      $handler_message = $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_SENDED_SUCCESS');
+      $handler_status_code = 1;
+    } else {
+      $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND'));
+      $handler_status_code = 0;
     }
   } else {
-    if (User::exists_by_login($system_core, $user_login_or_email)) {
-      $user = User::get_by_login($system_core, $user_login_or_email);
-    }
-  }
-
-  $user->init_data(['login', 'email', 'metadata']);
-
-  if (!is_null($user)) {
-    $site_title = (empty($system_core->configurator->get_meta_title())) ? $system_core->configurator->get_site_title() : $system_core->configurator->get_meta_title();
-
-    $user_email = $user->get_email();
-    $user_login = $user->get_login();
-
-    $template = new \core\PHPLibrary\Template($system_core, 'official');
-
-    $email_sender = new \core\PHPLibrary\EmailSender($system_core);
-    $email_sender->set_from_user($site_title, 'support@garbalo.com');
-    $email_sender->set_to_user_email($user_email);
-    $email_sender->add_header(sprintf("From: %s <%s>", $site_title, 'support@garbalo.com'));
-    $email_sender->add_header(sprintf("\r\nX-Mailer: PHP/%s", phpversion()));
-    $email_sender->add_header("\r\nMIME-Version: 1.0");
-    $email_sender->add_header("\r\nContent-type: text/html; charset=UTF-8");
-    $email_sender->add_header("\r\n");
-
-    $reset_password_created_unix_timestamp = time();
-    $reset_password_token = md5($reset_password_created_unix_timestamp . $system_core::CMS_VERSION);
-
-    $email_sender->set_subject($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_SUBJECT'));
-    $email_sender->set_content(\core\PHPLibrary\Template\Collector::assembly_file_content($template, 'templates/email/default.tpl', [
-      'EMAIL_TITLE' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_TITLE'),
-      'EMAIL_CONTENT' => sprintf($system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_CONTENT'), $user_login, sprintf('%s/password-reset?token=%s', $system_core->get_site_url(), $reset_password_token)),
-      'EMAIL_COPYRIGHT' => $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_EMAIL_COPYRIGHT')
-    ]));
-
-    $email_sender->send();
-
-    $reset_password_created_unix_timestamp = time();
-    $user->update(['metadata' => ['passwordResetToken' => $reset_password_token, 'passwordResetTokenCreatedUnixTimestamp' => $reset_password_created_unix_timestamp]]);
-
-    $handler_message = $system_core->locale->get_single_value_by_key('API_USER_REQUEST_PASSWORD_RESET_SENDED_SUCCESS');
-    $handler_status_code = 1;
-  } else {
-    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_NOT_FOUND'));
+    $handler_message = sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET'));
     $handler_status_code = 0;
   }
 }

@@ -318,19 +318,21 @@ export class EntryComment {
       }
 
       if (!this.isHidden) {
-        // Answer to comment
-        let interactiveButtonAnswer = new Interactive('button');
-        interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
-        interactiveButtonAnswer.target.setCallback((event) => {
-          let form = elementEntry.querySelector('[role="entryCommentForm"]');
-          let formTextarea = elementEntry.querySelector('[name="comment_content"]');
-          let formInputCommentParentIDElement = form.querySelector('[name="comment_parent_id"]');
-          formInputCommentParentIDElement.value = this.id;
-          formTextarea.focus();
-          formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
-        });
-        interactiveButtonAnswer.assembly();
-        commentPanel.append(interactiveButtonAnswer.target.element);
+        if (clientUserData.isLogged) {
+          // Answer to comment
+          let interactiveButtonAnswer = new Interactive('button');
+          interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
+          interactiveButtonAnswer.target.setCallback((event) => {
+            let form = elementEntry.querySelector('[role="entryCommentForm"]');
+            let formTextarea = elementEntry.querySelector('[name="comment_content"]');
+            let formInputCommentParentIDElement = form.querySelector('[name="comment_parent_id"]');
+            formInputCommentParentIDElement.value = this.id;
+            formTextarea.focus();
+            formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
+          });
+          interactiveButtonAnswer.assembly();
+          commentPanel.append(interactiveButtonAnswer.target.element);
+        }
           
         let commentRatePanel = this.elementAssembled.querySelector('[role="entryCommentRate"]');
         let rateCountElement = document.createElement('div');

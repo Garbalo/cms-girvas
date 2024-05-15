@@ -36,11 +36,33 @@
                   <td class="table__cell cell">
                     <div class="cell__title">Доменное имя</div>
                     <div class="cell__description">
-                      <div class="page__phar-block">Укажите доменное имя, с которым будет работать Ваш веб-сайт. Это необходимо для правильной переадресации и генерации Cookie.</div>
+                      <div class="page__phar-block">Укажите доменное имя, с которым будет работать Ваш веб-сайт. Это необходимо для правильной переадресации.</div>
                     </div>
                   </td>
                   <td class="table__cell cell">
-                    <input name="domain" type="text" class="form__input" value="{CONFIGURATION_DATABASE_DOMAIN}" placeholder="www.example.ru">
+                    <input name="domain" type="text" class="form__input" value="{CONFIGURATION_DATABASE_DOMAIN}" placeholder="example.ru">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Доменное имя для Cookie</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Укажите специфическое доменное имя для генерации Cookie. Если доменное имя Вашего веб-сайта совпадает с доменным именем для которого необходимо генерировать Cookie, то укажите здесь доменное имя Вашего веб-сайта.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <input name="domain_cookies" type="text" class="form__input" value="{CONFIGURATION_DATABASE_DOMAIN}" placeholder="example.ru">
+                  </td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__cell cell">
+                    <div class="cell__title">Доменное имя для E-Mail</div>
+                    <div class="cell__description">
+                      <div class="page__phar-block">Укажите доменное имя, с которого будут отправляться системные электронные письма.</div>
+                    </div>
+                  </td>
+                  <td class="table__cell cell">
+                    <input name="domain_email" type="text" class="form__input" value="{CONFIGURATION_DATABASE_DOMAIN}" placeholder="example.ru">
                   </td>
                 </tr>
                 <tr class="table__row">

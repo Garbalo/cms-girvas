@@ -12,6 +12,13 @@ namespace core\PHPLibrary {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 
   #[\AllowDynamicProperties]
+  /**
+   * Class User
+   * @package core\PHPLibrary
+   * 
+   * @property-read SystemCore $system_core Класс системного ядра CMS
+   * @property int $id ID пользователя
+   */
   class User {
     private readonly SystemCore $system_core;
     private int $id;
@@ -28,7 +35,14 @@ namespace core\PHPLibrary {
       $this->set_id($id);
     }
 
-    public function init_data(array $columns = ['*']) {
+    /**
+     * Инициализировать данные
+     * 
+     * @param array $columns
+     * 
+     * @return void
+     */
+    public function init_data(array $columns = ['*']) : void {
       $columns_data = $this->get_database_columns_data($columns);
       foreach ($columns_data as $column_name => $column_data) {
         $this->{$column_name} = $column_data;
@@ -36,7 +50,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Назначить идентификатор записи
+     * Назначить ID
      *
      * @param  mixed $value
      * @return void
@@ -46,7 +60,7 @@ namespace core\PHPLibrary {
     }
     
     /**
-     * Получить идентификатор записи
+     * Получить ID
      *
      * @param  mixed $value
      * @return int
@@ -55,30 +69,68 @@ namespace core\PHPLibrary {
       return $this->id;
     }
 
+    /**
+     * Получить логин
+     * 
+     * @return string
+     */
     public function get_login() : string {
       return (property_exists($this, 'login')) ? $this->login : '';
     }
 
+    /**
+     * Получить E-Mail
+     * 
+     * @return string
+     */
     public function get_email() : string {
       return (property_exists($this, 'email')) ? $this->email : '';
     }
 
+    /**
+     * Получить хеш пароля
+     * 
+     * @return string
+     */
     public function get_password_hash() : string {
       return (property_exists($this, 'password_hash')) ? $this->password_hash : '';
     }
 
+    /**
+     * Получить хеш-ключ
+     * 
+     * @return string
+     */
     public function get_security_hash() : string {
       return (property_exists($this, 'security_hash')) ? $this->security_hash : '';
     }
 
+    /**
+     * Получить временную отментку создания данных в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_created_unix_timestamp() : int {
       return (property_exists($this, 'created_unix_timestamp')) ? $this->created_unix_timestamp : 0;
     }
 
+    /**
+     * Получить временную отментку обновления данных в UNIX-формате
+     * 
+     * @return int
+     */
     public function get_updated_unix_timestamp() : int {
       return (property_exists($this, 'updated_unix_timestamp')) ? $this->updated_unix_timestamp : 0;
     }
 
+    /**
+     * Получить URL дефолтного аватара пользователя
+     * 
+     * @param SystemCore $system_core
+     * @param int $size
+     * 
+     * @return string
+     */
     public static function get_avatar_default_url(SystemCore $system_core, int $size) : string {
       return sprintf('/%s/images/avatar_default_%d.png', $system_core->template->get_url(), $size);
     }
@@ -226,6 +278,13 @@ namespace core\PHPLibrary {
       return 0;
     }
 
+    /**
+     * Получить данные по дополнительному полю
+     * 
+     * @param string $field_name
+     * 
+     * @return mixed
+     */
     public function get_additional_field_data(string $field_name) : mixed {
       if (property_exists($this, 'metadata')) {
         $metadata_array = json_decode($this->metadata, true);
@@ -254,7 +313,14 @@ namespace core\PHPLibrary {
       return self::get_avatar_default_url($this->system_core, $size);
     }
 
-    public function hashing(string $string) {
+    /**
+     * Хешировать строку
+     * 
+     * @param string $string
+     * 
+     * @return string
+     */
+    public function hashing(string $string) : string {
       $user_id = $this->get_id();
       $security_hash = $this->get_security_hash();
       $system_salt = $this->system_core->configurator->get('system_salt');
@@ -262,6 +328,15 @@ namespace core\PHPLibrary {
       return md5($hash_source);
     }
 
+    /**
+     * Хешировать пароль
+     * 
+     * @param SystemCore $system_core
+     * @param string $user_security_hash
+     * @param string $password
+     * 
+     * @return string
+     */
     public static function password_hash(SystemCore $system_core, string $user_security_hash, string $password) : string {
       $system_salt = $system_core->configurator->get('system_salt');
       $password_hashing_algorithm = $system_core->configurator->get('password_hashing_algorithm');
@@ -269,17 +344,38 @@ namespace core\PHPLibrary {
       return password_hash($crypt_source, $password_hashing_algorithm);
     }
 
+    /**
+     * Проверить пароль
+     * 
+     * @param string $password
+     * 
+     * @return bool
+     */
     public function password_verify(string $password) : bool {
       $system_salt = $this->system_core->configurator->get('system_salt');
       $crypt_source = sprintf('{GIRVAS:%s+%s=>%s}', $this->get_security_hash(), $system_salt, $password);
       return password_verify($crypt_source, $this->get_password_hash());
     }
 
+    /**
+     * Сгенерировать хеш-ключ
+     * 
+     * @param SystemCore $system_core
+     * 
+     * @return string
+     */
     public static function generate_security_hash(SystemCore $system_core) : string {
       $system_salt = $system_core->configurator->get('system_salt');
       return md5(sprintf('{GIRVAS:%s+%d}', $system_salt, time()));
     }
 
+    /**
+     * Получить данные с колонок в БД
+     * 
+     * @param array $columns
+     * 
+     * @return array
+     */
     private function get_database_columns_data(array $columns = ['*']) : array|null {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
@@ -375,7 +471,7 @@ namespace core\PHPLibrary {
      * @param  string $user_login
      * @return void
      */
-    public static function exists_by_login(\core\PHPLibrary\SystemCore $system_core, string $user_login) : bool {
+    public static function exists_by_login(SystemCore $system_core, string $user_login) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -405,7 +501,7 @@ namespace core\PHPLibrary {
      * @param  string $user_login
      * @return void
      */
-    public static function exists_by_email(\core\PHPLibrary\SystemCore $system_core, string $user_email) : bool {
+    public static function exists_by_email(SystemCore $system_core, string $user_email) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -435,7 +531,7 @@ namespace core\PHPLibrary {
      * @param  int $user_id
      * @return void
      */
-    public static function exists_by_id(\core\PHPLibrary\SystemCore $system_core, int $user_id) : bool {
+    public static function exists_by_id(SystemCore $system_core, int $user_id) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -480,6 +576,16 @@ namespace core\PHPLibrary {
       return ($execute) ? true : false;
     }
 
+    /**
+     * Создать пользователя
+     * 
+     * @param SystemCore $system_core
+     * @param string $user_login
+     * @param string $user_email
+     * @param string $user_password
+     * 
+     * @return User
+     */
     public static function create(SystemCore $system_core, string $user_login, string $user_email, string $user_password) : User|null {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_insert();
@@ -534,7 +640,7 @@ namespace core\PHPLibrary {
     }
 
     /**
-     * Обновление существующего пользователя
+     * Обновить пользователя
      *
      * @param  array $data Массив данных
      * @return bool
@@ -596,6 +702,11 @@ namespace core\PHPLibrary {
       return ($execute) ? true : false;
     }
 
+    /**
+     * Создать заявку на подтверждение регистрации
+     * 
+     * @return array
+     */
     public function create_registration_submit() : array|null {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_insert();
@@ -631,7 +742,16 @@ namespace core\PHPLibrary {
       return null;
     }
 
-    public static function get_user_id_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
+    /**
+     * Получить ID пользователя-инициатора заявки подтверждения регистрации
+     * по подтвержающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return int
+     */
+    public static function get_user_id_by_registration_submit_token(SystemCore $system_core, string $token) : int {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['user_id']);
@@ -654,7 +774,16 @@ namespace core\PHPLibrary {
       return ($result) ? (int)$result['user_id'] : null;
     }
 
-    public static function get_user_id_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : int {
+    /**
+     * Получить ID пользователя-инициатора заявки подтверждения регистрации
+     * по сбрасывающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return int
+     */
+    public static function get_user_id_by_registration_refusal_token(SystemCore $system_core, string $token) : int {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['user_id']);
@@ -677,7 +806,15 @@ namespace core\PHPLibrary {
       return ($result) ? (int)$result['user_id'] : null;
     }
 
-    public static function exists_by_registration_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+    /**
+     * Проверить наличие заявки на подтверждение регистрации по подтверждающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public static function exists_by_registration_submit_token(SystemCore $system_core, string $token) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -698,7 +835,15 @@ namespace core\PHPLibrary {
       return ($database_query->fetchColumn()) ? true : false;
     }
 
-    public static function exists_by_registration_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+    /**
+     * Проверить наличие заявки на подтверждение регистрации по сбрасывающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public static function exists_by_registration_refusal_token(SystemCore $system_core, string $token) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['1']);
@@ -719,7 +864,15 @@ namespace core\PHPLibrary {
       return ($database_query->fetchColumn()) ? true : false;
     }
 
-    public static function delete_registration_submit_by_refusal_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+    /**
+     * Удалить заявку на подтверждение регистрации по сбрасывающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public static function delete_registration_submit_by_refusal_token(SystemCore $system_core, string $token) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
@@ -738,7 +891,15 @@ namespace core\PHPLibrary {
       return ($execute) ? true : false;
     }
 
-    public static function delete_registration_submit_by_submit_token(\core\PHPLibrary\SystemCore $system_core, string $token) : bool {
+    /**
+     * Удалить заявку на подтверждение регистрации по подтверждающему токену
+     * 
+     * @param SystemCore $system_core
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public static function delete_registration_submit_by_submit_token(SystemCore $system_core, string $token) : bool {
       $query_builder = new DatabaseQueryBuilder($system_core);
       $query_builder->set_statement_delete();
       $query_builder->statement->set_clause_from();
@@ -755,6 +916,42 @@ namespace core\PHPLibrary {
 			$execute = $database_query->execute();
 
       return ($execute) ? true : false;
+    }
+
+    /**
+     * Проверить на валидацию E-Mail
+     * 
+     * @param SystemCore $system_core
+     * @param string $email
+     * 
+     * @return bool
+     */
+    public static function email_is_valid(SystemCore $system_core, string $email) : bool {
+      return preg_match('/^[\w\-\.]{1,30}@([\w\-]{1,63}\.){1,2}[\w\-]{2,4}$/i', $email);
+    }
+
+    /**
+     * Проверить на валидацию логин
+     * 
+     * @param SystemCore $system_core
+     * @param string $login
+     * 
+     * @return bool
+     */
+    public static function login_is_valid(SystemCore $system_core, string $login) : bool {
+      return preg_match('/^[\w\-\.\_]{1,36}$/i', $login);
+    }
+
+    /**
+     * Проверить на валидацию пароль
+     * 
+     * @param SystemCore $system_core
+     * @param string $login
+     * 
+     * @return bool
+     */
+    public static function password_is_valid(SystemCore $system_core, string $password) : bool {
+      return preg_match('/^[a-zA-Z0-9\@\#\$\%\&\(\)\?\!]{1,36}$/', $password);
     }
   }
 }

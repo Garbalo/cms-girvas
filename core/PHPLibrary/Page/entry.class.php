@@ -62,114 +62,135 @@ namespace core\PHPLibrary\Page {
         $entry_name = urldecode($this->system_core->urlp->get_path(1));
 
         if (Entry::exists_by_name($this->system_core, $entry_name)) {
-          http_response_code(200);
-
           $entry = Entry::get_by_name($this->system_core, $entry_name);
           $entry->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
-          $entry_category = $entry->get_category();
-          $entry_category_title = $entry_category->get_title($cms_base_locale_name);
 
-          $this->system_core->configurator->set_meta_title($entry->get_title($cms_base_locale_name));
-          $this->system_core->configurator->set_meta_description($entry->get_description($cms_base_locale_name));
-          $this->system_core->configurator->set_meta_keywrords($entry->get_keywords($cms_base_locale_name));
+          $entry_is_visible = false;
 
-          $this->page->breadcrumbs->add($locale_data['PAGE_ENTRY_BREADCRUMPS_ALL_ENTRIES_LABEL'], '/entries');
-          $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
-          $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
-          $this->page->breadcrumbs->assembly();
+          $client_is_logged = $this->system_core->client->is_logged(1);
+          $client_user = ($client_is_logged) ? $this->system_core->client->get_user() : null;
 
-          //sortColumn=created_unix_timestamp&sortType=desc
-          $entry_comments_array = $entry->get_comments([
-            'limit' => [2, 0],
-            'order_by' => [
-              'column' => 'created_unix_timestamp',
-              'sort' => 'desc'
-            ],
-            'parent_id' => 0
-          ]);
-          foreach ($entry_comments_array as $entry_comment) {
-            $entry_comment->init_data(['created_unix_timestamp']);
+          $entry_is_visible = ($entry->is_published()) ? true : false;
+          if (!$entry_is_visible) {
+            if ($client_user != null) {
+              $entry_is_visible = ($client_user->get_id() == 1 || $client_user->get_group_id() == 1) ? true : false;
+            }
           }
 
-          usort($entry_comments_array, function ($a, $b) {
-            $a_cut = $a->get_created_unix_timestamp();
-            $b_cut = $b->get_created_unix_timestamp();
+          if ($entry_is_visible) {
+            http_response_code(200);
 
-            if ($a_cut != $b_cut) {
-              return ($a_cut > $b_cut) ? -1 : 1;
+            $entry_category = $entry->get_category();
+            $entry_category_title = $entry_category->get_title($cms_base_locale_name);
+
+            $this->system_core->configurator->set_meta_title($entry->get_title($cms_base_locale_name));
+            $this->system_core->configurator->set_meta_description($entry->get_description($cms_base_locale_name));
+            $this->system_core->configurator->set_meta_keywrords($entry->get_keywords($cms_base_locale_name));
+
+            $this->page->breadcrumbs->add($locale_data['PAGE_ENTRY_BREADCRUMPS_ALL_ENTRIES_LABEL'], '/entries');
+            $this->page->breadcrumbs->add($entry_category_title, sprintf('/entries/%s', $entry_category->get_name()));
+            $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
+            $this->page->breadcrumbs->assembly();
+
+            //sortColumn=created_unix_timestamp&sortType=desc
+            $entry_comments_array = $entry->get_comments([
+              'limit' => [2, 0],
+              'order_by' => [
+                'column' => 'created_unix_timestamp',
+                'sort' => 'desc'
+              ],
+              'parent_id' => 0
+            ]);
+            foreach ($entry_comments_array as $entry_comment) {
+              $entry_comment->init_data(['created_unix_timestamp']);
             }
 
-            return 0;
-          });
+            usort($entry_comments_array, function ($a, $b) {
+              $a_cut = $a->get_created_unix_timestamp();
+              $b_cut = $b->get_created_unix_timestamp();
 
-          $entry_comments_transformed_array = [];
-          $entry_comment_index = 1;
-          foreach ($entry_comments_array as $entry_comment) {
-            $entry_comment->init_data(['entry_id', 'author_id', 'content', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
-            $entry_comment_author = $entry_comment->get_author();
-            $entry_comment_author->init_data(['login']);
-            array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
-              'COMMENT_ID' => $entry_comment->get_id(),
-              'COMMENT_INDEX' => $entry_comment_index,
-              'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
-              'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
-              'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
-              'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
-            ]));
+              if ($a_cut != $b_cut) {
+                return ($a_cut > $b_cut) ? -1 : 1;
+              }
 
-            $entry_comment_index++;
-          }
+              return 0;
+            });
 
-          if (count($entry_comments_array) > 0) {
-            $entry_comments_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/commentsList.tpl', [
-              'COMMENTS_ITEMS' => implode($entry_comments_transformed_array)
+            $entry_comments_transformed_array = [];
+            $entry_comment_index = 1;
+            foreach ($entry_comments_array as $entry_comment) {
+              $entry_comment->init_data(['entry_id', 'author_id', 'content', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
+              $entry_comment_author = $entry_comment->get_author();
+              $entry_comment_author->init_data(['login']);
+              array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
+                'COMMENT_ID' => $entry_comment->get_id(),
+                'COMMENT_INDEX' => $entry_comment_index,
+                'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
+                'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
+                'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
+                'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
+              ]));
+
+              $entry_comment_index++;
+            }
+
+            if (count($entry_comments_array) > 0) {
+              $entry_comments_transformed = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/commentsList.tpl', [
+                'COMMENTS_ITEMS' => implode($entry_comments_transformed_array)
+              ]);
+            }
+
+            /**
+             * @var Parsedown Парсер markdown-разметки
+             */
+            $parsedown = new Parsedown();
+
+            /**
+             * @var string Заголовок записи
+             */
+            $entry_title = (!empty($entry->get_title($cms_base_locale_name))) ? $entry->get_title($cms_base_locale_name) : $entry->get_title($cms_base_locale_setted_name);
+            /**
+             * @var string Содержание записи
+             */
+            $entry_content = (!empty($entry->get_content($cms_base_locale_name))) ? $entry->get_content($cms_base_locale_name) : $entry->get_content($cms_base_locale_setted_name);
+
+            $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry->get_updated_unix_timestamp());
+
+            $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_updated_unix_timestamp());
+
+            /**
+             * @property string Собранный шаблон в виде строки
+             */
+            $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
+              'PAGE_NAME' => 'entry',
+              'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
+                'ENTRY_ID' => $entry->get_id(),
+                'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
+                'ENTRY_TITLE' => $entry_title,
+                'ENTRY_CONTENT' => $parsedown->text($entry_content),
+                'ENTRY_PREVIEW_URL' => ($entry->get_preview_url() != '') ? $entry->get_preview_url() : Entry::get_preview_default_url($this->system_core, 1024),
+                'ENTRY_CATEGORY_TITLE' => $entry_category_title,
+                'ENTRY_CATEGORY_URL' => $entry_category->get_url(),
+                'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL'],
+                'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
+                'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+                'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
+                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
+              ])
             ]);
+          } else {
+            http_response_code(404);
+  
+            $page_error = new PageError($this->system_core, $this->page, 404);
+            $page_error->assembly();
+            $this->assembled = $page_error->assembled;
           }
-
-          /**
-           * @var Parsedown Парсер markdown-разметки
-           */
-          $parsedown = new Parsedown();
-
-          /**
-           * @var string Заголовок записи
-           */
-          $entry_title = (!empty($entry->get_title($cms_base_locale_name))) ? $entry->get_title($cms_base_locale_name) : $entry->get_title($cms_base_locale_setted_name);
-          /**
-           * @var string Содержание записи
-           */
-          $entry_content = (!empty($entry->get_content($cms_base_locale_name))) ? $entry->get_content($cms_base_locale_name) : $entry->get_content($cms_base_locale_setted_name);
-
-          $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry->get_created_unix_timestamp());
-          $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry->get_published_unix_timestamp());
-          $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry->get_updated_unix_timestamp());
-
-          $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_created_unix_timestamp());
-          $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_published_unix_timestamp());
-          $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_updated_unix_timestamp());
-
-          /**
-           * @property string Собранный шаблон в виде строки
-           */
-          $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
-            'PAGE_NAME' => 'entry',
-            'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry.tpl', [
-              'ENTRY_ID' => $entry->get_id(),
-              'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
-              'ENTRY_TITLE' => $entry_title,
-              'ENTRY_CONTENT' => $parsedown->text($entry_content),
-              'ENTRY_PREVIEW_URL' => ($entry->get_preview_url() != '') ? $entry->get_preview_url() : Entry::get_preview_default_url($this->system_core, 1024),
-              'ENTRY_CATEGORY_TITLE' => $entry_category_title,
-              'ENTRY_CATEGORY_URL' => $entry_category->get_url(),
-              'ENTRY_COMMENTS_LIST' => (count($entry_comments_array) > 0) ? $entry_comments_transformed : $locale_data['PAGE_ENTRY_COMMENTS_NOT_FOUND_LABEL'],
-              'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
-              'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
-              'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
-              'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
-              'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
-              'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
-            ])
-          ]);
         } else {
           http_response_code(404);
 

@@ -12,6 +12,9 @@ namespace core\PHPLibrary\SystemCore {
   use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
   use \core\PHPLibrary\SystemCore as SystemCore;
 
+  /**
+   * Class Configurator
+   */
   final class Configurator {
     const FILE_PATH = 'core/configuration.php';
 
@@ -35,67 +38,131 @@ namespace core\PHPLibrary\SystemCore {
       }
     }
 
+    /**
+     * Назначить заголовок для веб-сайта
+     * 
+     * @param string $value
+     * 
+     * @return void
+     */
     public function set_meta_title(string $value) : void {
       $this->meta_title = $value;
     }
 
+    /**
+     * Назначить описание для веб-сайта
+     * 
+     * @param string $value
+     * 
+     * @return void
+     */
     public function set_meta_description(string $value) : void {
       $this->meta_description = $value;
     }
 
+    /**
+     * Назначить ключевые слова для веб-сайта
+     * 
+     * @param array $values
+     * 
+     * @return void
+     */
     public function set_meta_keywrords(array $values) : void {
       $this->meta_keywords = $values;
     }
 
+    /**
+     * Добавить ключевое слово
+     * 
+     * @param mixed $value
+     * 
+     * @return void
+     */
     public function add_meta_keywrord(mixed $value) : void {
       array_push($this->meta_keywords, $value);
     }
 
+    /**
+     * Получить заголовок для веб-сайта
+     * 
+     * @return string
+     */
     public function get_meta_title() : string {
       return $this->meta_title;
     }
 
+    /**
+     * Получить описание для веб-сайта
+     * 
+     * @return string
+     */
     public function get_meta_description() : string {
       return $this->meta_description;
     }
 
+    /**
+     * Получить ключевые слова для веб-сайта
+     * 
+     * @return array
+     */
     public function get_meta_keywords() : array {
       return $this->meta_keywords;
     }
 
+    /**
+     * Получить ключевые слова для веб-сайта в формате строки
+     * 
+     * @return string
+     */
     public function get_meta_keywords_imploded() : string {
       return implode(', ', $this->meta_keywords);
     }
 
+    /**
+     * Получить ключевые слова для веб-сайта в формате JSON
+     * 
+     * @return string
+     */
     public function get_meta_keywords_json() : string {
       return json_encode($this->meta_keywords);
     }
 
+    /**
+     * Получить заголовок для веб-сайта из базы данных
+     * 
+     * @return string
+     */
     public function get_site_title() : string {
       return ($this->exists_database_entry_value('base_site_title')) ? $this->get_database_entry_value('base_site_title') : $this->system_core->get_cms_title();
     }
 
+    /**
+     * Получить описание для веб-сайта из базы данных
+     * 
+     * @return string
+     */
     public function get_site_description() : string {
       return ($this->exists_database_entry_value('seo_site_description')) ? $this->get_database_entry_value('seo_site_description') : sprintf('%s %s developed by www.garbalo.com', $this->system_core->get_cms_title(), $this->system_core->get_cms_version());
     }
 
+    /**
+     * Получить ключевые слова для веб-сайта из базы данных
+     * 
+     * @return string
+     */
     public function get_site_keywords() : string {
       return ($this->exists_database_entry_value('seo_site_keywords')) ? implode(', ', json_decode($this->get_database_entry_value('seo_site_keywords'), true)) : implode(', ', ['cms girvas', 'garbalo', 'empty site']);
     }
 
+    /**
+     * Получить кодировку веб-сайта из базы данных
+     * 
+     * @return string
+     */
     public function get_site_charset() : string {
       return ($this->exists_database_entry_value('base_site_charset')) ? $this->get_database_entry_value('base_site_charset') : 'UTF-8';
     }
-    
-    /**
-     * Объединить данные для конфигураций CMS
-     *
-     * @param  mixed $data
-     * @return void
-     */
-    private function merge(array $data) : void {
-      $this->data = array_merge($this->data, $data);
-    }
+
     /**
      * Получить данные конфигурации CMS из базы данных
      *
@@ -127,6 +194,13 @@ namespace core\PHPLibrary\SystemCore {
       return null;
     }
 
+    /**
+     * Проверить наличие записи конфигураций CMS в базе данных
+     * 
+     * @param string $name
+     * 
+     * @return bool
+     */
     public function exists_database_entry_value(string $name) : bool {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
@@ -153,6 +227,14 @@ namespace core\PHPLibrary\SystemCore {
       return false;
     }
 
+    /**
+     * Добавить запись конфигураций CMS в базу данных
+     * 
+     * @param string $name
+     * @param string $value
+     * 
+     * @return bool
+     */
     public function insert_database_entry_value(string $name, string $value) : bool {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_insert();
@@ -175,6 +257,14 @@ namespace core\PHPLibrary\SystemCore {
       return false;
     }
 
+    /**
+     * Обновить запись конфигураций CMS в базе данных
+     * 
+     * @param string $name
+     * @param string|int $value
+     * 
+     * @return mixed
+     */
     public function update_database_entry_value(string $name, string|int $value) : mixed {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_update();
@@ -212,7 +302,7 @@ namespace core\PHPLibrary\SystemCore {
     }
     
     /**
-     * Назначение отдельного параметра конфигурации CMS
+     * Назначить отдельного параметра конфигурации CMS
      *
      * @param  mixed $configuration_name
      * @param  mixed $configuration_value
@@ -223,13 +313,33 @@ namespace core\PHPLibrary\SystemCore {
     }
 
     /**
-     * Получение отдельного параметра конфигураций CMS
+     * Получить отдельного параметра конфигураций CMS
      *
      * @param  mixed $configuration_name Наименование конфигурации
      * @return mixed
      */
     public function get(string $configuration_name) : mixed {
       return (array_key_exists($configuration_name, $this->data)) ? $this->data[$configuration_name] : null;
+    }
+
+    /**
+     * Проверить наличие отдельного параметра конфигураций CMS
+     *
+     * @param  string $configuration_name Наименование конфигурации
+     * @return bool
+     */
+    public function exists(string $configuration_name) : bool {
+      return array_key_exists($configuration_name, $this->data);
+    }
+    
+    /**
+     * Объединить данные для конфигураций CMS
+     *
+     * @param  mixed $data
+     * @return void
+     */
+    private function merge(array $data) : void {
+      $this->data = array_merge($this->data, $data);
     }
   }
 
