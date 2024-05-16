@@ -109,7 +109,7 @@ namespace core\PHPLibrary\Page {
           $entry_is_visible = false;
 
           $client_is_logged = $this->system_core->client->is_logged(1);
-          $client_user = ($client_is_logged) ? $this->system_core->client->get_user() : null;
+          $client_user = ($client_is_logged) ? $this->system_core->client->get_user(1) : null;
 
           $entry_is_visible = ($entry_object->is_published()) ? true : false;
           if (!$entry_is_visible) {

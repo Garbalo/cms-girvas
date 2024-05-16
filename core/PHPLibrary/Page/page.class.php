@@ -67,7 +67,7 @@ namespace core\PHPLibrary\Page {
           $page_is_visible = false;
 
           $client_is_logged = $this->system_core->client->is_logged(1);
-          $client_user = ($client_is_logged) ? $this->system_core->client->get_user() : null;
+          $client_user = ($client_is_logged) ? $this->system_core->client->get_user(1) : null;
 
           $page_is_visible = ($page_static->is_published()) ? true : false;
           if (!$page_is_visible) {
