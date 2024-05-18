@@ -79,7 +79,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
           }
         }
 
-        if (isset($user_login)) {
+        if (isset($user_login) && $client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
           if ($user_login != $user->get_login()) {
             if (User::login_is_valid($system_core, $user_login)) {
               if (!User::exists_by_login($system_core, $user_login)) {

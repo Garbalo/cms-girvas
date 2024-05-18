@@ -14,7 +14,7 @@
           <table class="table profile__information-table">
             <tr class="table__row">
               <th class="table__cell table__cell_header">{LANG:PAGE_PROFILE_USER_LOGIN_TITLE}</th>
-              <td class="table__cell"><input name="user_login" type="text" class="form__input" value="{USER_LOGIN}" placeholder="User3425" required></td>
+              <td class="table__cell"><input name="user_login" type="text" class="form__input" value="{USER_LOGIN}" placeholder="User3425" required disabled></td>
             </tr>
             <tr class="table__row">
               <th class="table__cell table__cell_header">{LANG:PAGE_PROFILE_USER_EMAIL_TITLE}</th>

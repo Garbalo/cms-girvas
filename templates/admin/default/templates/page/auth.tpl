@@ -37,6 +37,20 @@
     let adminAccessCodeInputs = document.querySelectorAll('[name="admin_access-code[]"]');
     for (let inputIndex = 0; inputIndex < adminAccessCodeInputs.length; inputIndex++) {
       let input = adminAccessCodeInputs[inputIndex];
+
+      input.addEventListener('paste', (event) => {
+        let clipboardData = event.clipboardData || window.clipboardData;
+        let pastedData = clipboardData.getData('Text');
+
+        let codes = pastedData.split('-');
+
+        adminAccessCodeInputs.forEach((element, elementIndex) => {
+          if (typeof(codes[elementIndex]) != 'undefined') {
+            element.value = codes[elementIndex];
+          }
+        });
+      });
+
       input.addEventListener('keydown', (event) => {
         let isBreak = true;
 
