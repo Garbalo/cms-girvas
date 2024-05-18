@@ -37,6 +37,13 @@
               <td class="table__cell"><input name="user_birthdate" type="date" class="form__input" value="{USER_BIRTHDATE}" placeholder="19.01.1997"></td>
             </tr>
             <tr class="table__row">
+              <th class="table__cell table__cell_header" colspan="2">{LANG:PAGE_PROFILE_SECURITY_GROUP_TITLE}</th>
+            </tr>
+            <tr class="table__row">
+              <th class="table__cell table__cell_header">{LANG:PAGE_PROFILE_USER_PASSWORD_OLD_TITLE}</th>
+              <td class="table__cell"><input name="user_password_old" type="password" class="form__input" value="" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" role="profileFormInputUserPasswordOld"></td>
+            </tr>
+            <tr class="table__row">
               <th class="table__cell table__cell_header">{LANG:PAGE_PROFILE_USER_PASSWORD_TITLE}</th>
               <td class="table__cell"><input name="user_password" type="password" class="form__input" value="" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" role="profileFormInputUserPassword"></td>
             </tr>

@@ -54,6 +54,8 @@
   "API_USER_ERROR_INVALID_EMAIL": "E-Mail имеет неверный формат.",
   "API_USER_ERROR_INVALID_PASSWORD": "Пароль имеет неверный формат или не отвечает требованиям безопасности.",
   "API_USER_ERROR_INVALID_REPEAT_PASSWORD": "Указанные пароли не совпадают.",
+  "API_USER_ERROR_EMPTY_OLD_PASSWORD": "Укажите старый пароль.",
+  "API_USER_ERROR_INVALID_OLD_PASSWORD": "Указанный старый пароль не совпадает.",
   "API_USER_ERROR_INVALID_LOGIN": "Логин имеет неверный формат.",
   "API_USER_REQUEST_PASSWORD_RESET_SENDED_SUCCESS": "Запрос на восстановление успешно отправлен.",
   "API_USER_REQUEST_PASSWORD_RESET_EMAIL_SUBJECT": "Запрос на восстановление пароля",

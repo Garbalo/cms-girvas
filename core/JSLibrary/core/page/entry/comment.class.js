@@ -36,7 +36,7 @@ export class EntryComment {
 
     let interactivePanelButtonContainerElement = document.createElement('div');
     interactivePanelButtonContainerElement.classList.add('comment__answers-container');
-    interactivePanelButtonContainerElement.setAttribute('data-parent-id', this.entryID);
+    interactivePanelButtonContainerElement.setAttribute('data-parent-id', this.id);
 
     let interactivePanelButton = new Interactive('button');
     interactivePanelButton.target.setLabel(this.entry.localeBaseData.BUTTON_LOAD_ANSWERS_COMMENTS_LABEL);
@@ -45,6 +45,7 @@ export class EntryComment {
         return (response.ok) ? response.json() : Promise.reject(response);
       }).then((commentsLoadedData) => {
         let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
+        console.log(commentsLoadedData.outputData);
 
         let answersListElement = document.createElement('ul');
         answersListElement.classList.add('comment__answers-list');
@@ -57,6 +58,7 @@ export class EntryComment {
           }).then((authorLoadedData) => {
             let authorData = authorLoadedData.outputData.user;
             
+            commentData.entryID = this.entryID;
             commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComments"]').length + entryCommentsListElement.querySelectorAll('[role="entryCommentAnswer"]').length + 1;
             
             let entryComment = new EntryComment(this.entry, commentData);
@@ -81,8 +83,10 @@ export class EntryComment {
 
         interactivePanelButtonContainerElement.append(answersListElement);
 
-        if (comments.length > 0) {
-          appendComment(comments[0]);
+        if (typeof(comments) != 'undefined') {
+          if (comments.length > 0) {
+            appendComment(comments[0]);
+          }
         }
       });
     });

@@ -1,3 +1,9 @@
+@media (min-width: 670px) {
+  .header {
+    padding-top: 60px;
+  }
+}
+
 .header__container {
   background: linear-gradient(270deg, #FFF 64.61%, #E0E0E0 100%);
 }

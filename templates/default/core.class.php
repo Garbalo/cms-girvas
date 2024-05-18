@@ -96,7 +96,11 @@ namespace templates\default {
 
       $locale_data = $this->template->locale->get_data();
 
-      if ($this->template->system_core->configurator->get_database_entry_value('base_engineering_works_status') == 'off') {
+      $client_is_logged = $this->template->system_core->client->is_logged(1);
+      $client_user = ($client_is_logged) ? $this->template->system_core->client->get_user(1) : null;
+      $client_user->init_data(['metadata']);
+
+      if ($this->template->system_core->configurator->get_database_entry_value('base_engineering_works_status') == 'off' || $client_user->get_group_id() == 1) {
         $this->template->add_style(['href' => 'styles/header.css', 'rel' => 'stylesheet']);
         $this->template->add_style(['href' => 'styles/main.css', 'rel' => 'stylesheet']);
         $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);

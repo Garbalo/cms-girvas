@@ -18,14 +18,7 @@ a {
 
 body {
   background-color: var(--bcg-body-color);
-  font-family: Roboto;
-}
-
-@media (min-width: 670px) {
-  body {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
+  font-family: 'Roboto';
 }
 
 @media (min-width: 670px) and (max-width: 1139px) {
@@ -60,6 +53,81 @@ body {
   background-color: transparent;
   cursor: pointer;
   padding: 0;
+}
+
+.plug {
+  padding-bottom: 48px;
+}
+
+.plug__header {
+  position: relative;
+  background-color: var(--primary-color-3);
+  margin-bottom: 224px;
+  height: 200px;
+}
+
+.plug__brand-container {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color-3);
+  border-radius: 100%;
+  padding: 48px;
+  width: 248px;
+  height: 248px;
+  bottom: -124px;
+  left: calc(50% - 124px);
+}
+
+.plug__brand {
+  fill: var(--primary-color-5);
+  width: 100%;
+}
+
+.plug__body {
+  box-sizing: border-box;
+  background-color: var(--primary-color-4);
+  color: var(--primary-color-5);
+  border-left: 6px solid var(--primary-color-5);
+  padding: 24px 48px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1140px) {
+  .plug__body {
+    width: 600px;
+  }
+}
+
+@media (max-width: 1139px) {
+  .plug__body {
+    width: 100%;
+  }
+}
+
+
+.plug__body .section__title {
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 670px) {
+  .plug__body .section__title {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 669px) {
+  .plug__body .section__title {
+    font-size: 16px;
+  }
+}
+
+.plug__body .section__content {
+  font-size: 14px;
 }
 
 :root {

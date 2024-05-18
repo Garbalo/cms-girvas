@@ -54,6 +54,8 @@
   "API_USER_ERROR_INVALID_EMAIL": "The email is not in the correct format.",
   "API_USER_ERROR_INVALID_PASSWORD": "The password is not in the correct format or does not meet security requirements.",
   "API_USER_ERROR_INVALID_REPEAT_PASSWORD": "The specified passwords do not match.",
+  "API_USER_ERROR_EMPTY_OLD_PASSWORD": "Please enter your old password.",
+  "API_USER_ERROR_INVALID_OLD_PASSWORD": "The old password provided does not match.",
   "API_USER_ERROR_INVALID_LOGIN": "The login is not in the correct format.",
   "API_USER_REQUEST_PASSWORD_RESET_SENDED_SUCCESS": "The restore request was sent successfully.",
   "API_USER_REQUEST_PASSWORD_RESET_EMAIL_SUBJECT": "Password recovery request",

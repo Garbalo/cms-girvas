@@ -91,6 +91,7 @@ export class PageProfile {
             let profileAvatarInput = document.querySelector('[role="profileFormInputUserAvatar"]');
             let profilePasswordInput = document.querySelector('[role="profileFormInputUserPassword"]');
             let profilePasswordRepeatInput = document.querySelector('[role="profileFormInputUserPasswordRepeat"]');
+            let profilePasswordOldInput = document.querySelector('[role="profileFormInputUserPasswordOld"]');
             
             let interactiveButtonBack = new Interactive('button');
             interactiveButtonBack.target.setLabel(this.localeBaseData.DEFAULT_TEXT_BACK);
@@ -112,10 +113,12 @@ export class PageProfile {
               if (event.target.value != '') {
                 profilePasswordInput.setAttribute('required', '');
                 profilePasswordRepeatInput.setAttribute('required', '');
+                profilePasswordOldInput.setAttribute('required', '');
               } else {
                 if (profilePasswordRepeatInput.value == '') {
                   profilePasswordInput.removeAttribute('required');
                   profilePasswordRepeatInput.removeAttribute('required');
+                  profilePasswordOldInput.removeAttribute('required');
                 }
               }
             });
@@ -126,10 +129,28 @@ export class PageProfile {
               if (event.target.value != '') {
                 profilePasswordInput.setAttribute('required', '');
                 profilePasswordRepeatInput.setAttribute('required', '');
+                profilePasswordOldInput.setAttribute('required', '');
               } else {
                 if (profilePasswordRepeatInput.value == '') {
                   profilePasswordInput.removeAttribute('required');
                   profilePasswordRepeatInput.removeAttribute('required');
+                  profilePasswordOldInput.removeAttribute('required');
+                }
+              }
+            });
+
+            profilePasswordOldInput.addEventListener('change', (event) => {
+              event.preventDefault();
+
+              if (event.target.value != '') {
+                profilePasswordInput.setAttribute('required', '');
+                profilePasswordRepeatInput.setAttribute('required', '');
+                profilePasswordOldInput.setAttribute('required', '');
+              } else {
+                if (profilePasswordRepeatInput.value == '') {
+                  profilePasswordInput.removeAttribute('required');
+                  profilePasswordRepeatInput.removeAttribute('required');
+                  profilePasswordOldInput.removeAttribute('required');
                 }
               }
             });

@@ -45,6 +45,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
         if (isset($_PATCH['user_group_id'])) $user_group_id = (int)$_PATCH['user_group_id'];
         if (isset($_PATCH['user_password'])) $user_password = $_PATCH['user_password'];
         if (isset($_PATCH['user_password_repeat'])) $user_password_repeat = $_PATCH['user_password_repeat'];
+        if (isset($_PATCH['user_password_old'])) $user_password_old = $_PATCH['user_password_old'];
 
         if (isset($user_password) && isset($user_password_repeat)) {
           if (!empty($user_password) || !empty($user_password_repeat)) {
@@ -54,6 +55,26 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
               $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_REPEAT_PASSWORD')) : $handler_message;
               $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
               $user_is_updated = false;
+            }
+
+            if (!$client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
+              if (isset($user_password_old)) {
+                if (!empty($user_password_old)) {
+                  if (!$user->password_verify($user_password)) {
+                    $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_OLD_PASSWORD')) : $handler_message;
+                    $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+                    $user_is_updated = false;
+                  }
+                } else {
+                  $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_EMPTY_OLD_PASSWORD')) : $handler_message;
+                  $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+                  $user_is_updated = false;
+                }
+              } else {
+                $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_ERROR_INVALID_INPUT_DATA_SET')) : $handler_message;
+                $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+                $user_is_updated = false;
+              }
             }
           }
         }

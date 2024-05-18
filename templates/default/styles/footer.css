@@ -22,6 +22,12 @@
   background-color: var(--bcg-body-color);
 }
 
+@media (min-width: 670px) {
+  .footer {
+    padding-bottom: 60px;
+  }
+}
+
 .footer-top {
   height: 142px;
 }
