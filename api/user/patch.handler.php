@@ -57,10 +57,10 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
               $user_is_updated = false;
             }
 
-            if (!$client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
+            if (!$client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT) || $user_id == $client_user->get_id()) {
               if (isset($user_password_old)) {
                 if (!empty($user_password_old)) {
-                  if (!$user->password_verify($user_password)) {
+                  if (!$user->password_verify($user_password_old)) {
                     $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_OLD_PASSWORD')) : $handler_message;
                     $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
                     $user_is_updated = false;
