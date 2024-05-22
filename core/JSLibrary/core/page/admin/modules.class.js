@@ -60,12 +60,14 @@ export class PageModules {
             let formData = new FormData();
             formData.append('module_name', moduleName);
 
-            fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+            let request = new Interactive('request', {
               method: 'DELETE',
-              body: formData
-            }).then((response) => {
-              return response.json();
-            }).then((data) => {
+              url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+            });
+  
+            request.target.data = formData;
+  
+            request.target.send().then((data) => {
               interactiveModal.target.close();
 
               if (data.statusCode == 1) {
@@ -76,9 +78,6 @@ export class PageModules {
                   buttons.delete.target.element.style.display = 'none';
                 }
               }
-
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
             });
           });
           interactiveModal.assembly();
@@ -94,24 +93,18 @@ export class PageModules {
           let formData = new FormData();
           formData.append('module_name', moduleName);
 
-          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_LOADING_MODULE, document.body, true);
-          notification_start.show();
-
-          fetch('/handler/module/install?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'POST',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
-            notification_start.hide();
+            url: '/handler/module/install?localeMessage=' + window.CMSCore.locales.admin.name
+          });
 
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.install.target.element.style.display = 'none';
               buttons.delete.target.element.style.display = 'flex';
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.install.assembly();
@@ -124,24 +117,18 @@ export class PageModules {
           formData.append('module_name', moduleName);
           formData.append('module_event', 'enable');
 
-          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_ACTIVATION_MODULE, document.body, true);
-          notification_start.show();
-
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'PATCH',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
-            notification_start.hide();
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
 
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.enable.target.element.style.display = 'none';
               buttons.disable.target.element.style.display = 'flex';
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.enable.assembly();
@@ -154,24 +141,18 @@ export class PageModules {
           formData.append('module_name', moduleName);
           formData.append('module_event', 'disable');
 
-          let notification_start = new PopupNotification(localeData.POPUP_SLIDE_DEACTIVATION_MODULE, document.body, true);
-          notification_start.show();
-
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'PATCH',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
-            notification_start.hide();
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
 
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.enable.target.element.style.display = 'flex';
               buttons.disable.target.element.style.display = 'none';
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.disable.assembly();

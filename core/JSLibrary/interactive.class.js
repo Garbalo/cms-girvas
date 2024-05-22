@@ -12,25 +12,35 @@ import {Choices} from './interactive/choices.class.js';
 import {Button} from './interactive/button.class.js';
 import {Modal} from './interactive/modal.class.js';
 import {Form} from './interactive/form.class.js';
+import {Request} from './interactive/request.class.js';
+import {Notification} from './interactive/notification.class.js';
 
 export class Interactive {
   constructor(interactiveName, interactiveParams = {}) {
     this.id = this.generateUniqueID();
 
-    let modalData = {};
+    let data = {};
 
     if (interactiveName == 'modal') {
-      modalData.title = (Object.hasOwn(interactiveParams, 'title')) ? interactiveParams.title : 'Anonymous modal';
-      modalData.description = (Object.hasOwn(interactiveParams, 'description')) ? interactiveParams.description : '';
-      modalData.content = (Object.hasOwn(interactiveParams, 'content')) ? interactiveParams.content : '';
-      modalData.width = (Object.hasOwn(interactiveParams, 'width')) ? interactiveParams.width : 300;
+      data.title = (Object.hasOwn(interactiveParams, 'title')) ? interactiveParams.title : 'Anonymous modal';
+      data.description = (Object.hasOwn(interactiveParams, 'description')) ? interactiveParams.description : '';
+      data.content = (Object.hasOwn(interactiveParams, 'content')) ? interactiveParams.content : '';
+      data.width = (Object.hasOwn(interactiveParams, 'width')) ? interactiveParams.width : 300;
+    }
+
+    if (interactiveName == 'request') {
+      data.method = (Object.hasOwn(interactiveParams, 'method')) ? interactiveParams.method : 'POST';
+      data.url = (Object.hasOwn(interactiveParams, 'url')) ? interactiveParams.url : '/';
+      data.data = (Object.hasOwn(interactiveParams, 'data')) ? interactiveParams.data : undefined;
     }
 
     switch (interactiveName) {
       case 'choices': this.target = new Choices(); break;
       case 'button': this.target = new Button(); break;
       case 'form': this.target = new Form(); break;
-      case 'modal': this.target = new Modal(modalData.title, modalData.content, modalData.description, modalData.width); break;
+      case 'modal': this.target = new Modal(data.title, data.content, data.description, data.width); break;
+      case 'request': this.target = new Request(data.method, data.url, data.data); break;
+      case 'notification': this.target = new Notification(); break;
     }
 
     if (typeof(window.CMSCore) != 'undefined') {

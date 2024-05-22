@@ -12,11 +12,17 @@
 import {ElementTextarea} from "./form/elementTextarea.class.js";
 import {ElementInput} from "./form/elementInput.class.js";
 import {ElementButton} from "./form/elementButton.class.js";
+import {Interactive} from "../interactive.class.js";
 
 /**
  * Интерактивная форма (экспериментальный класс)
  */
 export class Form {
+  /**
+   * constructor
+   * 
+   * @param {*} element 
+   */
   constructor(element = null) {
     this.element = element;
     this.successCallback = (data) => {};
@@ -147,68 +153,43 @@ export class Form {
    * @param {*} senderParams 
    */
   send(senderParams = {}) {
-    let formData = new FormData(this.element.firstChild);
+    let locale, CMSCore = window.CMSCore;
 
-    let notificationLoading = new PopupNotification('Обработка запроса...', document.body, true);
-    notificationLoading.show();
+    if (CMSCore.pages.hasOwnProperty('admin')) {
+      if (CMSCore.pages.admin.hasOwnProperty('global')) {
+        locale = window.CMSCore.locales.admin;
+      }
+    }
 
-    let formAction = (typeof senderParams.action == 'undefined') ? this.element.firstChild.getAttribute('action') : senderParams.action;
-    let formMethod = (typeof senderParams.method == 'undefined') ? this.element.firstChild.getAttribute('method') : senderParams.method;
-    
-    fetch(formAction, {
+    if (CMSCore.pages.hasOwnProperty('default')) {
+      if (CMSCore.pages.default.hasOwnProperty('global')) {
+        locale = window.CMSCore.locales.base;
+      }
+    }
+
+    if (CMSCore.pages.hasOwnProperty('install')) {
+      if (CMSCore.pages.install.hasOwnProperty('global')) {
+        locale = window.CMSCore.locales.install;
+      }
+    }
+
+    let formElement, formMethod, formAction;
+
+    formElement = this.element;
+    formAction = (typeof senderParams.action == 'undefined') ? formElement.firstChild.getAttribute('action') : senderParams.action;
+    formMethod = (typeof senderParams.method == 'undefined') ? formElement.firstChild.getAttribute('method') : senderParams.method;
+
+    let request, requestURL;
+
+    requestURL = formAction;
+
+    request = new Interactive('request', {
       method: formMethod,
-      body: formData
-    }).then((response) => {
-      console.log('Interactive form sended...');
-      return response.json();
-    }).then((data) => {
-      console.log('Interactive form getted data: ' + data);
-
-      let notificationContainerTarget = document.body;
-      
-      // Переписать эту дичь
-      if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
-        let notificationIsPopup = false;
-        
-        if (typeof(data.outputData.notificationContainerTargetID) == 'undefined') {
-          notificationIsPopup = true;
-        } else {
-          notificationContainerTarget = document.querySelector('#' + data.outputData.notificationContainerTargetID);
-          
-          if (Object.is(notificationContainerTarget, null)) {
-            notificationIsPopup = true;
-          }
-        }
-
-        notificationLoading.hide();
-
-        let notification = new PopupNotification(data.message, notificationContainerTarget, notificationIsPopup);
-        notification.show();
-      }
-
-      if (typeof(data.outputData.modalClose) != 'undefined') {
-        this.modalParent.remove();
-      }
-
-      if (typeof(data.outputData.reload) != 'undefined') {
-        this.timeout = setTimeout(() => {
-          window.location.reload();
-        }, 10);
-      }
-
-      if (typeof(data.outputData.href) != 'undefined') {
-        this.timeout = setTimeout(() => {
-          window.location.href = data.outputData.href;
-        }, 10);
-      }
-
-      this.successCallback(data);
-    }).catch((error) => {
-      let notification = new PopupNotification('Interactive form getted error: ' + error, document.body, true);
-      notification.show();
-      
-      this.failCallback(error);
+      url: formAction + `?localeMessage=${locale.name}`,
+      data: formElement.firstChild
     });
+
+    request.target.send();
   }
 
   assembly() {

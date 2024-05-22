@@ -12,6 +12,7 @@ import {Locale} from './core/locale.class.js';
 import {Page} from './core/page.class.js';
 import {Client} from './core/client.class.js';
 import {URLParser} from './urlParser.class.js';
+import {Form as StaticForm} from './form.class.js';
 
 export class Core {
   // ¯\_(ツ)_/¯
@@ -22,14 +23,15 @@ export class Core {
    */
   constructor() {
     this.searchParams = new URLParser();
-    this.pages = {default: {}, admin: {}};
-    this.locales = {base: {}, admin: {}};
+    this.pages = {default: {}, admin: {}, install: {}};
+    this.locales = {base: {}, admin: {}, install: {}};
     this.client = new Client(this);
     this.debugLevel = 1;
   }
 
   /**
    * Инициализация локализаций
+   * 
    * @returns
    */
   async initLocales() {
@@ -65,6 +67,7 @@ export class Core {
   
   /**
    * Инициализация страниц
+   * 
    * @returns {Boolean}
    */
   async initPages() {
@@ -105,7 +108,39 @@ export class Core {
   }
 
   /**
+   * Инициализация статических форм (встроенные через TPL)
+   * 
+   * @returns 
+   */
+  async initStaticForms() {
+    let staticFormsArray = [], formsElements = document.querySelectorAll('form');
+    let locale;
+
+    if (this.pages.admin.hasOwnProperty('global')) {
+      locale = this.locales.admin;
+    }
+
+    if (this.pages.default.hasOwnProperty('global')) {
+      locale = this.locales.base;
+    }
+
+    if (this.pages.install.hasOwnProperty('global')) {
+      locale = this.locales.install;
+    }
+
+    for (let element of formsElements) {
+      let staticForm = new StaticForm(element, locale);
+      staticForm.initFormElement();
+
+      staticFormsArray.push(staticForm);
+    }
+
+    return staticFormsArray;
+  }
+
+  /**
    * Получение текущей версии CMS
+   * 
    * @returns {String}
    */
   async getCMSVersion() {
@@ -142,6 +177,7 @@ export class Core {
 
   /**
    * Вывести сообщение в консоль
+   * 
    * @param {Number} debugLevel
    * @param {String} label 
    * @param {String} string 
@@ -168,6 +204,7 @@ export class Core {
 
   /**
    * Вывести ошибку в консоль
+   * 
    * @param {Number} debugLevel 
    * @param {String} label 
    * @param {String} string 
@@ -194,6 +231,7 @@ export class Core {
 
   /**
    * Вывести примечание в консоль
+   * 
    * @param {Number} debugLevel
    * @param {String} label
    * @param {String} string
@@ -228,6 +266,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     return window.CMSCore.initPages();
   }).then(() => {
     window.CMSCore.debugLog(1, 'CMSCore', 'Pages initied!', true);
+    return window.CMSCore.initStaticForms();
+  }).then(() => {
+    window.CMSCore.debugLog(1, 'CMSCore', 'Static forms initied!', true);
     return window.CMSCore.getCMSVersion();
   }).then((version) => {
     window.CMSCore.debugLog(1, 'CMSCore', `Core CMS initied! Current version: ${version}`, true);

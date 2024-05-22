@@ -39,12 +39,14 @@ export class PageTemplate {
           let formData = new FormData();
           formData.append('setting_base_template', templateName);
 
-          fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'POST',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.install.target.element.style.display = 'none';
               buttons.delete.target.element.style.display = 'none';
@@ -52,9 +54,6 @@ export class PageTemplate {
 
               templateBlock.setAttribute('data-template-installed-status', 'installed');
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
 
@@ -65,12 +64,14 @@ export class PageTemplate {
           formData.append('template_name', templateName);
           formData.append('template_category', 'default');
 
-          fetch('/handler/template?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/template?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.download.target.element.style.display = 'flex';
               buttons.delete.target.element.style.display = 'none';
@@ -79,9 +80,6 @@ export class PageTemplate {
               templateBlock.setAttribute('data-template-installed-status', 'not-installed');
               templateBlock.setAttribute('data-template-dowloaded-status', 'not-dowloaded');
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
 
@@ -91,12 +89,14 @@ export class PageTemplate {
           let formData = new FormData();
           formData.append('template_name', templateName);
 
-          fetch('/handler/template?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'POST',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/template?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.download.target.element.style.display = 'none';
               buttons.delete.target.element.style.display = 'flex';
@@ -105,9 +105,6 @@ export class PageTemplate {
               templateBlock.setAttribute('data-template-installed-status', 'not-installed');
               templateBlock.setAttribute('data-template-dowloaded-status', 'dowloaded');
             }
-
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
 

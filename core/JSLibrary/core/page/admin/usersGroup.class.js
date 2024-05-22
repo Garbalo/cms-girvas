@@ -59,14 +59,18 @@ export class PageUsersGroup {
           usersGroupTitleInputElement.setAttribute('name', 'user_group_title_' + locale.iso639_2);
 
           if (searchParams.getPathPart(3) != null) {
-            fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-              method: 'GET'
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              let usersGroupData = data1.outputData.usersGroup;
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: '/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+            });
 
-              usersGroupTitleInputElement.value = usersGroupData.title;
+            request.target.showingNotification = false;
+
+            request.target.send().then((data) => {
+              if (data.statusCode == 1 && data.outputData.hasOwnProperty('usersGroup')) {
+                let usersGroupData = data.outputData.usersGroup;
+                usersGroupTitleInputElement.value = usersGroupData.title;
+              }
             });
           }
         }
@@ -96,14 +100,18 @@ export class PageUsersGroup {
             usersGroupTitleInputElement.setAttribute('name', 'user_group_title_' + locale.iso639_2);
 
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + event.target.value + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-                method: 'GET'
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((data1) => {
-                let usersGroupData = data1.outputData.usersGroup;
-
-                usersGroupTitleInputElement.value = usersGroupData.title;
+              let request = new Interactive('request', {
+                method: 'GET',
+                url: '/handler/usersGroup/' + searchParams.getPathPart(3) + '?locale=' + event.target.value + '&localeMessage=' + window.CMSCore.locales.admin.name
+              });
+  
+              request.target.showingNotification = false;
+  
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('usersGroup')) {
+                  let usersGroupData = data.outputData.usersGroup;
+                  usersGroupTitleInputElement.value = usersGroupData.title;
+                }
               });
             }
           }
@@ -121,23 +129,29 @@ export class PageUsersGroup {
         if (form.target.checkRequiredFields()) {
           let formData = new FormData(elementForm);
 
-          fetch('/handler/usersGroup?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let usersGroupData = data1.outputData.usersGroup;
+            url: '/handler/usersGroup?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let usersGroupData = data.outputData.usersGroup;
               window.location.href = '/admin/userGroup/' + usersGroupData.id;
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -156,18 +170,17 @@ export class PageUsersGroup {
           let formData = new FormData();
           formData.append('user_group_id', searchParams.getPathPart(3));
 
-          fetch('/handler/usersGroup/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/usersGroup/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/usersGroups';
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
 

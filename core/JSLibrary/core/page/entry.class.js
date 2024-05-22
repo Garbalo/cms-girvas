@@ -194,16 +194,26 @@ export class PageEntry {
       let interactiveButtonCommentsLoad = new Interactive('button');
       interactiveButtonCommentsLoad.target.setLabel(this.localeBaseData.BUTTON_LOAD_MORE_COMMENTS_LABEL);
       interactiveButtonCommentsLoad.target.setCallback((event) => {
-        fetch(`/handler/entry/${entryID}/comments?localeMessage=${window.CMSCore.locales.base.name}&limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`, {method: 'GET'}).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((commentsLoadedData) => {
-          let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
-          
-          if (typeof(comments) != 'undefined') {
+        let request = new Interactive('request', {
+          method: 'GET',
+          url: `/handler/entry/${entryID}/comments?localeMessage=${window.CMSCore.locales.base.name}&limit=${this.commentsLimit}&offset=${this.commentsOffset}&sortColumn=created_unix_timestamp&sortType=desc&parentID=0`
+        });
+
+        request.target.showingNotification = false;
+
+        request.target.send().then((data1) => {
+          if (data1.statusCode == 1 && data1.outputData.hasOwnProperty('comments')) {
+            let comments = data1.outputData.comments, commentLoadedIndex = 0;
+            
             let appendComment = (commentData) => {
-              fetch(`/handler/user/${commentData.authorID}`, {method: 'GET'}).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((authorLoadedData) => {
+              let requestAppend = new Interactive('request', {
+                method: 'GET',
+                url: `/handler/user/${commentData.authorID}`
+              });
+
+              requestAppend.target.showingNotification = false;
+
+              requestAppend.target.send().then((authorLoadedData) => {
                 let authorData = authorLoadedData.outputData.user;
                 
                 commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComment"]').length + 1;
@@ -215,7 +225,9 @@ export class PageEntry {
                   commentLoadedIndex++;
                   this.commentsOffset++;
                   entryCommentsListElement.append(commentElement);
+
                   entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+
                   if (commentLoadedIndex < comments.length) {
                     appendComment(comments[commentLoadedIndex]);
                   }

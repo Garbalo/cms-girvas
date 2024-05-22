@@ -8,19 +8,24 @@
 
 'use strict';
 
+import {Interactive} from './interactive.class.js';
+
 /**
  * Форма (устаревшее)
  */
-class Form {
+export class Form {
   /**
    * constructor
    * 
    * @param {HTMLFormElement} element
    */
-  constructor(element) {
+  constructor(element, locale) {
     this.modalParent = null;
+    this.timeout = null;
+    this.locale = locale;
     this.setFormElement(element);
   }
+
   /**
    * Назначить элемент формы
    * 
@@ -30,17 +35,17 @@ class Form {
     /** @type {HTMLFormElement} */
     this.element = element;
   }
+
   /**
    * Инициализация элемента формы
    */
   initFormElement() {
     this.element.addEventListener('submit', (event) => {
       event.preventDefault();
-
-      let formMethod = (event.submitter.hasAttribute('formmethod')) ? event.submitter.getAttribute('formmethod') : '';
       this.send(event);
     });
   }
+
   getFormMethod(submitEvent) {
     if (submitEvent.submitter.hasAttribute('formmethod')) {
       if (submitEvent.submitter.getAttribute('formmethod') != '') {
@@ -50,60 +55,35 @@ class Form {
 
     return (this.element.hasAttribute('method')) ? this.element.getAttribute('method') : 'POST';
   }
+
   getFormAction() {
     return (this.element.hasAttribute('action')) ? this.element.getAttribute('action') : '/handler';
   }
-  send(submitEvent) {
-    /** @type {FormData} */
-    let formData = new FormData(this.element);
-    let submitterName = submitEvent.submitter.hasAttribute('name') ? submitEvent.submitter.getAttribute('name') : 'submitter';
-    formData.append(submitterName, true);
 
-    let notificationLoading = new PopupNotification('Обработка запроса...', document.body, true);
-    notificationLoading.show();
+  send(event) {
+    let submitter, submitterName, submitterMethod;
 
-    // Отправка через Fetch API
-    fetch(this.getFormAction(), {
-      method: this.getFormMethod(submitEvent),
-      body: formData
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      console.debug('Response by form: ' + data);
-      if (typeof(data.outputData.reload) == 'undefined' && typeof(data.outputData.href) == 'undefined') {
-        let notificationContainerTarget, notificationIsPopup = false;
-        if (typeof(data.outputData.notificationContainerTargetID) == 'undefined') {
-          notificationContainerTarget = document.body;
-          notificationIsPopup = true;
-        } else {
-          notificationContainerTarget = document.querySelector('#' + data.outputData.notificationContainerTargetID);
-          if (Object.is(notificationContainerTarget, null)) {
-            notificationContainerTarget = document.body;
-            notificationIsPopup = true;
-          }
-        }
+    submitter = event.submitter;
+    submitterName = (submitter.hasAttribute('name')) ? submitter.getAttribute('name') : 'submitter_anomymous';
+    submitterMethod = (submitter.hasAttribute('formmethod')) ? submitter.getAttribute('formmethod') : 'POST';
 
-        notificationLoading.hide();
+    let form, formMethod, formAction;
 
-        let notification = new PopupNotification(data.message, notificationContainerTarget, notificationIsPopup);
-        notification.show();
-      }
+    form = event.target;
+    formMethod = (event.target.hasAttribute('method')) ? event.target.getAttribute('method') : 'POST';
+    formAction = (event.target.hasAttribute('action')) ? event.target.getAttribute('action') : '/';
 
-      if (typeof(data.outputData.modalClose) != 'undefined') {
-        this.modalParent.remove();
-      }
+    let request, requestMethod, requestURL;
 
-      if (typeof(data.outputData.reload) != 'undefined') {
-        this.timeout = setTimeout(() => {
-          window.location.reload();
-        }, 10);
-      }
+    requestMethod = (submitter.hasAttribute('formmethod')) ? submitterMethod : formMethod;
+    requestURL = formAction;
 
-      if (typeof(data.outputData.href) != 'undefined') {
-        this.timeout = setTimeout(() => {
-          window.location.href = data.outputData.href;
-        }, 10);
-      }
+    request = new Interactive('request', {
+      method: requestMethod,
+      url: formAction + `?localeMessage=${this.locale.name}`,
+      data: this.element
     });
+
+    request.target.send();
   }
 }

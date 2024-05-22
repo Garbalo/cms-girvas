@@ -45,18 +45,18 @@ export class PageMedia {
         let formData = new FormData();
         formData.append('media_file_fullname', fileName);
 
-        fetch('/handler/media?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'DELETE',
-          body: formData
-        }).then((response) => {
-          return response.json();
-        }).then((data) => {
-          element.remove();
+          url: '/handler/media?localeMessage=' + window.CMSCore.locales.admin.name
+        });
 
-          interactiveModal.target.close();
+        request.target.data = formData;
 
-          let notification = new PopupNotification(data.message, document.body, true);
-          notification.show();
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
+            element.remove();
+            interactiveModal.target.close();
+          }
         });
       });
 
@@ -73,12 +73,17 @@ export class PageMedia {
     buttons.link = new Interactive('button');
     buttons.link.target.setLabel(PageMedia.buttonIcons.link);
     buttons.link.target.setCallback((event) => {
+      let interactiveNotification;
+
       event.preventDefault();
-      
       navigator.clipboard.writeText(fileURL);
-      
-      let notification = new PopupNotification(this.localeData.POPUP_SLIDE_RELATIVE_LINK_COPIED, document.body, true);
-      notification.show();
+        
+      interactiveNotification = new Interactive('notification');
+      interactiveNotification.target.isPopup = true;
+      interactiveNotification.target.setContent(localeData.POPUP_SLIDE_RELATIVE_LINK_COPIED);
+      interactiveNotification.target.assembly();
+
+      interactiveNotification.target.show();
     });
     buttons.link.assembly();
 
@@ -90,19 +95,16 @@ export class PageMedia {
     let formData = new FormData();
     formData.append('mediaFile', inputElement.files[fileIndex]);
 
-    fetch('/handler/media?localeMessage=' + window.CMSCore.locales.admin.name, {
+    let request = new Interactive('request', {
       method: 'POST',
-      body: formData
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      let notification = new PopupNotification(data.message, document.body, true);
-      notification.show();
+      url: '/handler/media?localeMessage=' + window.CMSCore.locales.admin.name
+    });
 
-      if (Object.hasOwn(data.outputData, 'file')) {
+    request.target.data = formData;
+
+    request.target.send().then((data) => {
+      if (data.statusCode == 1 && data.outputData.hasOwnProperty('file')) {
         let fileName, fileURL;
-
-        console.log(data.outputData.file);
 
         fileName = data.outputData.file.fullname;
         fileURL = data.outputData.file.url;

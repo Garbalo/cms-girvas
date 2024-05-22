@@ -48,6 +48,9 @@ if ($system_core->urlp->get_path(2) == 'assembly') {
     }
 
     $handler_output_data['templateAssembled'] = TemplateCollector::assembly_locale(TemplateCollector::assembly_file_content($template, $_GET['templateFilePath'], $templates_patterns), $system_core->locale);
+    
+    $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS') : $handler_message;
+    $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
   }
 }
 

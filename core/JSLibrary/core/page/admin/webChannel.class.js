@@ -47,19 +47,18 @@ export class PageWebChannel {
         interactiveModal.target.addButton(localeData.BUTTON_DELETE_LABEL, () => {
           let formData = new FormData();
           formData.append('web_channel_id', searchParams.getPathPart(3));
-  
-          fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/webChannel/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+  
+          request.target.data = formData;
+  
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/webChannels';
             }
-  
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
   
@@ -84,24 +83,31 @@ export class PageWebChannel {
         if (form.target.checkRequiredFields()) {
           let formData = new FormData(elementForm);
 
-          fetch('/handler/webChannel?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            console.log(data1);
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let webChannelData = data1.outputData.webChannel;
-              window.location.href = '/admin/webChannel/' + webChannelData.id;
+            url: '/handler/webChannel?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              if (data.outputData.hasOwnProperty('webChannel')) {
+                let webChannelData = data1.outputData.webChannel;
+                window.location.href = '/admin/webChannel/' + webChannelData.id;
+              }
             }
-    
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -195,13 +201,18 @@ export class PageWebChannel {
             webChannelDescriptionTextareaElement.setAttribute('name', 'web_channel_description_' + locale.iso639_2);
             webChannelTitleInputElement.setAttribute('name', 'web_channel_title_' + locale.iso639_2);
             
-            fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-              method: 'GET'
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data) => {
-              webChannelDescriptionTextareaElement.value = data.outputData.webChannel.description;
-              webChannelTitleInputElement.value = data.outputData.webChannel.title;
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: '/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+            });
+
+            request.target.showingNotification = false;
+
+            request.target.send().then((data) => {
+              if (data.statusCode == 1 && data.outputData.hasOwnProperty('webChannel')) {
+                webChannelDescriptionTextareaElement.value = data.outputData.webChannel.description;
+                webChannelTitleInputElement.value = data.outputData.webChannel.title;
+              }
             });
           }
         });
@@ -230,13 +241,18 @@ export class PageWebChannel {
               webChannelDescriptionTextareaElement.setAttribute('name', 'web_channel_description_' + locale.iso639_2);
               webChannelTitleInputElement.setAttribute('name', 'web_channel_title_' + locale.iso639_2);
               
-              fetch('/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-                method: 'GET'
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((data) => {
-                webChannelDescriptionTextareaElement.value = data.outputData.webChannel.description;
-                webChannelTitleInputElement.value = data.outputData.webChannel.title;
+              let request = new Interactive('request', {
+                method: 'GET',
+                url: '/handler/webChannel/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+              });
+  
+              request.target.showingNotification = false;
+  
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('webChannel')) {
+                  webChannelDescriptionTextareaElement.value = data.outputData.webChannel.description;
+                  webChannelTitleInputElement.value = data.outputData.webChannel.title;
+                }
               });
             }
           });

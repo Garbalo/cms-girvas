@@ -69,15 +69,20 @@ export class PagePageStatic {
           keywordsInputElement.setAttribute('name', 'page_static_keywords_' + locale.iso639_2);
             
           if (searchParams.getPathPart(3) != null) {
-            fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-              method: 'GET'
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              contentTextareaElement.value = data1.outputData.pageStatic.content;
-              descriptionTextareaElement.value = data1.outputData.pageStatic.description;
-              titleInputElement.value = data1.outputData.pageStatic.title;
-              keywordsInputElement.value = data1.outputData.pageStatic.keywords.join(', ');
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: '/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+            });
+
+            request.target.showingNotification = false;
+  
+            request.target.send().then((data) => {
+              if (data.statusCode == 1 && data.outputData.hasOwnProperty('pageStatic')) {
+                contentTextareaElement.value = data.outputData.pageStatic.content;
+                descriptionTextareaElement.value = data.outputData.pageStatic.description;
+                titleInputElement.value = data.outputData.pageStatic.title;
+                keywordsInputElement.value = data.outputData.pageStatic.keywords.join(', ');
+              }
             });
           }
         }
@@ -110,15 +115,20 @@ export class PagePageStatic {
             keywordsInputElement.setAttribute('name', 'page_static_keywords_' + locale.iso639_2);
             
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-                method: 'GET'
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((data1) => {
-                contentTextareaElement.value = data1.outputData.pageStatic.content;
-                descriptionTextareaElement.value = data1.outputData.pageStatic.description;
-                titleInputElement.value = data1.outputData.pageStatic.title;
-                keywordsInputElement.value = data1.outputData.pageStatic.keywords.join(', ');
+              let request = new Interactive('request', {
+                method: 'GET',
+                url: '/handler/pageStatic/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+              });
+
+              request.target.showingNotification = false;
+    
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('pageStatic')) {
+                  contentTextareaElement.value = data.outputData.pageStatic.content;
+                  descriptionTextareaElement.value = data.outputData.pageStatic.description;
+                  titleInputElement.value = data.outputData.pageStatic.title;
+                  keywordsInputElement.value = data.outputData.pageStatic.keywords.join(', ');
+                }
               });
             }
           }
@@ -136,23 +146,31 @@ export class PagePageStatic {
         if (form.target.checkRequiredFields()) {
           let formData = new FormData(elementForm);
 
-          fetch('/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let pageData = data1.outputData.pageStatic;
-              window.location.href = '/admin/page/' + pageData.id;
-            }
+            url: '/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name
+          });
 
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              if (data.outputData.hasOwnProperty('pageStatic')) {
+                let pageData = data.outputData.pageStatic;
+                window.location.href = '/admin/page/' + pageData.id;
+              }
+            }
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -171,18 +189,17 @@ export class PagePageStatic {
           let formData = new FormData();
           formData.append('page_static_id', searchParams.getPathPart(3));
 
-          fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/pages';
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
 
@@ -205,19 +222,18 @@ export class PagePageStatic {
         formData.append('page_static_id', searchParams.getPathPart(3));
         formData.append('page_static_is_published', 1);
 
-        fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unpublish.target.element.style.display = 'flex';
             this.buttons.publish.target.element.style.display = 'none';
           }
-
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.publish.assembly();
@@ -231,19 +247,18 @@ export class PagePageStatic {
         formData.append('page_static_id', searchParams.getPathPart(3));
         formData.append('page_static_is_published', 0);
 
-        fetch('/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/pageStatic/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unpublish.target.element.style.display = 'none';
             this.buttons.publish.target.element.style.display = 'flex';
           }
-
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.unpublish.assembly();
@@ -295,15 +310,19 @@ export class PagePageStatic {
             formData.append('page_static_event_save', true);
             formData.append('page_static_id', searchParams.getPathPart(3));
             formData.append('page_static_preview', fileReader.result);
-    
-            fetch('/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+            let request = new Interactive('request', {
               method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              let notification = new PopupNotification(data1.message, document.body, true);
-              notification.show();
+              url: '/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name
+            });
+    
+            request.target.data = formData;
+    
+            request.target.send().then((data) => {
+              if (data.statusCode == 1) {
+                this.buttons.unpublish.target.element.style.display = 'none';
+                this.buttons.publish.target.element.style.display = 'flex';
+              }
             });
           };
 

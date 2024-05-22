@@ -67,13 +67,18 @@ export class PageEntriesCategory {
           titleInputElement.setAttribute('name', 'entries_category_title_' + locale.iso639_2);
 
           if (searchParams.getPathPart(3) != null) {
-            fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
-              method: 'GET'
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              descriptionTextareaElement.value = data1.outputData.entriesCategory.description;
-              titleInputElement.value = data1.outputData.entriesCategory.title;
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: '/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name
+            });
+    
+            request.target.showingNotification = false;
+    
+            request.target.send().then((data) => {
+              if (data.statusCode == 1 && data.outputData.hasOwnProperty('entriesCategory')) {
+                descriptionTextareaElement.value = data.outputData.entriesCategory.description;
+                titleInputElement.value = data.outputData.entriesCategory.title;
+              }
             });
           }
         }
@@ -106,13 +111,18 @@ export class PageEntriesCategory {
             entryTitleInputElement.setAttribute('name', 'entries_category_title_' + locale.iso639_2);
 
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-                method: 'GET'
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((data1) => {
-                entryDescriptionTextareaElement.value = data1.outputData.entriesCategory.description;
-                entryTitleInputElement.value = data1.outputData.entriesCategory.title;
+              let request = new Interactive('request', {
+                method: 'GET',
+                url: '/handler/entry/category/' + searchParams.getPathPart(3) + '?locale=' + locale.name + '&localeMessage=' + window.CMSCore.locales.admin.name
+              });
+      
+              request.target.showingNotification = false;
+      
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('entriesCategory')) {
+                  entryDescriptionTextareaElement.value = data.outputData.entriesCategory.description;
+                  entryTitleInputElement.value = data.outputData.entriesCategory.title;
+                }
               });
             }
           }
@@ -168,20 +178,29 @@ export class PageEntriesCategory {
           let fetchLink = (searchParams.getPathPart(3) == null) ? '/handler/entry/category?localeMessage=' + window.CMSCore.locales.admin.name : '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name;
           let fetchMethod = (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH';
 
-          fetch(fetchLink, {method: fetchMethod, body: formData}).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let entriesCategoryData = data1.outputData.entriesCategory;
+          let request = new Interactive('request', {
+            method: fetchMethod,
+            url: fetchLink
+          });
+  
+          request.target.data = formData;
+  
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              let entriesCategoryData = data.outputData.entriesCategory;
               window.location.href = '/admin/entriesCategory/' + entriesCategoryData.id;
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -200,18 +219,15 @@ export class PageEntriesCategory {
           let formData = new FormData();
           formData.append('entries_category_id', searchParams.getPathPart(3));
 
-          fetch('/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/entriesCategories';
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
 

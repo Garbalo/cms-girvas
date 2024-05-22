@@ -53,20 +53,19 @@ export class PageEntriesComments {
                 formData.append('comment_is_hidden', 'off');
                 formData.append('comment_hidden_reason', '');
 
-                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
+                let request = new Interactive('request', {
                   method: 'PATCH',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
-                  interactiveModal.target.close();
+                  url: '/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name
+                });
         
+                request.target.data = formData;
+        
+                request.target.send().then((data) => {
+                  interactiveModal.target.close();
+
                   if (data.statusCode == 1) {
                     window.location.reload();
                   }
-        
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               });
 
@@ -100,20 +99,19 @@ export class PageEntriesComments {
                 formData.append('comment_is_hidden', 'on');
                 formData.append('comment_hidden_reason', elementTextarea.value);
 
-                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
+                let request = new Interactive('request', {
                   method: 'PATCH',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
-                  interactiveModal.target.close();
+                  url: '/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name
+                });
         
+                request.target.data = formData;
+        
+                request.target.send().then((data) => {
+                  interactiveModal.target.close();
+
                   if (data.statusCode == 1) {
                     window.location.reload();
                   }
-        
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               });
 
@@ -136,21 +134,20 @@ export class PageEntriesComments {
                 let formData = new FormData();
                 formData.append('comment_id', commentID);
 
-                fetch('/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name, {
+                let request = new Interactive('request', {
                   method: 'DELETE',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
-                  interactiveModal.target.close();
+                  url: '/handler/entry/comment?localeMessage=' + window.CMSCore.locales.admin.name
+                });
         
+                request.target.data = formData;
+        
+                request.target.send().then((data) => {
+                  interactiveModal.target.close();
+
                   if (data.statusCode == 1) {
                     tableItem.remove();
                     window.location.reload();
                   }
-        
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               });
 

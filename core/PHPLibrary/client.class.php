@@ -63,12 +63,33 @@ namespace core\PHPLibrary {
     }
 
     /**
+     * Получить объект сессии по токену
+     *
+     * @param  int $session_type_id
+     * @param  string $token
+     * @param  array $data_init
+     * @return ClientSession
+     */
+    public function get_session_by_token(int $session_type_id, string $token, array $data_init = ['*']) : ClientSession {
+      $session = ClientSession::get_by_ip_and_token($this->system_core, $this->ip_address, $token, $session_type_id);
+      $session->init_data($data_init);
+      return $session;
+    }
+
+    /**
      * Получить объект пользователя, к которому привязана сессия
      *
      * @return User|null
      */
     public function get_user(int $session_type_id) : User|null {
-      $session = ClientSession::get_by_ip($this->system_core, $this->ip_address, $session_type_id);
+      switch ($session_type_id) {
+        case 2: $client_session_cookie_token_name = '_grv_atoken'; break;
+        default: $client_session_cookie_token_name = '_grv_utoken';
+      }
+
+      $client_session_token = (isset($_COOKIE[$client_session_cookie_token_name])) ? $_COOKIE[$client_session_cookie_token_name] : '';
+
+      $session = ClientSession::get_by_ip_and_token($this->system_core, $this->ip_address, $client_session_token, $session_type_id);
       return (!is_null($session)) ? $session->get_user() : null;
     }
 
@@ -79,16 +100,17 @@ namespace core\PHPLibrary {
      * @return bool
      */
     public function is_logged(int $session_type_id) : bool {
-      if (ClientSession::exists_by_ip($this->system_core, $this->ip_address, $session_type_id)) {
-        $client_session = $this->get_session($session_type_id, ['updated_unix_timestamp', 'token']);
-        if (!is_null($client_session)) {
-          switch ($session_type_id) {
-            case 2: $client_session_cookie_token_name = '_grv_atoken'; break;
-            default: $client_session_cookie_token_name = '_grv_utoken';
-          }
+      switch ($session_type_id) {
+        case 2: $client_session_cookie_token_name = '_grv_atoken'; break;
+        default: $client_session_cookie_token_name = '_grv_utoken';
+      }
 
-          $client_session_token = (isset($_COOKIE[$client_session_cookie_token_name])) ? $_COOKIE[$client_session_cookie_token_name] : '';
-          if (isset($_COOKIE[$client_session_cookie_token_name])) {
+      $client_session_token = (isset($_COOKIE[$client_session_cookie_token_name])) ? $_COOKIE[$client_session_cookie_token_name] : '';
+
+      if (isset($_COOKIE[$client_session_cookie_token_name])) {
+        if (ClientSession::exists_by_ip_and_token($this->system_core, $this->ip_address, $client_session_token, $session_type_id)) {
+          $client_session = $this->get_session_by_token($session_type_id, $client_session_token, ['updated_unix_timestamp', 'token']);
+          if (!is_null($client_session)) {
             if ($client_session_token == $client_session->get_token()) {
               if ($client_session->is_alive($this->system_core->configurator->get('session_expires'))) {
                 return true;

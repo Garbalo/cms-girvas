@@ -321,18 +321,23 @@ export class PageSettings {
         if (form.target.checkRequiredFields()) {
           let formData = new FormData(elementForm);
 
-          fetch('/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'POST',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data) => {
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
+            url: '/handler/settings?localeMessage=' + window.CMSCore.locales.admin.name
           });
+
+          request.target.data = formData;
+          request.target.send();
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();

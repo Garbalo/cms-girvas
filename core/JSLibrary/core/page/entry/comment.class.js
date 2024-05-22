@@ -30,6 +30,14 @@ export class EntryComment {
     this.elementAssembled = null;
   }
 
+  getAnswersContainerElement() {
+    return this.elementAssembled.children[2];
+  }
+
+  getAnswersListElement() {
+    return this.getAnswersContainerElement().children[0];
+  }
+
   initAnswersPanel(clientUserData = {}, clientUserPermissions = {}) {
     let elementEntry = document.querySelector('[role="entry"]');
     let entryCommentsListElement = elementEntry.querySelector('[role="entryCommentsList"]');
@@ -41,51 +49,78 @@ export class EntryComment {
     let interactivePanelButton = new Interactive('button');
     interactivePanelButton.target.setLabel(this.entry.localeBaseData.BUTTON_LOAD_ANSWERS_COMMENTS_LABEL);
     interactivePanelButton.target.setCallback((event) => {
-      fetch(`/handler/entry/${this.entryID}/comments?sortColumn=created_unix_timestamp&sortType=desc&parentID=${this.id}&limit=${this.answersLoadingLimit}&offset=${this.answersLoadingOffset}&localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
-        return (response.ok) ? response.json() : Promise.reject(response);
-      }).then((commentsLoadedData) => {
-        let comments = commentsLoadedData.outputData.comments, commentLoadedIndex = 0;
-        console.log(commentsLoadedData.outputData);
+      let commentParentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
+      let answersContainerParentElement = this.getAnswersListElement();
+      let answersCount = (answersContainerParentElement != null) ? answersContainerParentElement.children.length : 0;
+      console.log(answersCount);
 
-        let answersListElement = document.createElement('ul');
-        answersListElement.classList.add('comment__answers-list');
-        answersListElement.classList.add('answers-list');
-        answersListElement.classList.add('list-reset');
+      let request = new Interactive('request', {
+        method: 'GET',
+        url: `/handler/entry/${this.entryID}/comments?sortColumn=created_unix_timestamp&sortType=desc&parentID=${this.id}&limit=${this.answersLoadingLimit}&offset=${answersCount}&localeMessage=${window.CMSCore.locales.base.name}`
+      });
 
-        let appendComment = (commentData) => {
-          fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((authorLoadedData) => {
-            let authorData = authorLoadedData.outputData.user;
-            
-            commentData.entryID = this.entryID;
-            commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComments"]').length + entryCommentsListElement.querySelectorAll('[role="entryCommentAnswer"]').length + 1;
-            
-            let entryComment = new EntryComment(this.entry, commentData);
-            entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
-              commentLoadedIndex++;
-              this.answersLoadingOffset++;
-              answersListElement.append(commentElement);
-              entryComment.initPanel(clientUserData, clientUserPermissions);
-              if (commentLoadedIndex < comments.length) {
-                appendComment(comments[commentLoadedIndex]);
-              }
+      request.target.showingNotification = false;
 
-              if (entryComment.answersCount > 0) {
-                entryComment.initAnswersPanel(clientUserData, clientUserPermissions);
-              }
+      request.target.send().then((data) => {
+        if (data.statusCode == 1 && data.outputData.hasOwnProperty('comments')) {
+          let comments = data.outputData.comments, commentLoadedIndex = 0;
+          let answersListElementQuery = this.getAnswersListElement();
 
-              entryComment.elementAssembled.setAttribute('role', 'entryCommentsAnswer');
-              entryComment.elementAssembled.classList.add('comment_answer');
+          console.log(comments);
+          
+          let answersListElement;
+          if (answersListElementQuery == null) {
+            answersListElement = document.createElement('ul');
+            answersListElement.classList.add('comment__answers-list');
+            answersListElement.classList.add('answers-list');
+            answersListElement.classList.add('list-reset');
+          } else {
+            answersListElement = answersListElementQuery;
+          }
+
+          let appendComment = (commentData, commentParentElement) => {
+            let requestAppend = new Interactive('request', {
+              method: 'GET',
+              url: `/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`
             });
-          });
-        };
+      
+            requestAppend.target.showingNotification = false;
 
-        interactivePanelButtonContainerElement.append(answersListElement);
+            requestAppend.target.send().then((authorLoadedData) => {
+              let authorData = authorLoadedData.outputData.user;
+              
+              commentData.entryID = this.entryID;
+              commentData.answersLoadingLimit = this.answersLoadingLimit;
+              commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComments"]').length + entryCommentsListElement.querySelectorAll('[role="entryCommentAnswer"]').length + 1;
+              
+              let entryComment = new EntryComment(this.entry, commentData);
+              entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                commentLoadedIndex++;
+                
+                answersListElement.append(commentElement);
+                entryComment.initPanel(clientUserData, clientUserPermissions);
+                if (commentLoadedIndex < comments.length) {
+                  appendComment(comments[commentLoadedIndex], commentParentElement);
+                }
+  
+                if (entryComment.answersCount > 0) {
+                  entryComment.initAnswersPanel(clientUserData, clientUserPermissions);
+                }
+  
+                entryComment.elementAssembled.setAttribute('role', 'entryCommentsAnswer');
+                entryComment.elementAssembled.classList.add('comment_answer');
+              });
+            });
+          };
+  
+          if (answersListElementQuery == null) {
+            interactivePanelButtonContainerElement.append(answersListElement);
+          }
 
-        if (typeof(comments) != 'undefined') {
-          if (comments.length > 0) {
-            appendComment(comments[0]);
+          if (typeof(comments) != 'undefined') {
+            if (comments.length > 0) {
+              appendComment(comments[0], commentParentElement);
+            }
           }
         }
       });
@@ -172,22 +207,19 @@ export class EntryComment {
               formData.append('comment_is_hidden', 'on');
               formData.append('comment_hidden_reason', elementTextarea.value);
 
-              console.log(this.entry.commentForm.target.element);
-
-              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+              let request = new Interactive('request', {
                 method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
+                url: `/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`
+              });
+    
+              request.target.data = formData;
+    
+              request.target.send().then((data) => {
                 interactiveModal.target.close();
-      
+
                 if (data.statusCode == 1) {
                   window.location.reload();
                 }
-      
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
               });
             });
 
@@ -222,20 +254,19 @@ export class EntryComment {
               formData.append('comment_is_hidden', 'off');
               formData.append('comment_hidden_reason', '');
 
-              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+              let request = new Interactive('request', {
                 method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
+                url: `/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`
+              });
+    
+              request.target.data = formData;
+    
+              request.target.send().then((data) => {
                 interactiveModal.target.close();
-      
+
                 if (data.statusCode == 1) {
                   window.location.reload();
                 }
-      
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
               });
             });
 
@@ -269,20 +300,19 @@ export class EntryComment {
                 let formData = new FormData();
                 formData.append('comment_id', this.id);
 
-                fetch('/handler/entry/comment', {
+                let request = new Interactive('request', {
                   method: 'DELETE',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
+                  url: '/handler/entry/comment'
+                });
+      
+                request.target.data = formData;
+      
+                request.target.send().then((data) => {
                   interactiveModal.target.close();
-        
+
                   if (data.statusCode == 1) {
                     this.elementAssembled.remove();
                   }
-        
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               } else {
                 let formData = new FormData();
@@ -290,20 +320,19 @@ export class EntryComment {
                 formData.append('comment_is_hidden', 'on');
                 formData.append('comment_hidden_reason', this.entry.localeBaseData.MODAL_COMMENT_HIDEN_REASON_DELETED);
 
-                fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+                let request = new Interactive('request', {
                   method: 'PATCH',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
+                  url: `/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`
+                });
+      
+                request.target.data = formData;
+      
+                request.target.send().then((data) => {
                   interactiveModal.target.close();
-        
+
                   if (data.statusCode == 1) {
                     window.location.reload();
                   }
-        
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               }
             });
@@ -352,19 +381,19 @@ export class EntryComment {
               formData.append('comment_id', this.id);
               formData.append('comment_rating_vote', 'up');
 
-              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+              let request = new Interactive('request', {
                 method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                console.log(this.index);
-                let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
-                let rateCountElement = commentElement.querySelector('.comment__rating-count');
-                rateCountElement.innerHTML = data.outputData.comment.rating;
-
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
+                url: `/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`
+              });
+    
+              request.target.data = formData;
+    
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('comment')) {
+                  let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
+                  let rateCountElement = commentElement.querySelector('.comment__rating-count');
+                  rateCountElement.innerHTML = data.outputData.comment.rating;
+                }
               });
             });
             interactiveButtonRateUp.assembly();
@@ -388,18 +417,19 @@ export class EntryComment {
               formData.append('comment_id', this.id);
               formData.append('comment_rating_vote', 'down');
 
-              fetch(`/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`, {
+              let request = new Interactive('request', {
                 method: 'PATCH',
-                body: formData
-              }).then((response) => {
-                return response.json();
-              }).then((data) => {
-                let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
-                let rateCountElement = commentElement.querySelector('.comment__rating-count');
-                rateCountElement.innerHTML = data.outputData.comment.rating;
-                
-                let notification = new PopupNotification(data.message, document.body, true);
-                notification.show();
+                url: `/handler/entry/comment?localeMessage=${window.CMSCore.locales.base.name}`
+              });
+    
+              request.target.data = formData;
+    
+              request.target.send().then((data) => {
+                if (data.statusCode == 1 && data.outputData.hasOwnProperty('comment')) {
+                  let commentElement = document.querySelector(`[data-comment-id="${this.id}"]`);
+                  let rateCountElement = commentElement.querySelector('.comment__rating-count');
+                  rateCountElement.innerHTML = data.outputData.comment.rating;
+                }
               });
             });
             interactiveButtonRateDown.assembly();
@@ -449,20 +479,27 @@ export class EntryComment {
     };
 
     let urlSearchParams = new URLSearchParams(requestData);
-    
-    fetch(`/handler/template/assembly?localeMessage=${window.CMSCore.locales.base.name}&` + urlSearchParams.toString(), {method: 'GET'}).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
-      let templateAssembled = data.outputData.templateAssembled;
-      let elementAssembled = document.createElement('div');
-      elementAssembled.innerHTML = templateAssembled;
-      this.elementAssembled = elementAssembled.firstChild;
 
-      if (this.isHidden) {
-        this.elementAssembled.classList.add('comment_is-hidden');
+    let request = new Interactive('request', {
+      method: 'GET',
+      url: `/handler/template/assembly?localeMessage=${window.CMSCore.locales.base.name}&` + urlSearchParams.toString()
+    });
+
+    request.target.showingNotification = false;
+
+    request.target.send().then((data) => {
+      if (data.statusCode == 1 && data.outputData.hasOwnProperty('templateAssembled')) {
+        let templateAssembled = data.outputData.templateAssembled;
+        let elementAssembled = document.createElement('div');
+        elementAssembled.innerHTML = templateAssembled;
+        this.elementAssembled = elementAssembled.firstChild;
+
+        if (this.isHidden) {
+          this.elementAssembled.classList.add('comment_is-hidden');
+        }
+
+        callback(this.elementAssembled);
       }
-
-      callback(this.elementAssembled);
     });
   }
 }

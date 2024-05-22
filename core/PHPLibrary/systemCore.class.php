@@ -41,7 +41,7 @@ namespace core\PHPLibrary {
     public const CMS_CORE_TS_LIBRARY_PATH = 'core/TSLibrary';
     public const CMS_MODULES_PATH = 'modules';
     public const CMS_TITLE = 'CMS GIRVAS';
-    public const CMS_VERSION = '0.0.74-1 Pre-alpha';
+    public const CMS_VERSION = '0.0.75 Pre-alpha';
 
     /** 
      * @var \core\PHPLibrary\SystemCore\Configurator Конфигуратор системы
@@ -173,6 +173,8 @@ namespace core\PHPLibrary {
      */
     public function init_page(string $dir) : bool {
       $dir = ($dir == '') ? 'index' : $dir;
+      $dir = rtrim($dir, '/');
+      
       $this->page_dir_array = explode('/', $dir);
       $this->page_dir_array[count($this->page_dir_array) - 1] = explode('?', $this->page_dir_array[count($this->page_dir_array) - 1]);
       $this->page_dir_array[count($this->page_dir_array) - 1] = $this->page_dir_array[count($this->page_dir_array) - 1][0];

@@ -95,25 +95,30 @@ export class PageUser {
         form.target.replaceElement(elementForm);
 
         if (form.target.checkRequiredFields()) {
-          let formData = new FormData(elementForm);
-    
-          fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let userData = data1.outputData.user;
-              window.location.href = '/admin/user/' + userData.id;
+            url: '/handler/user?localeMessage=' + window.CMSCore.locales.admin.name,
+            data: elementForm
+          });
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              if (data.outputData.hasOwnProperty('user')) {
+                let userData = data.outputData.user;
+                window.location.href = '/admin/user/' + userData.id;
+              }
             }
-    
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -127,19 +132,18 @@ export class PageUser {
         formData.append('user_id', searchParams.getPathPart(3));
         formData.append('user_is_block', 1);
   
-        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return response.json();
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/user?localeMessage=' + window.CMSCore.locales.admin.name
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unblock.target.element.style.display = 'flex';
             this.buttons.block.target.element.style.display = 'none';
           }
-  
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.block.assembly();
@@ -153,19 +157,18 @@ export class PageUser {
         formData.append('user_id', searchParams.getPathPart(3));
         formData.append('user_is_block', 0);
   
-        fetch('/handler/user?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return response.json();
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/user?localeMessage=' + window.CMSCore.locales.admin.name
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unblock.target.element.style.display = 'none';
             this.buttons.block.target.element.style.display = 'flex';
           }
-  
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.unblock.assembly();
@@ -184,18 +187,17 @@ export class PageUser {
           let formData = new FormData();
           formData.append('user_id', searchParams.getPathPart(3));
   
-          fetch('/handler/user/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/user?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/users';
             }
-  
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
   

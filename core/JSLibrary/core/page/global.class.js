@@ -77,16 +77,18 @@ export class PageGlobal {
         profileNavigationItemExitElement.addEventListener('click', (event) => {
           event.preventDefault();
 
-          fetch('/handler/client/session-end?level=1', {method: 'POST'}).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data) => {
-            let result = data.outputData.result;
+          let request = new Interactive('request', {
+            method: 'POST',
+            url: '/handler/client/session-end?level=1'
+          });
 
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && data.outputData.hasOwnProperty('result')) {
+              let result = data.outputData.result;
 
-            if (result == true) {
-              window.location.reload();
+              if (result == true) {
+                window.location.reload();
+              }
             }
           });
         });
@@ -107,10 +109,12 @@ export class PageGlobal {
 
             /** @type {ElementInput} */
             let authFormInputLogin = authForm.target.createElementInput();
+            
             authFormInputLogin.init({
               name: 'user_login',
               type: 'text'
             });
+
             authFormInputLogin.element.placeholder = localeData.MODAL_AUTHORIZATION_INPUT_LOGIN_PLACEHOLDER;
 
             /** @type {ElementInput} */

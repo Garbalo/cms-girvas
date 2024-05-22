@@ -60,18 +60,17 @@ export class PageWebChannels {
                 let formData = new FormData();
                 formData.append('web_channel_id', webChannelID);
 
-                fetch('/handler/webChannel/' + webChannelID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+                let request = new Interactive('request', {
                   method: 'DELETE',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
+                  url: '/handler/webChannel/' + webChannelID + '?localeMessage=' + window.CMSCore.locales.admin.name
+                });
+      
+                request.target.data = formData;
+      
+                request.target.send().then((data) => {
                   if (data.statusCode == 1) {
                     window.location.href = '/admin/webChannels';
                   }
-
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               });
 

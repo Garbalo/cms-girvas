@@ -71,15 +71,20 @@ export class PageEntry {
           keywordsInputElement.setAttribute('name', 'entry_keywords_' + locale.iso639_2);
 
           if (searchParams.getPathPart(3) != null) {
-            fetch('/handler/entry/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
-              method: 'GET'
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              contentTextareaElement.value = data1.outputData.entry.content;
-              descriptionTextareaElement.value = data1.outputData.entry.description;
-              titleInputElement.value = data1.outputData.entry.title;
-              keywordsInputElement.value = data1.outputData.entry.keywords.join(', ');
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: '/handler/entry/' + searchParams.getPathPart(3) + '?locale=' + locale.name
+            });
+
+            request.target.showingNotification = false;
+    
+            request.target.send().then((data) => {
+              if (data.statusCode == 1) {
+                contentTextareaElement.value = data.outputData.entry.content;
+                descriptionTextareaElement.value = data.outputData.entry.description;
+                titleInputElement.value = data.outputData.entry.title;
+                keywordsInputElement.value = data.outputData.entry.keywords.join(', ');
+              }
             });
           }
         }
@@ -112,15 +117,18 @@ export class PageEntry {
             keywordsInputElement.setAttribute('name', 'entry_keywords_' + locale.iso639_2);
             
             if (searchParams.getPathPart(3) != null) {
-              fetch('/handler/entry/' + searchParams.getPathPart(3) + '?locale=' + locale.name, {
-                method: 'GET'
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((data1) => {
-                contentTextareaElement.value = data1.outputData.entry.content;
-                descriptionTextareaElement.value = data1.outputData.entry.description;
-                titleInputElement.value = data1.outputData.entry.title;
-                keywordsInputElement.value = data1.outputData.entry.keywords.join(', ');
+              let request = new Interactive('request', {
+                method: 'GET',
+                url: '/handler/entry/' + searchParams.getPathPart(3) + '?locale=' + locale.name
+              });
+      
+              request.target.send().then((data) => {
+                if (data.statusCode == 1) {
+                  contentTextareaElement.value = data.outputData.entry.content;
+                  descriptionTextareaElement.value = data.outputData.entry.description;
+                  titleInputElement.value = data.outputData.entry.title;
+                  keywordsInputElement.value = data.outputData.entry.keywords.join(', ');
+                }
               });
             }
           }
@@ -138,23 +146,31 @@ export class PageEntry {
         if (form.target.checkRequiredFields()) {
           let formData = new FormData(elementForm);
 
-          fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: (searchParams.getPathPart(3) == null) ? 'PUT' : 'PATCH',
-            body: formData
-          }).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data1) => {
-            if (data1.statusCode == 1 && searchParams.getPathPart(3) == null) {
-              let entryData = data1.outputData.entry;
-              window.location.href = '/admin/entry/' + entryData.id;
+            url: '/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+  
+          request.target.data = formData;
+  
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && searchParams.getPathPart(3) == null) {
+              if (data.outputData.hasOwnProperty('entry')) {
+                let entryData = data.outputData.entry;
+                window.location.href = '/admin/entry/' + entryData.id;
+              }
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         } else {
-          let notification = new PopupNotification(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY, document.body, true);
-          notification.show();
+          let interactiveNotification;
+        
+          interactiveNotification = new Interactive('notification');
+          interactiveNotification.target.isPopup = true;
+          interactiveNotification.target.setStatusCode(0);
+          interactiveNotification.target.setContent(localeData.FORM_REQUIRED_FIELDS_IS_EMPTY);
+          interactiveNotification.target.assembly();
+
+          interactiveNotification.target.show();
         }
       });
       this.buttons.save.assembly();
@@ -173,18 +189,17 @@ export class PageEntry {
           let formData = new FormData();
           formData.append('entry_id', searchParams.getPathPart(3));
 
-          fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data1) => {
-            if (data1.statusCode == 1) {
+            url: '/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name,
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1) {
               window.location.href = '/admin/entries';
             }
-
-            let notification = new PopupNotification(data1.message, document.body, true);
-            notification.show();
           });
         });
 
@@ -207,19 +222,18 @@ export class PageEntry {
         formData.append('entry_id', searchParams.getPathPart(3));
         formData.append('entry_is_published', 1);
 
-        fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name,
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unpublish.target.element.style.display = 'flex';
             this.buttons.publish.target.element.style.display = 'none';
           }
-
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.publish.assembly();
@@ -233,31 +247,33 @@ export class PageEntry {
         formData.append('entry_id', searchParams.getPathPart(3));
         formData.append('entry_is_published', 0);
 
-        fetch('/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+        let request = new Interactive('request', {
           method: 'PATCH',
-          body: formData
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
+          url: '/handler/entry/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name,
+        });
+
+        request.target.data = formData;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1) {
             this.buttons.unpublish.target.element.style.display = 'none';
             this.buttons.publish.target.element.style.display = 'flex';
           }
-
-          let notification = new PopupNotification(data1.message, document.body, true);
-          notification.show();
         });
       });
       this.buttons.unpublish.assembly();
 
       if (searchParams.getPathPart(3) == null) {
-        fetch('/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name, {
-          method: 'GET'
-        }).then((response) => {
-          return (response.ok) ? response.json() : Promise.reject(response);
-        }).then((data1) => {
-          if (data1.statusCode == 1) {
-            let entriesCategories = data1.outputData.entriesCategories;
+        let request = new Interactive('request', {
+          method: 'GET',
+          url: '/handler/entry/categories' + '?locale=' + window.CMSCore.locales.admin.name + '&localeMessage=' + window.CMSCore.locales.admin.name,
+        });
+
+        request.target.showingNotification = false;
+
+        request.target.send().then((data) => {
+          if (data.statusCode == 1 && data.outputData.hasOwnProperty('entriesCategories')) {
+            let entriesCategories = data.outputData.entriesCategories;
             
             entriesCategories.forEach((entriesCategory, entriesCategoryIndex) => {
               interactiveCategoriesChoices.target.addItem(entriesCategory.title, entriesCategory.id);
@@ -317,16 +333,14 @@ export class PageEntry {
             formData.append('entry_event_save', true);
             formData.append('entry_id', searchParams.getPathPart(3));
             formData.append('entry_preview', fileReader.result);
-    
-            fetch('/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+            let request = new Interactive('request', {
               method: 'PATCH',
-              body: formData
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data1) => {
-              let notification = new PopupNotification(data1.message, document.body, true);
-              notification.show();
+              url: '/handler/entry?localeMessage=' + window.CMSCore.locales.admin.name
             });
+    
+            request.target.data = formData;
+            request.target.send();
           };
 
           fileReader.onerror = (event) => {

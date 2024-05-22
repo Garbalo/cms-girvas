@@ -58,18 +58,17 @@ export class PageUsersGroups {
                 let formData = new FormData();
                 formData.append('user_group_id', userGroupID);
 
-                fetch('/handler/usersGroup/' + userGroupID + '?localeMessage=' + window.CMSCore.locales.admin.name, {
+                let request = new Interactive('request', {
                   method: 'DELETE',
-                  body: formData
-                }).then((response) => {
-                  return response.json();
-                }).then((data) => {
+                  url: '/handler/usersGroup/' + userGroupID + '?localeMessage=' + window.CMSCore.locales.admin.name
+                });
+      
+                request.target.data = formData;
+      
+                request.target.send().then((data) => {
                   if (data.statusCode == 1) {
                     window.location.href = '/admin/usersGroups';
                   }
-
-                  let notification = new PopupNotification(data.message, document.body, true);
-                  notification.show();
                 });
               });
 

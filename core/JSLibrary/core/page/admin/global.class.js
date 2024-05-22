@@ -55,16 +55,22 @@ export class PageGlobal {
         mainNavigationItemExitElement.addEventListener('click', (event) => {
           event.preventDefault();
 
-          fetch('/handler/client/session-end?level=2', {method: 'POST'}).then((response) => {
-            return (response.ok) ? response.json() : Promise.reject(response);
-          }).then((data) => {
-            let result = data.outputData.result;
+          let formData = new FormData();
 
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
+          let request = new Interactive('request', {
+            method: 'POST',
+            url: '/handler/client/session-end?level=2'
+          });
 
-            if (result == true) {
-              window.location.reload();
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
+            if (data.statusCode == 1 && data.outputData.hasOwnProperty('result')) {
+              let result = data.outputData.result;
+
+              if (result == true) {
+                window.location.reload();
+              }
             }
           });
         });

@@ -8,6 +8,7 @@
 
 'use strict';
 
+import {Interactive} from '../interactive.class.js';
 import {Locale} from './locale.class.js';
 import {URLParser} from '../urlParser.class.js';
 
@@ -24,11 +25,14 @@ export class Client {
    * @returns {String}
    */
   async getIPAddress() {
-    return fetch('/handler/client/ip-address', {
-      method: 'GET'
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
+    let request = new Interactive('request', {
+      method: 'GET',
+      url: '/handler/client/ip-address'
+    });
+
+    request.target.showingNotification = false;
+
+    return request.target.send().then((data) => {
       if (data.outputData.hasOwnProperty('result')) {
         return data.outputData.result; 
       }
@@ -42,11 +46,14 @@ export class Client {
    * @returns {Boolean}
    */
   async isLogged() {
-    return fetch('/handler/client/is-logged', {
-      method: 'GET'
-    }).then((response) => {
-      return (response.ok) ? response.json() : Promise.reject(response);
-    }).then((data) => {
+    let request = new Interactive('request', {
+      method: 'GET',
+      url: '/handler/client/is-logged'
+    });
+
+    request.target.showingNotification = false;
+
+    return request.target.send().then((data) => {
       if (data.outputData.hasOwnProperty('result')) {
         return data.outputData.result; 
       }

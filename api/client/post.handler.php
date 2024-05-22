@@ -26,7 +26,7 @@ if ($system_core->urlp->get_path(2) == 'session-end') {
 
     if (!ClientSession::exists_by_ip_and_user_id($system_core, $system_core->client->get_ip_address(), $session_user_id, $session_level)) {
       $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_POST_DATA_SUCCESS') : $handler_message;
-      $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+      $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
 
       $handler_output_data['result'] = true;
     } else {

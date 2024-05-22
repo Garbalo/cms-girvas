@@ -46,16 +46,15 @@ export class PageProfile {
             formData.append('user_id', formInputUserID.getAttribute('value'));
             formData.append('avatarFile', profileAvatarInput.files[0]);
 
-            fetch('/handler/user/avatar?localeMessage=' + window.CMSCore.locales.base.name, {
+            let request = new Interactive('request', {
               method: 'POST',
-              body: formData
-            }).then((response) => {
-              return (response.ok) ? response.json() : Promise.reject(response);
-            }).then((data) => {
-              let notification = new PopupNotification(data.message, document.body, true);
-              notification.show();
-
-              if (Object.hasOwn(data.outputData, 'file')) {
+              url: '/handler/user/avatar?localeMessage=' + window.CMSCore.locales.base.name
+            });
+  
+            request.target.data = formData;
+  
+            request.target.send().then((data) => {
+              if (data.statusCode == 1 && data.outputData.hasOwnProperty('file')) {
                 let fileName, fileURL;
 
                 fileName = data.outputData.file.fullname;

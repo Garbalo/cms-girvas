@@ -40,22 +40,21 @@ export class PageModule {
           let formData = new FormData();
           formData.append('module_name', moduleName);
           formData.append('module_event', 'enable');
-    
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+          let request = new Interactive('request', {
             method: 'PATCH',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.enable.target.element.style.display = 'none';
               buttons.disable.target.element.style.display = 'flex';
     
               moduleBlock.setAttribute('data-module-enabled-status', 'enabled');
             }
-    
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.enable.assembly();
@@ -66,22 +65,21 @@ export class PageModule {
           let formData = new FormData();
           formData.append('module_name', moduleName);
           formData.append('module_event', 'disable');
-    
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+          let request = new Interactive('request', {
             method: 'PATCH',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.enable.target.element.style.display = 'flex';
               buttons.disable.target.element.style.display = 'none';
     
               moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
             }
-    
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.disable.assembly();
@@ -92,13 +90,15 @@ export class PageModule {
           let formData = new FormData();
           formData.append('module_name', moduleName);
           formData.append('module_event', 'install');
-    
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+          let request = new Interactive('request', {
             method: 'POST',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.install.target.element.style.display = 'none';
               buttons.delete.target.element.style.display = 'flex';
@@ -108,9 +108,6 @@ export class PageModule {
               moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
               moduleBlock.setAttribute('data-module-installed-status', 'installed');
             }
-    
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.install.assembly();
@@ -120,13 +117,15 @@ export class PageModule {
         buttons.delete.target.setCallback(() => {
           let formData = new FormData();
           formData.append('module_name', moduleName);
-    
-          fetch('/handler/module?localeMessage=' + window.CMSCore.locales.admin.name, {
+
+          let request = new Interactive('request', {
             method: 'DELETE',
-            body: formData
-          }).then((response) => {
-            return response.json();
-          }).then((data) => {
+            url: '/handler/module?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+
+          request.target.send().then((data) => {
             if (data.statusCode == 1) {
               buttons.install.target.element.style.display = 'flex';
               buttons.delete.target.element.style.display = 'none';
@@ -136,9 +135,6 @@ export class PageModule {
               moduleBlock.setAttribute('data-module-enabled-status', 'disabled');
               moduleBlock.setAttribute('data-module-installed-status', 'not-installed');
             }
-    
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
           });
         });
         buttons.delete.assembly();
