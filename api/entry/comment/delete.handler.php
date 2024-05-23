@@ -28,7 +28,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
       $comment = new EntryComment($system_core, $comment_id);
       $comment->init_data(['author_id']);
 
-      if ($client_user_group->permission_check($client_user_group::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT) || $comment->get_author_id() == $client_user->get_id()) {
+      if ($client_user_group->permission_check($client_user_group::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT) || $client_user_group->permission_check($client_user_group::PERMISSION_BASE_ENTRY_COMMENT_CHANGE) && $comment->get_author_id() == $client_user->get_id()) {
         $comment_is_deleted = $comment->delete();
 
         if ($comment_is_deleted) {

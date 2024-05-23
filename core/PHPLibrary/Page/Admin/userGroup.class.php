@@ -80,6 +80,8 @@ namespace core\PHPLibrary\Page\Admin {
         'USER_GROUP_PERMISSION_EDITOR_ENTRIES_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_EDITOR_PAGES_STATIC_EDIT_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_CREATE_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CREATE)) ? 'checked' : ''),
+        'USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_CHANGE_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CHANGE)) ? 'checked' : ''),
         'USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_RATE_VALUE' => (is_null($user_group)) ? '' : (($user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE)) ? 'checked' : ''),
       ]);
     }

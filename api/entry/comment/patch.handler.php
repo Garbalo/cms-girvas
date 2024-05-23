@@ -21,6 +21,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
   $client_user_group = $client_user->get_group();
   $client_user_group->init_data(['permissions']);
 
+  $comment_data = [];
 
   if (isset($_PATCH['comment_id'])) {
     $comment_id = (is_numeric($_PATCH['comment_id'])) ? (int)$_PATCH['comment_id'] : 0;
@@ -28,40 +29,64 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
     if (EntryComment::exists_by_id($system_core, $comment_id)) {
       $comment = new EntryComment($system_core, $comment_id);
       $comment->init_data(['metadata', 'author_id']);
-      
-      if ($client_user_group->permission_check($client_user_group::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT) || $comment->get_author_id() == $client_user->get_id()) {
-        $comment_data = [];
-        if (isset($_PATCH['comment_content'])) $comment_data['content'] = $_PATCH['comment_content'];
-        
-        if (!array_key_exists('metadata', $comment_data)) $comment_data['metadata'] = [];
-        
-        if (isset($_PATCH['comment_is_hidden'])) {
-          $comment_data['metadata']['is_hidden'] = ($_PATCH['comment_is_hidden'] == 'on') ? true : false;
-        }
 
-        if (isset($_PATCH['comment_hidden_reason'])) {
-          $comment_data['metadata']['hidden_reason'] = $_PATCH['comment_hidden_reason'];
-        }
+      $comment_patching_is_allowed = false;
 
-        if (isset($_PATCH['comment_parent_id'])) {
-          $comment_data['metadata']['parentID'] = $_PATCH['comment_parent_id'];
-        }
+      if (isset($_PATCH['comment_content']) || isset($_PATCH['comment_parent_id'])) {
+        $comment_content = $_PATCH['comment_content'];
+        $comment_parent_id = (is_numeric($_PATCH['comment_parent_id'])) ? (int)$_PATCH['comment_parent_id'] : 0;
 
-        if (isset($_PATCH['comment_rating_vote'])) {
+        if ($client_user_group->permission_check($client_user_group::PERMISSION_BASE_ENTRY_COMMENT_CHANGE) && $comment->get_author_id() == $client_user->get_id()) {
+          $comment_data['content'] = $comment_content;
+          $comment_data['metadata']['parentID'] = $comment_parent_id;
+          $comment_patching_is_allowed = true;
+        } elseif ($client_user_group->permission_check($client_user_group::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT)) {
+          $comment_data['content'] = $comment_content;
+          $comment_data['metadata']['parentID'] = $comment_parent_id;
+          $comment_patching_is_allowed = true;
+        }
+      }
+
+      if (isset($_PATCH['comment_is_hidden']) || isset($_PATCH['comment_hidden_reason'])) {
+        $comment_is_hidden = $_PATCH['comment_is_hidden'];
+        $comment_hidden_reason = $_PATCH['comment_hidden_reason'];
+
+        if ($client_user_group->permission_check($client_user_group::PERMISSION_MODER_ENTRIES_COMMENTS_MANAGEMENT)) {
+          $comment_data['metadata']['is_hidden'] = ($comment_is_hidden == 'on') ? true : false;
+          $comment_data['metadata']['hidden_reason'] = $comment_hidden_reason;
+          $comment_patching_is_allowed = true;
+        }
+      }
+
+      if (isset($_PATCH['comment_rating_vote'])) {
+        $comment_rating_vote = $_PATCH['comment_rating_vote'];
+
+        if ($client_user_group->permission_check($client_user_group::PERMISSION_BASE_ENTRY_COMMENT_RATE) && $comment->get_author_id() != $client_user->get_id()) {
           $comment_rating_voters = $comment->get_rating_voters();
-          
+          $client_user_id = $client_user->get_id();
+          $client_user_id_s = (string)$client_user_id;
+
           $allow_voting = false;
-          if (isset($comment_rating_voters[(string)$client_user->get_id()])) {
-            if ($comment_rating_voters[(string)$client_user->get_id()] != $_PATCH['comment_rating_vote']) {
+          if (isset($comment_rating_voters[$client_user_id_s])) {
+            if ($comment_rating_voters[$client_user_id_s] != $comment_rating_vote) {
               $allow_voting = true;
             }
           } else {
             $allow_voting = true;
           }
 
-          if ($allow_voting) $comment_data['metadata']['rating_vote'] = ['voter_id' => $client_user->get_id(), 'vote' => $_PATCH['comment_rating_vote']];
-        }
+          if ($allow_voting) {
+            $comment_data['metadata']['rating_vote'] = [
+              'voter_id' => $client_user_id,
+              'vote' => $comment_rating_vote
+            ];
+          }
 
+          $comment_patching_is_allowed = true;
+        }
+      }
+      
+      if ($comment_patching_is_allowed) {
         $comment_is_updated = (!empty($comment_data)) ? $comment->update($comment_data) : false;
 
         if ($comment_is_updated) {

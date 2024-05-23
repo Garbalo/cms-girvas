@@ -178,11 +178,29 @@
           <th class="table__cell table__cell_header" colspan="2">{LANG:PAGE_USERS_GROUP_PERSMISSIONS_GROUP_BASE_TITLE}</th>
         </tr>
         <tr class="table__row">
+          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_ENTRIES_COMMENTS_CREATING_TITLE}</td>
+          <td class="table__cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308984" name="user_group_permissions[]" type="checkbox" value="base_entry_comment_create" {USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_CREATE_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308984"></label>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
+          <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_ENTRIES_COMMENTS_CHANGING_TITLE}</td>
+          <td class="table__cell">
+            <div class="form__checkbox-container checkbox-container">
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308988" name="user_group_permissions[]" type="checkbox" value="base_entry_comment_change" {USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_CHANGE_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308988"></label>
+            </div>
+          </td>
+        </tr>
+        <tr class="table__row">
           <td class="table__cell">{LANG:PAGE_USERS_GROUP_PERSMISSION_ENTRIES_COMMENTS_RATING_CHANGING_TITLE}</td>
           <td class="table__cell">
             <div class="form__checkbox-container checkbox-container">
-              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308983" name="user_group_permissions[]" type="checkbox" value="base_entry_comment_rate" {USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_RATE_VALUE}>
-              <label class="checkbox-container__label form__label" for="I1474308983"></label>
+              <input class="checkbox-container__input form__input form__input_checkbox" id="I1474308933" name="user_group_permissions[]" type="checkbox" value="base_entry_comment_rate" {USER_GROUP_PERMISSION_BASE_ENTRY_COMMENT_RATE_VALUE}>
+              <label class="checkbox-container__label form__label" for="I1474308933"></label>
             </div>
           </td>
         </tr>

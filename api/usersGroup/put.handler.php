@@ -49,6 +49,8 @@ if ($system_core->client->is_logged(2)) {
                   case 'editor_entries_edit': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
                   case 'editor_entries_categories_edit': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
                   case 'editor_pages_static_edit': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
+                  case 'base_entry_comment_create': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CREATE; break;
+                  case 'base_entry_comment_change': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CHANGE; break;
                   case 'base_entry_comment_rate': $user_group_permissions = $user_group_permissions | UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
                 }
               }

@@ -27,7 +27,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
 
       if (User::exists_by_id($system_core, $user_id)) {
         $user = new User($system_core, $user_id);
-        $user->init_data(['login', 'email', 'security_hash']);
+        $user->init_data(['login', 'email', 'security_hash', 'password_hash']);
 
         $user_data = [];
 

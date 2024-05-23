@@ -59,7 +59,7 @@ export class PageGlobal {
 
           let request = new Interactive('request', {
             method: 'POST',
-            url: '/handler/client/session-end?level=2'
+            url: '/handler/client/session-end?level=2&localeMessage=' + window.CMSCore.locales.admin.name
           });
 
           request.target.data = formData;

@@ -143,7 +143,7 @@ export class EntryComment {
       
       if (clientUserData.isLogged) {
         // Edit comment
-        if (clientUserData.id == this.authorID) {
+        if (clientUserPermissions.base_entry_comment_change && clientUserData.id == this.authorID || clientUserPermissions.moder_entries_comments_management) {
           let interactiveButtonEdit = new Interactive('button');
           interactiveButtonEdit.target.setLabel(this.entry.localeBaseData.BUTTON_EDIT_LABEL);
           interactiveButtonEdit.target.setCallback((event) => {
@@ -195,7 +195,7 @@ export class EntryComment {
             elementForm.classList.add('form');
             let elementTextarea = document.createElement('textarea');
             elementTextarea.classList.add('form__textarea');
-            elementTextarea.style.width = '300px';
+            elementTextarea.style.width = '100%';
             elementTextarea.setAttribute('name', 'comment_hidden_reason');
             elementTextarea.setAttribute('placeholder', 'Укажите причину...');
             elementForm.append(elementTextarea);
@@ -287,7 +287,7 @@ export class EntryComment {
         }
 
         // Delete comment
-        if (clientUserPermissions.moder_entries_comments_management) {
+        if (clientUserPermissions.base_entry_comment_change && clientUserData.id == this.authorID || clientUserPermissions.moder_entries_comments_management) {
           let interactiveButtonDelete = new Interactive('button');
           interactiveButtonDelete.target.setLabel(this.entry.localeBaseData.BUTTON_DELETE_LABEL);
           interactiveButtonDelete.target.setCallback((event) => {
@@ -352,19 +352,21 @@ export class EntryComment {
 
       if (!this.isHidden) {
         if (clientUserData.isLogged) {
-          // Answer to comment
-          let interactiveButtonAnswer = new Interactive('button');
-          interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
-          interactiveButtonAnswer.target.setCallback((event) => {
-            let form = elementEntry.querySelector('[role="entryCommentForm"]');
-            let formTextarea = elementEntry.querySelector('[name="comment_content"]');
-            let formInputCommentParentIDElement = form.querySelector('[name="comment_parent_id"]');
-            formInputCommentParentIDElement.value = this.id;
-            formTextarea.focus();
-            formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
-          });
-          interactiveButtonAnswer.assembly();
-          commentPanel.append(interactiveButtonAnswer.target.element);
+          if (clientUserPermissions.base_entry_comment_create) {
+            // Answer to comment
+            let interactiveButtonAnswer = new Interactive('button');
+            interactiveButtonAnswer.target.setLabel(this.entry.localeBaseData.BUTTON_ANSWER_LABEL);
+            interactiveButtonAnswer.target.setCallback((event) => {
+              let form = elementEntry.querySelector('[role="entryCommentForm"]');
+              let formTextarea = elementEntry.querySelector('[name="comment_content"]');
+              let formInputCommentParentIDElement = form.querySelector('[name="comment_parent_id"]');
+              formInputCommentParentIDElement.value = this.id;
+              formTextarea.focus();
+              formTextarea.scrollIntoView({block: "center", behavior: "smooth"});
+            });
+            interactiveButtonAnswer.assembly();
+            commentPanel.append(interactiveButtonAnswer.target.element);
+          }
         }
           
         let commentRatePanel = this.elementAssembled.querySelector('[role="entryCommentRate"]');
@@ -373,7 +375,7 @@ export class EntryComment {
 
         if (clientUserData.isLogged) {
           // Rate comment
-          if (clientUserPermissions.base_entry_comment_rate) {
+          if (clientUserPermissions.base_entry_comment_rate && clientUserData.id != this.authorID) {
             let interactiveButtonRateUp = new Interactive('button');
             interactiveButtonRateUp.target.setLabel('🡅');
             interactiveButtonRateUp.target.setCallback((event) => {
@@ -409,7 +411,7 @@ export class EntryComment {
         commentRatePanel.append(rateCountElement);
 
         if (clientUserData.isLogged) {
-          if (clientUserPermissions.base_entry_comment_rate) {
+          if (clientUserPermissions.base_entry_comment_rate && clientUserData.id != this.authorID) {
             let interactiveButtonRateDown = new Interactive('button');
             interactiveButtonRateDown.target.setLabel('🡇');
             interactiveButtonRateDown.target.setCallback((event) => {

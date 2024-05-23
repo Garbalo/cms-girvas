@@ -54,133 +54,135 @@ export class PageEntry {
       if (typeof data.outputData.user != 'undefined') {
         this.clientUserPermissions = data.outputData.user.permissions;
 
-        /** @type {Interactive} */
-        let commentForm = new Interactive('form');
-        commentForm.target.init({
-          id: 'E7429674077',
-          method: 'PUT',
-          action: `/handler/entry/comment`,
-          role: 'entryCommentForm'
-        });
+        if (this.clientUserPermissions.base_entry_comment_create || this.clientUserPermissions.base_entry_comment_change) {
+          /** @type {Interactive} */
+          let commentForm = new Interactive('form');
+          commentForm.target.init({
+            id: 'E7429674077',
+            method: 'PUT',
+            action: `/handler/entry/comment`,
+            role: 'entryCommentForm'
+          });
 
-        let commentFormElement = commentForm.target.element.querySelector('form');
-        commentFormElement.classList.add('form_entry-comment');
-        commentFormElement.setAttribute('readonly', '');
+          let commentFormElement = commentForm.target.element.querySelector('form');
+          commentFormElement.classList.add('form_entry-comment');
+          commentFormElement.setAttribute('readonly', '');
 
-        commentForm.target.successCallback = (data) => {
-          if (data.outputData.hasOwnProperty('comment')) {
-            if (commentForm.target.element.firstChild.getAttribute('method') == 'PUT') {
-              let commentID = data.outputData.comment.id;
-              let commentData = {}, authorData = {};
-              
-              fetch(`/handler/entry/comment/${commentID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((commentCreatedData) => {
-                commentData = commentCreatedData.outputData.comment;
-                return fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
-              }).then((response) => {
-                return (response.ok) ? response.json() : Promise.reject(response);
-              }).then((authorCommentCreatedData) => {
-                authorData = authorCommentCreatedData.outputData.user;
+          commentForm.target.successCallback = (data) => {
+            if (data.outputData.hasOwnProperty('comment')) {
+              if (commentForm.target.element.firstChild.getAttribute('method') == 'PUT') {
+                let commentID = data.outputData.comment.id;
+                let commentData = {}, authorData = {};
+                
+                fetch(`/handler/entry/comment/${commentID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'}).then((response) => {
+                  return (response.ok) ? response.json() : Promise.reject(response);
+                }).then((commentCreatedData) => {
+                  commentData = commentCreatedData.outputData.comment;
+                  return fetch(`/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
+                }).then((response) => {
+                  return (response.ok) ? response.json() : Promise.reject(response);
+                }).then((authorCommentCreatedData) => {
+                  authorData = authorCommentCreatedData.outputData.user;
 
-                let newEntryComment = new EntryComment(this, commentData);
-                newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
-                  entryCommentsListElement.prepend(commentElement);
-                  newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                  let newEntryComment = new EntryComment(this, commentData);
+                  newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                    entryCommentsListElement.prepend(commentElement);
+                    newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                  });
                 });
-              });
-            }
-
-            if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
-              let commentID = data.outputData.comment.id;
-              let commentContent = data.outputData.comment.content;
-              let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
-              if (commentElement != null) {
-                let commentContentElement = commentElement.querySelector('[role="entryCommentContent"]');
-                commentContentElement.innerHTML = commentContent;
               }
-            }
-          } else {
-            let notification = new PopupNotification(data.message, document.body, true);
-            notification.show();
-          }
-        };
-        
-        /** @type {ElementInput} */
-        let formInputEntryID = commentForm.target.createElementInput();
-        formInputEntryID.init({
-          name: 'comment_entry_id',
-          type: 'hidden'
-        });
 
-        formInputEntryID.element.value = entryID;
-        
-        /** @type {ElementInput} */
-        let formInputParentID = commentForm.target.createElementInput();
-        formInputParentID.init({
-          name: 'comment_parent_id',
-          type: 'hidden'
-        });
-        
-        /** @type {ElementTextarea} */
-        let formTextarea = commentForm.target.createElementTextarea();
-        formTextarea.init({
-          name: 'comment_content',
-          placeholder: this.localeBaseData.ENTRY_COMMENT_TEXTAREA_PLACEHOLDER,
-          rows: 6
-        });
-
-        /** @type {ElementButton} */
-        let formButton = commentForm.target.createElementButton();
-        formButton.setStringLabel(this.localeBaseData.BUTTON_SEND_LABEL);
-        formButton.setClickEvent((event) => {
-          event.preventDefault();
-
-          if (formTextarea.element.value != '') {
-            commentForm.target.send();
-          }
-
-          formTextarea.element.value = '';
-
-          let formInputCommentID = commentForm.target.element.querySelector('[name="comment_id"]');
-          if (formInputCommentID != null) {
-            let commentTargetElement = elementEntry.querySelector(`[data-comment-id="${formInputCommentID.value}"]`);
-            commentTargetElement.scrollIntoView({block: "center", behavior: "smooth"});
-            formInputCommentID.remove();
-
-            if (commentForm.target.element.firstChild.hasAttribute('method')) {
               if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
-                commentForm.target.element.firstChild.setAttribute('method', 'PUT');
+                let commentID = data.outputData.comment.id;
+                let commentContent = data.outputData.comment.content;
+                let commentElement = elementEntry.querySelector(`[data-comment-id="${commentID}"]`);
+                if (commentElement != null) {
+                  let commentContentElement = commentElement.querySelector('[role="entryCommentContent"]');
+                  commentContentElement.innerHTML = commentContent;
+                }
+              }
+            } else {
+              let notification = new PopupNotification(data.message, document.body, true);
+              notification.show();
+            }
+          };
+          
+          /** @type {ElementInput} */
+          let formInputEntryID = commentForm.target.createElementInput();
+          formInputEntryID.init({
+            name: 'comment_entry_id',
+            type: 'hidden'
+          });
+
+          formInputEntryID.element.value = entryID;
+          
+          /** @type {ElementInput} */
+          let formInputParentID = commentForm.target.createElementInput();
+          formInputParentID.init({
+            name: 'comment_parent_id',
+            type: 'hidden'
+          });
+          
+          /** @type {ElementTextarea} */
+          let formTextarea = commentForm.target.createElementTextarea();
+          formTextarea.init({
+            name: 'comment_content',
+            placeholder: this.localeBaseData.ENTRY_COMMENT_TEXTAREA_PLACEHOLDER,
+            rows: 6
+          });
+
+          /** @type {ElementButton} */
+          let formButton = commentForm.target.createElementButton();
+          formButton.setStringLabel(this.localeBaseData.BUTTON_SEND_LABEL);
+          formButton.setClickEvent((event) => {
+            event.preventDefault();
+
+            if (formTextarea.element.value != '') {
+              commentForm.target.send();
+            }
+
+            formTextarea.element.value = '';
+
+            let formInputCommentID = commentForm.target.element.querySelector('[name="comment_id"]');
+            if (formInputCommentID != null) {
+              let commentTargetElement = elementEntry.querySelector(`[data-comment-id="${formInputCommentID.value}"]`);
+              commentTargetElement.scrollIntoView({block: "center", behavior: "smooth"});
+              formInputCommentID.remove();
+
+              if (commentForm.target.element.firstChild.hasAttribute('method')) {
+                if (commentForm.target.element.firstChild.getAttribute('method') == 'PATCH') {
+                  commentForm.target.element.firstChild.setAttribute('method', 'PUT');
+                }
               }
             }
+
+            let formButtonRest = commentForm.target.element.querySelector('[role="comment-form-button-reset"]');
+            if (formButtonRest != null) formButtonRest.remove();
+          });
+          formButton.init({
+            role: 'comment-form-button-send'
+          });
+
+          let commentFormContainerElement = document.querySelector('[role="entryCommentFormContainer"]');
+
+          if (commentFormContainerElement != null) {
+            let commentFormPanelElement = document.createElement('div');
+            commentFormPanelElement.classList.add('form__panel-container');
+            commentFormPanelElement.append(formButton.element);
+
+            // Assembly form
+            commentForm.target.element.setAttribute('id', 'E7443753064');
+            commentForm.target.element.firstChild.append(formInputParentID.element);
+            commentForm.target.element.firstChild.append(formInputEntryID.element);
+            commentForm.target.element.firstChild.append(formTextarea.element);
+            commentForm.target.element.firstChild.append(commentFormPanelElement);
+            commentForm.assembly();
+
+            this.commentForm = commentForm;
+
+            // Append form to container
+            commentFormContainerElement.append(this.commentForm.target.element);
           }
-
-          let formButtonRest = commentForm.target.element.querySelector('[role="comment-form-button-reset"]');
-          if (formButtonRest != null) formButtonRest.remove();
-        });
-        formButton.init({
-          role: 'comment-form-button-send'
-        });
-
-        let commentFormContainerElement = document.querySelector('[role="entryCommentFormContainer"]');
-
-        if (commentFormContainerElement != null) {
-          let commentFormPanelElement = document.createElement('div');
-          commentFormPanelElement.classList.add('form__panel-container');
-          commentFormPanelElement.append(formButton.element);
-
-          // Assembly form
-          commentForm.target.element.setAttribute('id', 'E7443753064');
-          commentForm.target.element.firstChild.append(formInputParentID.element);
-          commentForm.target.element.firstChild.append(formInputEntryID.element);
-          commentForm.target.element.firstChild.append(formTextarea.element);
-          commentForm.target.element.firstChild.append(commentFormPanelElement);
-          commentForm.assembly();
-
-          this.commentForm = commentForm;
-
-          // Append form to container
-          commentFormContainerElement.append(this.commentForm.target.element);
         }
       }
 
@@ -189,6 +191,7 @@ export class PageEntry {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       this.postLoadComments = data.outputData.comments;
+      console.log(this.clientUserPermissions);
       
       let entryCommentsContainerElement = elementEntry.querySelector('[role="entryCommentsContainer"]');
       let interactiveButtonCommentsLoad = new Interactive('button');
@@ -205,7 +208,7 @@ export class PageEntry {
           if (data1.statusCode == 1 && data1.outputData.hasOwnProperty('comments')) {
             let comments = data1.outputData.comments, commentLoadedIndex = 0;
             
-            let appendComment = (commentData) => {
+            let appendComment = (commentData, clientUserPermissions) => {
               let requestAppend = new Interactive('request', {
                 method: 'GET',
                 url: `/handler/user/${commentData.authorID}`
@@ -226,21 +229,21 @@ export class PageEntry {
                   this.commentsOffset++;
                   entryCommentsListElement.append(commentElement);
 
-                  entryComment.initPanel(this.clientUserData, this.clientUserPermissions);
+                  entryComment.initPanel(this.clientUserData, clientUserPermissions);
 
                   if (commentLoadedIndex < comments.length) {
-                    appendComment(comments[commentLoadedIndex]);
+                    appendComment(comments[commentLoadedIndex], clientUserPermissions);
                   }
                   
                   if (commentData.answersCount > 0) {
-                    entryComment.initAnswersPanel(this.clientUserData, this.clientUserPermissions);
+                    entryComment.initAnswersPanel(this.clientUserData, clientUserPermissions);
                   }
                 });
               });
             };
 
             if (comments.length > 0) {
-              appendComment(comments[0]);
+              appendComment(comments[0], this.clientUserPermissions);
             }
           }
         });

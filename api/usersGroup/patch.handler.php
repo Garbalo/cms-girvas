@@ -52,6 +52,8 @@ if ($system_core->client->is_logged(2)) {
               case 'editor_entries_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT; break;
               case 'editor_entries_categories_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT; break;
               case 'editor_pages_static_edit': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT; break;
+              case 'base_entry_comment_create': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CREATE; break;
+              case 'base_entry_comment_change': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CHANGE; break;
               case 'base_entry_comment_rate': $users_group_permissions = $users_group_permissions | \core\PHPLibrary\UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE; break;
             }
           }

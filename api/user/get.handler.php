@@ -51,6 +51,8 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
         $handler_output_data['user']['permissions']['editor_entries_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_EDIT);
         $handler_output_data['user']['permissions']['editor_entries_categories_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT);
         $handler_output_data['user']['permissions']['editor_pages_static_edit'] = $user_group->permission_check(UserGroup::PERMISSION_EDITOR_PAGES_STATIC_EDIT);
+        $handler_output_data['user']['permissions']['base_entry_comment_create'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CREATE);
+        $handler_output_data['user']['permissions']['base_entry_comment_change'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_CHANGE);
         $handler_output_data['user']['permissions']['base_entry_comment_rate'] = $user_group->permission_check(UserGroup::PERMISSION_BASE_ENTRY_COMMENT_RATE);
 
         $handler_message = $system_core->locale->get_single_value_by_key('API_GET_DATA_SUCCESS');

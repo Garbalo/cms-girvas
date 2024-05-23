@@ -104,7 +104,7 @@ export class PageGlobal {
             let authForm = new Interactive('form');
             authForm.target.init({
               method: 'POST',
-              action: `/handler/utils/authorization?method=base`
+              action: '/handler/utils/authorization?method=base&localeMessage=' + window.CMSCore.locales.base.name
             });
 
             /** @type {ElementInput} */
@@ -149,7 +149,7 @@ export class PageGlobal {
               let requestForm = new Interactive('form');
               requestForm.target.init({
                 method: 'POST',
-                action: `/handler/user/request-password-reset`
+                action: '/handler/user/request-password-reset&localeMessage=' + window.CMSCore.locales.base.name
               });
               
               /** Модальное окно для создания запроса на восстановление пароля
