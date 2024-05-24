@@ -71,9 +71,13 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
   }
 } else if (is_null($system_core->urlp->get_path(3))) {
   $user = ($system_core->urlp->get_path(2) == '@me') ? $system_core->client->get_user(1) : (is_numeric($system_core->urlp->get_path(2)) ? new User($system_core, $system_core->urlp->get_path(2)) : User::get_by_login($system_core, $system_core->urlp->get_path(2)));
-
+  $locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
+  
   if (!is_null($user)) {
-    $user->init_data(['login','metadata']);
+    $user->init_data(['login', 'metadata']);
+
+    $user_group = $user->get_group();
+    $user_group->init_data(['texts']);
     
     $template_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
     $template = new \core\PHPLibrary\Template($system_core, $template_name);
@@ -85,6 +89,10 @@ if ($system_core->urlp->get_path(3) == 'permissions') {
     $handler_output_data['user']['avatarURL'] = $user->get_avatar_url(64);
     $handler_output_data['user']['isBlocked'] = $user->is_blocked();
     $handler_output_data['user']['groupID'] = $user->get_group_id();
+    $handler_output_data['user']['group'] = [
+      'id' => $user_group->get_id(),
+      'title' => $user_group->get_title($locale)
+    ];
 
     if ($system_core->urlp->get_path(2) == '@me') {
       $handler_output_data['user']['isLogged'] = ($system_core->client->is_logged(1)) ? true : false;

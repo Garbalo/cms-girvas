@@ -121,13 +121,18 @@ namespace core\PHPLibrary\Page {
             foreach ($entry_comments_array as $entry_comment) {
               $entry_comment->init_data(['entry_id', 'author_id', 'content', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
               $entry_comment_author = $entry_comment->get_author();
-              $entry_comment_author->init_data(['login']);
+              $entry_comment_author->init_data(['login', 'metadata']);
+
+              $entry_comment_author_group = $entry_comment_author->get_group();
+              $entry_comment_author_group->init_data(['texts']);
+
               array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
                 'COMMENT_ID' => $entry_comment->get_id(),
                 'COMMENT_INDEX' => $entry_comment_index,
                 'COMMENT_CREATED_DATE_TIMESTAMP' => date('d.m.Y H:i:s', $entry_comment->get_created_unix_timestamp()),
                 'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
                 'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
+                'COMMENT_AUTHOR_GROUP_TITLE' => $entry_comment_author_group->get_title($cms_base_locale_name),
                 'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
               ]));
 

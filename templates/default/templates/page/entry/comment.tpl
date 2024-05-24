@@ -8,7 +8,7 @@
       <time class="item__value" datetime="{COMMENT_CREATED_DATE_TIMESTAMP}">{COMMENT_CREATED_DATE_TIMESTAMP}</time>
     </li>
     <li class="metadata-list__item metadata-list__item_user-group item">
-      <span class="item__value metadata">Администратор</span>
+      <span class="item__value metadata">{COMMENT_AUTHOR_GROUP_TITLE}</span>
     </li>
   </ul>
   <div class="comment__container">

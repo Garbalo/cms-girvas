@@ -65,8 +65,6 @@ export class EntryComment {
         if (data.statusCode == 1 && data.outputData.hasOwnProperty('comments')) {
           let comments = data.outputData.comments, commentLoadedIndex = 0;
           let answersListElementQuery = this.getAnswersListElement();
-
-          console.log(comments);
           
           let answersListElement;
           if (answersListElementQuery == null) {
@@ -81,20 +79,21 @@ export class EntryComment {
           let appendComment = (commentData, commentParentElement) => {
             let requestAppend = new Interactive('request', {
               method: 'GET',
-              url: `/handler/user/${commentData.authorID}?localeMessage=${window.CMSCore.locales.base.name}`
+              url: `/handler/user/${commentData.authorID}`
             });
       
             requestAppend.target.showingNotification = false;
 
             requestAppend.target.send().then((authorLoadedData) => {
               let authorData = authorLoadedData.outputData.user;
+              let answersContainerParentElement = this.getAnswersListElement();
               
               commentData.entryID = this.entryID;
               commentData.answersLoadingLimit = this.answersLoadingLimit;
-              commentData.index = entryCommentsListElement.querySelectorAll('[role="entryComments"]').length + entryCommentsListElement.querySelectorAll('[role="entryCommentAnswer"]').length + 1;
+              commentData.index = (answersContainerParentElement != null) ? answersContainerParentElement.children.length + 1 : 1;
               
               let entryComment = new EntryComment(this.entry, commentData);
-              entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+              entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL, group: authorData.group}, (commentElement) => {
                 commentLoadedIndex++;
                 
                 answersListElement.append(commentElement);
@@ -450,6 +449,7 @@ export class EntryComment {
     let content = (!this.isHidden) ? this.content : this.hiddenReason;
     let authorLogin = (typeof params.login != 'undefined') ? params.login : '';
     let authorAvatarURL = (typeof params.avatarURL != 'undefined') ? params.avatarURL : '';
+    let authorGroupTitle = (typeof params.group != 'undefined') ? params.group.title : '';
     
     let createdDate = new Date(this.createdUnixTimestamp * 1000);
     let createdDay = (createdDate.getDay() + 1).toString().padStart(2, '0');
@@ -468,6 +468,7 @@ export class EntryComment {
         'COMMENT_CONTENT',
         'COMMENT_AUTHOR_LOGIN',
         'COMMENT_AUTHOR_AVATAR_URL',
+        'COMMENT_AUTHOR_GROUP_TITLE',
         'COMMENT_CREATED_DATE_TIMESTAMP'
       ],
       patternValues: [
@@ -476,6 +477,7 @@ export class EntryComment {
         content.replaceAll(",", "{DELIM}"),
         authorLogin,
         authorAvatarURL,
+        authorGroupTitle,
         `${createdDay}.${createdMonth}.${createdYear} ${createdHours}:${createdMinutes}:${createdSeconds}`
       ]
     };

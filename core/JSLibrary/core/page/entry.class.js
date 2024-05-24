@@ -85,7 +85,7 @@ export class PageEntry {
                   authorData = authorCommentCreatedData.outputData.user;
 
                   let newEntryComment = new EntryComment(this, commentData);
-                  newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                  newEntryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL, group: authorData.group}, (commentElement) => {
                     entryCommentsListElement.prepend(commentElement);
                     newEntryComment.initPanel(this.clientUserData, this.clientUserPermissions);
                   });
@@ -224,7 +224,7 @@ export class PageEntry {
                 commentData.answersLoadingLimit = 4;
 
                 let entryComment = new EntryComment(this, commentData);
-                entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL}, (commentElement) => {
+                entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL, group: authorData.group}, (commentElement) => {
                   commentLoadedIndex++;
                   this.commentsOffset++;
                   entryCommentsListElement.append(commentElement);
