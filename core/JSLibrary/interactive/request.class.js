@@ -25,6 +25,7 @@ export class Request {
     this.setURL(url);
 
     this.data = (data == undefined || data == null) ? undefined : new FormData(data);
+    this.headers = {};
     this.showingNotification = true;
   }
 
@@ -129,7 +130,8 @@ export class Request {
 
     return fetch(requestURL, {
       method: requestMethod,
-      body: this.data
+      body: this.data,
+      headers: {}
     }).then((response) => {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {

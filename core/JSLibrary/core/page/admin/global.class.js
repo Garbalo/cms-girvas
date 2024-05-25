@@ -83,7 +83,36 @@ export class PageGlobal {
         this.buttons.checkVersion.target.setCallback((event) => {
           event.preventDefault();
 
-          //
+          window.CMSCore.getCMSVersion().then((data) => {
+            let request = new Interactive('request', {
+              method: 'GET',
+              url: `https://repository.cms-girvas.ru/system-checker?currentVersion=${data}`
+            });
+
+            request.target.showingNotification = false;
+
+            request.target.send().then((data1) => {
+              if (data1.statusCode == 1 && data1.outputData.hasOwnProperty('needToUpdate')) {
+                let needToUpdate = data1.outputData.needToUpdate;
+                let lastVersion = data1.outputData.lastVersion;
+  
+                let interactiveNotificationLoading = new Interactive('notification');
+                interactiveNotificationLoading.target.isPopup = true;
+
+                if (needToUpdate) {
+                  interactiveNotificationLoading.target.setStatusCode(1);
+                  interactiveNotificationLoading.target.setContent(`${localeData.UPDATE_CHECKER_NEW_VERSION} [${data} => ${lastVersion}]`);
+                } else {
+                  interactiveNotificationLoading.target.setStatusCode(-1);
+                  interactiveNotificationLoading.target.setContent(localeData.UPDATE_CHECKER_CURRENT_VERSION);
+                }
+
+                interactiveNotificationLoading.target.assembly();
+
+                interactiveNotificationLoading.target.show();
+              }
+            });
+          });
         });
 
         // Кнопка "Перейти на сайт"

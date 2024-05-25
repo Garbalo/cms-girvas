@@ -68,6 +68,7 @@ namespace core\PHPLibrary\SystemCore {
           EnumFileFormat::JPG => $convert_to_extension = 'jpeg',
           EnumFileFormat::PNG => $convert_to_extension = 'png',
           EnumFileFormat::WEBP => $convert_to_extension = 'webp',
+          EnumFileFormat::AVIF => $convert_to_extension = 'avif',
           default => ''
         };
 
@@ -109,7 +110,13 @@ namespace core\PHPLibrary\SystemCore {
           }
 
           if (($file_extension == $file_extension)) {
-            if (file_exists($file_source_path)) rename($file_source_path, $file_output_path);
+            if (file_exists($file_source_path)) {
+              $file_renamed = rename($file_source_path, $file_output_path);
+
+              if ($file_renamed) {
+                $converted_result = true;
+              }
+            };
           }
         }
 
@@ -152,6 +159,31 @@ namespace core\PHPLibrary\SystemCore {
     }
     
     /**
+     * convert_jpg_to_avif
+     *
+     * @param  string $file_source_path
+     * @param  string $file_output_path
+     * @param  bool $delete_old_file
+     * @return bool
+     */
+    private function convert_jpeg_to_avif(string $file_source_path, string $file_output_path, bool $delete_old_file = false) : bool {
+      $image_source = imagecreatefromjpeg($file_source_path);
+      $image_source_width = imagesx($image_source);
+      $image_source_height = imagesy($image_source);
+
+      $image_converted = imagecreatetruecolor($image_source_width, $image_source_height);
+      imagecopy($image_converted, $image_source, 0, 0, 0, 0, $image_source_width, $image_source_height);
+      imageavif($image_converted, $file_output_path);
+
+      imagedestroy($image_source);
+      imagedestroy($image_converted);
+
+      if ($delete_old_file) unlink($file_source_path);
+
+      return file_exists($file_output_path);
+    }
+    
+    /**
      * convert_png_to_webp
      *
      * @param  string $file_source_path
@@ -173,6 +205,37 @@ namespace core\PHPLibrary\SystemCore {
 
       imagecopy($image_converted, $image_source, 0, 0, 0, 0, $image_source_width, $image_source_height);
       imagewebp($image_converted, $file_output_path, 100);
+
+      imagedestroy($image_source);
+      imagedestroy($image_converted);
+
+      if ($delete_old_file) unlink($file_source_path);
+
+      return file_exists($file_output_path);
+    }
+    
+    /**
+     * convert_png_to_avif
+     *
+     * @param  string $file_source_path
+     * @param  string $file_output_path
+     * @param  bool $delete_old_file
+     * @return bool
+     */
+    private function convert_png_to_avif(string $file_source_path, string $file_output_path, bool $delete_old_file = false) : bool {
+      $image_source = imagecreatefrompng($file_source_path);
+      $image_source_width = imagesx($image_source);
+      $image_source_height = imagesy($image_source);
+
+      $image_converted = imagecreatetruecolor($image_source_width, $image_source_height);
+      imageAlphaBlending($image_converted, false);
+      imageSaveAlpha($image_converted, true);
+
+      $image_transparent = imagecolorallocatealpha($image_converted, 0, 0, 0, 127);
+      imagefilledrectangle($image_converted, 0, 0, $image_source_width - 1, $image_source_height - 1, $image_transparent);
+
+      imagecopy($image_converted, $image_source, 0, 0, 0, 0, $image_source_width, $image_source_height);
+      imageavif($image_converted, $file_output_path);
 
       imagedestroy($image_source);
       imagedestroy($image_converted);

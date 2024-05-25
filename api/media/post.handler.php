@@ -41,11 +41,13 @@ if ($system_core->client->is_logged(2)) {
           $file_converter = new FileConverter($system_core);
           $file_converted = $file_converter->convert($_FILES['mediaFile'], $file_uploaded_folder_path, EnumFileFormat::WEBP, true);
           
-          if (is_array($file_converted)) {
-            $handler_output_data['file'] = [];
-            $handler_output_data['file']['url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
-            $handler_output_data['file']['fullname'] = $file_converted['file_name'];
+          $file_data = [];
+          $file_data['url'] = sprintf('/uploads/media/%s', $file_converted['file_name']);
+          $file_data['fullname'] = $file_converted['file_name'];
 
+          $handler_output_data['file'] = $file_data;
+
+          if (is_array($file_converted)) {
             $handler_message = (!isset($handler_message)) ? $system_core->locale->get_single_value_by_key('API_POST_FILES_SUCCESS') : $handler_message;
             $handler_status_code = (!isset($handler_status_code)) ? 1 : $handler_status_code;
           } else {

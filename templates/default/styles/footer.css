@@ -18,8 +18,9 @@
 
 /* footer */
 .footer {
-  height: 182px;
   background-color: var(--bcg-body-color);
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 670px) {
@@ -70,7 +71,7 @@
 .footer__nav-link {
   height: 100%;
   padding: 12px 24px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--container-and-text-white-color);
@@ -181,7 +182,7 @@
 }
 
 .footer__bottom-left-block {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -224,7 +225,7 @@
 
 .information-list__link {
   position: relative;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
 }
 

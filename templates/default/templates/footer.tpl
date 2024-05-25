@@ -38,7 +38,7 @@
     </div>
   </div>
   <div class="footer__bottom flex">
-    <div class="footer__bottom-left-block">© <a href="{CMS_DEVELOPER_SITE_LINK}" target="_blank">{CMS_DEVELOPER_TITLE}</a>. 2023. {CMS_COPYRIGHT}.</div>
+    <div class="footer__bottom-left-block">{CMS_COPYRIGHT}</div>
     <ul class="information-list footer__bottom-information-list flex">
       <li class="information-list__item">
         <a class="information-list__link" href="#">{LANG:DEFAULT_FOOTER_META_LINK_LICENSE_AGREEMENT}</a>

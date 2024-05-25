@@ -420,5 +420,7 @@
   "REPORT_TYPE_ID_AP_ENTRY_EDITED": "Запись &laquo;{ENTRY_TITLE}&raquo; отредактирована пользователем [IP: {CLIENT_IP}].",
   "REPORT_TYPE_ID_AP_ENTRY_DELETED": "Запись &laquo;{ENTRY_TITLE}&raquo; удалена пользователем [IP: {CLIENT_IP}].",
   "REPORT_JS_CMSCORE_ERROR_IMAGES_WHERE_NOT_LOADED": "Во время обработки произошла ошибка. Изображения не загрузились.",
-  "REPORT_JS_CMSCORE_ERROR_FILEREADER_IS_NOT_SUPPORTED": "Во время обработки произошла ошибка. FileReader не поддерживается, и загруженное изображение невозможно отобразить."
+  "REPORT_JS_CMSCORE_ERROR_FILEREADER_IS_NOT_SUPPORTED": "Во время обработки произошла ошибка. FileReader не поддерживается, и загруженное изображение невозможно отобразить.",
+  "UPDATE_CHECKER_NEW_VERSION": "Ваша версия устарела, можете обновиться.",
+  "UPDATE_CHECKER_CURRENT_VERSION": "Ваша версия актуальна."
 }

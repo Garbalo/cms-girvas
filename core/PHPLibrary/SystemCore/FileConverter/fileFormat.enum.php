@@ -13,6 +13,7 @@ namespace core\PHPLibrary\SystemCore\FileConverter {
     case JPG;
     case PNG;
     case WEBP;
+    case AVIF;
   }
 }
 

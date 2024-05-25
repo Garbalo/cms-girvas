@@ -24,15 +24,34 @@
   margin-bottom: 20px;
 }
 
-.page .pagination-list__item-link {
+.page .pagination-list {
+  display: flex;
+}
+
+.page .pagination-list__item {
+  display: flex;
   background-color: var(--primary-color-3);
   font-size: 14px;
   color: var(--primary-color-2);
+}
+
+.page .pagination-list__item:not(:last-child) {
+  margin-right: 4px;
+}
+
+.page .pagination-list__item.pagination-list__item_active {
+  font-weight: 700;
+}
+
+.page .pagination-list__item-link {
+  text-decoration: none;
+  color: inherit;
   padding: 4px 6px;
 }
 
 .page .pagination-list__item-link:hover,
-.page .pagination-list__item-link:focus {
+.page .pagination-list__item-link:focus,
+.page .pagination-list__item.pagination-list__item_active {
   background-color: var(--primary-color-2);
   color: var(--primary-color-3);
 }

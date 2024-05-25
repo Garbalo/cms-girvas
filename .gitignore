@@ -1,10 +1,13 @@
 /cron/database.config.php
 /repository/
-/rest.php
 /install/
-/modules/
+/modules/*
+!/modules/README.md
 /OLD/
 /core/configuration.php
-/templates/official
-/robots.txt
+/templates/*
+!/tempaltes/default
+!/tempaltes/admin
+!/tempaltes/install
+!/tempaltes/README.md
 /.gitignore

@@ -71,6 +71,16 @@ namespace core\PHPLibrary\Page {
 
         $this->page->breadcrumbs->add($locale_data['PAGE_ENTRIES_BREADCRUMPS_ALL_ENTRIES_LABEL'], '/entries');
 
+        $client_is_logged = $this->system_core->client->is_logged(1);
+        $client_user = ($client_is_logged) ? $this->system_core->client->get_user(1) : null;
+
+        if ($client_user != null) {
+          $entries_not_published_is_visible = ($client_user->get_id() == 1 || $client_user->get_group_id() == 1) ? true : false;
+          $only_published = ($entries_not_published_is_visible) ? false : true;
+        } else {
+          $only_published = true;
+        }
+
         if ($entries_category_name != 'all') {
           $entries_category = EntryCategory::get_by_name($this->system_core, $entries_category_name);
           $entries_category->init_data(['name', 'texts']);
@@ -85,8 +95,9 @@ namespace core\PHPLibrary\Page {
           $entries = new Entries($this->system_core);
           $entries_array_objects = $entries->get_by_category_id($entries_category_id, [
             'limit' => [$entries_count_on_page, $pagination_item_current * $entries_count_on_page]
-          ]);
-          $entries_count = $entries->get_count_by_category_id($entries_category_id);
+          ], $only_published);
+          
+          $entries_count = $entries->get_count_by_category_id($entries_category_id, $only_published);
         } else {
           $this->page->breadcrumbs->assembly();
 
@@ -96,8 +107,9 @@ namespace core\PHPLibrary\Page {
           $entries = new Entries($this->system_core);
           $entries_array_objects = $entries->get_all([
             'limit' => [$entries_count_on_page, $pagination_item_current * $entries_count_on_page]
-          ]);
-          $entries_count = $entries->get_count_total();
+          ], $only_published);
+
+          $entries_count = $entries->get_count_total($only_published);
         }
 
         unset($entries);
@@ -105,55 +117,41 @@ namespace core\PHPLibrary\Page {
         $entries_array_templates = [];
         foreach ($entries_array_objects as $entry_object) {
           $entry_object->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
-          
-          $entry_is_visible = false;
 
-          $client_is_logged = $this->system_core->client->is_logged(1);
-          $client_user = ($client_is_logged) ? $this->system_core->client->get_user(1) : null;
+          /** @var string Заголовок записи */
+          $entry_title = (!empty($entry_object->get_title($cms_base_locale_name))) ? $entry_object->get_title($cms_base_locale_name) : $entry_object->get_title($cms_base_locale_setted_name);
+          /** @var string Описание записи */
+          $entry_description = (!empty($entry_object->get_description($cms_base_locale_name))) ? $entry_object->get_description($cms_base_locale_name) : $entry_object->get_description($cms_base_locale_setted_name);
+          /** @var string Содержание записи */
+          $entry_content = (!empty($entry_object->get_content($cms_base_locale_name))) ? $entry_object->get_content($cms_base_locale_name) : $entry_object->get_content($cms_base_locale_setted_name);
 
-          $entry_is_visible = ($entry_object->is_published()) ? true : false;
-          if (!$entry_is_visible) {
-            if ($client_user != null) {
-              $entry_is_visible = ($client_user->get_id() == 1 || $client_user->get_group_id() == 1) ? true : false;
-            }
-          }
+          $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_created_unix_timestamp());
+          $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_published_unix_timestamp());
+          $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_updated_unix_timestamp());
 
-          if ($entry_is_visible) {
-            /** @var string Заголовок записи */
-            $entry_title = (!empty($entry_object->get_title($cms_base_locale_name))) ? $entry_object->get_title($cms_base_locale_name) : $entry_object->get_title($cms_base_locale_setted_name);
-            /** @var string Описание записи */
-            $entry_description = (!empty($entry_object->get_description($cms_base_locale_name))) ? $entry_object->get_description($cms_base_locale_name) : $entry_object->get_description($cms_base_locale_setted_name);
-            /** @var string Содержание записи */
-            $entry_content = (!empty($entry_object->get_content($cms_base_locale_name))) ? $entry_object->get_content($cms_base_locale_name) : $entry_object->get_content($cms_base_locale_setted_name);
+          $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_created_unix_timestamp());
+          $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_published_unix_timestamp());
+          $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_updated_unix_timestamp());
 
-            $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_created_unix_timestamp());
-            $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_published_unix_timestamp());
-            $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_updated_unix_timestamp());
+          $entry_category = $entry_object->get_category();
+          $entry_category_title = $entry_category->get_title($cms_base_locale_name);
 
-            $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_created_unix_timestamp());
-            $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_published_unix_timestamp());
-            $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_updated_unix_timestamp());
-
-            $entry_category = $entry_object->get_category();
-            $entry_category_title = $entry_category->get_title($cms_base_locale_name);
-
-            if (!empty($entry_title) && !empty($entry_description) && !empty($entry_content)) {
-              array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/item.tpl', [
-                'ENTRY_ID' => $entry_object->get_id(),
-                'ENTRY_TITLE' => $entry_title,
-                'ENTRY_DESCRIPTION' => $entry_description,
-                'ENTRY_URL' => $entry_object->get_url(),
-                'ENTRY_PREVIEW_URL' => ($entry_object->get_preview_url() != '') ? $entry_object->get_preview_url() : Entry::get_preview_default_url($this->system_core, 512),
-                'ENTRY_CATEGORY_TITLE' => $entry_category_title,
-                'ENTRY_CATEGORY_URL' => $entry_category->get_url(),
-                'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
-                'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
-                'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
-                'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
-                'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
-                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
-              ]));
-            }
+          if (!empty($entry_title) && !empty($entry_description) && !empty($entry_content)) {
+            array_push($entries_array_templates, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/entriesList/item.tpl', [
+              'ENTRY_ID' => $entry_object->get_id(),
+              'ENTRY_TITLE' => $entry_title,
+              'ENTRY_DESCRIPTION' => $entry_description,
+              'ENTRY_URL' => $entry_object->get_url(),
+              'ENTRY_PREVIEW_URL' => ($entry_object->get_preview_url() != '') ? $entry_object->get_preview_url() : Entry::get_preview_default_url($this->system_core, 512),
+              'ENTRY_CATEGORY_TITLE' => $entry_category_title,
+              'ENTRY_CATEGORY_URL' => $entry_category->get_url(),
+              'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
+              'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
+              'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+              'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
+              'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
+              'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
+            ]));
           }
 
           unset($entry_data);

@@ -420,5 +420,7 @@
   "REPORT_TYPE_ID_AP_ENTRY_EDITED": "The entry '{ENTRY_TITLE}' was edited by [IP: {CLIENT_IP}].",
   "REPORT_TYPE_ID_AP_ENTRY_DELETED": "The entry '{ENTRY_TITLE}' was deleted by [IP: {CLIENT_IP}].",
   "REPORT_JS_CMSCORE_ERROR_IMAGES_WHERE_NOT_LOADED": "An error occurred during processing. Images were not loaded.",
-  "REPORT_JS_CMSCORE_ERROR_FILEREADER_IS_NOT_SUPPORTED": "An error occurred during processing. FileReader is not supported and the downloaded image cannot be displayed."
+  "REPORT_JS_CMSCORE_ERROR_FILEREADER_IS_NOT_SUPPORTED": "An error occurred during processing. FileReader is not supported and the downloaded image cannot be displayed.",
+  "UPDATE_CHECKER_NEW_VERSION": "Your version is outdated, you can update.",
+  "UPDATE_CHECKER_CURRENT_VERSION": "Your version is current."
 }

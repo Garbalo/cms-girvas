@@ -27,16 +27,24 @@ namespace core\PHPLibrary {
     /**
      * Получить все объекты записей
      *
-     * @param  array $params_array
-     * @return array
+     * @param   array $params_array
+     * @param   bool 
+     * @return  array
      */
-    public function get_all(array $params_array = []) : array {
+    public function get_all(array $params_array = [], $only_published = false) : array {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('entries');
       $query_builder->statement->clause_from->assembly();
+
+      if ($only_published) {
+        $query_builder->statement->set_clause_where();
+        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+        $query_builder->statement->clause_where->assembly();
+      }
+
       $query_builder->statement->set_clause_order_by();
       $query_builder->statement->clause_order_by->set_column('id');
       $query_builder->statement->clause_order_by->set_sort_type('DESC');
@@ -72,7 +80,7 @@ namespace core\PHPLibrary {
      * @param  array $params_array
      * @return array
      */
-    public function get_by_category_id(int $category_id, array $params_array = []) : array {
+    public function get_by_category_id(int $category_id, array $params_array = [], $only_published = false) : array {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
@@ -81,6 +89,11 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
       $query_builder->statement->clause_where->add_condition('category_id = :category_id');
+
+      if ($only_published) {
+        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+      }
+
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->set_clause_order_by();
       $query_builder->statement->clause_order_by->set_column('created_unix_timestamp');
@@ -116,7 +129,7 @@ namespace core\PHPLibrary {
      * @param  int $category_id
      * @return int
      */
-    public function get_count_by_category_id(int $category_id) : int {
+    public function get_count_by_category_id(int $category_id, $only_published = false) : int {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
@@ -125,6 +138,11 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_from->assembly();
       $query_builder->statement->set_clause_where();
       $query_builder->statement->clause_where->add_condition('category_id = :category_id');
+
+      if ($only_published) {
+        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+      }
+
       $query_builder->statement->clause_where->assembly();
       $query_builder->statement->assembly();
 
@@ -142,13 +160,20 @@ namespace core\PHPLibrary {
      *
      * @return int
      */
-    public function get_count_total() : int {
+    public function get_count_total($only_published = false) : int {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['count(*)']);
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('entries');
       $query_builder->statement->clause_from->assembly();
+
+      if ($only_published) {
+        $query_builder->statement->set_clause_where();
+        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+        $query_builder->statement->clause_where->assembly();
+      }
+
       $query_builder->statement->assembly();
 
       $database_connection = $this->system_core->database_connector->database->connection;
