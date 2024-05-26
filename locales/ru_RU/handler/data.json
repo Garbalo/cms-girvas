@@ -27,6 +27,7 @@
   "API_ENTRY_ERROR_NOT_FOUND": "Запись не найдена.",
   "API_ENTRY_COMMENT_ERROR_NOT_FOUND": "Комментарий к записи не найден.",
   "API_ENTRY_COMMENT_ERROR_FEW_CHARACTERS": "Комментарий слишком короткий (менее 16 символов).",
+  "API_ENTRY_COMMENT_ERROR_MAX_CHARACTERS": "Комментарий слишком большой (более 400 символов).",
   "API_ENTRY_COMMENT_ERROR_EMPTY": "Комментарий пуст.",
   "API_ENTRY_COMMENT_ERROR_REPEAT_VOTE": "Невозможно проголосовать также повторно.",
   "API_ENTRY_EMPTY_LOCALE_DEFAULT_PUBLISHED_ERROR": "Невозможно опубликовать запись, так как в ней отсутствует стандартная локализация [%s].",

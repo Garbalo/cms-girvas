@@ -33,6 +33,10 @@
   padding: 24px;
 }
 
+.page__article .article__content > * {
+  word-break: break-word;
+}
+
 .page__article .article__content > p {
   margin-top: 0;
 }
@@ -156,6 +160,7 @@
 }
 
 .page__article .article__comments .comment__content {
+  word-break: break-word;
   background-color: var(--container-and-text-white-color);
   font-size: 12px;
   border: 1px solid var(--light2-gray-color);

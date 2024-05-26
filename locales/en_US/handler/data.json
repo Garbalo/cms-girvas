@@ -27,6 +27,7 @@
   "API_ENTRY_ERROR_NOT_FOUND": "Entry not found.",
   "API_ENTRY_COMMENT_ERROR_NOT_FOUND": "Entry comment not found.",
   "API_ENTRY_COMMENT_ERROR_FEW_CHARACTERS": "The comment is too short (less than 16 characters).",
+  "API_ENTRY_COMMENT_ERROR_MAX_CHARACTERS": "The comment is too long (more than 400 characters).",
   "API_ENTRY_COMMENT_ERROR_EMPTY": "Comment is empty.",
   "API_ENTRY_COMMENT_ERROR_REPEAT_VOTE": "It is also impossible to vote again.",
   "API_ENTRY_EMPTY_LOCALE_DEFAULT_PUBLISHED_ERROR": "The entry cannot be published because it does not have the default localization [%s].",

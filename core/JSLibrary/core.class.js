@@ -71,6 +71,8 @@ export class Core {
    * @returns {Boolean}
    */
   async initPages() {
+    let locale;
+
     return this.client.isLogged().then((clientIsLogged) => {
       if (this.searchParams.getPathPart(1) == 'entry') this.pages.default.entry = new Page(this, 'default', 'entry');
       if (this.searchParams.getPathPart(1) == 'profile') this.pages.default.profile = new Page(this, 'default', 'profile');
@@ -102,6 +104,22 @@ export class Core {
       } else {
         this.pages.default.global = new Page(this, 'default', 'global');
       }
+
+      if (this.pages.admin.hasOwnProperty('global')) {
+        locale = this.locales.admin;
+      }
+  
+      if (this.pages.default.hasOwnProperty('global')) {
+        locale = this.locales.base;
+      }
+  
+      if (this.pages.install.hasOwnProperty('global')) {
+        locale = this.locales.install;
+      }
+
+      return locale.getData();
+    }).then((localeData) => {
+      this.localeData = localeData;
 
       return true;
     });

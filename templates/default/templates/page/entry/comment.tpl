@@ -1,4 +1,4 @@
-<li id="comment_{COMMENT_INDEX}" class="comments-list__item comment" role="entryComment" data-comment-id="{COMMENT_ID}">
+<li id="comment_{COMMENT_INDEX}" class="comments-list__item comment" role="entryComment" data-comment-id="{COMMENT_ID}" data-index="{COMMENT_INDEX}">
   <ul class="comment__metadata-list metadata-list list-reset">
     <li class="metadata-list__item metadata-list__item_index item">
       <a class="item__value" href="#comment_{COMMENT_INDEX}" role="entryCommentIndex">#{COMMENT_INDEX}</a>

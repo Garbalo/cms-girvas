@@ -1,7 +1,7 @@
 <tr class="table__row table-entries__item" data-entry-id="{ENTRY_ID}" data-name="{ENTRY_NAME}" data-is-published="{ENTRY_PUBLISHED_STATUS}">
   <td class="table__cell" rowspan="2" style="width: fit-content;">#{ENTRY_INDEX}</td>
-  <td class="table__cell" style="font-weight: 700;">{ENTRY_TITLE}</td>
-  <td class="table__cell" style="font-weight: 700;" rowspan="2">{ENTRY_CATEGORY_TITLE}</td>
+  <td class="table__cell table__cell_title" style="font-weight: 700;">{ENTRY_TITLE}</td>
+  <td class="table__cell table__cell_category-title" style="font-weight: 700;" rowspan="2">{ENTRY_CATEGORY_TITLE}</td>
   <td class="table__cell" rowspan="2">{ENTRY_CREATED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">{ENTRY_PUBLISHED_DATE_TIMESTAMP}</td>
   <td class="table__cell" rowspan="2">{ENTRY_UPDATED_DATE_TIMESTAMP}</td>
@@ -35,5 +35,5 @@
   </td>
 </tr>
 <tr class="table__row table-entries__item" data-is-published="{ENTRY_PUBLISHED_STATUS}">
-  <td class="table__cell">{ENTRY_DESCRIPTION}</td>
+  <td class="table__cell table__cell_description">{ENTRY_DESCRIPTION}</td>
 </tr>

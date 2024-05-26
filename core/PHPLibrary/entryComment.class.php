@@ -480,7 +480,9 @@ namespace core\PHPLibrary {
             }
           }
 
-          $query_builder->statement->clause_set->add_column('metadata', sprintf('metadata::jsonb || %s', implode(' || ', $metadata_assignments)));
+          if (!empty($metadata_assignments)) {
+            $query_builder->statement->clause_set->add_column('metadata', sprintf('metadata::jsonb || %s', implode(' || ', $metadata_assignments)));
+          }
         }
       }
 

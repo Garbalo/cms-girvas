@@ -116,7 +116,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
         }
 
         if (isset($user_birthdate)) {
-          $user_data['metadata']['birthdateUnixTimestamp'] = $user_birthdate;
+          $user_data['metadata']['birthdateUnixTimestamp'] = (is_numeric($user_birthdate)) ? $user_birthdate : strtotime($user_birthdate);
         }
 
         if (isset($user_name)) {

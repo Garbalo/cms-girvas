@@ -79,6 +79,9 @@ if ($system_core->client->is_logged(2)) {
       }
     }
   } else {
+    $entry_title_length_max = 80;
+    $entry_description_length_max = 600;
+    
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       if (isset($_PATCH['entry_id'])) {
         $entry_id = (is_numeric($_PATCH['entry_id'])) ? (int)$_PATCH['entry_id'] : 0;

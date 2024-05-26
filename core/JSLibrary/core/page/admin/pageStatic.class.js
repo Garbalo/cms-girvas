@@ -375,6 +375,13 @@ export class PagePageStatic {
             this.buttons.delete.target.element.style.display = 'none';
             this.buttons.save.target.element.style.display = 'flex';
           }
+
+          let interactiveNotificationLoading = new Interactive('notification');
+          interactiveNotificationLoading.target.isPopup = true;
+          interactiveNotificationLoading.target.setStatusCode(data1.statusCode);
+          interactiveNotificationLoading.target.setContent(data1.message);
+          interactiveNotificationLoading.target.assembly();
+          interactiveNotificationLoading.target.show();
         });
       }
 

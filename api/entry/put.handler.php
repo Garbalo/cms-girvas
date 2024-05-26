@@ -75,6 +75,9 @@ if ($system_core->client->is_logged(2)) {
   }
 
   if ($system_core->urlp->get_path(2) == null) {
+    $entry_title_length_max = 80;
+    $entry_description_length_max = 600;
+
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       $entry_name = isset($_PUT['entry_name']) ? $_PUT['entry_name'] : '';
       $entry_category_id = isset($_PUT['entry_category_id']) ? $_PUT['entry_category_id'] : 1;

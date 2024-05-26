@@ -16,6 +16,7 @@ export class EntryComment {
     this.id = (typeof data.id != 'undefined') ? data.id : 0;
     this.entryID = (typeof data.entryID != 'undefined') ? data.entryID : 0;
     this.index = (typeof data.index != 'undefined') ? data.index : 0;
+    this.indexLabel = (typeof data.indexLabel != 'undefined') ? data.indexLabel : 0;
     this.content = (typeof data.content != 'undefined') ? data.content : '';
     this.authorID = (typeof data.authorID != 'undefined') ? data.authorID : 0;
     this.isHidden = (typeof data.isHidden != 'undefined') ? data.isHidden : false;
@@ -91,6 +92,7 @@ export class EntryComment {
               commentData.entryID = this.entryID;
               commentData.answersLoadingLimit = this.answersLoadingLimit;
               commentData.index = (answersContainerParentElement != null) ? answersContainerParentElement.children.length + 1 : 1;
+              commentData.indexLabel = `${commentParentElement.id}_${commentData.index}`
               
               let entryComment = new EntryComment(this.entry, commentData);
               entryComment.assembly({login: authorData.login, avatarURL: authorData.avatarURL, group: authorData.group}, (commentElement) => {
@@ -446,7 +448,7 @@ export class EntryComment {
   }
 
   assembly(params = {}, callback = (htmlElement) => {}) {
-    let content = (!this.isHidden) ? this.content : this.hiddenReason;
+    let content = (!this.isHidden) ? this.content : `${CMSCore.localeData.PAGE_ENTRY_COMMENT_HIDE_LABEL}: ${this.content}`;
     let authorLogin = (typeof params.login != 'undefined') ? params.login : '';
     let authorAvatarURL = (typeof params.avatarURL != 'undefined') ? params.avatarURL : '';
     let authorGroupTitle = (typeof params.group != 'undefined') ? params.group.title : '';
@@ -500,6 +502,14 @@ export class EntryComment {
 
         if (this.isHidden) {
           this.elementAssembled.classList.add('comment_is-hidden');
+        }
+
+        this.elementAssembled.id = (this.indexLabel == 0) ? `#comment_${this.index}` : this.indexLabel;
+        
+        let indexLinkElement = this.elementAssembled.querySelector(`a[role="entryCommentIndex"]`);
+        if (indexLinkElement != null) {
+          indexLinkElement.setAttribute('href', this.elementAssembled.id);
+          indexLinkElement.innerHTML = this.elementAssembled.id.replace('comment_', '');
         }
 
         callback(this.elementAssembled);

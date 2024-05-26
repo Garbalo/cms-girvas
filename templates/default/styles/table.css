@@ -13,6 +13,7 @@
   border-color: var(--primary-color-3);
 }
 .table__cell {
+  word-wrap: break-word;
   border-color: var(--primary-color-3);
   padding: 10px;
 }
