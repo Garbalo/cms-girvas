@@ -75,6 +75,8 @@ namespace core\PHPLibrary\Page {
         $client_user = ($client_is_logged) ? $this->system_core->client->get_user(1) : null;
 
         if ($client_user != null) {
+          $client_user->init_data(['metadata']);
+
           $entries_not_published_is_visible = ($client_user->get_id() == 1 || $client_user->get_group_id() == 1) ? true : false;
           $only_published = ($entries_not_published_is_visible) ? false : true;
         } else {

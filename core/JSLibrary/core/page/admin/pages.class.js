@@ -40,12 +40,17 @@ export class PagePages {
 
       for (let tableItemPageStatic of tableItemsPagesStatic) {
         let pageStaticID = tableItemPageStatic.getAttribute('data-page-static-id');
+        let pageStaticName = tableItemPageStatic.getAttribute('data-name');
         let buttons = tableItemPageStatic.querySelectorAll('button[role]');
 
         for (let button of buttons) {
           button.addEventListener('click', (event) => {
             if (button.getAttribute('role') == 'page-static-edit') {
               window.location.href = `./page/${pageStaticID}`;
+            }
+            
+            if (button.getAttribute('role') == 'page-static-view') {
+              window.open(`/page/${pageStaticName}`, '_blank');
             }
 
             if (button.getAttribute('role') == 'page-static-remove') {

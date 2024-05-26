@@ -40,12 +40,17 @@ export class PageEntries {
 
       for (let tableItemEntry of tableItemsEntries) {
         let entryID = tableItemEntry.getAttribute('data-entry-id');
+        let entryName = tableItemEntry.getAttribute('data-name');
         let buttons = tableItemEntry.querySelectorAll('button[role]');
 
         for (let button of buttons) {
           button.addEventListener('click', (event) => {
             if (button.getAttribute('role') == 'entry-edit') {
               window.location.href = `./entry/${entryID}`;
+            }
+            
+            if (button.getAttribute('role') == 'entry-view') {
+              window.open(`/entry/${entryName}`, '_blank');
             }
 
             if (button.getAttribute('role') == 'entry-remove') {

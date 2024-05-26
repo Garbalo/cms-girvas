@@ -12,6 +12,7 @@ namespace core\PHPLibrary\Page\Admin {
   use \core\PHPLibrary\InterfacePage as InterfacePage;
   use \core\PHPLibrary\SystemCore as SystemCore;
   use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
+  use \core\PHPLibrary\EntryCategory as EntryCategory;
   use \core\PHPLibrary\Entries as Entries;
   use \core\PHPLibrary\Template\Collector as TemplateCollector;
   use \core\PHPLibrary\Page as Page;
@@ -112,7 +113,11 @@ namespace core\PHPLibrary\Page\Admin {
 
       $entry_number = 1;
       foreach ($entries_array_objects as $entry_object) {
-        $entry_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
+        $entry_object->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata', 'category_id']);
+
+        $entry_category_id = $entry_object->get_category_id();
+        $entry_category_object = new EntryCategory($this->system_core, $entry_category_id);
+        $entry_category_object->init_data(['texts']);
 
         $entry_created_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_created_unix_timestamp());
         $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_published_unix_timestamp());
@@ -120,16 +125,20 @@ namespace core\PHPLibrary\Page\Admin {
 
         $entry_title = $entry_object->get_title($entries_locale_default->get_name());
         $entry_description = $entry_object->get_description($entries_locale_default->get_name());
+        $entry_category_title = $entry_category_object->get_title($cms_locale_name);
 
         array_push($entries_table_items_assembled_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entries/tableItem.tpl', [
           'ENTRY_ID' => $entry_object->get_id(),
+          'ENTRY_NAME' => $entry_object->get_name(),
           'ENTRY_INDEX' => $entry_number,
           'ENTRY_TITLE' => (!empty($entry_title)) ? $entry_title : sprintf('[ TITLE NOT FOUND IN LOCALE %s ]', $entries_locale_default->get_name()),
           'ENTRY_DESCRIPTION' => (!empty($entry_description)) ? $entry_description : sprintf('[ DESCRIPTION NOT FOUND IN LOCALE %s ]', $entries_locale_default->get_name()),
+          'ENTRY_CATEGORY_TITLE' => (!empty($entry_category_title)) ? $entry_category_title : sprintf('[ CATEGORY TITLE NOT FOUND IN LOCALE %s ]', $cms_locale_name),
+          'ENTRY_PUBLISHED_STATUS' => ($entry_object->is_published()) ? 'published' : 'not-published',
           'ENTRY_URL' => $entry_object->get_url(),
           'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
           'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
-          'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp
+          'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
         ]));
 
         $entry_number++;

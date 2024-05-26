@@ -1,7 +1,8 @@
 <tr class="table__row table-users__item" data-user-id="{USER_ID}">
   <td class="table__cell" style="width: fit-content;">#{USER_INDEX}</td>
-  <td class="table__cell">{USER_LOGIN}</td>
+  <td class="table__cell" style="font-weight: 700;">{USER_LOGIN}</td>
   <td class="table__cell">{USER_EMAIL}</td>
+  <td class="table__cell" style="font-weight: 700;">{USER_GROUP_TITLE}</td>
   <td class="table__cell">{USER_CREATED_DATE_TIMESTAMP}</td>
   <td class="table__cell">{USER_UPDATED_DATE_TIMESTAMP}</td>
   <td class="table__cell">

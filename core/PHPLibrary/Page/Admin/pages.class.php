@@ -96,9 +96,11 @@ namespace core\PHPLibrary\Page\Admin {
 
         array_push($pages_static_table_items_assembled_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/pages/tableItem.tpl', [
           'PAGE_STATIC_ID' => $page_static_object->get_id(),
+          'PAGE_STATIC_NAME' => $page_static_object->get_name(),
           'PAGE_STATIC_INDEX' => $page_static_number,
           'PAGE_STATIC_TITLE' => (!empty($page_static_title)) ? $page_static_title : sprintf('[ TITLE NOT FOUND IN LOCALE %s ]', $pages_static_locale_default->get_name()),
           'PAGE_STATIC_DESCRIPTION' => (!empty($page_static_description)) ? $page_static_description : sprintf('[ DESCRIPTION NOT FOUND IN LOCALE %s ]', $pages_static_locale_default->get_name()),
+          'PAGE_STATIC_PUBLISHED_STATUS' => ($page_static_object->is_published()) ? 'published' : 'not-published',
           'PAGE_STATIC_URL' => $page_static_object->get_url(),
           'PAGE_STATIC_CREATED_DATE_TIMESTAMP' => $page_static_created_date_timestamp,
           'PAGE_STATIC_PUBLISHED_DATE_TIMESTAMP' => ($page_static_object->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp : '-',

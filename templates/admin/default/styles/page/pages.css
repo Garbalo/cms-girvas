@@ -6,7 +6,15 @@
  * @license     https://github.com/Andrey-Shestakov/cms-girvas/LICENSE.md
  */
 
- .table-pages-static__item-buttons-list {
+.table-pages-static__item[data-is-published="not-published"] {
+  background-color: var(--common-main-color-2);
+}
+
+.table-pages-static__item td {
+  background-color: inherit !important;
+}
+
+.table-pages-static__item-buttons-list {
   display: flex;
 }
 .buttons-list__item {
