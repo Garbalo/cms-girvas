@@ -448,7 +448,7 @@ export class EntryComment {
   }
 
   assembly(params = {}, callback = (htmlElement) => {}) {
-    let content = (!this.isHidden) ? this.content : `${CMSCore.localeData.PAGE_ENTRY_COMMENT_HIDE_LABEL}: ${this.content}`;
+    let content = (!this.isHidden) ? this.content : `${CMSCore.localeData.PAGE_ENTRY_COMMENT_HIDE_LABEL}: ${this.hiddenReason}`;
     let authorLogin = (typeof params.login != 'undefined') ? params.login : '';
     let authorAvatarURL = (typeof params.avatarURL != 'undefined') ? params.avatarURL : '';
     let authorGroupTitle = (typeof params.group != 'undefined') ? params.group.title : '';

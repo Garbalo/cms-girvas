@@ -116,7 +116,15 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
         }
 
         if (isset($user_birthdate)) {
-          $user_data['metadata']['birthdateUnixTimestamp'] = (is_numeric($user_birthdate)) ? $user_birthdate : strtotime($user_birthdate);
+          $user_birthdate = (is_numeric($user_birthdate)) ? $user_birthdate : strtotime($user_birthdate);
+          
+          if ($user_birthdate <= time()) {
+            $user_data['metadata']['birthdateUnixTimestamp'] = $user_birthdate;
+          } else {
+            $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_INVALID_BIRTHDATE_FUTURE')) : $handler_message;
+            $handler_status_code = (!isset($handler_status_code)) ? 0 : $handler_status_code;
+            $user_is_updated = false;
+          }
         }
 
         if (isset($user_name)) {
