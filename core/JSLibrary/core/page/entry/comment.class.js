@@ -504,12 +504,12 @@ export class EntryComment {
           this.elementAssembled.classList.add('comment_is-hidden');
         }
 
-        this.elementAssembled.id = (this.indexLabel == 0) ? `#comment_${this.index}` : this.indexLabel;
+        this.elementAssembled.id = (this.indexLabel == 0) ? `comment_${this.index}` : this.indexLabel;
         
         let indexLinkElement = this.elementAssembled.querySelector(`a[role="entryCommentIndex"]`);
         if (indexLinkElement != null) {
-          indexLinkElement.setAttribute('href', this.elementAssembled.id);
-          indexLinkElement.innerHTML = this.elementAssembled.id.replace('comment_', '');
+          indexLinkElement.setAttribute('href', `#${this.elementAssembled.id}`);
+          indexLinkElement.innerHTML = `#${this.elementAssembled.id.replace('comment_', '')}`;
         }
 
         callback(this.elementAssembled);
