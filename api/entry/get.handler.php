@@ -16,6 +16,7 @@ if (!defined('IS_NOT_HACKED')) {
 use \core\PHPLibrary\Entry as Entry;
 use \core\PHPLibrary\EntriesCategories as EntriesCategories;
 use \core\PHPLibrary\EntryCategory as EntryCategory;
+use \core\PHPLibrary\Parsedown as Parsedown;
 
 if (is_numeric($system_core->urlp->get_path(2))) {
   if ($system_core->urlp->get_path(3) == 'comments') {
@@ -84,6 +85,10 @@ if (is_numeric($system_core->urlp->get_path(2))) {
       $entry = new Entry($system_core, $entry_id);
       $entry->init_data(['name', 'author_id', 'category_id', 'texts', 'metadata', 'created_unix_timestamp', 'updated_unix_timestamp']);
       $entry_locale = (!is_null($system_core->urlp->get_param('locale'))) ? $system_core->urlp->get_param('locale') : $system_core->configurator->get_database_entry_value('base_locale');
+
+      $parsedown = new Parsedown();
+      $parsedown->setSafeMode(true);
+      $parsedown->setMarkupEscaped(true);
 
       $handler_output_data['entry'] = [];
       $handler_output_data['entry']['id'] = $entry->get_id();

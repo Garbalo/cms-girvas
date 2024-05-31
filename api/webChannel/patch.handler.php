@@ -42,13 +42,13 @@ if ($system_core->client->is_logged(2)) {
             if (!array_key_exists('texts', $web_channel_data)) $web_channel_data['texts'] = [];
             if (!array_key_exists($cms_locale->get_name(), $web_channel_data['texts'])) $web_channel_data['texts'][$cms_locale->get_name()] = [];
 
-            if (array_key_exists($feed_title_input_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars($_PATCH[$feed_title_input_name]);
-            if (array_key_exists($feed_description_textarea_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars($_PATCH[$feed_description_textarea_name]);
+            if (array_key_exists($feed_title_input_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$feed_title_input_name]));
+            if (array_key_exists($feed_description_textarea_name, $_PATCH)) $web_channel_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$feed_description_textarea_name]));
           }
         }
       }
 
-      if (isset($_PATCH['web_channel_name'])) $web_channel_data['name'] = $_PATCH['web_channel_name'];
+      if (isset($_PATCH['web_channel_name'])) $web_channel_data['name'] = urlencode(htmlentities($_PATCH['web_channel_name']));
       if (isset($_PATCH['web_channel_type_id'])) $web_channel_data['type_id'] = $_PATCH['web_channel_type_id'];
       if (isset($_PATCH['web_channel_entries_category_id'])) $web_channel_data['entries_category_id'] = $_PATCH['web_channel_entries_category_id'];
 

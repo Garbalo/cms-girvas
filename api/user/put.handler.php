@@ -25,15 +25,15 @@ if ($system_core->client->is_logged(2)) {
   if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_MANAGEMENT)) {
     $user_creation_allowed = true;
 
-    $user_login = isset($_PUT['user_login']) ? $_PUT['user_login'] : '';
-    $user_email = isset($_PUT['user_email']) ? $_PUT['user_email'] : '';
-    $user_name = isset($_PUT['user_name']) ? $_PUT['user_name'] : '';
-    $user_surname = isset($_PUT['user_surname']) ? $_PUT['user_surname'] : '';
-    $user_patronymic = isset($_PUT['user_patronymic']) ? $_PUT['user_patronymic'] : '';
+    $user_login = isset($_PUT['user_login']) ? htmlspecialchars(str_replace('\'', '"', $_PUT['user_login'])) : '';
+    $user_email = isset($_PUT['user_email']) ? str_replace('\'', '"', $_PUT['user_email']) : '';
+    $user_name = isset($_PUT['user_name']) ? htmlspecialchars(str_replace('\'', '"', $_PUT['user_name'])) : '';
+    $user_surname = isset($_PUT['user_surname']) ? htmlspecialchars(str_replace('\'', '"', $_PUT['user_surname'])) : '';
+    $user_patronymic = isset($_PUT['user_patronymic']) ? htmlspecialchars(str_replace('\'', '"', $_PUT['user_patronymic'])) : '';
     $user_birthdate = isset($_PUT['user_birthdate']) ? $_PUT['user_birthdate'] : 0;
     $user_group_id = isset($_PUT['user_group_id']) ? (int)$_PUT['user_group_id'] : 4;
-    $user_password = isset($_PUT['user_password']) ? $_PUT['user_password'] : '';
-    $user_password_repeat = isset($_PUT['user_password_repeat']) ? $_PUT['user_password_repeat'] : '';
+    $user_password = isset($_PUT['user_password']) ? str_replace('\'', '"', $_PUT['user_password']) : '';
+    $user_password_repeat = isset($_PUT['user_password_repeat']) ? str_replace('\'', '"', $_PUT['user_password']) : '';
 
     if (User::exists_by_login($system_core, $user_login)) {
       $handler_message = (!isset($handler_message)) ? sprintf('API ERROR: %s', $system_core->locale->get_single_value_by_key('API_USER_ERROR_LOGIN_ALREADY_EXISTS')) : $handler_message;
@@ -115,7 +115,7 @@ if ($system_core->client->is_logged(2)) {
 
         if (is_bool($value)) $value = (int)$value;
 
-        $user_data['metadata']['additionalFields'][implode($value_name_parts)] = $value;
+        $user_data['metadata']['additionalFields'][implode($value_name_parts)] = htmlspecialchars(str_replace('\'', '"', $value));
       }
     }
 

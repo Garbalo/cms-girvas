@@ -74,12 +74,12 @@ if ($system_core->client->is_logged(2)) {
               if (!array_key_exists('texts', $users_group_data)) $users_group_data['texts'] = [];
               if (!array_key_exists($cms_locale->get_name(), $users_group_data['texts'])) $users_group_data['texts'][$cms_locale->get_name()] = [];
 
-              if (array_key_exists($users_groups_title_input_name, $_PATCH)) $users_group_data['texts'][$cms_locale->get_name()]['title'] = $_PATCH[$users_groups_title_input_name];
+              if (array_key_exists($users_groups_title_input_name, $_PATCH)) $users_group_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$users_groups_title_input_name]));
             }
           }
         }
 
-        if (isset($_PATCH['user_group_name'])) $users_group_data['name'] = $_PATCH['user_group_name'];
+        if (isset($_PATCH['user_group_name'])) $users_group_data['name'] = urlencode(htmlentities($_PATCH['user_group_name']));
 
         $users_group_is_updated = $users_group->update($users_group_data);
 

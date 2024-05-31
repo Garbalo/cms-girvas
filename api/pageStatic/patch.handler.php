@@ -48,15 +48,15 @@ if ($system_core->client->is_logged(2)) {
               if (!array_key_exists('texts', $page_static_data)) $page_static_data['texts'] = [];
               if (!array_key_exists($cms_locale->get_name(), $page_static_data['texts'])) $page_static_data['texts'][$cms_locale->get_name()] = [];
 
-              if (array_key_exists($title_input_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars($_PATCH[$title_input_name]);
-              if (array_key_exists($description_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars($_PATCH[$description_textarea_name]);
-              if (array_key_exists($content_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['content'] = htmlspecialchars($_PATCH[$content_textarea_name]);
-              if (array_key_exists($keywords_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars($_PATCH[$keywords_textarea_name]), -1, PREG_SPLIT_NO_EMPTY);
+              if (array_key_exists($title_input_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$title_input_name]));
+                if (array_key_exists($description_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['description'] = str_replace('\'', '"', $_PATCH[$description_textarea_name]);
+                if (array_key_exists($content_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['content'] = str_replace('\'', '"', $_PATCH[$content_textarea_name]);
+                if (array_key_exists($keywords_textarea_name, $_PATCH)) $page_static_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars(str_replace('\'', '"', $_PATCH[$keywords_textarea_name])), -1, PREG_SPLIT_NO_EMPTY);
             }
           }
         }
 
-        if (isset($_PATCH['page_static_name'])) $page_static_data['name'] = $_PATCH['page_static_name'];
+        if (isset($_PATCH['page_static_name'])) $page_static_data['name'] = urlencode(htmlentities($_PATCH['page_static_name']));
         if (isset($_PATCH['page_static_preview'])) {
           $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);
           $file_converter = new FileConverter($system_core);

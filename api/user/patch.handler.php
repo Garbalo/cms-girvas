@@ -36,16 +36,16 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
           $user_data['metadata']['isBlocked'] = (int)$_PATCH['user_is_block'];
         }
 
-        if (isset($_PATCH['user_login'])) $user_login = $_PATCH['user_login'];
-        if (isset($_PATCH['user_email'])) $user_email = $_PATCH['user_email'];
-        if (isset($_PATCH['user_name'])) $user_name = $_PATCH['user_name'];
-        if (isset($_PATCH['user_surname'])) $user_surname = $_PATCH['user_surname'];
-        if (isset($_PATCH['user_patronymic'])) $user_patronymic = $_PATCH['user_patronymic'];
+        if (isset($_PATCH['user_login'])) $user_login = htmlspecialchars(str_replace('\'', '"', $_PATCH['user_login']));
+        if (isset($_PATCH['user_email'])) $user_email = str_replace('\'', '"', $_PATCH['user_email']);
+        if (isset($_PATCH['user_name'])) $user_name = htmlspecialchars(str_replace('\'', '"', $_PATCH['user_name']));
+        if (isset($_PATCH['user_surname'])) $user_surname = htmlspecialchars(str_replace('\'', '"', $_PATCH['user_surname']));
+        if (isset($_PATCH['user_patronymic'])) $user_patronymic = htmlspecialchars(str_replace('\'', '"', $_PATCH['user_patronymic']));
         if (isset($_PATCH['user_birthdate'])) $user_birthdate = strtotime($_PATCH['user_birthdate']);
         if (isset($_PATCH['user_group_id'])) $user_group_id = (int)$_PATCH['user_group_id'];
-        if (isset($_PATCH['user_password'])) $user_password = $_PATCH['user_password'];
-        if (isset($_PATCH['user_password_repeat'])) $user_password_repeat = $_PATCH['user_password_repeat'];
-        if (isset($_PATCH['user_password_old'])) $user_password_old = $_PATCH['user_password_old'];
+        if (isset($_PATCH['user_password'])) $user_password = str_replace('\'', '"', $_PATCH['user_password']);
+        if (isset($_PATCH['user_password_repeat'])) $user_password_repeat = str_replace('\'', '"', $_PATCH['user_password_repeat']);
+        if (isset($_PATCH['user_password_old'])) $user_password_old = str_replace('\'', '"', $_PATCH['user_password_old']);
 
         if (isset($user_password) && isset($user_password_repeat)) {
           if (!empty($user_password) || !empty($user_password_repeat)) {
@@ -158,7 +158,7 @@ if ($system_core->client->is_logged(1) || $system_core->client->is_logged(2)) {
               $field_name_transformed .= ($i > 0) ? ucfirst($field_name_parts[$i]) : $field_name_parts[$i];
             }
 
-            $user_data['metadata']['additionalFields'][$field_name_transformed] = $value;
+            $user_data['metadata']['additionalFields'][$field_name_transformed] = htmlspecialchars(str_replace('\'', '"', $value));
           }
         }
 

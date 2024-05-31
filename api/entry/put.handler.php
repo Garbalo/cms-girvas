@@ -25,7 +25,7 @@ if ($system_core->client->is_logged(2)) {
 
   if ($system_core->urlp->get_path(2) == 'category') {
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT)) {
-      $entries_category_name = isset($_PUT['entries_category_name']) ? $_PUT['entries_category_name'] : '';
+      $entries_category_name = isset($_PUT['entries_category_name']) ? urlencode(htmlentities($_PUT['entries_category_name'])) : '';
       $entries_category_parent_id = isset($_PUT['entries_category_parent_id']) ? (int)$_PUT['entries_category_parent_id'] : 0;
       $texts = [];
       $metadata = [];
@@ -41,8 +41,8 @@ if ($system_core->client->is_logged(2)) {
           if (array_key_exists($entries_category_title_input_name, $_PUT) || array_key_exists($entries_category_description_textarea_name, $_PUT)) {
             if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
 
-            if (array_key_exists($entries_category_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars($_PUT[$entries_category_title_input_name]);
-            if (array_key_exists($entries_category_description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = htmlspecialchars($_PUT[$entries_category_description_textarea_name]);
+            if (array_key_exists($entries_category_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$entries_category_title_input_name]));
+            if (array_key_exists($entries_category_description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$entries_category_description_textarea_name]));
           }
         }
       }
@@ -79,7 +79,7 @@ if ($system_core->client->is_logged(2)) {
     $entry_description_length_max = 600;
 
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
-      $entry_name = isset($_PUT['entry_name']) ? $_PUT['entry_name'] : '';
+      $entry_name = isset($_PUT['entry_name']) ? urlencode(htmlentities($_PUT['entry_name'])) : '';
       $entry_category_id = isset($_PUT['entry_category_id']) ? $_PUT['entry_category_id'] : 1;
       $texts = [];
 
@@ -96,10 +96,10 @@ if ($system_core->client->is_logged(2)) {
           if (array_key_exists($entry_title_input_name, $_PUT) || array_key_exists($entry_description_textarea_name, $_PUT) || array_key_exists($entry_content_textarea_name, $_PUT)) {
             if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
 
-            if (array_key_exists($entry_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars($_PUT[$entry_title_input_name]);
-            if (array_key_exists($entry_description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = htmlspecialchars($_PUT[$entry_description_textarea_name]);
-            if (array_key_exists($entry_content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = htmlspecialchars($_PUT[$entry_content_textarea_name]);
-            if (array_key_exists($entry_keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars($_PUT[$entry_keywords_textarea_name]), -1, PREG_SPLIT_NO_EMPTY);
+            if (array_key_exists($entry_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$entry_title_input_name]));
+            if (array_key_exists($entry_description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = str_replace('\'', '"', $_PUT[$entry_description_textarea_name]);
+            if (array_key_exists($entry_content_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['content'] = str_replace('\'', '"', $_PUT[$entry_content_textarea_name]);
+            if (array_key_exists($entry_keywords_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars(str_replace('\'', '"', $_PUT[$entry_keywords_textarea_name])), -1, PREG_SPLIT_NO_EMPTY);
           }
         }
       }

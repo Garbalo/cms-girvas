@@ -25,7 +25,7 @@ if ($system_core->client->is_logged(2)) {
 
   if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_USERS_GROUPS_MANAGEMENT)) {
     if (is_null($system_core->urlp->get_path(2))) {
-      $user_group_name = isset($_PUT['user_group_name']) ? $_PUT['user_group_name'] : '';
+      $user_group_name = isset($_PUT['user_group_name']) ? urlencode(htmlentities($_PUT['user_group_name'])) : '';
 
       if (!empty($user_group_name)) {
         if (!UserGroup::exists_by_name($system_core, $user_group_name)) {
@@ -68,7 +68,7 @@ if ($system_core->client->is_logged(2)) {
                 if (array_key_exists($user_group_title_input_name, $_PUT)) {
                   if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
         
-                  if (array_key_exists($user_group_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$user_group_title_input_name];
+                  if (array_key_exists($user_group_title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$user_group_title_input_name]));
                 }
               }
             }

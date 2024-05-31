@@ -92,6 +92,13 @@ namespace core\PHPLibrary\Page {
             $this->page->breadcrumbs->add($entry->get_title($cms_base_locale_name), sprintf('/entry/%s', $entry->get_name()));
             $this->page->breadcrumbs->assembly();
 
+            /**
+             * @var Parsedown Парсер markdown-разметки
+             */
+            $parsedown = new Parsedown();
+            $parsedown->setSafeMode(true);
+            $parsedown->setMarkupEscaped(true);
+
             //sortColumn=created_unix_timestamp&sortType=desc
             $entry_comments_array = $entry->get_comments([
               'limit' => [2, 0],
@@ -126,6 +133,8 @@ namespace core\PHPLibrary\Page {
               $entry_comment_author_group = $entry_comment_author->get_group();
               $entry_comment_author_group->init_data(['texts']);
 
+              $entry_comment_content = $parsedown->text($entry_comment->get_content());
+
               array_push($entry_comments_transformed_array, TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/entry/comment.tpl', [
                 'COMMENT_ID' => $entry_comment->get_id(),
                 'COMMENT_INDEX' => $entry_comment_index,
@@ -133,7 +142,7 @@ namespace core\PHPLibrary\Page {
                 'COMMENT_AUTHOR_LOGIN' => $entry_comment_author->get_login(),
                 'COMMENT_AUTHOR_AVATAR_URL' => $entry_comment_author->get_avatar_url(64),
                 'COMMENT_AUTHOR_GROUP_TITLE' => $entry_comment_author_group->get_title($cms_base_locale_name),
-                'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment->get_content()
+                'COMMENT_CONTENT' => ($entry_comment->is_hidden()) ? sprintf('%s: %s', $locale_data['PAGE_ENTRY_COMMENT_HIDE_LABEL'], $entry_comment->get_hidden_reason()) : $entry_comment_content
               ]));
 
               $entry_comment_index++;
@@ -144,11 +153,6 @@ namespace core\PHPLibrary\Page {
                 'COMMENTS_ITEMS' => implode($entry_comments_transformed_array)
               ]);
             }
-
-            /**
-             * @var Parsedown Парсер markdown-разметки
-             */
-            $parsedown = new Parsedown();
 
             /**
              * @var string Заголовок записи

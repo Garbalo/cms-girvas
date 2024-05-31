@@ -46,13 +46,13 @@ if ($system_core->client->is_logged(2)) {
                 if (!array_key_exists('texts', $entries_category_data)) $entries_category_data['texts'] = [];
                 if (!array_key_exists($cms_locale->get_name(), $entries_category_data['texts'])) $entries_category_data['texts'][$cms_locale->get_name()] = [];
 
-                if (array_key_exists($entries_category_title_input_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['title'] = $_PATCH[$entries_category_title_input_name];
-                if (array_key_exists($entries_category_description_textarea_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['description'] = $_PATCH[$entries_category_description_textarea_name];
+                if (array_key_exists($entries_category_title_input_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entries_category_title_input_name]));
+                if (array_key_exists($entries_category_description_textarea_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entries_category_description_textarea_name]))
               }
             }
           }
 
-          if (isset($_PATCH['entries_category_name'])) $entries_category_data['name'] = $_PATCH['entries_category_name'];
+          if (isset($_PATCH['entries_category_name'])) $entries_category_data['name'] = urlencode(htmlentities($_PATCH['entries_category_name']));
           if (isset($_PATCH['entries_category_parent_id'])) $entries_category_data['parent_id'] = $_PATCH['entries_category_parent_id'];
           
           if (isset($_PATCH['entries_category_show_index'])) {
@@ -81,7 +81,7 @@ if ($system_core->client->is_logged(2)) {
   } else {
     $entry_title_length_max = 80;
     $entry_description_length_max = 600;
-    
+
     if ($client_user_group->permission_check($client_user_group::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       if (isset($_PATCH['entry_id'])) {
         $entry_id = (is_numeric($_PATCH['entry_id'])) ? (int)$_PATCH['entry_id'] : 0;
@@ -107,15 +107,15 @@ if ($system_core->client->is_logged(2)) {
                 if (!array_key_exists('texts', $entry_data)) $entry_data['texts'] = [];
                 if (!array_key_exists($cms_locale->get_name(), $entry_data['texts'])) $entry_data['texts'][$cms_locale->get_name()] = [];
 
-                if (array_key_exists($entry_title_input_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars($_PATCH[$entry_title_input_name]);
-                if (array_key_exists($entry_description_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars($_PATCH[$entry_description_textarea_name]);
-                if (array_key_exists($entry_content_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['content'] = htmlspecialchars($_PATCH[$entry_content_textarea_name]);
-                if (array_key_exists($entry_keywords_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars($_PATCH[$entry_keywords_textarea_name]), -1, PREG_SPLIT_NO_EMPTY);
+                if (array_key_exists($entry_title_input_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entry_title_input_name]));
+                if (array_key_exists($entry_description_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['description'] = str_replace('\'', '"', $_PATCH[$entry_description_textarea_name]);
+                if (array_key_exists($entry_content_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['content'] = str_replace('\'', '"', $_PATCH[$entry_content_textarea_name]);
+                if (array_key_exists($entry_keywords_textarea_name, $_PATCH)) $entry_data['texts'][$cms_locale->get_name()]['keywords'] = preg_split('/\h*[\,]+\h*/', htmlspecialchars(str_replace('\'', '"', $_PATCH[$entry_keywords_textarea_name])), -1, PREG_SPLIT_NO_EMPTY);
               }
             }
           }
 
-          if (isset($_PATCH['entry_name'])) $entry_data['name'] = $_PATCH['entry_name'];
+          if (isset($_PATCH['entry_name'])) $entry_data['name'] = urlencode(htmlentities($_PATCH['entry_name']));
           if (isset($_PATCH['entry_category_id'])) $entry_data['category_id'] = $_PATCH['entry_category_id'];
           if (isset($_PATCH['entry_preview'])) {
             $file_uploaded_folder_path = sprintf('%s/uploads/media', CMS_ROOT_DIRECTORY);

@@ -120,7 +120,7 @@ if ($system_core->urlp->get_path(2) == 'request-password-reset') {
       $user_login = $user->get_login();
 
       /** @var Template Объект шаблона */
-      $template = new Template($system_core, 'official');
+      $template = new Template($system_core, 'default');
 
       /** @var EmailSender Объект отправителя E-Mail */
       $email_sender = new EmailSender($system_core);

@@ -62,9 +62,9 @@ if ($system_core->client->is_logged(2)) {
           }
 
           if ($system_core->configurator->exists_database_entry_value($setting_name)) {
-            $system_core->configurator->update_database_entry_value($setting_name, $setting_value);
+            $system_core->configurator->update_database_entry_value($setting_name, htmlspecialchars(str_replace('\'', '"', $setting_value)));
           } else {
-            $system_core->configurator->insert_database_entry_value($setting_name, $setting_value);
+            $system_core->configurator->insert_database_entry_value($setting_name, htmlspecialchars(str_replace('\'', '"', $setting_value)));
           }
         }
       }

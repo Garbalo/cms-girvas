@@ -23,7 +23,7 @@ if ($system_core->client->is_logged(2)) {
   $client_user_group->init_data(['permissions']);
 
   if ($client_user_group->permission_check($client_user_group::PERMISSION_ADMIN_FEEDS_MANAGEMENT)) {
-    $web_channel_name = (isset($_PUT['web_channel_name'])) ? $_PUT['web_channel_name'] : '';
+    $web_channel_name = (isset($_PUT['web_channel_name'])) ? urlencode(htmlentities($_PUT['web_channel_name'])) : '';
     
     $web_channel_entries_category_id = (isset($_PUT['web_channel_entries_category_id'])) ? $_PUT['web_channel_entries_category_id'] : 0;
     $web_channel_entries_category_id = (is_numeric($_PUT['web_channel_entries_category_id'])) ? (int)$_PUT['web_channel_entries_category_id'] : 0;
@@ -44,8 +44,8 @@ if ($system_core->client->is_logged(2)) {
         if (array_key_exists($title_input_name, $_PUT) || array_key_exists($description_textarea_name, $_PUT)) {
           if (!array_key_exists($cms_locale->get_name(), $texts)) $texts[$cms_locale->get_name()] = [];
 
-          if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = $_PUT[$title_input_name];
-          if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = $_PUT[$description_textarea_name];
+          if (array_key_exists($title_input_name, $_PUT)) $texts[$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$title_input_name]));
+          if (array_key_exists($description_textarea_name, $_PUT)) $texts[$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$description_textarea_name]));
         }
       }
     }
