@@ -111,7 +111,6 @@ namespace templates\default {
         $this->template->add_style(['href' => 'styles/footer.css', 'rel' => 'stylesheet']);
         $this->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
         
-        $this->template->add_script(['src' => 'popupNotification.class.js'], true);
         $this->template->add_script(['src' => 'common.js'], true);
         $this->template->add_script(['src' => 'core.class.js', 'type' => 'module'], true);
 

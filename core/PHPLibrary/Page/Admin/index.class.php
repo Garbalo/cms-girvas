@@ -31,7 +31,7 @@ namespace core\PHPLibrary\Page\Admin {
 
       $locale_data = $this->system_core->locale->get_data();
 
-      $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/feed/last-releases');
+      $web_channel_importer = new WebChannelImporter($this->system_core, 'https://www.cms-girvas.ru/feed/last-news');
       $web_channel_xml = $web_channel_importer->get([
         'ssl' => [
           'verify_peer' => false,

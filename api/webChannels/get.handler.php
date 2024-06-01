@@ -13,13 +13,15 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
-use \core\PHPLibrary\WebChannel as WebChannel;
+use \core\PHPLibrary\WebChannel as Feed;
+use \core\PHPLibrary\WebChannel\Builder as FeedBuilder;
 
 if ($system_core->urlp->get_path(2) == 'types') {
   $handler_output_data['webChannelsTypes'] = [
-    ['id' => 1, 'name' => 'rss1-0', 'title' => 'RSS 1.0'],
-    ['id' => 2, 'name' => 'rss2-0', 'title' => 'RSS 2.0'],
-    ['id' => 3, 'name' => 'atom', 'title' => 'Atom']
+    ['id' => 1, 'name' => FeedBuilder::get_type_name(1), 'title' => FeedBuilder::get_type_title(1)],
+    ['id' => 2, 'name' => FeedBuilder::get_type_name(2), 'title' => FeedBuilder::get_type_title(2)],
+    ['id' => 3, 'name' => FeedBuilder::get_type_name(3), 'title' => FeedBuilder::get_type_title(3)],
+    //['id' => 4, 'name' => FeedBuilder::get_type_name(4), 'title' => FeedBuilder::get_type_title(4)]
   ];
 }
 

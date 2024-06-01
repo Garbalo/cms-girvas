@@ -147,6 +147,8 @@ export class PageEntriesCategory {
         if (data1.statusCode == 1) {
           entriesCategoriesData = data1.outputData.entriesCategories;
 
+          interactiveParentChoices.target.addItem('', 0);
+
           entriesCategoriesData.forEach((entriesCategory, entriesCategoryIndex) => {
             if (entriesCategoryData.id != entriesCategory.id) {
               interactiveParentChoices.target.addItem(entriesCategory.title, entriesCategory.id);

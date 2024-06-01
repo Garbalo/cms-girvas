@@ -47,7 +47,7 @@ if ($system_core->client->is_logged(2)) {
                 if (!array_key_exists($cms_locale->get_name(), $entries_category_data['texts'])) $entries_category_data['texts'][$cms_locale->get_name()] = [];
 
                 if (array_key_exists($entries_category_title_input_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entries_category_title_input_name]));
-                if (array_key_exists($entries_category_description_textarea_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entries_category_description_textarea_name]))
+                if (array_key_exists($entries_category_description_textarea_name, $_PATCH)) $entries_category_data['texts'][$cms_locale->get_name()]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$entries_category_description_textarea_name]));
               }
             }
           }

@@ -59,12 +59,13 @@ if ($system_core->client->is_logged(2)) {
             case 'security_allowed_emails': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
             case 'seo_site_keywords': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
             case 'security_premoderation_words_filter_list': $setting_value = (!empty($setting_value)) ? json_encode(preg_split('/\s*\,\s*/', $setting_value)) : json_encode([]); break;
+            default: $setting_value = htmlspecialchars(str_replace('\'', '"', $setting_value));
           }
 
           if ($system_core->configurator->exists_database_entry_value($setting_name)) {
-            $system_core->configurator->update_database_entry_value($setting_name, htmlspecialchars(str_replace('\'', '"', $setting_value)));
+            $system_core->configurator->update_database_entry_value($setting_name, $setting_value);
           } else {
-            $system_core->configurator->insert_database_entry_value($setting_name, htmlspecialchars(str_replace('\'', '"', $setting_value)));
+            $system_core->configurator->insert_database_entry_value($setting_name, $setting_value);
           }
         }
       }

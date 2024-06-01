@@ -16,6 +16,7 @@ namespace core\PHPLibrary\WebChannel {
   use \core\PHPLibrary\WebChannel\Specification\RSS1_0 as SpecificationRSS1_0;
   use \core\PHPLibrary\WebChannel\Specification\RSS2_0 as SpecificationRSS2_0;
   use \core\PHPLibrary\WebChannel\Specification\Atom as SpecificationAtom;
+  use \core\PHPLibrary\WebChannel\Specification\YandexTurbo as SpecificationYandexTurbo;
 
   final class Builder {
     public DOMDocument $document;
@@ -39,6 +40,7 @@ namespace core\PHPLibrary\WebChannel {
         EnumSpecification::RSS1_0 => new SpecificationRSS1_0($system_core, $this),
         EnumSpecification::RSS2_0 => new SpecificationRSS2_0($system_core, $this),
         EnumSpecification::Atom => new SpecificationAtom($system_core, $this),
+        EnumSpecification::YandexTurbo => new SpecificationYandexTurbo($system_core, $this),
       };
     }
     
@@ -66,6 +68,7 @@ namespace core\PHPLibrary\WebChannel {
         case 1: return EnumSpecification::RSS1_0;
         case 2: return EnumSpecification::RSS2_0;
         case 3: return EnumSpecification::Atom;
+        case 4: return EnumSpecification::YandexTurbo;
       }
 
       return null;
@@ -76,6 +79,7 @@ namespace core\PHPLibrary\WebChannel {
         case 1: return SpecificationRSS1_0::TYPE_TITLE;
         case 2: return SpecificationRSS2_0::TYPE_TITLE;
         case 3: return SpecificationAtom::TYPE_TITLE;
+        case 4: return SpecificationYandexTurbo::TYPE_TITLE;
       }
 
       return '';
@@ -86,6 +90,7 @@ namespace core\PHPLibrary\WebChannel {
         case 1: return SpecificationRSS1_0::TYPE_NAME;
         case 2: return SpecificationRSS2_0::TYPE_NAME;
         case 3: return SpecificationAtom::TYPE_NAME;
+        case 4: return SpecificationYandexTurbo::TYPE_NAME;
       }
 
       return '';
