@@ -16,6 +16,7 @@ namespace core\PHPLibrary {
     private readonly SystemCore $system_core;
     private int $id;
     private int $category_id;
+    private int $views_count = 0;
     private string $name;
     
     /**
@@ -50,6 +51,28 @@ namespace core\PHPLibrary {
      */
     private function set_id(int $value) : void {
       $this->id = $value;
+    }
+
+    /**
+     * Установить количество просмотров
+     * 
+     * @param int $views
+     * 
+     * @return void
+     */
+    public function set_views_count(int $value) : void {
+      $this->views_count = $value;
+    }
+
+    /**
+     * Получить количество просмотров
+     * 
+     * @param int $value
+     * 
+     * @return int
+     */
+    public function get_views_count() : int {
+      return $this->views_count;
     }
     
     /**

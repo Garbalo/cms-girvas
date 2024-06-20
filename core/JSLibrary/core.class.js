@@ -11,6 +11,7 @@
 import {Locale} from './core/locale.class.js';
 import {Page} from './core/page.class.js';
 import {Client} from './core/client.class.js';
+import {Metrics} from './core/metrics.class.js';
 import {URLParser} from './urlParser.class.js';
 import {Form as StaticForm} from './form.class.js';
 
@@ -26,6 +27,7 @@ export class Core {
     this.pages = {default: {}, admin: {}, install: {}};
     this.locales = {base: {}, admin: {}, install: {}};
     this.client = new Client(this);
+    this.metrics = new Metrics();
     this.debugLevel = 1;
   }
 
@@ -79,6 +81,7 @@ export class Core {
     
       if (this.searchParams.getPathPart(1) == 'admin') {
         if (clientIsLogged) {
+          if (this.searchParams.getPathPart(2) == 'analytics') this.pages.admin.entry = new Page(this, 'admin', 'analytics');
           if (this.searchParams.getPathPart(2) == 'entry') this.pages.admin.entry = new Page(this, 'admin', 'entry');
           if (this.searchParams.getPathPart(2) == 'entries') this.pages.admin.entries = new Page(this, 'admin', 'entries');
           if (this.searchParams.getPathPart(2) == 'entriesCategory') this.pages.admin.entriesCategory = new Page(this, 'admin', 'entriesCategory');

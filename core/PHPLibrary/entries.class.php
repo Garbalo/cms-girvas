@@ -91,7 +91,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_where->add_condition('category_id = :category_id');
 
       if ($only_published) {
-        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+        $query_builder->statement->clause_where->add_condition('AND (metadata::jsonb->>\'is_published\')::boolean = true');
       }
 
       $query_builder->statement->clause_where->assembly();
@@ -140,7 +140,7 @@ namespace core\PHPLibrary {
       $query_builder->statement->clause_where->add_condition('category_id = :category_id');
 
       if ($only_published) {
-        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+        $query_builder->statement->clause_where->add_condition('AND (metadata::jsonb->>\'is_published\')::boolean = true');
       }
 
       $query_builder->statement->clause_where->assembly();

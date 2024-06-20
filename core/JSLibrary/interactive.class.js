@@ -8,8 +8,10 @@
 
 'use strict';
 
-import {Choices} from './interactive/choices.class.js';
+
 import {Button} from './interactive/button.class.js';
+import {Choices} from './interactive/choices.class.js';
+import {Schedule} from './interactive/schedule.class.js';
 import {Modal} from './interactive/modal.class.js';
 import {Form} from './interactive/form.class.js';
 import {Request} from './interactive/request.class.js';
@@ -20,6 +22,11 @@ export class Interactive {
     this.id = this.generateUniqueID();
 
     let data = {};
+
+    if (interactiveName == 'schedule') {
+      data.canvasElement = (Object.hasOwn(interactiveParams, 'canvasElement')) ? interactiveParams.canvasElement : null;
+      data.type = (Object.hasOwn(interactiveParams, 'type')) ? interactiveParams.type : 'linear';
+    }
 
     if (interactiveName == 'modal') {
       data.title = (Object.hasOwn(interactiveParams, 'title')) ? interactiveParams.title : 'Anonymous modal';
@@ -35,8 +42,9 @@ export class Interactive {
     }
 
     switch (interactiveName) {
-      case 'choices': this.target = new Choices(); break;
       case 'button': this.target = new Button(); break;
+      case 'choices': this.target = new Choices(); break;
+      case 'schedule': this.target = new Schedule(data.canvasElement, data.type); break;
       case 'form': this.target = new Form(); break;
       case 'modal': this.target = new Modal(data.title, data.content, data.description, data.width); break;
       case 'request': this.target = new Request(data.method, data.url, data.data); break;

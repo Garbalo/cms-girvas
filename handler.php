@@ -18,8 +18,22 @@ if (!isset($system_core)) {
   die('CMS system core not initialized.');
 }
 
+if ($system_core->urlp->get_path(1) != 'client' && $system_core->urlp->get_path(2) != 'ip-address') {
+  if (isset($_COOKIE['_grv_rest'])) {
+    $address = str_replace('.', '', $_SERVER['REMOTE_ADDR']);
+    
+    if ((int)$_COOKIE['_grv_rest'] != (int)(((int)$address * (round(asin(1) * strlen($address)) << 3)) . strtotime(date('Y/m/d 00:00:00.0')))) {
+      die('{"message":"An attempted hacker attack has been detected.","statusCode":403,"outputData":{}}');
+    }
+  } else {
+    die('{"message":"An attempted hacker attack has been detected.","statusCode":403,"outputData":{}}');
+  }
+}
+
 if (defined('IS_NOT_HACKED')) {
   header(sprintf('Access-Control-Allow-Origin: %s', $system_core->configurator->get('domain')));
+
+  $handler_headers = apache_request_headers();
 
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'PATCH': $_PATCH = $system_core::parse_raw_http_request(file_get_contents('php://input'), $_SERVER['CONTENT_TYPE']); break;
@@ -42,6 +56,12 @@ if (defined('IS_NOT_HACKED')) {
   // Installation API
   if ($system_core->urlp->get_path(1) == 'install') {
     $api_file_path = sprintf('%s/api/installation.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  // Metrics API
+  if ($system_core->urlp->get_path(1) == 'metrics') {
+    $api_file_path = sprintf('%s/api/metrics.api.php', CMS_ROOT_DIRECTORY);
     include_once($api_file_path);
   }
 

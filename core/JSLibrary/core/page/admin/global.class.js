@@ -89,8 +89,6 @@ export class PageGlobal {
               url: `https://repository.cms-girvas.ru/system-checker?currentVersion=${data}`
             });
 
-            request.target.showingNotification = false;
-
             request.target.send().then((data1) => {
               if (data1.statusCode == 1 && data1.outputData.hasOwnProperty('needToUpdate')) {
                 let needToUpdate = data1.outputData.needToUpdate;

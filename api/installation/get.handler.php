@@ -29,7 +29,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       [sprintf('%s curl', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('curl', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s dom', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('dom', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
       [sprintf('%s mbstring', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('mbstring', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
-      [sprintf('%s json', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('json', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))]
+      [sprintf('%s json', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('json', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))],
+      [sprintf('%s zip', $system_core->locale->get_single_value_by_key('API_INSTALLATION_PHP_MODULE_LABEL')), $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED'), (in_array('zip', $php_loaded_extensions) ? $system_core->locale->get_single_value_by_key('API_INSTALLATION_ENABLED') : $system_core->locale->get_single_value_by_key('API_INSTALLATION_DISABLED'))]
     ];
 
     $table_cells_font_color = [
@@ -40,7 +41,8 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
       (in_array('curl', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('dom', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
       (in_array('mbstring', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
-      (in_array('json', $php_loaded_extensions) ? '#209A20' : '#9A2020')
+      (in_array('json', $php_loaded_extensions) ? '#209A20' : '#9A2020'),
+      (in_array('zip', $php_loaded_extensions) ? '#209A20' : '#9A2020')
     ];
 
     $table = $dom_document->createElement('table');
@@ -634,6 +636,26 @@ if (!file_exists(sprintf('%s/INSTALLED', CMS_ROOT_DIRECTORY))) {
     $query_builder->statement->add_column('entries_category_id', 'bigint', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('type_id', 'integer', 'NOT NULL DEFAULT 1');
     $query_builder->statement->add_column('texts', $json_data_type_dms);
+    $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+    $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
+    $query_builder->statement->assembly();
+
+    $database_connection = $database_connector->database->connection;
+    $database_query = $database_connection->prepare($query_builder->statement->assembled);
+
+    $execute = $database_query->execute();
+
+    // =======================
+    // ТАБЛИЦА МЕТРИКИ
+    // =======================
+
+    $query_builder = new \core\PHPLibrary\Database\QueryBuilder($system_core);
+    $query_builder->set_statement_create_table();
+    $query_builder->statement->set_check_exists(true);
+    $query_builder->statement->set_table_name('metrics');
+    $query_builder->statement->add_column('id', 'serial', 'NOT NULL PRIMARY KEY');
+    $query_builder->statement->add_column('date', 'integer', 'NOT NULL');
+    $query_builder->statement->add_column('data', $json_data_type_dms);
     $query_builder->statement->add_column('created_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->add_column('updated_unix_timestamp', 'integer', 'NOT NULL DEFAULT 0');
     $query_builder->statement->assembly();

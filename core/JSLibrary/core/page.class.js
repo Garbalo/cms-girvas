@@ -10,6 +10,7 @@
 
 import {PageProfile as PageDefaultProfile} from './page/profile.class.js';
 import {PageEntry as PageDefaultEntry} from './page/entry.class.js';
+import {PageAnalytics as PageAdminAnalytics} from './page/admin/analytics.class.js';
 import {PageEntry as PageAdminEntry} from './page/admin/entry.class.js';
 import {PageEntries as PageAdminEntries} from './page/admin/entries.class.js';
 import {PageEntriesCategory as PageAdminEntriesCategory} from './page/admin/entriesCategory.class.js';
@@ -50,6 +51,7 @@ export class Page {
 
     if (pageCategory == 'admin') {
       switch (pageName) {
+        case 'analytics': this.target = new PageAdminAnalytics(this, params); break;
         case 'entry': this.target = new PageAdminEntry(this, params); break;
         case 'entries': this.target = new PageAdminEntries(this, params); break;
         case 'entriesCategory': this.target = new PageAdminEntriesCategory(this, params); break;

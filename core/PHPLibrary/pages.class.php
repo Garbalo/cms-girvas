@@ -28,15 +28,23 @@ namespace core\PHPLibrary {
      * Получить все объекты страниц
      *
      * @param  array $params_array
+     * @param   bool 
      * @return array
      */
-    public function get_all(array $params_array = []) : array {
+    public function get_all(array $params_array = [], $only_published = false) : array {
       $query_builder = new DatabaseQueryBuilder($this->system_core);
       $query_builder->set_statement_select();
       $query_builder->statement->add_selections(['id']);
       $query_builder->statement->set_clause_from();
       $query_builder->statement->clause_from->add_table('pages_static');
       $query_builder->statement->clause_from->assembly();
+
+      if ($only_published) {
+        $query_builder->statement->set_clause_where();
+        $query_builder->statement->clause_where->add_condition('(metadata::jsonb->>\'is_published\')::boolean = true');
+        $query_builder->statement->clause_where->assembly();
+      }
+
       $query_builder->statement->set_clause_order_by();
       $query_builder->statement->clause_order_by->set_column('id');
       $query_builder->statement->clause_order_by->set_sort_type('DESC');

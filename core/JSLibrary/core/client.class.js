@@ -18,6 +18,28 @@ import {URLParser} from '../urlParser.class.js';
 export class Client {
   constructor(core) {
     this.core = core;
+    this.setRestHash();
+  }
+
+  setRestHash() {
+    this.getIPAddress().then((ipAddress) => {
+      let date = new Date();
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
+
+      let address = ipAddress.replaceAll('.', '');
+      document.cookie = `_grv_rest=${Number(address) * (Math.round(Math.asin(1) * address.length) << 3)}${date.getTime() / 1000};path=/`;
+    });
+  }
+
+  static setCookie(name, value, days = 30) {
+    let date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+
+    let expires = "expires=" + date.toUTCString();
+    document.cookie = `${name}=${value};${expires};path=/`;
   }
 
   /**
