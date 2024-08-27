@@ -63,7 +63,9 @@ if ($system_core->urlp->get_path(2) == 'registration') {
                       $user = User::create($system_core, $user_login, $user_email, $user_password);
                       
                       if (!is_null($user)) {
-                        $template = new \core\PHPLibrary\Template($system_core, 'official');
+                        $template_base_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
+
+                        $template = new \core\PHPLibrary\Template($system_core, $template_base_name);
                         $registration_submit = $user->create_registration_submit();
 
                         if (is_array($registration_submit)) {

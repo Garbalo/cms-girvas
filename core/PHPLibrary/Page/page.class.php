@@ -41,6 +41,7 @@ namespace core\PHPLibrary\Page {
      */
     public function assembly() : void {
       $this->system_core->template->add_style(['href' => 'styles/page.css', 'rel' => 'stylesheet']);
+      $this->system_core->template->add_style(['href' => 'styles/page/static.css', 'rel' => 'stylesheet']);
 
       $cms_base_locale_setted_name = $this->system_core->configurator->get_database_entry_value('base_locale');
       $url_base_locale_setted_name = $this->system_core->urlp->get_param('locale');
@@ -63,6 +64,12 @@ namespace core\PHPLibrary\Page {
         if (PageStatic::exists_by_name($this->system_core, $page_static_name)) {
           $page_static = PageStatic::get_by_name($this->system_core, $page_static_name);
           $page_static->init_data(['id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
+
+          if (!is_null($url_base_locale_setted_name)) {
+            if ($url_base_locale_setted_name == $cms_base_locale_setted_name) {
+              $this->system_core->template->add_link_canonical(sprintf('/page/%s', $page_static->get_name()));
+            }
+          }
 
           $page_is_visible = false;
 
@@ -107,13 +114,30 @@ namespace core\PHPLibrary\Page {
             $page_static_published_date_timestamp = date('d.m.Y H:i:s', $page_static->get_published_unix_timestamp());
             $page_static_updated_date_timestamp = date('d.m.Y H:i:s', $page_static->get_updated_unix_timestamp());
 
+            $page_static_created_date_timestamp_without_time = date('d.m.Y', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp_without_time = date('d.m.Y', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp_without_time = date('d.m.Y', $page_static->get_updated_unix_timestamp());
+    
+            $page_static_created_date_timestamp_without_date = date('H:i:s', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp_without_date = date('H:i:s', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp_without_date = date('H:i:s', $page_static->get_updated_unix_timestamp());
+
             $page_static_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_created_unix_timestamp());
             $page_static_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_published_unix_timestamp());
             $page_static_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $page_static->get_updated_unix_timestamp());
 
+            $page_static_created_date_timestamp_iso_8601_without_time = date('Y-m-d', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp_iso_8601_without_time = date('Y-m-d', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp_iso_8601_without_time = date('Y-m-d', $page_static->get_updated_unix_timestamp());
+    
+            $page_static_created_date_timestamp_iso_8601_without_date = date('H:i:s', $page_static->get_created_unix_timestamp());
+            $page_static_published_date_timestamp_iso_8601_without_date = date('H:i:s', $page_static->get_published_unix_timestamp());
+            $page_static_updated_date_timestamp_iso_8601_without_date = date('H:i:s', $page_static->get_updated_unix_timestamp());
+
             $this->assembled = TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page.tpl', [
               'PAGE_NAME' => 'static',
               'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/static.tpl', [
+                'PAGE_ID' => $page_static->get_id(),
                 'PAGE_BREADCRUMPS' => $this->page->breadcrumbs->assembled,
                 'PAGE_TITLE' => $page_static_title,
                 'PAGE_CONTENT' => $parsedown->text($page_static_content),
@@ -121,9 +145,21 @@ namespace core\PHPLibrary\Page {
                 'PAGE_CREATED_DATE_TIMESTAMP' => $page_static_created_date_timestamp,
                 'PAGE_PUBLISHED_DATE_TIMESTAMP' => ($page_static->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp : '-',
                 'PAGE_UPDATED_DATE_TIMESTAMP' => $page_static_updated_date_timestamp,
+                'PAGE_CREATED_DATE_TIMESTAMP_WITHOUT_TIME' => $page_static_created_date_timestamp_without_time,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP_WITHOUT_TIME' => ($page_static->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp_without_time : '-',
+                'PAGE_UPDATED_DATE_TIMESTAMP_WITHOUT_TIME' => $page_static_updated_date_timestamp_without_time,
+                'PAGE_CREATED_DATE_TIMESTAMP_WITHOUT_DATE' => $page_static_created_date_timestamp_without_date,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP_WITHOUT_DATE' => ($page_static->get_published_unix_timestamp() > 0) ? $page_static_published_date_timestamp_without_date : '-',
+                'PAGE_UPDATED_DATE_TIMESTAMP_WITHOUT_DATE' => $page_static_updated_date_timestamp_without_date,
                 'PAGE_CREATED_DATE_TIMESTAMP_ISO_8601' => $page_static_created_date_timestamp_iso_8601,
                 'PAGE_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $page_static_published_date_timestamp_iso_8601,
-                'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601' => $page_static_updated_date_timestamp_iso_8601
+                'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601' => $page_static_updated_date_timestamp_iso_8601,
+                'PAGE_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $page_static_created_date_timestamp_iso_8601_without_time,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $page_static_published_date_timestamp_iso_8601_without_time,
+                'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $page_static_updated_date_timestamp_iso_8601_without_time,
+                'PAGE_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $page_static_created_date_timestamp_iso_8601_without_date,
+                'PAGE_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $page_static_published_date_timestamp_iso_8601_without_date,
+                'PAGE_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $page_static_updated_date_timestamp_iso_8601_without_date
               ])
             ]);
           } else {

@@ -42,6 +42,38 @@ export class Client {
     document.cookie = `${name}=${value};${expires};path=/`;
   }
 
+  static existsCookie(name) {
+    let cookie = document.cookie;
+    let cookiePrefix = name + "=";
+    let begin = cookie.indexOf("; " + cookiePrefix);
+
+    if (begin == -1) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static getCookie(name) {
+    let cookie = document.cookie;
+    let cookiePrefix = name + "=";
+    let begin = cookie.indexOf("; " + cookiePrefix);
+
+    if (begin == -1) {
+      begin = cookie.indexOf(cookiePrefix);
+      if (begin != 0) return null;
+    } else {
+      begin += 2;
+      
+      let end = document.cookie.indexOf(";", begin);
+      if (end == -1) {
+        end = cookie.length;
+      }
+    }
+
+    return decodeURI(cookie.substring(begin + cookiePrefix.length, end));
+  }
+
   /**
    * Получение IP-адреса клиента
    * @returns {String}

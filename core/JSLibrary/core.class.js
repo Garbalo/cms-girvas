@@ -29,6 +29,17 @@ export class Core {
     this.client = new Client(this);
     this.metrics = new Metrics();
     this.debugLevel = 1;
+    this.isReady = false;
+
+    this.callbacks = {
+      ready: []
+    };
+  }
+
+  addEventListener(event, callback) {
+    if (this.callbacks.hasOwnProperty(event)) {
+      this.callbacks[event].push(callback);
+    }
   }
 
   /**
@@ -276,12 +287,20 @@ export class Core {
       console.info(stringResult);
     }
   }
+
+  ready() {
+    for (let method of this.callbacks.ready) {
+      method();
+    }
+
+    window.CMSCore.debugLog(1, 'CMSCore', `Core CMS is ready!`, true);
+  }
 }
+
+window.CMSCore = new Core();
 
 // Инициализация клиентского ядра CMS
 document.addEventListener('DOMContentLoaded', async () => {
-  window.CMSCore = new Core();
-
   await window.CMSCore.initLocales().then(() => {
     window.CMSCore.debugLog(1, 'CMSCore', 'Locales initied!', true);
     return window.CMSCore.initPages();
@@ -293,5 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return window.CMSCore.getCMSVersion();
   }).then((version) => {
     window.CMSCore.debugLog(1, 'CMSCore', `Core CMS initied! Current version: ${version}`, true);
+  }).then(() => {
+    window.CMSCore.ready();
   });
 });

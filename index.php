@@ -46,7 +46,7 @@ if ($system_core->urlp->get_path(0) == 'handler') {
   $query_builder->statement->clause_from->add_table('users');
   $query_builder->statement->clause_from->assembly();
   $query_builder->statement->set_clause_where();
-  $query_builder->statement->clause_where->add_condition(sprintf('metadata_json::jsonb->>\'passwordResetToken\' = \'%s\'', $system_core->urlp->get_param('token')));
+  $query_builder->statement->clause_where->add_condition(sprintf('metadata::jsonb->>\'passwordResetToken\' = \'%s\'', $system_core->urlp->get_param('token')));
   $query_builder->statement->clause_where->assembly();
   $query_builder->statement->set_clause_limit(1);
   $query_builder->statement->assembly();
@@ -60,13 +60,15 @@ if ($system_core->urlp->get_path(0) == 'handler') {
   $user = ($result) ? new \core\PHPLibrary\User($system_core, (int)$result['id']) : null;
 
   if (!is_null($user)) {
-    $user->init_data(['login', 'email', 'metadata_json', 'security_hash']);
+    $user->init_data(['login', 'email', 'metadata', 'security_hash']);
     
     if ($user->get_password_reset_created_unix_timestamp() + 600 > time()) {
       $user_new_password = random_int(10000000, 99999999);
-      $user->update(['password_hash' => \core\PHPLibrary\User::password_hash($system_core, $user->get_security_hash(), $user_new_password), 'metadata_json' => ['passwordResetToken' => '', 'passwordResetTokenCreatedTimestamp' => 0]]);
-    
-      $template = new \core\PHPLibrary\Template($system_core, 'official');
+      $user->update(['password_hash' => \core\PHPLibrary\User::password_hash($system_core, $user->get_security_hash(), $user_new_password), 'metadata' => ['passwordResetToken' => '', 'passwordResetTokenCreatedTimestamp' => 0]]);
+      
+      $template_base_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
+
+      $template = new \core\PHPLibrary\Template($system_core, $template_base_name);
 
       $email_sender = new \core\PHPLibrary\EmailSender($system_core);
       $email_sender->set_from_user('CMS GIRVAS', 'support@garbalo.com');

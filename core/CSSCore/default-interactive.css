@@ -171,17 +171,18 @@
   left: 0;
   bottom: 0;
   z-index: 100;
+  backdrop-filter: blur(5px);
 }
 .interactive .interactive__modal {
   display: flex;
   flex-direction: column;
   background-color: var(--primary-color-4);
   box-shadow: 0 0 10px var(--primary-color-2--opacity-0-2);
-  max-width: calc(100% - 200px);
+  max-width: calc(100% - 400px);
 }
 @media (min-width: 400px) {
   .interactive .interactive__modal {
-    max-width: calc(100% - 200px);
+    max-width: calc(100% - 400px);
   }
 }
 @media (max-width: 399px) {

@@ -15,6 +15,13 @@
 
 @font-face {
   font-family: 'Roboto';
+  src: url('../FontsCore/Roboto/italic.ttf');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Roboto';
   src: url('../FontsCore/Roboto/medium.ttf');
   font-weight: 500;
   font-style: normal;

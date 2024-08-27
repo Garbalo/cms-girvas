@@ -92,7 +92,7 @@ if ($system_core->urlp->get_path(2) == 'avatar') {
  * ни логин, ни e-mail не были отправлены, то обработчик вернет ошибку о неполноте
  * введенных данных.
  */
-if ($system_core->urlp->get_path(2) == 'request-password-reset') {
+if ($system_core->urlp->get_path(2) == 'reset') {
   /** @var string Логин или e-mail пользователя */
   $user_login_or_email = (isset($_POST['user_login_or_email'])) ? $_POST['user_login_or_email'] : '';
 
@@ -119,8 +119,10 @@ if ($system_core->urlp->get_path(2) == 'request-password-reset') {
       /** @var string Логин получателя */
       $user_login = $user->get_login();
 
+      $template_base_name = ($system_core->configurator->exists_database_entry_value('base_template')) ? $system_core->configurator->get_database_entry_value('base_template') : 'default';
+
       /** @var Template Объект шаблона */
-      $template = new Template($system_core, 'default');
+      $template = new Template($system_core, $template_base_name);
 
       /** @var EmailSender Объект отправителя E-Mail */
       $email_sender = new EmailSender($system_core);

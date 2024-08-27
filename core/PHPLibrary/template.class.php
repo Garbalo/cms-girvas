@@ -27,6 +27,8 @@ namespace core\PHPLibrary {
     private array $styles = [];
     private array $scripts = [];
 
+    private array $head_links = [];
+
     private array $important_files = [
       'templates/html.tpl',
       'templates/header.tpl',
@@ -308,6 +310,16 @@ namespace core\PHPLibrary {
     }
 
     /**
+     * Добавить каноническую ссылку
+     */
+    public function add_link_canonical(string $href) : void {
+      array_push($this->head_links, [
+        'rel' => 'canonical',
+        'href' => $href
+      ]);
+    }
+
+    /**
      * Получить сборку шаблона ядра
      *
      * @return string
@@ -348,9 +360,116 @@ namespace core\PHPLibrary {
         
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->system_core->locale);
         $this->core->assembled = TemplateCollector::assembly_locale($this->core->assembled, $this->locale);
+        $this->core->assembled = TemplateCollector::assembly($this->core->assembled, $template_tags_array);
+        
+        unset($template_tags_array);
+
+        $document_assembled_encoded = mb_encode_numericentity($this->core->assembled, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
+
+        libxml_use_internal_errors(true);
+
+        $document = new \DOMDocument();
+        $document->loadHTML($document_assembled_encoded);
+
+        $element_head = $document->getElementsByTagName('head');
+
+        /**
+         * Добавление стилей в секцию HEAD
+         */
+
+        $head_styles = $this->get_styles();
+        if (isset($element_head[0])) {
+          if (count($head_styles) > 0) {
+            foreach ($head_styles as $element_index => $element_data) {
+              $element_link = $document->createElement('link');
+
+              if (isset($element_data['rel']) && isset($element_data['href'])) {
+                $style_is_core = false;
+                if (array_key_exists('is_core', $element_data)) {
+                  if ($element_data['is_core'] == true) {
+                    $style_is_core = true;
+                    $style_href = sprintf('/core/CSSCore/%s', $element_data['href']);
+                  }
+                }
+
+                if (!$style_is_core) {
+                  $style_href = ($this->get_category() != 'default') ? sprintf('/templates/%s/%s/%s', $this->get_category(), $this->get_name(), $element_data['href']) : sprintf('/templates/%s/%s', $this->get_name(), $element_data['href']);
+                }
+
+                $attribute_rel = $document->createAttribute('rel');
+                $attribute_rel->value = $element_data['rel'];
+
+                $attribute_href = $document->createAttribute('href');
+                $attribute_href->value = $style_href;
+                
+                $element_link->appendChild($attribute_rel);
+                $element_link->appendChild($attribute_href);
+              }
+
+              $element_head[0]->appendChild($element_link);
+            }
+          }
+        }
+
+        $head_scripts = $this->get_scripts();
+        if (isset($element_head[0])) {
+          if (count($head_scripts) > 0) {
+            foreach ($head_scripts as $element_index => $element_data) {
+              $element_script = $document->createElement('script');
+
+              if ($this->get_category() != 'default') {
+                $script_url = (!$element_data['is_cms_core']) ? sprintf('/templates/%s/%s/%s', $this->get_category(), $this->get_name(), $element_data['src']) : sprintf('/core/JSLibrary/%s', $element_data['src']);
+              } else {
+                $script_url = (!$element_data['is_cms_core']) ? sprintf('/templates/%s/%s', $this->get_name(), $element_data['src']) : sprintf('/core/JSLibrary/%s', $element_data['src']);
+              }
+
+              if (array_key_exists('src', $element_data)) {
+                foreach ($element_data as $attribute_name => $attribute_value) {
+                  if ($attribute_name != 'is_cms_core') {
+                    $attribute = $document->createAttribute($attribute_name);
+                    $attribute->value = ($attribute_name != 'src') ? $attribute_value : $script_url;
+                    
+                    $element_script->appendChild($attribute);
+                  }
+                }
+
+                $element_head[0]->appendChild($element_script);
+              }
+            }
+          }
+        }
+
+
+        if (isset($element_head[0])) {
+          if (count($this->head_links) > 0) {
+            foreach ($this->head_links as $element_index => $element_data) {
+              $element_link = $document->createElement('link');
+              
+              if (isset($element_data['rel']) && isset($element_data['href'])) {
+                if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+                  $protocol = 'https';
+                }
+                else {
+                  $protocol = 'http';
+                }
+
+                $attribute_rel = $document->createAttribute('rel');
+                $attribute_rel->value = $element_data['rel'];
+
+                $attribute_href = $document->createAttribute('href');
+                $attribute_href->value = sprintf('%s://%s%s', $protocol, $_SERVER['HTTP_HOST'], $element_data['href']);
+                
+                $element_link->appendChild($attribute_rel);
+                $element_link->appendChild($attribute_href);
+              }
+
+              $element_head[0]->appendChild($element_link);
+            }
+          }
+        }
 
         // Итоговая сборка шаблона веб-страницы
-        return TemplateCollector::assembly($this->core->assembled, $template_tags_array);
+        return TemplateCollector::assembly($document->saveHTML(), []);
       }
 
       return 'Template core don\'t have a assembled templates files.';

@@ -18,7 +18,7 @@ if (!isset($system_core)) {
   die('CMS system core not initialized.');
 }
 
-if ($system_core->urlp->get_path(1) != 'client' && $system_core->urlp->get_path(2) != 'ip-address') {
+if ($system_core->urlp->get_path(1) != 'client' && $system_core->urlp->get_path(2) != 'ip-address' && $system_core->urlp->get_path(1) != 'install') {
   if (isset($_COOKIE['_grv_rest'])) {
     $address = str_replace('.', '', $_SERVER['REMOTE_ADDR']);
     

@@ -16,6 +16,7 @@ import {Modal} from './interactive/modal.class.js';
 import {Form} from './interactive/form.class.js';
 import {Request} from './interactive/request.class.js';
 import {Notification} from './interactive/notification.class.js';
+import {Slider} from './interactive/slider.class.js';
 
 export class Interactive {
   constructor(interactiveName, interactiveParams = {}) {
@@ -49,6 +50,7 @@ export class Interactive {
       case 'modal': this.target = new Modal(data.title, data.content, data.description, data.width); break;
       case 'request': this.target = new Request(data.method, data.url, data.data); break;
       case 'notification': this.target = new Notification(); break;
+      case 'slider': this.target = new Slider(); break;
     }
 
     if (typeof(window.CMSCore) != 'undefined') {

@@ -173,7 +173,7 @@ namespace core\PHPLibrary {
      * @return string
      */
     public static function get_copyright_string() : string {
-      return sprintf('<div class="footer__copyright">&copy; <a href="%s" title="Garbalo Site Official" target="_blank">%s</a>. 2021 &mdash; %d. All rights reserved. Powered by <a href="%s" title="CMS Site Official" target="_blank">CMS &laquo;GIRVAS&raquo;</a>.</div>', self::CMS_DEVELOPER_SITE_LINK, self::CMS_DEVELOPER_TITLE, date('Y'), self::CMS_PRODUCT_SITE_LINK);
+      return sprintf('<div class="footer__copyright"><span>&copy;&nbsp;<a href="%s" title="Garbalo Site Official" target="_blank">%s</a>.</span> <span>2021&nbsp;&mdash;&nbsp;%d. <span>All&nbsp;rights&nbsp;reserved.</span> <span>Powered&nbsp;by&nbsp;<a href="%s" title="CMS Site Official" target="_blank">CMS&nbsp;&laquo;GIRVAS&raquo;</a>.</span></div>', self::CMS_DEVELOPER_SITE_LINK, self::CMS_DEVELOPER_TITLE, date('Y'), self::CMS_PRODUCT_SITE_LINK);
     }
 
     /**

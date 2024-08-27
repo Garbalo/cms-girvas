@@ -77,9 +77,25 @@ namespace core\PHPLibrary\Page {
         $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_published_unix_timestamp());
         $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry_object->get_updated_unix_timestamp());
 
+        $entry_created_date_timestamp_without_time = date('d.m.Y', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp_without_time = date('d.m.Y', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp_without_time = date('d.m.Y', $entry_object->get_updated_unix_timestamp());
+
+        $entry_created_date_timestamp_without_date = date('H:i:s', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp_without_date = date('H:i:s', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp_without_date = date('H:i:s', $entry_object->get_updated_unix_timestamp());
+
         $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_created_unix_timestamp());
         $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_published_unix_timestamp());
         $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry_object->get_updated_unix_timestamp());
+
+        $entry_created_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry_object->get_updated_unix_timestamp());
+
+        $entry_created_date_timestamp_iso_8601_without_date = date('H:i:s', $entry_object->get_created_unix_timestamp());
+        $entry_published_date_timestamp_iso_8601_without_date = date('H:i:s', $entry_object->get_published_unix_timestamp());
+        $entry_updated_date_timestamp_iso_8601_without_date = date('H:i:s', $entry_object->get_updated_unix_timestamp());
 
         $entry_category_title = $entry_category_object->get_title($cms_base_locale_name);
 
@@ -95,9 +111,21 @@ namespace core\PHPLibrary\Page {
             'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
             'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
             'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+            'ENTRY_CREATED_DATE_TIMESTAMP_WITHOUT_TIME' => $entry_created_date_timestamp_without_time,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP_WITHOUT_TIME' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp_without_time : '-',
+            'ENTRY_UPDATED_DATE_TIMESTAMP_WITHOUT_TIME' => $entry_updated_date_timestamp_without_time,
+            'ENTRY_CREATED_DATE_TIMESTAMP_WITHOUT_DATE' => $entry_created_date_timestamp_without_date,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP_WITHOUT_DATE' => ($entry_object->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp_without_date : '-',
+            'ENTRY_UPDATED_DATE_TIMESTAMP_WITHOUT_DATE' => $entry_updated_date_timestamp_without_date,
             'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
             'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
-            'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
+            'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601,
+            'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_created_date_timestamp_iso_8601_without_time,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_published_date_timestamp_iso_8601_without_time,
+            'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_updated_date_timestamp_iso_8601_without_time,
+            'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_created_date_timestamp_iso_8601_without_date,
+            'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_published_date_timestamp_iso_8601_without_date,
+            'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_updated_date_timestamp_iso_8601_without_date
           ]));
         }
 

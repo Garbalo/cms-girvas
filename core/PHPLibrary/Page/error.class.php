@@ -75,7 +75,7 @@ namespace core\PHPLibrary\Page {
         'PAGE_NAME' => sprintf('error error_%d', $this->error_code),
         'PAGE_CONTENT' => TemplateCollector::assembly_file_content($this->system_core->template, 'templates/page/error.tpl', [
           'ERROR_TITLE' => $this->error_title,
-          'ERROR_DESCRIPTION' => $this->error_desription
+          'ERROR_DESCRIPTION' => sprintf('<div class="page__simple-note">%s</div>', $this->error_desription)
         ])
       ]);
     }

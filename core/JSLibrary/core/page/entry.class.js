@@ -24,8 +24,8 @@ export class PageEntry {
 
   init() {
     let elementEntry = document.querySelector('[role="entry"]');
-    let entryCommentsListElement = elementEntry.querySelector('[role="entryCommentsList"]');
-    let entryID = elementEntry.getAttribute('data-entry-id');
+    let entryCommentsListElement = (elementEntry != null) ? elementEntry.querySelector('[role="entryCommentsList"]') : null;
+    let entryID = (elementEntry != null) ? elementEntry.getAttribute('data-entry-id') : 0;
     this.clientUserPermissions = {};
     this.clientUserData = {};
 
@@ -191,9 +191,8 @@ export class PageEntry {
       return (response.ok) ? response.json() : Promise.reject(response);
     }).then((data) => {
       this.postLoadComments = data.outputData.comments;
-      console.log(this.clientUserPermissions);
       
-      let entryCommentsContainerElement = elementEntry.querySelector('[role="entryCommentsContainer"]');
+      let entryCommentsContainerElement = (elementEntry != null) ? elementEntry.querySelector('[role="entryCommentsContainer"]') : null;
       let interactiveButtonCommentsLoad = new Interactive('button');
       interactiveButtonCommentsLoad.target.setLabel(this.localeBaseData.BUTTON_LOAD_MORE_COMMENTS_LABEL);
       interactiveButtonCommentsLoad.target.setCallback((event) => {
@@ -250,7 +249,10 @@ export class PageEntry {
       });
 
       interactiveButtonCommentsLoad.assembly();
-      entryCommentsContainerElement.append(interactiveButtonCommentsLoad.target.element);
+
+      if (entryCommentsContainerElement != null) {
+        entryCommentsContainerElement.append(interactiveButtonCommentsLoad.target.element);
+      }
       
       return fetch(`/handler/user/@me?localeMessage=${window.CMSCore.locales.base.name}`, {method: 'GET'});
     }).then((response) => {

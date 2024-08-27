@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+
+Disallow: /registration
+Disallow: /entries?*
+Disallow: /entries/*?*

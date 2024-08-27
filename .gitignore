@@ -4,6 +4,7 @@
 /modules/*
 !/modules/README.md
 /OLD/
+/core/PHPLibrary/service.class.php
 /core/configuration.php
 /templates/*
 !/tempaltes/default

@@ -65,6 +65,12 @@ namespace core\PHPLibrary\Page {
           $entry = Entry::get_by_name($this->system_core, $entry_name);
           $entry->init_data(['id', 'category_id', 'texts', 'name', 'created_unix_timestamp', 'updated_unix_timestamp', 'metadata']);
 
+          if (!is_null($url_base_locale_setted_name)) {
+            if ($url_base_locale_setted_name == $cms_base_locale_setted_name) {
+              $this->system_core->template->add_link_canonical(sprintf('/entry/%s', $entry->get_name()));
+            }
+          }
+
           $entry_is_visible = false;
 
           $client_is_logged = $this->system_core->client->is_logged(1);
@@ -167,9 +173,25 @@ namespace core\PHPLibrary\Page {
             $entry_published_date_timestamp = date('d.m.Y H:i:s', $entry->get_published_unix_timestamp());
             $entry_updated_date_timestamp = date('d.m.Y H:i:s', $entry->get_updated_unix_timestamp());
 
+            $entry_created_date_timestamp_without_time = date('d.m.Y', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp_without_time = date('d.m.Y', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp_without_time = date('d.m.Y', $entry->get_updated_unix_timestamp());
+    
+            $entry_created_date_timestamp_without_date = date('H:i:s', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp_without_date = date('H:i:s', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp_without_date = date('H:i:s', $entry->get_updated_unix_timestamp());
+
             $entry_created_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_created_unix_timestamp());
             $entry_published_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_published_unix_timestamp());
             $entry_updated_date_timestamp_iso_8601 = date('Y-m-dH:i:s', $entry->get_updated_unix_timestamp());
+
+            $entry_created_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp_iso_8601_without_time = date('Y-m-d', $entry->get_updated_unix_timestamp());
+    
+            $entry_created_date_timestamp_iso_8601_without_date = date('H:i:s', $entry->get_created_unix_timestamp());
+            $entry_published_date_timestamp_iso_8601_without_date = date('H:i:s', $entry->get_published_unix_timestamp());
+            $entry_updated_date_timestamp_iso_8601_without_date = date('H:i:s', $entry->get_updated_unix_timestamp());
 
             /**
              * @property string Собранный шаблон в виде строки
@@ -188,9 +210,21 @@ namespace core\PHPLibrary\Page {
                 'ENTRY_CREATED_DATE_TIMESTAMP' => $entry_created_date_timestamp,
                 'ENTRY_PUBLISHED_DATE_TIMESTAMP' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp : '-',
                 'ENTRY_UPDATED_DATE_TIMESTAMP' => $entry_updated_date_timestamp,
+                'ENTRY_CREATED_DATE_TIMESTAMP_WITHOUT_TIME' => $entry_created_date_timestamp_without_time,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP_WITHOUT_TIME' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp_without_time : '-',
+                'ENTRY_UPDATED_DATE_TIMESTAMP_WITHOUT_TIME' => $entry_updated_date_timestamp_without_time,
+                'ENTRY_CREATED_DATE_TIMESTAMP_WITHOUT_DATE' => $entry_created_date_timestamp_without_date,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP_WITHOUT_DATE' => ($entry->get_published_unix_timestamp() > 0) ? $entry_published_date_timestamp_without_date : '-',
+                'ENTRY_UPDATED_DATE_TIMESTAMP_WITHOUT_DATE' => $entry_updated_date_timestamp_without_date,
                 'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601' => $entry_created_date_timestamp_iso_8601,
                 'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601' => $entry_published_date_timestamp_iso_8601,
-                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601
+                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601' => $entry_updated_date_timestamp_iso_8601,
+                'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_created_date_timestamp_iso_8601_without_time,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_published_date_timestamp_iso_8601_without_time,
+                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_TIME' => $entry_updated_date_timestamp_iso_8601_without_time,
+                'ENTRY_CREATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_created_date_timestamp_iso_8601_without_date,
+                'ENTRY_PUBLISHED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_published_date_timestamp_iso_8601_without_date,
+                'ENTRY_UPDATED_DATE_TIMESTAMP_ISO_8601_WITHOUT_DATE' => $entry_updated_date_timestamp_iso_8601_without_date
               ])
             ]);
           } else {

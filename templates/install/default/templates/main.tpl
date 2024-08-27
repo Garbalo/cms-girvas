@@ -92,7 +92,6 @@
                   <td class="table__cell cell">
                     <select name="database_dms">
                       <option value="DMS::PostgreSQL">PostgreSQL (рекомендуется)</option>
-                      <option value="DMS::MySQL">MySQL</option>
                     </select>
                   </td>
                 </tr>

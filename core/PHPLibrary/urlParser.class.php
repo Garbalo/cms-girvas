@@ -97,7 +97,7 @@ namespace core\PHPLibrary {
         $url_params_array =  explode('&', $url_parsed['query']);
 
         foreach ($url_params_array as $url_param) {
-          preg_match('/([a-z0-9]*)\=([a-z0-9\-\_\\.\,]*)/i', $url_param, $regex_matches);
+          preg_match('/([a-z0-9\-\_\.]*)\=([a-z0-9\-\_\\.\,]*)/i', $url_param, $regex_matches);
           if (array_key_exists(1, $regex_matches) && array_key_exists(2, $regex_matches)) {
             $param_value = (is_numeric($regex_matches[2])) ? (int)$regex_matches[2] : $regex_matches[2];
             $result[$regex_matches[1]] = $param_value;

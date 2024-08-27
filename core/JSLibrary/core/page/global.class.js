@@ -149,7 +149,7 @@ export class PageGlobal {
               let requestForm = new Interactive('form');
               requestForm.target.init({
                 method: 'POST',
-                action: '/handler/user/request-password-reset&localeMessage=' + window.CMSCore.locales.base.name
+                action: '/handler/user/reset?localeMessage=' + window.CMSCore.locales.base.name
               });
               
               /** Модальное окно для создания запроса на восстановление пароля
