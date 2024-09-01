@@ -9,6 +9,7 @@
 .interactive .interactive__select-imitation {
   display: flex;
   position: relative;
+  box-sizing: border-box;
   justify-content: space-between;
   border: 1px solid #EAEAEA;
   width: 150px;
