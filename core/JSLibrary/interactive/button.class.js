@@ -16,6 +16,7 @@ export class Button {
     this.callback = (event) => {
       event.preventDefault();
     };
+    this.disabled = false;
     this.assembled = null;
   }
 
@@ -25,6 +26,34 @@ export class Button {
 
   hide() {
     this.assembled.style.display = 'none';
+  }
+
+  enable() {
+    this.disabled = false;
+
+    if (this.element != null) {
+      let button = this.element.querySelector('button');
+
+      if (button != null) {
+        button.removeAttribute('disabled');
+      }
+    }
+  }
+
+  disable() {
+    this.disabled = true;
+
+    if (this.element != null) {
+      let button = this.element.querySelector('button');
+
+      if (button != null) {
+        button.setAttribute('disabled', 'disabled');
+      }
+    }
+  }
+
+  isDisabled() {
+    return this.disabled;
   }
 
   setCallback(callbackFunction) {
@@ -45,6 +74,10 @@ export class Button {
     let buttonElement = document.createElement('button');
     buttonElement.classList.add('interactive__button');
     buttonElement.addEventListener('click', this.callback);
+
+    if (this.isDisabled()) {
+      buttonElement.setAttribute('disabled', 'disabled');
+    }
 
     if (this.iconUrl != null) {
       let buttonIconElement = document.createElement('img');

@@ -218,6 +218,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -247,6 +249,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -346,6 +350,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -379,6 +385,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -412,6 +420,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -441,6 +451,8 @@ export class InstallationMaster {
 
           let installationPages = document.querySelectorAll('[data-page-index]');
           installationPages[this.getStepIndex()].appendChild(dynamicDiv);
+
+          this.buttons.nextStepIndex.target.enable();
         });
       });
 
@@ -524,6 +536,10 @@ export class InstallationMaster {
 
           this.buildPanel();
         });
+
+        if (this.getStepIndex() >= 5 && this.buttons.hasOwnProperty('nextStepIndex')) {
+          this.buttons.nextStepIndex.target.disable();
+        }
 
         this.buttons.nextStepIndex.assembly();
       }
