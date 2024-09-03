@@ -17,23 +17,48 @@
   top: 0;
   z-index: 1;
 }
+
 @media (max-width: 1199px) {
   .header {
     top: 64px;
   }
 }
+
+@media (max-width: 800px) {
+  .header {
+    box-sizing: border-box;
+    padding-bottom: 15px;
+    height: fit-content;
+  }
+}
+
 .header__container {
   display: flex;
   justify-content: space-between;
   height: 100%;
 }
+
+@media (max-width: 800px) {
+  .header__container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .header__brand-container {
   box-sizing: border-box;
   display: flex;
   padding-top: 10px;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
   height: 100%;
 }
+
+@media (max-width: 800px) {
+  .header__brand-container {
+    flex: 0 0 64px;
+  }
+}
+
 .header__brand-image {
   height: 100%;
 }

@@ -23,8 +23,16 @@ kozyrev-media.json
 !/templates/install
 !/templates/README.md
 /templates/admin/default/core/
+/templates/admin/default/styles/page/feedback.css
 /templates/admin/default/styles/page/concerts.css
 /templates/admin/default/styles/page/mediabox.css
 /templates/admin/default/templates/page/concerts.tpl
 /templates/admin/default/templates/page/mediabox.tpl
+/templates/admin/default/templates/page/feedback.tpl
+/templates/admin/default/templates/page/feedback/
+/core/PHPLibrary/feedbackMessages.class.php
+/core/PHPLibrary/feedbackMessage.class.php
+/core/PHPLibrary/Page/Admin/feedback.class.php
+/api/feedback/
+/api/feedback.api.php
 .gitignore

@@ -53,6 +53,30 @@ if (defined('IS_NOT_HACKED')) {
     include_once($api_file_path);
   }
 
+  // 
+  if ($system_core->urlp->get_path(1) == 'concert') {
+    $api_file_path = sprintf('%s/api/concert.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  // 
+  if ($system_core->urlp->get_path(1) == 'concerts') {
+    $api_file_path = sprintf('%s/api/concerts.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  // 
+  if ($system_core->urlp->get_path(1) == 'mediabox') {
+    $api_file_path = sprintf('%s/api/mediabox.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
+  // 
+  if ($system_core->urlp->get_path(1) == 'feedback') {
+    $api_file_path = sprintf('%s/api/feedback.api.php', CMS_ROOT_DIRECTORY);
+    include_once($api_file_path);
+  }
+
   // Installation API
   if ($system_core->urlp->get_path(1) == 'install') {
     $api_file_path = sprintf('%s/api/installation.api.php', CMS_ROOT_DIRECTORY);

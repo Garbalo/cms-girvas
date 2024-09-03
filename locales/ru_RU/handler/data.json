@@ -7,6 +7,8 @@
   "API_ERROR_AUTHORIZATION": "Ошибка авторизации.",
   "API_ERROR_SESSION_UNKNOWN": "Сессия не обнаружена.",
   "API_ERROR_SESSION_NOT_DELETED": "Сессия не была удалена.",
+  "API_ERROR_INVALID_DATA_EMAIL": "Обнаружена ошибка: неверно указан E-Mail.",
+  "API_ERROR_INVALID_DATA_PHONE": "Обнаружена ошибка: неверно указан номер телефона.",
   "API_POST_DATA_SUCCESS": "Данные успешно обработаны.",
   "API_GET_DATA_SUCCESS": "Данные успешно получены.",
   "API_PATCH_DATA_SUCCESS": "Данные успешно сохранены.",

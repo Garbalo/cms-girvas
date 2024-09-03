@@ -31,7 +31,7 @@
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MAIN_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item item item_entries" role="mainNavigationEntries">
+        <!-- <li class="admin-navigation-list__item item item_entries" role="mainNavigationEntries">
           <a href="/admin/entries" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
@@ -48,17 +48,43 @@
             </svg>
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_PAGES_LABEL}</div>
           </a>
+        </li> -->
+        <li class="admin-navigation-list__item item item_pages" role="mainNavigationPages">
+          <a href="/admin/concerts" class="admin-navigation-list__item-link" title="Концерты">
+            <svg class="admin-navigation-list__item-icon" version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <path d="M30.6,40.4c3.9,2.7,9.3,1.6,11.9-2.3L56,18.3c2.7-3.9,1.6-9.3-2.3-11.9l-5.9-4c-3.9-2.7-9.3-1.6-11.9,2.3l-0.3,0.5l8.7,10.1 l-2.4,3.6L33.1,8.8l-1.8,2.7l8.7,10.1l-2.4,3.6l-8.7-10.1L27,17.8l8.7,10.1l-2.4,3.6l-8.7-10.1l-2.1,3.1c-2.7,3.9-1.6,9.3,2.3,11.9 l0.9,0.6l-8.3,21.5h-6.1V64h36.4v-5.5H23.4l7-18.3L30.6,40.4z"/>
+            </svg>
+            <div class="admin-navigation-list__item-label">Концерты</div>
+          </a>
         </li>
-        <li class="admin-navigation-list__item item item_media" role="mainNavigationMedia">
-          <a href="/admin/media" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
+        <li class="admin-navigation-list__item item item_pages" role="mainNavigationPages">
+          <a href="/admin/mediabox" class="admin-navigation-list__item-link" title="Концерты">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
               <polygon points="27.9,10 17.6,20.3 17.6,64 60.9,64 60.9,10 "/>
             </svg>
+            <div class="admin-navigation-list__item-label">Медийный уголок</div>
+          </a>
+        </li>
+        <li class="admin-navigation-list__item item item_media" role="mainNavigationMedia">
+          <a href="/admin/media" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_ENTRIES_LABEL}">
+            <svg class="admin-navigation-list__item-icon" version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <path d="M64,36.1V9.7V0H0v58v5.5V64h3.8H64V36.1z M40.9,53.7c-0.7,0.1-21-20.1-21-20.1S11,44.6,4,53.1V4h56v35.2 C52.4,45.1,41.3,53.6,40.9,53.7z"/>
+              <circle cx="41.3" cy="24.4" r="11.8"/>
+            </svg>
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_MEDIA_LABEL}</div>
           </a>
         </li>
-        <li class="admin-navigation-list__item item item_users" role="mainNavigationUsers">
+        <li class="admin-navigation-list__item item item_pages" role="mainNavigationPages">
+          <a href="/admin/feedback" class="admin-navigation-list__item-link" title="Заявки букинга">
+            <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+              <polygon points="12.3,16.5 23.3,5.5 50.6,5.5 50.6,0 15.4,0 4.4,10.9 4.4,57.5 12.3,57.5 "/>
+              <polygon points="27.9,10 17.6,20.3 17.6,64 60.9,64 60.9,10 "/>
+            </svg>
+            <div class="admin-navigation-list__item-label">Заявки букинга</div>
+          </a>
+        </li>
+        <!-- <li class="admin-navigation-list__item item item_users" role="mainNavigationUsers">
           <a href="/admin/users" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_USERS_LABEL}">
             <svg class="admin-navigation-list__item-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16.933332 16.933281" style="enable-background:new 0 0 64 64;" xml:space="preserve">
               <circle cx="8.4666662" cy="6.0901923" r="6" />
@@ -114,7 +140,7 @@
             </svg>
             <div class="admin-navigation-list__item-label">{LANG:MAIN_NAVIGATION_SETTINGS_CMS_LABEL}</div>
           </a>
-        </li>
+        </li> -->
         <li class="admin-navigation-list__item item item_exit" role="mainNavigationExit">
           <a href="#" class="admin-navigation-list__item-link" title="{LANG:MAIN_NAVIGATION_EXIT_CMS_LABEL}">
             <svg class="admin-navigation-list__item-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">

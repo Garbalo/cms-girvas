@@ -161,10 +161,12 @@ export class Core {
     }
 
     for (let element of formsElements) {
-      let staticForm = new StaticForm(element, locale);
-      staticForm.initFormElement();
+      if (!element.hasAttribute('coreignore')) {
+        let staticForm = new StaticForm(element, locale);
+        staticForm.initFormElement();
 
-      staticFormsArray.push(staticForm);
+        staticFormsArray.push(staticForm);
+      }
     }
 
     return staticFormsArray;

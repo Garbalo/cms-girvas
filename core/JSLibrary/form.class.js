@@ -43,6 +43,8 @@ export class Form {
     this.element.addEventListener('submit', (event) => {
       event.preventDefault();
       this.send(event);
+
+      return false;
     });
   }
 
