@@ -49,8 +49,22 @@ final class PageReports implements InterfacePage
       'name' => 'base',
       'iconName' => 'base',
       'link' => '/reports',
-      'permanent' => false,
+      'permanent' => true,
       'isActive' => true
+    ],
+    'content' => [
+      'name' => 'content',
+      'iconName' => 'content',
+      'link' => '/reports/content',
+      'permanent' => false,
+      'isActive' => false
+    ],
+    'security' => [
+      'name' => 'security',
+      'iconName' => 'security',
+      'link' => '/reports/security',
+      'permanent' => false,
+      'isActive' => false
     ],
   ];
 
