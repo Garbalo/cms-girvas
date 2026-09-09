@@ -15,6 +15,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 use \core\PHPLibrary\Feed as Feed;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -24,6 +25,18 @@ if ($CMSCore->client->isLogged(2)) {
 
   if ($clientUserGroup->permissionCheck($clientUserGroup::PERMISSION_ADMIN_FEEDS_MANAGEMENT)) {
     $feedName = (isset($_PUT['feed_name'])) ? urlencode(htmlentities($_PUT['feed_name'])) : '';
+
+    if (empty($feedName)) {
+      $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_FEED_ERROR_NAME_EMPTY');
+      $handlerStatusCode = $handlerStatusCode ?? 0;
+      return;
+    }
+
+    if (Feed::existsByName($CMSCore, $feedName)) {
+      $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_FEED_ERROR_NAME_ALREADY_EXISTS');
+      $handlerStatusCode = $handlerStatusCode ?? 0;
+      return;
+    }
     
     $feedEntriesCategoryID = $_PUT['feed_entries_category_id'] ?? 0;
     $feedEntriesCategoryID = (is_numeric($_PUT['feed_entries_category_id'])) ? (int)$_PUT['feed_entries_category_id'] : 0;
@@ -48,14 +61,41 @@ if ($CMSCore->client->isLogged(2)) {
         if (array_key_exists($inputTitleName, $_PUT) || array_key_exists($textareaDescriptionName, $_PUT)) {
           if (!array_key_exists($CMSLocaleName, $texts)) $texts[$CMSLocaleName] = [];
 
-          if (array_key_exists($inputTitleName, $_PUT)) $texts[$CMSLocaleName]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$inputTitleName]));
-          if (array_key_exists($textareaDescriptionName, $_PUT)) $texts[$CMSLocaleName]['description'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$textareaDescriptionName]));
+          if (array_key_exists($inputTitleName, $_PUT)) {
+            $texts[$CMSLocaleName]['title'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$inputTitleName]));
+          }
+          
+          if (array_key_exists($textareaDescriptionName, $_PUT)) {
+            $texts[$CMSLocaleName]['description'] = htmlspecialchars(str_replace('\'', '"', $_PUT[$textareaDescriptionName]));
+          }
         }
       }
     }
 
     $feed = Feed::create($CMSCore, $feedName, $feedEntriesCategoryID, $feedTypeID, $texts);
+    
     if (!is_null($feed)) {
+      // ============================================================
+      // ЛОГИРОВАНИЕ СОЗДАНИЯ ВЕБ-КАНАЛА (152-ФЗ)
+      // ============================================================
+      $feed->initData(['name', 'texts']);
+      $feedTitle = $feed->getTitle($CMSCore->locale->getName());
+      
+      CMSReport::create(
+        $CMSCore,
+        CMSReport::REPORT_TYPE_ID_AP_FEED_CREATED,
+        [
+          'feedID' => $feed->getID(),
+          'feedName' => $feed->getName(),
+          'feedTitle' => $feedTitle,
+          'feedTypeID' => $feed->getTypeID(),
+          'feedCategoryID' => $feed->getEntriesCategoryID(),
+          'createdByID' => $clientUser->getID(),
+          'createdByLogin' => $clientUser->getLogin(),
+          'ip' => $CMSCore->client->getIPAddress()
+        ]
+      );
+
       $handlerOutputData['feed'] = [];
       $handlerOutputData['feed']['id'] = $feed->getID();
 

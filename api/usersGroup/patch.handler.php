@@ -8,7 +8,7 @@
  * @license     https://gitflic.ru/project/garbalo/cms-girvas/LICENSE.md
  */
 
- if (!defined('IS_NOT_HACKED')) {
+if (!defined('IS_NOT_HACKED')) {
   http_response_code(503);
   die('An attempted hacker attack has been detected.');
 }
@@ -16,6 +16,7 @@
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -30,11 +31,20 @@ if ($CMSCore->client->isLogged(2)) {
       
       if (UserGroup::existsByID($CMSCore, $usersGroupID)) {
         $usersGroup = new UserGroup($CMSCore, $usersGroupID);
-        $usersGroup->initData(['name']);
+        $usersGroup->initData(['name', 'texts', 'permissions']);
+        
+        // Сохраняем старые значения для сравнения
+        $oldValues = [
+          'name' => $usersGroup->getName(),
+          'title' => $usersGroup->getTitle($CMSCore->locale->getName()),
+          'permissions' => $usersGroup->getPermissions(),
+        ];
+        
         $usersGroupnameCurrent = $usersGroup->getName();
 
         if (!UserGroup::existsByName($CMSCore, $userGroupName) || $userGroupName === $usersGroupnameCurrent) {
           $usersGroupData = [];
+          $changedFields = [];
 
           $usersGroupPermissions = 0x0000000000000000;
           $usersGroupPermissionsArray = $_PATCH['user_group_permissions'] ?? [];
@@ -68,6 +78,7 @@ if ($CMSCore->client->isLogged(2)) {
           }
 
           $usersGroupData['permissions'] = $usersGroupPermissions;
+          if ($oldValues['permissions'] != $usersGroupPermissions) $changedFields[] = 'permissions';
 
           $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
           if (count($CMSLocalesNames) > 0) {
@@ -86,16 +97,43 @@ if ($CMSCore->client->isLogged(2)) {
                 if (!array_key_exists('texts', $usersGroupData)) $usersGroupData['texts'] = [];
                 if (!array_key_exists($CMSLocaleName, $usersGroupData['texts'])) $usersGroupData['texts'][$CMSLocaleName] = [];
 
-                if (array_key_exists($usersGroupTitleInputName, $_PATCH)) $usersGroupData['texts'][$CMSLocaleName]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$usersGroupTitleInputName]));
+                if (array_key_exists($usersGroupTitleInputName, $_PATCH)) {
+                  $newTitle = htmlspecialchars(str_replace('\'', '"', $_PATCH[$usersGroupTitleInputName]));
+                  $usersGroupData['texts'][$CMSLocaleName]['title'] = $newTitle;
+                  if ($oldValues['title'] !== $newTitle) $changedFields[] = 'title';
+                }
               }
             }
           }
 
-          if (isset($_PATCH['user_group_name'])) $usersGroupData['name'] = urlencode(htmlentities($_PATCH['user_group_name']));
+          if (isset($_PATCH['user_group_name'])) {
+            $usersGroupData['name'] = urlencode(htmlentities($_PATCH['user_group_name']));
+            if ($oldValues['name'] !== $usersGroupData['name']) $changedFields[] = 'name';
+          }
 
           $usersGroupIsUpdated = $usersGroup->update($usersGroupData);
 
           if ($usersGroupIsUpdated) {
+            // ============================================================
+            // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ (152-ФЗ)
+            // ============================================================
+            $usersGroup->initData(['name', 'texts']);
+            $groupTitle = $usersGroup->getTitle($CMSCore->locale->getName());
+            
+            CMSReport::create(
+              $CMSCore,
+              CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_EDITED,
+              [
+                'groupID' => $usersGroupID,
+                'groupName' => $usersGroup->getName(),
+                'groupTitle' => $groupTitle,
+                'updatedByID' => $clientUser->getID(),
+                'updatedByLogin' => $clientUser->getLogin(),
+                'changedFields' => $changedFields,
+                'ip' => $CMSCore->client->getIPAddress()
+              ]
+            );
+
             $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
             $handlerStatusCode = $handlerStatusCode ?? 1;
           } else {
@@ -110,6 +148,9 @@ if ($CMSCore->client->isLogged(2)) {
         $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_USERS_GROUP_ERROR_NOT_FOUND');
         $handlerStatusCode = $handlerStatusCode ?? 0;
       }
+    } else {
+      $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_INVALID_INPUT_DATA_SET');
+      $handlerStatusCode = $handlerStatusCode ?? 0;
     }
   } else {
     $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_DONT_HAVE_PERMISSIONS');

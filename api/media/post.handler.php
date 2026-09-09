@@ -15,6 +15,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\SystemCore\File\Converter as FileConverter;
 use \core\PHPLibrary\SystemCore\File\EnumFormat as EnumFileFormat;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 use \GdImage as GdImage;
 
 if ($CMSCore->client->isLogged(2)) {
@@ -63,6 +64,8 @@ if ($CMSCore->client->isLogged(2)) {
             if ($CMSCore->configurator->getUploadFileWeightMax() >= filesize($_FILES['mediaFile']['tmp_name']) / 1024 || $CMSCore->configurator->getUploadFileWeightMax() == 0) {
               $fileDirectoryPath = CMS_ROOT_DIRECTORY . '/uploads/media';
               $fileMIMEType = mime_content_type($_FILES['mediaFile']['tmp_name']);
+              $fileSize = filesize($_FILES['mediaFile']['tmp_name']);
+              $originalFileName = $_FILES['mediaFile']['name'];
 
               if (preg_match('/^image\//', $fileMIMEType)) {
                 preg_match('/^image\/([a-z]+)/', $fileMIMEType, $matches);
@@ -143,6 +146,26 @@ if ($CMSCore->client->isLogged(2)) {
                         $fileData['fullname'] = $fileConverted['fileName'];
                         $fileData['extension'] = $fileConverted['extensionNew'];
                         
+                        // ============================================================
+                        // ЛОГИРОВАНИЕ ЗАГРУЗКИ МЕДИА-ФАЙЛА (152-ФЗ)
+                        // ============================================================
+                        CMSReport::create(
+                          $CMSCore,
+                          CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
+                          [
+                            'fileName' => $fileConverted['fileName'],
+                            'originalFileName' => $originalFileName,
+                            'fileExtension' => $fileConverted['extensionNew'],
+                            'fileSize' => $fileSize,
+                            'fileMimeType' => $fileMIMEType,
+                            'imageWidth' => $imageWidth,
+                            'imageHeight' => $imageHeight,
+                            'uploadedByID' => $clientUser->getID(),
+                            'uploadedByLogin' => $clientUser->getLogin(),
+                            'ip' => $CMSCore->client->getIPAddress()
+                          ]
+                        );
+                        
                         $handlerOutputData['file'] = $fileData;
                         $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_POST_FILES_SUCCESS');
                         $handlerStatusCode = $handlerStatusCode ?? 1;
@@ -172,7 +195,7 @@ if ($CMSCore->client->isLogged(2)) {
                 /** @var FileConverter Объект-конвектор файлов */
                 $fileConverter = new FileConverter($CMSCore);
                 /** @var array|bool Конвертированный файл */
-                $fileConverted = $fileConverter->convert($_FILES['mediaFile'], $fileDirectoryPath, $fileExtensionConvertedEnum, true, 4658, $quality);
+                $fileConverted = $fileConverter->convert($_FILES['mediaFile'], $fileDirectoryPath, $fileExtensionConvertedEnum, true, 4658, $quality ?? 0);
 
                 if (is_array($fileConverted) && isset($fileConverted['fileName'], $fileConverted['extensionNew'])) {
                   $fileData = [];
@@ -180,6 +203,24 @@ if ($CMSCore->client->isLogged(2)) {
                   $fileData['isDirectory'] = is_dir(CMS_ROOT_DIRECTORY . $fileData['URL']);
                   $fileData['fullname'] = $fileConverted['fileName'];
                   $fileData['extension'] = $fileConverted['extensionNew'];
+                  
+                  // ============================================================
+                  // ЛОГИРОВАНИЕ ЗАГРУЗКИ МЕДИА-ФАЙЛА (152-ФЗ)
+                  // ============================================================
+                  CMSReport::create(
+                    $CMSCore,
+                    CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
+                    [
+                      'fileName' => $fileConverted['fileName'],
+                      'originalFileName' => $originalFileName,
+                      'fileExtension' => $fileConverted['extensionNew'],
+                      'fileSize' => $fileSize,
+                      'fileMimeType' => $fileMIMEType,
+                      'uploadedByID' => $clientUser->getID(),
+                      'uploadedByLogin' => $clientUser->getLogin(),
+                      'ip' => $CMSCore->client->getIPAddress()
+                    ]
+                  );
                   
                   $handlerOutputData['file'] = $fileData;
                   $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_POST_FILES_SUCCESS');

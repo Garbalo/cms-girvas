@@ -27,6 +27,7 @@ use \core\PHPLibrary\Parsedown as Parsedown;
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\SystemCore\Locale as SystemCoreLocale;
 use \core\PHPLibrary\Template\Collector as ThemeCollector;
+use \core\PHPLibrary\SystemCore\Report as Report;
 
 class PageProfile implements InterfacePage
 {
@@ -96,6 +97,21 @@ class PageProfile implements InterfacePage
 
         $userGroup = $user->getGroup();
         $userGroup->initData(['permissions']);
+
+        // ============================================================
+        // ЛОГИРОВАНИЕ ПРОСМОТРА ПРОФИЛЯ (если смотрит не сам себя)
+        // ============================================================
+        if ($this->CMSCore->urlp->getParam('event') !== 'edit' && $user->getID() !== $profileUser->getID()) {
+          Report::create(
+            $this->CMSCore,
+            Report::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED,
+            [
+              'targetUserID' => $profileUser->getID(),
+              'viewedByID' => $user->getID(),
+              'ip' => $this->CMSCore->client->getIPAddress()
+            ]
+          );
+        }
 
         $fieldsTypes = $CMSConfigurator->existsDatabaseEntryValue('users_additional_field_type')
           ? json_decode($this->CMSCore->configurator->getDatabaseEntryValue('users_additional_field_type'), true)

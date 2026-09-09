@@ -9,6 +9,7 @@
  */
 
 use \core\PHPLibrary\Client\Session as ClientSession;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if (!defined('IS_NOT_HACKED')) {
   http_response_code(503);
@@ -22,9 +23,40 @@ if ($CMSCore->urlp->getPath(2) === 'session-end') {
   $sessionUserID = $session->getUserID();
 
   if ($session !== null && $sessionLevel !== 0) {
+    // Получаем данные пользователя до удаления сессии
+    $user = null;
+    if ($sessionUserID > 0) {
+      $user = new \core\PHPLibrary\User($CMSCore, $sessionUserID);
+      $user->initData(['login']);
+    }
+
+    $clientIP = $CMSCore->client->getIPAddress();
+
+    // ============================================================
+    // ЛОГИРОВАНИЕ ВЫХОДА ИЗ СИСТЕМЫ (152-ФЗ)
+    // ============================================================
+    if ($user !== null) {
+      $reportType = $sessionLevel === 2
+        ? CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL
+        : CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL;
+
+      CMSReport::create(
+        $CMSCore,
+        $reportType,
+        [
+          'userID' => $user->getID(),
+          'ip' => $clientIP,
+          'typeID' => $sessionLevel,
+          'action' => 'logout'
+        ]
+      );
+    }
+
+    // Удаляем сессию
     $session->delete();
 
-    if (!ClientSession::existsByIPAndUserID($CMSCore, $CMSCore->client->getIPAddress(), $sessionUserID, $sessionLevel)) {
+    // Проверяем, что сессия удалена
+    if (!ClientSession::existsByIPAndUserID($CMSCore, $clientIP, $sessionUserID, $sessionLevel)) {
       $handlerMessage = $CMSCore->locale->getSingleValueByKey('API_POST_DATA_SUCCESS');
       $handlerStatusCode = $handlerStatusCode ?? 1;
 

@@ -11,6 +11,7 @@
 use \core\PHPLibrary\SystemCore\Database\Connector as CMSDatabaseConnector;
 use \core\PHPLibrary\Client as Client;
 use \core\PHPLibrary\User as User;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 use \DOMDocument as DOMDocument;
 
 if (!defined('IS_NOT_HACKED')) {
@@ -130,6 +131,24 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
 
                 if (!is_null($admin)) {
                   $admin->update(['emailIsSubmitted' => true, 'metadata' => ['groupID' => 1]]);
+
+                  // ============================================================
+                  // ЛОГИРОВАНИЕ СОЗДАНИЯ АДМИНИСТРАТОРА (152-ФЗ)
+                  // ============================================================
+                  $admin->initData(['login']);
+                  $clientIP = Client::getRealIPAddress();
+                  
+                  CMSReport::create(
+                    $CMSCore,
+                    CMSReport::REPORT_TYPE_ID_AP_USER_CREATED,
+                    [
+                      'userID' => $admin->getID(),
+                      'userLogin' => $admin->getLogin(),
+                      'createdByID' => 0,
+                      'createdByLogin' => 'system',
+                      'ip' => $clientIP
+                    ]
+                  );
 
                   $tipBlockElement->setAttribute('class', 'tip tip_green');
                   $tipBlockElement->nodeValue = $CMSCore->locale->getSingleValueByKey('API_POST_DATA_SUCCESS');

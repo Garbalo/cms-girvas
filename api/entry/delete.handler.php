@@ -25,22 +25,41 @@ if ($CMSCore->client->isLogged(2)) {
   $clientUserGroup->initData(['permissions']);
 
   if ($CMSCore->urlp->getPath(2) === 'category') {
+    // ============================================================
+    // УДАЛЕНИЕ КАТЕГОРИИ
+    // ============================================================
     if ($clientUserGroup->permissionCheck($clientUserGroup::PERMISSION_EDITOR_ENTRIES_CATEGORIES_EDIT)) {
       $entriesCategoryID = is_numeric($_DELETE['entries_category_id']) ? (int) $_DELETE['entries_category_id'] : 0;
       $entries = new Entries($CMSCore);
 
       if (EntryCategory::existsByID($CMSCore, $entriesCategoryID)) {
         if ($entries->getCountByCategoryID($entriesCategoryID) === 0) {
-          $entriesСategory = new EntryCategory($CMSCore, $entriesCategoryID);
-          $entriesСategoryIsDeleted = $entriesСategory->delete();
+          $entriesCategory = new EntryCategory($CMSCore, $entriesCategoryID);
+          $entriesCategory->initData(['name', 'texts']);
+          
+          // Получаем данные категории перед удалением
+          $categoryName = $entriesCategory->getName();
+          $categoryTitle = $entriesCategory->getTitle($CMSCore->locale->getName());
+          
+          // ============================================================
+          // ЛОГИРОВАНИЕ УДАЛЕНИЯ КАТЕГОРИИ (152-ФЗ)
+          // ============================================================
+          CMSReport::create(
+            $CMSCore,
+            CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
+            [
+              'categoryID' => $entriesCategoryID,
+              'categoryName' => $categoryName,
+              'categoryTitle' => $categoryTitle,
+              'deletedByID' => $clientUser->getID(),
+              'deletedByLogin' => $clientUser->getLogin(),
+              'ip' => $CMSCore->client->getIPAddress()
+            ]
+          );
+          
+          $entriesCategoryIsDeleted = $entriesCategory->delete();
 
-          if ($entriesСategoryIsDeleted) {
-            /** @var CMSReport Новый отчет */
-            $CMSReport = CMSReport::create($CMSCore, CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED, [
-              'clientIP' => $CMSCore->client->getIPAddress(),
-              'entriesCategoryID' => $entriesCategoryID
-            ]);
-
+          if ($entriesCategoryIsDeleted) {
             $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_DELETE_DATA_SUCCESS');
             $handlerStatusCode = $handlerStatusCode ?? 1;
           } else {
@@ -51,32 +70,50 @@ if ($CMSCore->client->isLogged(2)) {
           $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ENTRIES_CATEGORY_ERROR_DELETION_EXISTS_ENTRIES');
           $handlerStatusCode = $handlerStatusCode ?? 0;
         }
+      } else {
+        $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ENTRIES_CATEGORY_ERROR_NOT_FOUND');
+        $handlerStatusCode = $handlerStatusCode ?? 0;
       }
     } else {
       $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_DONT_HAVE_PERMISSIONS');
       $handlerStatusCode = $handlerStatusCode ?? 0;
     }
   } else {
+    // ============================================================
+    // УДАЛЕНИЕ ЗАПИСИ
+    // ============================================================
     if ($clientUserGroup->permissionCheck($clientUserGroup::PERMISSION_EDITOR_ENTRIES_EDIT)) {
       if (isset($_DELETE['entry_id'])) {
         $entryID = is_numeric($_DELETE['entry_id']) ? (int) $_DELETE['entry_id'] : 0;
 
         if (Entry::existsByID($CMSCore, $entryID)) {
           $entry = new Entry($CMSCore, $entryID);
-
-          $entry->initData(['texts']);
-          $entryTitle = $entry->getTitle();
+          $entry->initData(['texts', 'name', 'metadata']);
+          
+          // Получаем данные записи перед удалением
+          $entryName = $entry->getName();
+          $entryTitle = $entry->getTitle($CMSCore->locale->getName());
+          
+          // ============================================================
+          // ЛОГИРОВАНИЕ УДАЛЕНИЯ ЗАПИСИ (152-ФЗ)
+          // ============================================================
+          CMSReport::create(
+            $CMSCore,
+            CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED,
+            [
+              'entryID' => $entryID,
+              'entryName' => $entryName,
+              'entryTitle' => $entryTitle,
+              'deletedByID' => $clientUser->getID(),
+              'deletedByLogin' => $clientUser->getLogin(),
+              'ip' => $CMSCore->client->getIPAddress()
+            ]
+          );
 
           $entryIsDeleted = $entry->delete();
 
           if ($entryIsDeleted) {
-            /** @var CMSReport Новый отчет */
-            $CMSReport = CMSReport::create($CMSCore, CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED, [
-              'clientIP' => $CMSCore->client->getIPAddress(),
-              'entryID' => $entryID
-            ]);
-
-            $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_DELETE_DATA_SUCCESS');
+            $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_DELETE_DATA_SUCCESS');
             $handlerStatusCode = $handlerStatusCode ?? 1;
           } else {
             $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_UNKNOWN');
@@ -87,8 +124,11 @@ if ($CMSCore->client->isLogged(2)) {
           $handlerStatusCode = $handlerStatusCode ?? 0;
         }
 
-        $handler_output_data['modalClose'] = true;
-        $handler_output_data['reload'] = true;
+        $handlerOutputData['modalClose'] = true;
+        $handlerOutputData['reload'] = true;
+      } else {
+        $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_INVALID_INPUT_DATA_SET');
+        $handlerStatusCode = $handlerStatusCode ?? 0;
       }
     } else {
       $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_DONT_HAVE_PERMISSIONS');

@@ -15,6 +15,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\Feed as Feed;
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -28,7 +29,18 @@ if ($CMSCore->client->isLogged(2)) {
 
     if (Feed::existsByID($CMSCore, $feedID)) {
       $feed = new Feed($CMSCore, $feedID);
+      $feed->initData(['name', 'texts', 'typeID', 'entriesCategoryID']);
+      
+      // Сохраняем старые значения для сравнения
+      $oldValues = [
+        'name' => $feed->getName(),
+        'title' => $feed->getTitle($CMSCore->locale->getName()),
+        'typeID' => $feed->getTypeID(),
+        'entriesCategoryID' => $feed->getEntriesCategoryID(),
+      ];
+      
       $feedData = [];
+      $changedFields = [];
 
       $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
       if (count($CMSLocalesNames) > 0) {
@@ -46,19 +58,59 @@ if ($CMSCore->client->isLogged(2)) {
             if (!array_key_exists('texts', $feedData)) $feedData['texts'] = [];
             if (!array_key_exists($CMSLocaleName, $feedData['texts'])) $feedData['texts'][$CMSLocaleName] = [];
 
-            if (array_key_exists($inputTitleName, $_PATCH)) $feedData['texts'][$CMSLocaleName]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$inputTitleName]));
-            if (array_key_exists($textareaDescriptionName, $_PATCH)) $feedData['texts'][$CMSLocaleName]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$textareaDescriptionName]));
+            if (array_key_exists($inputTitleName, $_PATCH)) {
+              $feedData['texts'][$CMSLocaleName]['title'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$inputTitleName]));
+              if ($oldValues['title'] !== $feedData['texts'][$CMSLocaleName]['title']) $changedFields[] = 'title';
+            }
+            
+            if (array_key_exists($textareaDescriptionName, $_PATCH)) {
+              $feedData['texts'][$CMSLocaleName]['description'] = htmlspecialchars(str_replace('\'', '"', $_PATCH[$textareaDescriptionName]));
+              $changedFields[] = 'description';
+            }
           }
         }
       }
 
-      if (isset($_PATCH['feed_name'])) $feedData['name'] = urlencode(htmlentities($_PATCH['feed_name']));
-      if (isset($_PATCH['feed_type_id'])) $feedData['typeID'] = $_PATCH['feed_type_id'];
-      if (isset($_PATCH['feed_entries_category_id'])) $feedData['entriesCategoryID'] = $_PATCH['feed_entries_category_id'];
+      if (isset($_PATCH['feed_name'])) {
+        $feedData['name'] = urlencode(htmlentities($_PATCH['feed_name']));
+        if ($oldValues['name'] !== $feedData['name']) $changedFields[] = 'name';
+      }
+      
+      if (isset($_PATCH['feed_type_id'])) {
+        $feedData['typeID'] = $_PATCH['feed_type_id'];
+        if ($oldValues['typeID'] != $_PATCH['feed_type_id']) $changedFields[] = 'type_id';
+      }
+      
+      if (isset($_PATCH['feed_entries_category_id'])) {
+        $feedData['entriesCategoryID'] = $_PATCH['feed_entries_category_id'];
+        if ($oldValues['entriesCategoryID'] != $_PATCH['feed_entries_category_id']) $changedFields[] = 'category_id';
+      }
 
       $feedIsUpdated = $feed->update($feedData);
 
       if ($feedIsUpdated) {
+        // ============================================================
+        // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ВЕБ-КАНАЛА (152-ФЗ)
+        // ============================================================
+        $feed->initData(['name', 'texts']);
+        $feedTitle = $feed->getTitle($CMSCore->locale->getName());
+        
+        CMSReport::create(
+          $CMSCore,
+          CMSReport::REPORT_TYPE_ID_AP_FEED_EDITED,
+          [
+            'feedID' => $feedID,
+            'feedName' => $feed->getName(),
+            'feedTitle' => $feedTitle,
+            'feedTypeID' => $feed->getTypeID(),
+            'feedCategoryID' => $feed->getEntriesCategoryID(),
+            'updatedByID' => $clientUser->getID(),
+            'updatedByLogin' => $clientUser->getLogin(),
+            'changedFields' => $changedFields,
+            'ip' => $CMSCore->client->getIPAddress()
+          ]
+        );
+
         $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
         $handlerStatusCode = $handlerStatusCode ?? 1;
       } else {

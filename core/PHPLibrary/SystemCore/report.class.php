@@ -29,54 +29,78 @@ use \PDOException as PDOException;
 #[\AllowDynamicProperties]
 final class Report
 {
+  // ЗАПИСИ
   public const REPORT_TYPE_ID_AP_ENTRY_CREATED = 11000000;
   public const REPORT_TYPE_ID_AP_ENTRY_EDITED = 11000001;
   public const REPORT_TYPE_ID_AP_ENTRY_DELETED = 11000002;
 
+  // СТАТИЧЕСКИЕ СТРАНИЦЫ
   public const REPORT_TYPE_ID_AP_PAGE_CREATED = 11000003;
   public const REPORT_TYPE_ID_AP_PAGE_EDITED = 11000004;
   public const REPORT_TYPE_ID_AP_PAGE_DELETED = 11000005;
 
+  // МЕДИА-ФАЙЛЫ
   public const REPORT_TYPE_ID_AP_MEDIA_UPLOADED = 11000006;
   public const REPORT_TYPE_ID_AP_MEDIA_DELETED = 11000007;
 
+  // ПОЛЬЗОВАТЕЛИ (АДМИНКА)
   public const REPORT_TYPE_ID_AP_USER_CREATED = 11000008;
   public const REPORT_TYPE_ID_AP_USER_EDITED = 11000009;
   public const REPORT_TYPE_ID_AP_USER_DELETED = 11000010;
 
+  // КАТЕГОРИИ ЗАПИСЕЙ
   public const REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED = 11000011;
   public const REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED = 11000012;
   public const REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED = 11000013;
 
+  // ВЫБОРКИ
   public const REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED = 11000014;
   public const REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED = 11000015;
   public const REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED = 11000016;
 
+  // ФОРМЫ
   public const REPORT_TYPE_ID_AP_FORM_CREATED = 11000017;
   public const REPORT_TYPE_ID_AP_FORM_EDITED = 11000018;
   public const REPORT_TYPE_ID_AP_FORM_DELETED = 11000019;
 
+  // КОНТЕНТ-БЛОКИ
   public const REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED = 11000020;
   public const REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED = 11000021;
   public const REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED = 11000022;
 
+  // КОММЕНТАРИИ
   public const REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED = 11000023;
   public const REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED = 11000024;
   public const REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED = 11000025;
 
-  public const REPORT_TYPE_ID_AP_VIEWING_LOGS = 11000026;
+  // ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ
+  public const REPORT_TYPE_ID_AP_USERS_GROUP_CREATED = 11000026;
+  public const REPORT_TYPE_ID_AP_USERS_GROUP_EDITED = 11000027;
+  public const REPORT_TYPE_ID_AP_USERS_GROUP_DELETED = 11000028;
 
+  // ФИДЫ
+  public const REPORT_TYPE_ID_AP_FEED_CREATED = 11000029;
+  public const REPORT_TYPE_ID_AP_FEED_EDITED = 11000030;
+  public const REPORT_TYPE_ID_AP_FEED_DELETED = 11000031;
+
+  // АВТОРИЗАЦИЯ (АДМИНКА)
   public const REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL = 10000001;
   public const REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS = 10000002;
+
+  // АВТОРИЗАЦИЯ (САЙТ)
   public const REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL = 20000001;
   public const REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS = 20000002;
 
+  // ПОЛЬЗОВАТЕЛИ (САЙТ)
   public const REPORT_TYPE_ID_BASE_USER_CREATED = 11100001;
   public const REPORT_TYPE_ID_BASE_USER_EDITED = 11100002;
   public const REPORT_TYPE_ID_BASE_USER_DELETED = 11100003;
   public const REPORT_TYPE_ID_BASE_USER_BANNED = 11100004;
   public const REPORT_TYPE_ID_BASE_USER_UNBANNED = 11100005;
   public const REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED = 11100006;
+
+  // ПРОСМОТР ЛОГОВ
+  public const REPORT_TYPE_ID_AP_VIEWING_LOGS = 11000032;
 
   /** @var string Ключ шифрования для ПДн в логах */
   private static ?string $encryptionKey = null;

@@ -478,13 +478,14 @@ class ReportsBase implements ReportsPageInterface
     // ============================================================
     // ПОСЛЕДНИЕ СОБЫТИЯ
     // ============================================================
-    
-    // ============================================================
-    // ПОСЛЕДНИЕ СОБЫТИЯ
-    // ============================================================
 
     $recentItems = [];
     $recentReports = array_slice($reports, 0, 15);
+
+    usort($recentReports, function($a, $b) {
+      return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
+    });
+
     foreach ($recentReports as $report) {
       $typeName = $this->getReportTypeName($report->getTypeID());
       // Убираем префикс "REPORT_TYPE_ID_" для получения короткого имени

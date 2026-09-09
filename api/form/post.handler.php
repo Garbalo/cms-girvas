@@ -25,6 +25,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\Form as Form;
 use \core\PHPLibrary\SystemCore\Notifier as CMSNotifier;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 $formName = $CMSCore->urlp->getPath(2);
 
@@ -55,6 +56,31 @@ if (Form::existsByName($CMSCore, $formName)) {
   $result = $form->saveData($formData);
 
   if ($result) {
+    
+    // ============================================================
+    // ЛОГИРОВАНИЕ ОТПРАВКИ ФОРМЫ (152-ФЗ)
+    // Фиксируем факт получения ПДн через форму
+    // ============================================================
+    $formTitle = $form->getTitle($formLocale);
+    $formID = $form->getID();
+    
+    // Собираем названия полей (без значений ПДн!)
+    $fieldNames = [];
+    foreach ($formData as $fieldName => $value) {
+      $fieldNames[] = $fieldName;
+    }
+    
+    CMSReport::create(
+      $CMSCore,
+      CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
+      [
+        'formID' => $formID,
+        'formName' => $formName,
+        'formTitle' => $formTitle,
+        'fields' => $fieldNames, // Только названия полей, без значений!
+        'ip' => $formSendedAuthorIP
+      ]
+    );
 
     $notifierTelegramChatsIDs = $form->getTelegramChatsIDs();
     $notifierTelegramThreatsIDs = $form->getTelegramThreatsIDs();
@@ -97,7 +123,6 @@ if (Form::existsByName($CMSCore, $formName)) {
                 $selectedLabel = '';
                 foreach ($elementData['options'] as $option) {
                   if ($option['value'] === $POSTData) {
-                    // Получаем label для текущей локали
                     $selectedLabel = isset($option['texts'][$formLocale]['label']) 
                       ? $option['texts'][$formLocale]['label'] 
                       : $option['value'];
@@ -158,7 +183,6 @@ if (Form::existsByName($CMSCore, $formName)) {
                 $selectedLabel = '';
                 foreach ($elementData['options'] as $option) {
                   if ($option['value'] === $POSTData) {
-                    // Получаем label для текущей локали
                     $selectedLabel = isset($option['texts'][$formLocale]['label']) 
                       ? $option['texts'][$formLocale]['label'] 
                       : $option['value'];

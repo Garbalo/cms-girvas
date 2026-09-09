@@ -8,7 +8,7 @@
  * @license     https://gitflic.ru/project/garbalo/cms-girvas/LICENSE.md
  */
 
- if (!defined('IS_NOT_HACKED')) {
+if (!defined('IS_NOT_HACKED')) {
   http_response_code(503);
   die('An attempted hacker attack has been detected.');
 }
@@ -16,6 +16,7 @@
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\UserGroup as UserGroup;
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -84,6 +85,25 @@ if ($CMSCore->client->isLogged(2)) {
 
             $userGroup = UserGroup::create($CMSCore, $userGroupName, $texts, $usersGroupPermissions);
             if ($userGroup !== null) {
+              // ============================================================
+              // ЛОГИРОВАНИЕ СОЗДАНИЯ ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ (152-ФЗ)
+              // ============================================================
+              $userGroup->initData(['name', 'texts']);
+              $groupTitle = $userGroup->getTitle($CMSCore->locale->getName());
+              
+              CMSReport::create(
+                $CMSCore,
+                CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_CREATED,
+                [
+                  'groupID' => $userGroup->getID(),
+                  'groupName' => $userGroup->getName(),
+                  'groupTitle' => $groupTitle,
+                  'createdByID' => $clientUser->getID(),
+                  'createdByLogin' => $clientUser->getLogin(),
+                  'ip' => $CMSCore->client->getIPAddress()
+                ]
+              );
+
               $handlerOutputData['usersGroup'] = [];
               $handlerOutputData['usersGroup']['id'] = $userGroup->getID();
 
@@ -105,6 +125,9 @@ if ($CMSCore->client->isLogged(2)) {
         $handlerMessage = $handlerMessage ?? 'API ERROR: ' .$CMSCore->locale->getSingleValueByKey('API_ERROR_INVALID_INPUT_DATA_SET');
         $handlerStatusCode = $handlerStatusCode ?? 0;
       }
+    } else {
+      $handlerMessage = $handlerMessage ?? 'API ERROR: ' .$CMSCore->locale->getSingleValueByKey('API_ERROR_INVALID_INPUT_DATA_SET');
+      $handlerStatusCode = $handlerStatusCode ?? 0;
     }
   } else {
     $handlerMessage = 'API ERROR: ' .$CMSCore->locale->getSingleValueByKey('API_ERROR_DONT_HAVE_PERMISSIONS');
