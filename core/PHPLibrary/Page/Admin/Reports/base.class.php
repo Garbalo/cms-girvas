@@ -147,6 +147,23 @@ class ReportsBase implements ReportsPageInterface
   }
 
   /**
+   * Получить имя типа отчета
+   */
+  private function getReportTypeName(int $typeID): string
+  {
+    $reflectionClass = new \ReflectionClass('\core\PHPLibrary\SystemCore\Report');
+    $constants = $reflectionClass->getConstants();
+
+    foreach ($constants as $name => $value) {
+      if ($value === $typeID) {
+        return $name;
+      }
+    }
+
+    return 'UNKNOWN';
+  }
+
+  /**
    * Получить короткое название типа отчета для отображения
    */
   private function getReportTypeLabel(int $typeID): string
