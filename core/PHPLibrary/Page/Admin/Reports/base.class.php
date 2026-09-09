@@ -574,7 +574,7 @@ class ReportsBase implements ReportsPageInterface
       $login = $this->getUserLogin($userID);
       $items[] = ThemeCollector::assemblyFileContent(
         $this->CMSCore->theme,
-        'templates/page/reports/top_user_item.tpl',
+        'templates/page/reports/base/topUserItem.tpl',
         [
           'USER_RANK' => $rank,
           'USER_LOGIN' => $login,
