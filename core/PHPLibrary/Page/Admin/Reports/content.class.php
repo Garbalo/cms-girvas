@@ -28,7 +28,7 @@ use \core\PHPLibrary\Template as Template;
 use \core\PHPLibrary\Template\Collector as ThemeCollector;
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\Entry as Entry;
-use \core\PHPLibrary\Page as PageStatic;
+use \core\PHPLibrary\PageStatic as PageStatic;
 
 /**
  * Class ReportsContent
