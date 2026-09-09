@@ -32,6 +32,8 @@ use \core\PHPLibrary\Page as Page;
 
 /**
  * Class ReportsContent
+ * 
+ * Отчеты по контенту за последние 7 дней
  */
 class ReportsContent implements ReportsPageInterface
 {
@@ -126,7 +128,7 @@ class ReportsContent implements ReportsPageInterface
       $this->CMSCore,
       $startPeriodUnix,
       $endPeriodUnix,
-      ['id', 'metadata', 'variables']
+      ['id', 'metadata', 'variables', 'createdUnixTimestamp']
     );
 
     $filtered = [];
@@ -155,6 +157,36 @@ class ReportsContent implements ReportsPageInterface
     }
 
     return 'UNKNOWN';
+  }
+
+  /**
+   * Получить короткое название типа отчета для отображения
+   */
+  private function getReportTypeLabel(int $typeID): string
+  {
+    $typeName = $this->getReportTypeName($typeID);
+    $shortTypeName = str_replace('REPORT_TYPE_ID_', '', $typeName);
+    $labelKey = 'REPORT_TYPE_NAME_' . $shortTypeName;
+    
+    return $this->localeData[$labelKey] ?? $typeName;
+  }
+
+  /**
+   * Получить логин пользователя по ID
+   */
+  private function getUserLogin(int $userID): string
+  {
+    if ($userID <= 0) {
+      return 'system';
+    }
+
+    try {
+      $user = new User($this->CMSCore, $userID);
+      $user->initData(['login']);
+      return $user->getLogin();
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
   }
 
   /**
@@ -205,9 +237,8 @@ class ReportsContent implements ReportsPageInterface
       ? $report->getVariables($this->viewer)
       : $report->getVariables();
 
-    $localeData = $this->CMSCore->locale->getData();
     $typeName = $this->getReportTypeName($typeID);
-    $template = $localeData[$typeName] ?? '';
+    $template = $this->localeData[$typeName] ?? '';
 
     if (empty($template)) {
       return $typeName . ' (ID: ' . ($variables['id'] ?? '?') . ')';
@@ -216,9 +247,16 @@ class ReportsContent implements ReportsPageInterface
     $replacements = [
       '{ENTRY_TITLE}' => $this->getEntryTitle($variables['entryID'] ?? $variables['id'] ?? 0),
       '{PAGE_TITLE}' => $this->getPageTitle($variables['pageID'] ?? $variables['id'] ?? 0),
+      '{CATEGORY_TITLE}' => $variables['categoryTitle'] ?? $variables['name'] ?? '',
+      '{FORM_TITLE}' => $variables['formTitle'] ?? $variables['name'] ?? '',
+      '{BLOCK_TITLE}' => $variables['blockTitle'] ?? $variables['name'] ?? '',
+      '{SAMPLE_TITLE}' => $variables['sampleTitle'] ?? $variables['name'] ?? '',
+      '{FILE_NAME}' => $variables['fileName'] ?? $variables['name'] ?? '',
       '{CLIENT_IP}' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
       '{USER_LOGIN}' => $this->getUserLogin($variables['userID'] ?? 0),
-      '{USER_ID}' => $variables['userID'] ?? 0,
+      '{CREATOR_LOGIN}' => $this->getUserLogin($variables['createdByID'] ?? 0),
+      '{UPDATER_LOGIN}' => $this->getUserLogin($variables['updatedByID'] ?? 0),
+      '{DELETER_LOGIN}' => $this->getUserLogin($variables['deletedByID'] ?? 0),
     ];
 
     return str_replace(
@@ -226,24 +264,6 @@ class ReportsContent implements ReportsPageInterface
       array_values($replacements),
       $template
     );
-  }
-
-  /**
-   * Получить логин пользователя по ID
-   */
-  private function getUserLogin(int $userID): string
-  {
-    if ($userID <= 0) {
-      return 'system';
-    }
-
-    try {
-      $user = new \core\PHPLibrary\User($this->CMSCore, $userID);
-      $user->initData(['login']);
-      return $user->getLogin();
-    } catch (\Exception $e) {
-      return 'unknown';
-    }
   }
 
   /**
@@ -256,9 +276,12 @@ class ReportsContent implements ReportsPageInterface
   public function assembly(array $templateValues = []) : void
   {
     $templatePath = 'templates/page/reports/' . $this->name . '.tpl';
-    $localeData = $this->CMSCore->locale->getData();
+    $this->localeData = $this->CMSCore->locale->getData();
 
-    // Типы отчетов по контенту
+    // ============================================================
+    // ТИПЫ ОТЧЕТОВ ПО КОНТЕНТУ
+    // ============================================================
+    
     $contentTypeIDs = [
       CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED,
@@ -268,9 +291,6 @@ class ReportsContent implements ReportsPageInterface
       CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED,
       CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
       CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
@@ -283,96 +303,147 @@ class ReportsContent implements ReportsPageInterface
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED,
       CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
+      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
+      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED,
+      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
     ];
 
     $reports = $this->getReportsByTypes($contentTypeIDs);
 
-    // Статистика по типам контента
+    // ============================================================
+    // СТАТИСТИКА ПО ТИПАМ КОНТЕНТА
+    // ============================================================
+    
     $stats = [
-      'entries_created' => 0,
-      'entries_edited' => 0,
-      'entries_deleted' => 0,
-      'pages_created' => 0,
-      'pages_edited' => 0,
-      'pages_deleted' => 0,
-      'media_uploaded' => 0,
-      'media_deleted' => 0,
-      'categories_created' => 0,
-      'categories_edited' => 0,
-      'categories_deleted' => 0,
-      'samples_created' => 0,
-      'samples_edited' => 0,
-      'samples_deleted' => 0,
-      'forms_created' => 0,
-      'forms_edited' => 0,
-      'forms_deleted' => 0,
-      'comments_created' => 0,
-      'comments_edited' => 0,
-      'comments_deleted' => 0,
-      'blocks_created' => 0,
-      'blocks_edited' => 0,
-      'blocks_deleted' => 0,
+      'entries_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED])),
+      'entries_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED])),
+      'entries_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED])),
+      'pages_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_PAGE_CREATED])),
+      'pages_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_PAGE_EDITED])),
+      'pages_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED])),
+      'media_uploaded' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED])),
+      'media_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED])),
+      'categories_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED])),
+      'categories_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED])),
+      'categories_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED])),
+      'samples_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED])),
+      'samples_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED])),
+      'samples_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED])),
+      'forms_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED])),
+      'forms_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FORM_EDITED])),
+      'forms_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED])),
+      'comments_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED])),
+      'comments_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED])),
+      'comments_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED])),
+      'blocks_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED])),
+      'blocks_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED])),
+      'blocks_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED])),
     ];
 
-    $items = [];
-    foreach ($reports as $report) {
+    // ============================================================
+    // ПОСЛЕДНИЕ СОБЫТИЯ ПО КОНТЕНТУ
+    // ============================================================
+    
+    $recentItems = [];
+    $recentReports = array_slice($reports, 0, 20);
+    foreach ($recentReports as $report) {
+      $typeLabel = $this->getReportTypeLabel($report->getTypeID());
+      $description = $this->formatReportDescription($report);
+      $createdDate = date('d.m.Y H:i:s', $report->getCreatedUnixTimestamp());
+      
       $variables = $this->viewer !== null
         ? $report->getVariables($this->viewer)
         : $report->getVariables();
 
-      $typeID = $report->getTypeID();
-
-      // Сбор статистики
-      switch ($typeID) {
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED: $stats['entries_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED: $stats['entries_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED: $stats['entries_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_PAGE_CREATED: $stats['pages_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_PAGE_EDITED: $stats['pages_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED: $stats['pages_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED: $stats['media_uploaded']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED: $stats['media_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED: $stats['categories_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED: $stats['categories_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED: $stats['categories_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED: $stats['samples_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED: $stats['samples_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED: $stats['samples_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED: $stats['forms_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_FORM_EDITED: $stats['forms_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED: $stats['forms_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED: $stats['comments_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED: $stats['comments_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED: $stats['comments_deleted']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED: $stats['blocks_created']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED: $stats['blocks_edited']++; break;
-        case CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED: $stats['blocks_deleted']++; break;
+      // Определяем статус события
+      $statusClass = 'info';
+      if (in_array($report->getTypeID(), [
+        CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_PAGE_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
+      ])) {
+        $statusClass = 'success';
+      } elseif (in_array($report->getTypeID(), [
+        CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
+      ])) {
+        $statusClass = 'danger';
       }
 
-      $description = $this->formatReportDescription($report);
-      $createdDate = date('d.m.Y H:i:s', $report->getCreatedUnixTimestamp());
-      $typeName = $this->getReportTypeName($typeID);
-      $typeLabel = $localeData[$typeName] ?? $typeName;
-
-      $items[] = ThemeCollector::assemblyFileContent(
+      $recentItems[] = ThemeCollector::assemblyFileContent(
         $this->CMSCore->theme,
         'templates/page/reports/item.tpl',
         [
-          'REPORT_TYPE' => $typeLabel,
+          'REPORT_TYPE' => '{LANG:' . $typeLabel . '}',
           'REPORT_DESCRIPTION' => $description,
           'REPORT_DATE' => $createdDate,
-          'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0'
+          'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
+          'REPORT_STATUS_CLASS' => $statusClass
         ]
       );
     }
 
+    // ============================================================
+    // СБОРКА ШАБЛОНА
+    // ============================================================
+
     $this->assembled = ThemeCollector::assemblyFileContent(
       $this->CMSCore->theme,
       $templatePath,
-      array_merge($stats, [
-        'REPORTS_ITEMS' => implode("\n", $items),
-        'TOTAL_COUNT' => count($items)
-      ])
+      [
+        // Статистика по контенту
+        'CONTENT_ENTRIES_CREATED' => $stats['entries_created'],
+        'CONTENT_ENTRIES_EDITED' => $stats['entries_edited'],
+        'CONTENT_ENTRIES_DELETED' => $stats['entries_deleted'],
+        'CONTENT_PAGES_CREATED' => $stats['pages_created'],
+        'CONTENT_PAGES_EDITED' => $stats['pages_edited'],
+        'CONTENT_PAGES_DELETED' => $stats['pages_deleted'],
+        'CONTENT_MEDIA_UPLOADED' => $stats['media_uploaded'],
+        'CONTENT_MEDIA_DELETED' => $stats['media_deleted'],
+        'CONTENT_CATEGORIES_CREATED' => $stats['categories_created'],
+        'CONTENT_CATEGORIES_EDITED' => $stats['categories_edited'],
+        'CONTENT_CATEGORIES_DELETED' => $stats['categories_deleted'],
+        'CONTENT_SAMPLES_CREATED' => $stats['samples_created'],
+        'CONTENT_SAMPLES_EDITED' => $stats['samples_edited'],
+        'CONTENT_SAMPLES_DELETED' => $stats['samples_deleted'],
+        'CONTENT_FORMS_CREATED' => $stats['forms_created'],
+        'CONTENT_FORMS_EDITED' => $stats['forms_edited'],
+        'CONTENT_FORMS_DELETED' => $stats['forms_deleted'],
+        'CONTENT_COMMENTS_CREATED' => $stats['comments_created'],
+        'CONTENT_COMMENTS_EDITED' => $stats['comments_edited'],
+        'CONTENT_COMMENTS_DELETED' => $stats['comments_deleted'],
+        'CONTENT_BLOCKS_CREATED' => $stats['blocks_created'],
+        'CONTENT_BLOCKS_EDITED' => $stats['blocks_edited'],
+        'CONTENT_BLOCKS_DELETED' => $stats['blocks_deleted'],
+        'TOTAL_CONTENT_ACTIONS' => count($reports),
+        'RECENT_EVENTS' => implode("\n", $recentItems)
+      ]
     );
+  }
+
+  /**
+   * Фильтровать отчеты по типам
+   */
+  private function filterReports(array $reportsObjects, array $typeIDs) : array
+  {
+    $filtered = [];
+    foreach ($reportsObjects as $report) {
+      $typeID = $report->getTypeID();
+      if (in_array($typeID, $typeIDs, true)) {
+        $filtered[] = $report;
+      }
+    }
+    return $filtered;
   }
 }
