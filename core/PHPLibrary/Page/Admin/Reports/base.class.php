@@ -147,20 +147,14 @@ class ReportsBase implements ReportsPageInterface
   }
 
   /**
-   * Получить имя типа отчета
+   * Получить короткое название типа отчета для отображения
    */
-  private function getReportTypeName(int $typeID): string
+  private function getReportTypeLabel(int $typeID): string
   {
-    $reflectionClass = new \ReflectionClass('\core\PHPLibrary\SystemCore\Report');
-    $constants = $reflectionClass->getConstants();
-
-    foreach ($constants as $name => $value) {
-      if ($value === $typeID) {
-        return $name;
-      }
-    }
-
-    return 'UNKNOWN';
+    $typeName = $this->getReportTypeName($typeID);
+    $labelKey = 'REPORT_TYPE_NAME_' . $typeName;
+    
+    return $this->localeData[$labelKey] ?? $typeName;
   }
 
   /**
@@ -471,21 +465,15 @@ class ReportsBase implements ReportsPageInterface
     $recentItems = [];
     $recentReports = array_slice($reports, 0, 15);
     foreach ($recentReports as $report) {
-      $description = $this->formatReportDescription($report);
-      $createdDate = date('d.m.Y H:i:s', $report->getCreatedUnixTimestamp());
-      $typeName = $this->getReportTypeName($report->getTypeID());
-      $typeLabel = $this->localeData[$typeName] ?? $typeName;
-      
-      $variables = $this->viewer !== null
-        ? $report->getVariables($this->viewer)
-        : $report->getVariables();
+      $typeLabel = $this->getReportTypeLabel($report->getTypeID()); // Короткое название
+      $description = $this->formatReportDescription($report);      // Полное описание
 
       $recentItems[] = ThemeCollector::assemblyFileContent(
         $this->CMSCore->theme,
         'templates/page/reports/item.tpl',
         [
-          'REPORT_TYPE' => $typeLabel,
-          'REPORT_DESCRIPTION' => $description,
+          'REPORT_TYPE' => $typeLabel,        // Например: "Просмотр ПДн"
+          'REPORT_DESCRIPTION' => $description, // Например: "Просмотр ПДн пользователя oauth_http_user (просматривал: ADM021457_U)"
           'REPORT_DATE' => $createdDate,
           'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0'
         ]
