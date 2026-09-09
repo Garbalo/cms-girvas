@@ -182,7 +182,7 @@ if ($CMSCore->client->isLogged(2)) {
 
         if (Entry::existsByID($CMSCore, $entryID)) {
           $entry = new Entry($CMSCore, $entryID);
-          $entry->initData(['name', 'texts', 'metadata']);
+          $entry->initData(['name', 'texts', 'metadata', 'categoryID']);
           
           // Сохраняем старые значения для сравнения
           $oldValues = [
