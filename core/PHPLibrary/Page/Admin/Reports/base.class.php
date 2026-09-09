@@ -479,17 +479,30 @@ class ReportsBase implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ
     // ============================================================
     
+    // ============================================================
+    // ПОСЛЕДНИЕ СОБЫТИЯ
+    // ============================================================
+
     $recentItems = [];
     $recentReports = array_slice($reports, 0, 15);
     foreach ($recentReports as $report) {
-      $typeLabel = $this->getReportTypeLabel($report->getTypeID());
-      $description = $this->formatReportDescription($report); 
+      $typeName = $this->getReportTypeName($report->getTypeID());
+      // Убираем префикс "REPORT_TYPE_ID_" для получения короткого имени
+      $shortTypeName = str_replace('REPORT_TYPE_ID_', '', $typeName);
+      $labelKey = 'REPORT_TYPE_NAME_' . $shortTypeName;
+      
+      $description = $this->formatReportDescription($report);
+      $createdDate = date('d.m.Y H:i:s', $report->getCreatedUnixTimestamp());
+      
+      $variables = $this->viewer !== null
+        ? $report->getVariables($this->viewer)
+        : $report->getVariables();
 
       $recentItems[] = ThemeCollector::assemblyFileContent(
         $this->CMSCore->theme,
         'templates/page/reports/item.tpl',
         [
-          'REPORT_TYPE' => '{LANG:' . $typeLabel . '}',
+          'REPORT_TYPE' => '{LANG:' . $labelKey . '}',
           'REPORT_DESCRIPTION' => $description,
           'REPORT_DATE' => $createdDate,
           'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0'
