@@ -465,15 +465,15 @@ class ReportsBase implements ReportsPageInterface
     $recentItems = [];
     $recentReports = array_slice($reports, 0, 15);
     foreach ($recentReports as $report) {
-      $typeLabel = $this->getReportTypeLabel($report->getTypeID()); // Короткое название
-      $description = $this->formatReportDescription($report);      // Полное описание
+      $typeLabel = $this->getReportTypeLabel($report->getTypeID());
+      $description = $this->formatReportDescription($report); 
 
       $recentItems[] = ThemeCollector::assemblyFileContent(
         $this->CMSCore->theme,
         'templates/page/reports/item.tpl',
         [
-          'REPORT_TYPE' => $typeLabel,        // Например: "Просмотр ПДн"
-          'REPORT_DESCRIPTION' => $description, // Например: "Просмотр ПДн пользователя oauth_http_user (просматривал: ADM021457_U)"
+          'REPORT_TYPE' => $typeLabel,
+          'REPORT_DESCRIPTION' => $description,
           'REPORT_DATE' => $createdDate,
           'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0'
         ]
