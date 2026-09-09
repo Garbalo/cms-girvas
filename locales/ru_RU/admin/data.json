@@ -558,6 +558,7 @@
   "PAGE_REPORTS_STATS_IPS_SUCCESS": "IP-адреса с успешными авторизациями в административной панели",
   "PAGE_REPORTS_STATS_IPS_FAIL": "IP-адреса с неуспешными авторизациями в административной панели",
   "PAGE_REPORTS_TOP_USERS_EMPTY": "Нет данных об активности пользователей",
+  "PAGE_REPORTS_TOP_USERS_ACTIONS": "действий",
   "PAGE_REPORTS_CONTENT_STATS_ENTRIES": "Записи",
   "PAGE_REPORTS_CONTENT_STATS_ENTRIES_CREATED": "Создано записей",
   "PAGE_REPORTS_CONTENT_STATS_ENTRIES_EDITED": "Отредактировано записей",
