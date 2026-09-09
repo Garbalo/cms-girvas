@@ -28,7 +28,7 @@ use \core\PHPLibrary\Template as Template;
 use \core\PHPLibrary\Template\Collector as ThemeCollector;
 use \core\PHPLibrary\User as User;
 use \core\PHPLibrary\Entry as Entry;
-use \core\PHPLibrary\Page as Page;
+use \core\PHPLibrary\Page as PageStatic;
 
 /**
  * Class ReportsContent
@@ -214,7 +214,7 @@ class ReportsContent implements ReportsPageInterface
   private function getPageTitle(int $pageID): string
   {
     if ($pageID <= 0) {
-      return 0;
+      return '';
     }
 
     try {
