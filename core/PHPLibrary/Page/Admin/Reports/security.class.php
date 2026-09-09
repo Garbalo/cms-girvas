@@ -406,7 +406,7 @@ class ReportsSecurity implements ReportsPageInterface
         $this->CMSCore->theme,
         'templates/page/reports/item.tpl',
         [
-          'REPORT_TYPE' => '{LANG:' . $typeLabel . '}',
+          'REPORT_TYPE' => $typeLabel,
           'REPORT_DESCRIPTION' => $description,
           'REPORT_DATE' => $createdDate,
           'REPORT_IP' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
