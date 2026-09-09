@@ -48,25 +48,25 @@
 .main__page.page .report-section {
   background: var(--common-main-color-1);
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px 18px;
   border: 1px solid var(--common-main-color-2);
   box-shadow: 0 2px 4px var(--common-main-color-4--opacity-0-2);
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .main__page.page .report-section:hover {
   box-shadow: 0 4px 12px var(--common-main-color-4--opacity-0-2);
+  transform: translateY(-2px);
 }
 
 .main__page.page .report-section .report-section__title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--common-main-color-4);
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
   border-bottom: 2px solid var(--common-main-color-2);
 }
 
@@ -79,20 +79,44 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Стилизация скроллбара для списков статистики */
+.main__page.page .report-section .report-section__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.main__page.page .report-section .report-section__list::-webkit-scrollbar-track {
+  background: var(--common-main-color-2--opacity-0-4);
+  border-radius: 2px;
+}
+
+.main__page.page .report-section .report-section__list::-webkit-scrollbar-thumb {
+  background: var(--common-main-color-6);
+  border-radius: 2px;
+}
+
+.main__page.page .report-section .report-section__list::-webkit-scrollbar-thumb:hover {
+  background: var(--common-main-color-3);
 }
 
 .main__page.page .report-section .report-section__list > li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 5px 10px;
   font-size: 13px;
-  border-bottom: 1px solid var(--common-main-color-2--opacity-0-4);
-  transition: background 0.15s;
+  border-bottom: 1px solid var(--common-main-color-2--opacity-0-3);
+  transition: background 0.15s, padding-left 0.15s;
+  border-radius: 4px;
 }
 
 .main__page.page .report-section .report-section__list > li:hover {
   background: var(--common-main-color-7);
+  padding-left: 14px;
 }
 
 .main__page.page .report-section .report-section__list > li:last-child {
@@ -102,7 +126,7 @@
 .main__page.page .report-section .report-section__data-label {
   font-weight: 500;
   color: var(--common-main-color-3);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .main__page.page .report-section .report-section__data-label::after {
@@ -114,6 +138,8 @@
   font-weight: 600;
   color: var(--common-main-color-4);
   font-size: 14px;
+  min-width: 30px;
+  text-align: right;
 }
 
 /* ============================================================
@@ -121,13 +147,14 @@
    ============================================================ */
 
 /* Общая статистика */
+.report-section_overview {
+  border-top: 3px solid var(--common-secondary-color-3);
+}
+
 .report-section_overview .report-section__data-value {
   color: var(--common-secondary-color-3);
   font-size: 18px;
-}
-
-.report-section_overview .report-section__list > li {
-  padding: 10px 12px;
+  font-weight: 700;
 }
 
 .report-section_overview .report-section__list > li:hover {
@@ -182,6 +209,10 @@
   color: var(--common-main-color-4);
 }
 
+.report-section_top-users .report-section__list > li:hover {
+  background: var(--common-secondary-color-1);
+}
+
 /* Последние события */
 .report-section_recent {
   border-top: 3px solid var(--common-secondary-color-13);
@@ -193,19 +224,20 @@
 .report-section__list-item {
   display: flex;
   flex-direction: column;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 6px;
   background: var(--common-main-color-7);
-  border-left: 4px solid var(--common-main-color-6);
-  transition: background 0.15s;
+  border-left: 3px solid var(--common-main-color-6);
+  transition: background 0.15s, transform 0.15s;
 }
 
 .report-section__list-item:hover {
   background: var(--common-main-color-2);
+  transform: translateX(4px);
 }
 
 .report-section__list-item:not(:last-child) {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .report-section__list-item_status_success {
@@ -222,7 +254,7 @@
 
 .report-section__list-item .report-section__data-label {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--common-main-color-4);
   margin-bottom: 2px;
 }
@@ -241,7 +273,7 @@
 .report-section__list-item .report-section__data-value_meta {
   font-size: 11px;
   opacity: 0.6;
-  margin-top: 4px;
+  margin-top: 3px;
   display: flex;
   gap: 15px;
 }
@@ -252,43 +284,50 @@
 .report-section__list-item_top-user {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   background: var(--common-main-color-7);
   gap: 12px;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.report-section__list-item_top-user:hover {
+  background: var(--common-main-color-2);
+  transform: translateX(4px);
 }
 
 .report-section__list-item_top-user:not(:last-child) {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .report-section__list-item_top-user .top-user__rank {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--common-secondary-color-3);
-  min-width: 28px;
+  min-width: 24px;
   text-align: center;
 }
 
 .report-section__list-item_top-user .top-user__login {
   flex: 1;
   font-weight: 500;
+  font-size: 13px;
   color: var(--common-main-color-4);
 }
 
 .report-section__list-item_top-user .top-user__actions {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--common-main-color-3);
   font-weight: 600;
 }
 
 /* ============================================================
-   СТИЛИ ДЛЯ ПОСЛЕДНИХ СОБЫТИЙ (скролл)
+   СТИЛИ ДЛЯ ПОСЛЕДНИХ СОБЫТИЙ (увеличенный скролл)
    ============================================================ */
 .report-section_recent .report-section__list {
-  max-height: 400px;
+  max-height: 320px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 6px;
 }
 
 .report-section_recent .report-section__list::-webkit-scrollbar {
@@ -307,6 +346,22 @@
 
 .report-section_recent .report-section__list::-webkit-scrollbar-thumb:hover {
   background: var(--common-main-color-3);
+}
+
+/* ============================================================
+   КОМПАКТНЫЕ СТИЛИ ДЛЯ БЛОКОВ СТАТИСТИКИ
+   ============================================================ */
+.report-section_compact .report-section__list > li {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.report-section_compact .report-section__data-label {
+  font-size: 11px;
+}
+
+.report-section_compact .report-section__data-value {
+  font-size: 13px;
 }
 
 /* ============================================================
@@ -330,6 +385,11 @@
   .main__page.page .report-section .report-section__list > li {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 2px;
+  }
+  
+  .main__page.page .report-section .report-section__data-value {
+    text-align: left;
+    width: 100%;
   }
 }
