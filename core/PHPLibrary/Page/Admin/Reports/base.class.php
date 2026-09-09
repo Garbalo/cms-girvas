@@ -169,7 +169,8 @@ class ReportsBase implements ReportsPageInterface
   private function getReportTypeLabel(int $typeID): string
   {
     $typeName = $this->getReportTypeName($typeID);
-    $labelKey = 'REPORT_TYPE_NAME_' . $typeName;
+    $shortTypeName = str_replace('REPORT_TYPE_ID_', '', $typeName);
+    $labelKey = 'REPORT_TYPE_NAME_' . $shortTypeName;
     
     return $this->localeData[$labelKey] ?? $typeName;
   }
