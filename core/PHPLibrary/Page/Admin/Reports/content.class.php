@@ -214,7 +214,7 @@ class ReportsContent implements ReportsPageInterface
   private function getPageTitle(int $pageID): string
   {
     if ($pageID <= 0) {
-      return '';
+      return 0;
     }
 
     try {
