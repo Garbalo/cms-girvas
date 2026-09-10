@@ -39,6 +39,7 @@ if ($CMSCore->client->isLogged(2)) {
             Report::REPORT_TYPE_ID_AP_USER_DELETED,
             [
               'userID' => $userID,
+              'userLogin' => $userLogin,
               'deletedByID' => $clientUser->getID(),
               'ip' => $CMSCore->client->getIPAddress()
             ]

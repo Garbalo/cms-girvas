@@ -30,21 +30,23 @@ if ($CMSCore->client->isLogged(2)) {
       if (PageStatic::existsByID($CMSCore, $pageStaticID)) {
         $pageStatic = new PageStatic($CMSCore, $pageStaticID);
         $pageStatic->initData(['name', 'texts']);
-        
-        // Получаем данные страницы перед удалением
+
+        // Получаем все языковые версии заголовка
+        $pageTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $pageTitles[$localeName] = $pageStatic->getTitle($localeName);
+        }
         $pageName = $pageStatic->getName();
-        $pageTitle = $pageStatic->getTitle($CMSCore->locale->getName());
-        
-        // ============================================================
-        // ЛОГИРОВАНИЕ УДАЛЕНИЯ СТАТИЧЕСКОЙ СТРАНИЦЫ (152-ФЗ)
-        // ============================================================
+
+        // Логируем удаление страницы (152-ФЗ)
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED,
           [
             'pageID' => $pageStaticID,
             'pageName' => $pageName,
-            'pageTitle' => $pageTitle,
+            'pageTitles' => $pageTitles, // ← массив по локалям
             'deletedByID' => $clientUser->getID(),
             'deletedByLogin' => $clientUser->getLogin(),
             'ip' => $CMSCore->client->getIPAddress()

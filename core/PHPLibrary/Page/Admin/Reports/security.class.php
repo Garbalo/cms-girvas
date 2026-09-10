@@ -260,8 +260,8 @@ class ReportsSecurity implements ReportsPageInterface
     }
 
     $replacements = [
-      '{ENTRY_TITLE}' => $this->getEntryTitle($variables['entryID'] ?? $variables['id'] ?? 0),
-      '{PAGE_TITLE}' => $this->getPageTitle($variables['pageID'] ?? $variables['id'] ?? 0),
+      '{ENTRY_TITLE}' => $variables['entryTitle'] ?? $this->getEntryTitle($variables['entryID'] ?? $variables['id'] ?? 0),
+      '{PAGE_TITLE}' => $variables['pageTitle'] ?? $this->getPageTitle($variables['pageID'] ?? $variables['id'] ?? 0),
       '{CATEGORY_TITLE}' => $variables['categoryTitle'] ?? $variables['name'] ?? '',
       '{FORM_TITLE}' => $variables['formTitle'] ?? $variables['name'] ?? '',
       '{BLOCK_TITLE}' => $variables['blockTitle'] ?? $variables['name'] ?? '',

@@ -36,21 +36,22 @@ if ($CMSCore->client->isLogged(2)) {
         if ($entries->getCountByCategoryID($entriesCategoryID) === 0) {
           $entriesCategory = new EntryCategory($CMSCore, $entriesCategoryID);
           $entriesCategory->initData(['name', 'texts']);
-          
-          // Получаем данные категории перед удалением
+
+          // Получаем все языковые версии заголовка
+          $categoryTitles = [];
+          $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+          foreach ($CMSLocalesNames as $localeName) {
+            $categoryTitles[$localeName] = $entriesCategory->getTitle($localeName);
+          }
           $categoryName = $entriesCategory->getName();
-          $categoryTitle = $entriesCategory->getTitle($CMSCore->locale->getName());
-          
-          // ============================================================
-          // ЛОГИРОВАНИЕ УДАЛЕНИЯ КАТЕГОРИИ (152-ФЗ)
-          // ============================================================
+
           CMSReport::create(
             $CMSCore,
             CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
             [
               'categoryID' => $entriesCategoryID,
               'categoryName' => $categoryName,
-              'categoryTitle' => $categoryTitle,
+              'categoryTitles' => $categoryTitles, // ← массив по локалям
               'deletedByID' => $clientUser->getID(),
               'deletedByLogin' => $clientUser->getLogin(),
               'ip' => $CMSCore->client->getIPAddress()
@@ -89,21 +90,23 @@ if ($CMSCore->client->isLogged(2)) {
         if (Entry::existsByID($CMSCore, $entryID)) {
           $entry = new Entry($CMSCore, $entryID);
           $entry->initData(['texts', 'name', 'metadata']);
-          
-          // Получаем данные записи перед удалением
+
+          // Получаем все языковые версии заголовка
+          $entryTitles = [];
+          $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+          foreach ($CMSLocalesNames as $localeName) {
+            $entryTitles[$localeName] = $entry->getTitle($localeName);
+          }
           $entryName = $entry->getName();
-          $entryTitle = $entry->getTitle($CMSCore->locale->getName());
-          
-          // ============================================================
-          // ЛОГИРОВАНИЕ УДАЛЕНИЯ ЗАПИСИ (152-ФЗ)
-          // ============================================================
+
+          // Логируем удаление записи (152-ФЗ)
           CMSReport::create(
             $CMSCore,
             CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED,
             [
               'entryID' => $entryID,
               'entryName' => $entryName,
-              'entryTitle' => $entryTitle,
+              'entryTitles' => $entryTitles,
               'deletedByID' => $clientUser->getID(),
               'deletedByLogin' => $clientUser->getLogin(),
               'ip' => $CMSCore->client->getIPAddress()
