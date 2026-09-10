@@ -35,6 +35,8 @@ if (defined('IS_NOT_HACKED')) {
   $PHPInputContent = file_get_contents('php://input');
 
   if (isset($_SERVER['REQUEST_METHOD'])) {
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? 'application/x-www-form-urlencoded';
+    
     switch ($_SERVER['REQUEST_METHOD']) {
       case 'PATCH': $_PATCH = $CMSCore::parseRawHTTPRequest($PHPInputContent, $_SERVER['CONTENT_TYPE']); break;
       case 'PUT': $_PUT = $CMSCore::parseRawHTTPRequest($PHPInputContent, $_SERVER['CONTENT_TYPE']); break;
