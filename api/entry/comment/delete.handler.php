@@ -71,13 +71,20 @@ if ($CMSCore->client->isLogged(1) || $CMSCore->client->isLogged(2)) {
         // ============================================================
         // ЛОГИРОВАНИЕ УДАЛЕНИЯ КОММЕНТАРИЯ (152-ФЗ)
         // ============================================================
+        // Получаем все языковые версии заголовка записи
+        $entryTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $entryTitles[$localeName] = $entry->getTitle($localeName);
+        }
+
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
           [
             'commentID' => $commentID,
             'entryID' => $entryID,
-            'entryTitle' => $entryTitle,
+            'entryTitles' => $entryTitles,  // ← массив
             'authorID' => $authorID,
             'authorLogin' => $authorLogin,
             'deletedByID' => $clientUser->getID(),

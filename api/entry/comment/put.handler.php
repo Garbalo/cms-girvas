@@ -129,13 +129,20 @@ if ($CMSCore->client->isLogged(1)) {
               // ============================================================
               $comment->initData(['content']);
               
+              // Получаем все языковые версии заголовка записи
+              $entryTitles = [];
+              $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+              foreach ($CMSLocalesNames as $localeName) {
+                $entryTitles[$localeName] = $entry->getTitle($localeName);
+              }
+
               CMSReport::create(
                 $CMSCore,
                 CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
                 [
                   'commentID' => $comment->getID(),
                   'entryID' => $commentEntryID,
-                  'entryTitle' => $entryTitle,
+                  'entryTitles' => $entryTitles,  // ← массив по локалям
                   'authorID' => $clientUser->getID(),
                   'authorLogin' => $clientUser->getLogin(),
                   'ip' => $CMSCore->client->getIPAddress()

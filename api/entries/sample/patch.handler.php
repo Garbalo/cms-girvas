@@ -158,6 +158,8 @@ if ($CMSCore->client->isLogged(2)) {
                 $changedFields[] = $key;
               }
             }
+
+            error_log('DEBUG PATCH: creating report...');
             
             CMSReport::create(
               $CMSCore,
@@ -172,6 +174,8 @@ if ($CMSCore->client->isLogged(2)) {
                 'ip' => $CMSCore->client->getIPAddress()
               ]
             );
+
+            error_log('DEBUG PATCH: report=' . ($report === null ? 'null' : 'id=' . $report->getID()));
 
             $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
             $handlerStatusCode = $handlerStatusCode ?? 1;

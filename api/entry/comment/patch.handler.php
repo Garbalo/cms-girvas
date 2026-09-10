@@ -211,13 +211,20 @@ if ($CMSCore->client->isLogged(1) || $CMSCore->client->isLogged(2)) {
           // ============================================================
           $comment->initData(['content', 'metadata']);
           
+          // Получаем все языковые версии заголовка записи
+          $entryTitles = [];
+          $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+          foreach ($CMSLocalesNames as $localeName) {
+            $entryTitles[$localeName] = $entry->getTitle($localeName);
+          }
+
           CMSReport::create(
             $CMSCore,
             CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED,
             [
               'commentID' => $commentID,
               'entryID' => $entryID,
-              'entryTitle' => $entryTitle,
+              'entryTitles' => $entryTitles,  // ← массив
               'authorID' => $comment->getAuthorID(),
               'updatedByID' => $clientUser->getID(),
               'updatedByLogin' => $clientUser->getLogin(),
