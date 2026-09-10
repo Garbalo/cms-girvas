@@ -310,6 +310,8 @@ export class PageForm {
         url: `/handler/form/${this.searchParams.getPathPart(3)}?localeMessage=${window.CMSCore.locales.admin.name}`,
         data: formData
       });
+
+      request.target.data = formData;
       
       request.target.send().then((data) => {
         if (data.statusCode === 1) {
