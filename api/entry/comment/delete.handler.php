@@ -19,7 +19,7 @@ use \core\PHPLibrary\Entry as Entry;
 
 if ($CMSCore->client->isLogged(1) || $CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(1);
-  $clientUser->initData(['metadata']);
+  $clientUser->initData(['login','metadata']);
   $clientUserGroup = $clientUser->getGroup();
   $clientUserGroup->initData(['permissions']);
 

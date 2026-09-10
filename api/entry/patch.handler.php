@@ -24,7 +24,7 @@ use \Exception as Exception;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
-  $clientUser->initData(['metadata']);
+  $clientUser->initData(['login','metadata']);
   $clientUserGroup = $clientUser->getGroup();
   $clientUserGroup->initData(['permissions']);
 
@@ -334,18 +334,23 @@ if ($CMSCore->client->isLogged(2)) {
               // ============================================================
               // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ЗАПИСИ (152-ФЗ)
               // ============================================================
-              $entry->initData(['texts']);
+              $entry->initData(['name', 'texts']);
               
+              $entryTitles = [];
+              $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+              foreach ($CMSLocalesNames as $localeName) {
+                $entryTitles[$localeName] = $entry->getTitle($localeName);
+              }
+
               CMSReport::create(
                 $CMSCore,
                 CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED,
                 [
                   'entryID' => $entry->getID(),
                   'entryName' => $entry->getName(),
-                  'entryTitle' => $entry->getTitle($CMSCore->locale->getName()),
-                  'updatedByID' => $clientUser->getID(),
-                  'updatedByLogin' => $clientUser->getLogin(),
-                  'changedFields' => $changedFields,
+                  'entryTitles' => $entryTitles,
+                  'createdByID' => $clientUser->getID(),
+                  'createdByLogin' => $clientUser->getLogin(),
                   'ip' => $CMSCore->client->getIPAddress()
                 ]
               );

@@ -20,7 +20,7 @@ use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
-  $clientUser->initData(['metadata']);
+  $clientUser->initData(['login','metadata']);
   $clientUserGroup = $clientUser->getGroup();
   $clientUserGroup->initData(['permissions']);
 
@@ -257,18 +257,19 @@ if ($CMSCore->client->isLogged(2)) {
         $entryData['categoryID'] = $entryCategoryID;
         $entry->update($entryData);
 
-        $entryTitle = $entry->getTitle($CMSCore->locale->getName());
+        $entryTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $entryTitles[$localeName] = $entry->getTitle($localeName);
+        }
 
-        // ============================================================
-        // ЛОГИРОВАНИЕ СОЗДАНИЯ ЗАПИСИ (152-ФЗ)
-        // ============================================================
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED,
           [
             'entryID' => $entry->getID(),
             'entryName' => $entry->getName(),
-            'entryTitle' => $entryTitle,
+            'entryTitles' => $entryTitles,
             'createdByID' => $clientUser->getID(),
             'createdByLogin' => $clientUser->getLogin(),
             'ip' => $CMSCore->client->getIPAddress()

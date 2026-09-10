@@ -19,7 +19,7 @@ use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(1)) {
   $clientUser = $CMSCore->client->getUser(1);
-  $clientUser->initData(['metadata']);
+  $clientUser->initData(['login','metadata']);
   $clientUserGroup = $clientUser->getGroup();
   $clientUserGroup->initData(['permissions']);
 

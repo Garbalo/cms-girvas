@@ -251,36 +251,35 @@ class ReportsBase implements ReportsPageInterface
     // Текущая локаль админки
     $currentLocale = $this->CMSCore->locale->getName();
 
-    // Хелпер: получить заголовок из массива по локалям с fallback на БД
-    $getLocalizedTitle = function($titlesKey, $idKey, $dbGetter) use ($variables, $currentLocale) {
-      // 1. Пробуем взять из сохраненного массива
+    // Хелпер: получить заголовок из массива по локалям
+    $getLocalizedTitle = function($titlesKey, $singleKey, $idKey, $dbGetter) use ($variables, $currentLocale) {
+      // 1. Пробуем взять из массива по текущей локали
       if (isset($variables[$titlesKey]) && is_array($variables[$titlesKey])) {
         if (!empty($variables[$titlesKey][$currentLocale])) {
           return $variables[$titlesKey][$currentLocale];
         }
-        // Fallback на первый доступный язык
+        // 2. Fallback на первый непустой язык
         foreach ($variables[$titlesKey] as $title) {
           if (!empty($title)) return $title;
         }
       }
-      // 2. Пробуем взять из старого одиночного ключа
-      $singleKey = str_replace('Titles', 'Title', $titlesKey);
+      // 3. Пробуем одиночный ключ (старый формат)
       if (!empty($variables[$singleKey])) {
         return $variables[$singleKey];
       }
-      // 3. Fallback на БД
+      // 4. Fallback на БД
       return $dbGetter($variables[$idKey] ?? $variables['id'] ?? 0);
     };
 
     $replacements = [
-      '{ENTRY_TITLE}' => $getLocalizedTitle('entryTitles', 'entryID', fn($id) => $this->getEntryTitle($id)),
-      '{PAGE_TITLE}' => $getLocalizedTitle('pageTitles', 'pageID', fn($id) => $this->getPageTitle($id)),
-      '{CATEGORY_TITLE}' => $getLocalizedTitle('categoryTitles', 'categoryID', fn($id) => $this->getCategoryTitle($id)),
-      '{FORM_TITLE}' => $getLocalizedTitle('formTitles', 'formID', fn($id) => $this->getFormTitle($id)),
-      '{BLOCK_TITLE}' => $getLocalizedTitle('blockTitles', 'blockID', fn($id) => $this->getBlockTitle($id)),
-      '{SAMPLE_TITLE}' => $getLocalizedTitle('sampleTitles', 'sampleID', fn($id) => $this->getSampleTitle($id)),
-      '{FEED_TITLE}' => $getLocalizedTitle('feedTitles', 'feedID', fn($id) => $this->getFeedTitle($id)),
-      '{GROUP_TITLE}' => $getLocalizedTitle('groupTitles', 'groupID', fn($id) => $this->getGroupTitle($id)),
+      '{ENTRY_TITLE}' => $getLocalizedTitle('entryTitles', 'entryTitle', 'entryID', fn($id) => $this->getEntryTitle($id)),
+      '{PAGE_TITLE}' => $getLocalizedTitle('pageTitles', 'pageTitle', 'pageID', fn($id) => $this->getPageTitle($id)),
+      '{CATEGORY_TITLE}' => $getLocalizedTitle('categoryTitles', 'categoryTitle', 'categoryID', fn($id) => $this->getCategoryTitle($id)),
+      '{FORM_TITLE}' => $getLocalizedTitle('formTitles', 'formTitle', 'formID', fn($id) => $this->getFormTitle($id)),
+      '{BLOCK_TITLE}' => $getLocalizedTitle('blockTitles', 'blockTitle', 'blockID', fn($id) => $this->getBlockTitle($id)),
+      '{SAMPLE_TITLE}' => $getLocalizedTitle('sampleTitles', 'sampleTitle', 'sampleID', fn($id) => $this->getSampleTitle($id)),
+      '{FEED_TITLE}' => $getLocalizedTitle('feedTitles', 'feedTitle', 'feedID', fn($id) => $this->getFeedTitle($id)),
+      '{GROUP_TITLE}' => $getLocalizedTitle('groupTitles', 'groupTitle', 'groupID', fn($id) => $this->getGroupTitle($id)),
       '{FILE_NAME}' => $variables['fileName'] ?? $variables['name'] ?? '',
       '{CLIENT_IP}' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
       '{USER_LOGIN}' => $variables['userLogin'] ?? $this->getUserLogin($variables['userID'] ?? 0),

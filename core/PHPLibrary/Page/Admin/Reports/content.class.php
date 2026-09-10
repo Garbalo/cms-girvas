@@ -244,19 +244,45 @@ class ReportsContent implements ReportsPageInterface
       return $typeName . ' (ID: ' . ($variables['id'] ?? '?') . ')';
     }
 
+    // Текущая локаль админки
+    $currentLocale = $this->CMSCore->locale->getName();
+
+    // Хелпер: получить заголовок из массива по локалям
+    $getLocalizedTitle = function($titlesKey, $singleKey, $idKey, $dbGetter) use ($variables, $currentLocale) {
+      // 1. Пробуем взять из массива по текущей локали
+      if (isset($variables[$titlesKey]) && is_array($variables[$titlesKey])) {
+        if (!empty($variables[$titlesKey][$currentLocale])) {
+          return $variables[$titlesKey][$currentLocale];
+        }
+        // 2. Fallback на первый непустой язык
+        foreach ($variables[$titlesKey] as $title) {
+          if (!empty($title)) return $title;
+        }
+      }
+      // 3. Пробуем одиночный ключ (старый формат)
+      if (!empty($variables[$singleKey])) {
+        return $variables[$singleKey];
+      }
+      // 4. Fallback на БД
+      return $dbGetter($variables[$idKey] ?? $variables['id'] ?? 0);
+    };
+
     $replacements = [
-      '{ENTRY_TITLE}' => $variables['entryTitle'] ?? $this->getEntryTitle($variables['entryID'] ?? $variables['id'] ?? 0),
-      '{PAGE_TITLE}' => $variables['pageTitle'] ?? $this->getPageTitle($variables['pageID'] ?? $variables['id'] ?? 0),
-      '{CATEGORY_TITLE}' => $variables['categoryTitle'] ?? $variables['name'] ?? '',
-      '{FORM_TITLE}' => $variables['formTitle'] ?? $variables['name'] ?? '',
-      '{BLOCK_TITLE}' => $variables['blockTitle'] ?? $variables['name'] ?? '',
-      '{SAMPLE_TITLE}' => $variables['sampleTitle'] ?? $variables['name'] ?? '',
+      '{ENTRY_TITLE}' => $getLocalizedTitle('entryTitles', 'entryTitle', 'entryID', fn($id) => $this->getEntryTitle($id)),
+      '{PAGE_TITLE}' => $getLocalizedTitle('pageTitles', 'pageTitle', 'pageID', fn($id) => $this->getPageTitle($id)),
+      '{CATEGORY_TITLE}' => $getLocalizedTitle('categoryTitles', 'categoryTitle', 'categoryID', fn($id) => $this->getCategoryTitle($id)),
+      '{FORM_TITLE}' => $getLocalizedTitle('formTitles', 'formTitle', 'formID', fn($id) => $this->getFormTitle($id)),
+      '{BLOCK_TITLE}' => $getLocalizedTitle('blockTitles', 'blockTitle', 'blockID', fn($id) => $this->getBlockTitle($id)),
+      '{SAMPLE_TITLE}' => $getLocalizedTitle('sampleTitles', 'sampleTitle', 'sampleID', fn($id) => $this->getSampleTitle($id)),
       '{FILE_NAME}' => $variables['fileName'] ?? $variables['name'] ?? '',
       '{CLIENT_IP}' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
-      '{USER_LOGIN}' => $this->getUserLogin($variables['userID'] ?? 0),
-      '{CREATOR_LOGIN}' => $this->getUserLogin($variables['createdByID'] ?? 0),
-      '{UPDATER_LOGIN}' => $this->getUserLogin($variables['updatedByID'] ?? 0),
-      '{DELETER_LOGIN}' => $this->getUserLogin($variables['deletedByID'] ?? 0),
+      '{USER_LOGIN}' => $variables['userLogin'] ?? $this->getUserLogin($variables['userID'] ?? 0),
+      '{CREATOR_LOGIN}' => $variables['createdByLogin'] ?? $this->getUserLogin($variables['createdByID'] ?? 0),
+      '{UPDATER_LOGIN}' => $variables['updatedByLogin'] ?? $this->getUserLogin($variables['updatedByID'] ?? 0),
+      '{DELETER_LOGIN}' => $variables['deletedByLogin'] ?? $this->getUserLogin($variables['deletedByID'] ?? 0),
+      '{TARGET_USER_LOGIN}' => $variables['targetUserLogin'] ?? $this->getUserLogin($variables['targetUserID'] ?? 0),
+      '{VIEWER_LOGIN}' => $variables['viewedByLogin'] ?? $this->getUserLogin($variables['viewedByID'] ?? 0),
+      '{COUNT}' => $variables['count'] ?? 0,
     ];
 
     return str_replace(
@@ -264,6 +290,66 @@ class ReportsContent implements ReportsPageInterface
       array_values($replacements),
       $template
     );
+  }
+
+  /**
+   * Получить название категории по ID
+   */
+  private function getCategoryTitle(int $categoryID): string
+  {
+    if ($categoryID <= 0) return '';
+    try {
+      $category = new \core\PHPLibrary\EntryCategory($this->CMSCore, $categoryID);
+      $category->initData(['texts']);
+      return $category->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Получить название формы по ID
+   */
+  private function getFormTitle(int $formID): string
+  {
+    if ($formID <= 0) return '';
+    try {
+      $form = new \core\PHPLibrary\Form($this->CMSCore, $formID);
+      $form->initData(['texts']);
+      return $form->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Получить название контент-блока по ID
+   */
+  private function getBlockTitle(int $blockID): string
+  {
+    if ($blockID <= 0) return '';
+    try {
+      $block = new \core\PHPLibrary\ContentBlock($this->CMSCore, $blockID);
+      $block->initData(['texts']);
+      return $block->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Получить название выборки по ID
+   */
+  private function getSampleTitle(int $sampleID): string
+  {
+    if ($sampleID <= 0) return '';
+    try {
+      $sample = new \core\PHPLibrary\EntriesSample($this->CMSCore, $sampleID);
+      $sample->initData(['texts']);
+      return $sample->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
   }
 
   /**
