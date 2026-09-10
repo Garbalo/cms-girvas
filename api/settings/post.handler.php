@@ -101,8 +101,7 @@ if ($CMSCore->client->isLogged(2)) {
         $oldSettingsValues = [];
         foreach ($_POST as $key => $value) {
           if (!preg_match('/^setting_([a-z0-9_]+)$/', $key, $matches)) continue;
-
-          $bareKey = $matches[1]; // без префикса setting_
+          $bareKey = $matches[1];
           $oldSettingsValues[$bareKey] = $CMSCore->configurator->existsDatabaseEntryValue($bareKey)
             ? $CMSCore->configurator->getDatabaseEntryValue($bareKey)
             : null;
@@ -420,90 +419,143 @@ if ($CMSCore->client->isLogged(2)) {
         // ============================================================
         // ЛОГИРОВАНИЕ ИЗМЕНЕНИЯ НАСТРОЕК CMS (152-ФЗ)
         // ============================================================
-        /** @var array Список безопасных настроек (значения логируются) */
-        $safeSettings = [
-          'base_title', 'base_timezone', 'base_charset', 'base_locale', 'base_admin_locale',
-          'base_engineering_work_status', 'base_engineering_work_reason',
-          'seo_site_description', 'seo_site_keywords', 'seo_robots_txt', 'seo_llms_txt',
-          'seo_code_yandex_webmaster', 'seo_permanent_redirect_www',
-          'users_upload_avatar_status', 'users_login_length_min', 'users_login_length_max',
-          'users_password_length_min', 'users_password_length_max',
-          'users_login_special_symbols', 'users_password_special_symbols',
-          'users_login_edit_status', 'users_login_register_accounting',
-          'security_registration_users_status',
-          'security_entry_comments_premoderation',
-          'security_entry_comments_negative_threshold',
-          'security_entry_comments_premoderation_filter_by_external_links',
-          'security_entry_comments_premoderation_filter_by_words_status',
-          'content_security_policy_value',
-          'files_upload_file_weight_max', 'files_upload_file_image_width_max',
-          'files_upload_file_image_height_max', 'files_upload_image_compression',
-          'files_auto_convert_file_image_status', 'files_auto_convert_file_image_extension',
+
+        /**
+         * @var array Паттерны имён настроек, значения которых НЕ логируются.
+         * Проверка идёт по подстроке в имени поля (без префикса setting_).
+         */
+        $sensitivePatterns = [
+          'password',
+          'token',
+          'secret',
+          'hash',
+          'salt',
+          'smtp_password',
+          'smtp_username',
+          'allowed_admin_ip',
+          'allowed_emails',
+          'notification_telegram_chats_ids',
+          'notification_max_chats_ids',
+          'logins_blacklist',
+          'premoderation_words_filter_list',
+          'additional_field',
         ];
 
-        /** @var array Настройки, для которых логируются только имена (без значений) */
-        $sensitiveSettings = [
-          'security_premoderation_words_filter_list',
-          'users_additional_field_title', 'users_additional_field_description',
-          'users_additional_field_type', 'users_additional_field_name',
-          'entries_additional_field_title', 'entries_additional_field_description',
-          'entries_additional_field_type', 'entries_additional_field_name',
-          'entries_additional_field_category_id',
-          'static_pages_additional_field_title', 'static_pages_additional_field_description',
-          'static_pages_additional_field_type', 'static_pages_additional_field_name',
-          'email_smtp_host', 'email_smtp_port', 'email_smtp_username',
-          'email_smtp_password', 'email_smtp_domain',
-          'security_allowed_admin_ip', 'security_allowed_emails',
-          'security_notification_telegram_chats_ids',
-          'security_notification_max_chats_ids',
-          'users_logins_blacklist',
+        /**
+         * @var array Точные имена полей, которые НЕ sensitive (исключения).
+         * Используется для переопределения паттернов — если поле подпадает под паттерн,
+         * но по смыслу безопасно (длина, флаг, домен SMTP).
+         */
+        $sensitiveExceptions = [
+          'users_password_length_min',
+          'users_password_length_max',
+          'email_smtp_host',
+          'email_smtp_port',
+          'email_smtp_domain',
         ];
 
-        /** @var array $changedValues Изменения значений безопасных полей */
+        /**
+         * Рекурсивно отсортировать ключи массива (для стабильного сравнения)
+         */
+        $recursiveKsort = function(array $array) use (&$recursiveKsort): array {
+          ksort($array);
+          foreach ($array as $k => $v) {
+            if (is_array($v)) {
+              $array[$k] = $recursiveKsort($v);
+            }
+          }
+          return $array;
+        };
+
+        /**
+         * Нормализовать значение настройки для сравнения.
+         * Массивы и JSON-строки приводятся к канонической форме.
+         */
+        $normalizeSettingValue = function(mixed $value) use ($recursiveKsort): string {
+          if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE && (is_array($decoded) || is_object($decoded))) {
+              $value = $decoded;
+            } else {
+              return $value;
+            }
+          }
+
+          if (is_array($value)) {
+            $value = $recursiveKsort($value);
+            return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+          }
+
+          if (is_bool($value)) return $value ? '1' : '0';
+          if (is_null($value)) return '';
+
+          return (string)$value;
+        };
+
+        /** @var array Изменения значений безопасных полей */
         $changedValues = [];
-        /** @var array $sensitiveChanged Имена изменившихся чувствительных полей */
+        /** @var array Имена изменившихся чувствительных полей (без значений) */
         $sensitiveChanged = [];
-        /** @var array $changedFields Все изменившиеся поля */
+        /** @var array Полный список изменившихся полей (с префиксом setting_) */
         $changedFields = [];
 
         foreach ($_POST as $key => $value) {
           if (!preg_match('/^setting_([a-z0-9_]+)$/', $key, $matches)) continue;
 
-          $bareKey = $matches[1];   // например, base_locale
-          $settingKey = $key;       // например, setting_base_locale
-
+          $bareKey = $matches[1];
           $oldValue = $oldSettingsValues[$bareKey] ?? null;
-          $newValue = is_array($value) ? json_encode($value) : (string)$value;
 
-          // Нормализация: в БД может лежать JSON-строка, а из формы придёт просто строка
-          $oldNormalized = is_string($oldValue) ? $oldValue : json_encode($oldValue);
+          $oldNormalized = $normalizeSettingValue($oldValue);
+          $newNormalized = $normalizeSettingValue($value);
 
-          if ($oldNormalized === $newValue) continue;
+          if ($oldNormalized === $newNormalized) continue;
 
-          $changedFields[] = $settingKey;
+          $changedFields[] = $key;
 
-          if (in_array($bareKey, $sensitiveSettings, true)) {
-            $sensitiveChanged[] = $settingKey;
-          } elseif (in_array($bareKey, $safeSettings, true)) {
-            $changedValues[$settingKey] = [
+          // Определяем sensitive
+          $isSensitive = false;
+
+          // 1. Исключения — точные имена
+          if (in_array($bareKey, $sensitiveExceptions, true)) {
+            $isSensitive = false;
+          // 2. Флаги _status — не sensitive (кроме тех, что уже в исключениях)
+          } elseif (str_ends_with($bareKey, '_status')) {
+            $isSensitive = false;
+          // 3. Паттерны
+          } else {
+            foreach ($sensitivePatterns as $pattern) {
+              if (stripos($bareKey, $pattern) !== false) {
+                $isSensitive = true;
+                break;
+              }
+            }
+          }
+
+          if ($isSensitive) {
+            $sensitiveChanged[] = $key;
+          } else {
+            $changedValues[$key] = [
               'old' => mb_substr((string)$oldValue, 0, 500),
-              'new' => mb_substr($newValue, 0, 500),
+              'new' => mb_substr((string)$value, 0, 500),
             ];
           }
         }
 
-        CMSReport::create(
-          $CMSCore,
-          CMSReport::REPORT_TYPE_ID_AP_SETTINGS_EDITED,
-          [
-            'changedFields' => $changedFields,
-            'changedValues' => $changedValues,
-            'sensitiveChanged' => $sensitiveChanged,
-            'userID' => $clientUser->getID(),
-            'userLogin' => $clientUser->getLogin(),
-            'ip' => $CMSCore->client->getIPAddress()
-          ]
-        );
+        // Логируем только если что-то реально изменилось
+        if (!empty($changedFields)) {
+          CMSReport::create(
+            $CMSCore,
+            CMSReport::REPORT_TYPE_ID_AP_SETTINGS_EDITED,
+            [
+              'changedFields'    => $changedFields,
+              'changedValues'    => $changedValues,
+              'sensitiveChanged' => $sensitiveChanged,
+              'userID'           => $clientUser->getID(),
+              'userLogin'        => $clientUser->getLogin(),
+              'ip'               => $CMSCore->client->getIPAddress()
+            ]
+          );
+        }
 
         $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
         $handlerStatusCode = $handlerStatusCode ?? 1;
