@@ -93,6 +93,7 @@ export class Button {
     const buttonLabelElement = document.createElement('span');
 
     buttonElement.classList.add('interactive__button');
+    buttonElement.setAttribute('type', 'button');
     buttonElement.addEventListener('click', this.callback);
 
     if (this.style !== null || this.style !== '') {
