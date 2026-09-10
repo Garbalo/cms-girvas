@@ -36,11 +36,11 @@ if (defined('IS_NOT_HACKED')) {
 
   if (isset($_SERVER['REQUEST_METHOD'])) {
     $contentType = $_SERVER['CONTENT_TYPE'] ?? 'application/x-www-form-urlencoded';
-    
+
     switch ($_SERVER['REQUEST_METHOD']) {
-      case 'PATCH': $_PATCH = $CMSCore::parseRawHTTPRequest($PHPInputContent, $_SERVER['CONTENT_TYPE']); break;
-      case 'PUT': $_PUT = $CMSCore::parseRawHTTPRequest($PHPInputContent, $_SERVER['CONTENT_TYPE']); break;
-      case 'DELETE': $_DELETE = $CMSCore::parseRawHTTPRequest($PHPInputContent, $_SERVER['CONTENT_TYPE']); break;
+      case 'PATCH': $_PATCH = $CMSCore::parseRawHTTPRequest($PHPInputContent, $contentType); break;
+      case 'PUT': $_PUT = $CMSCore::parseRawHTTPRequest($PHPInputContent, $contentType); break;
+      case 'DELETE': $_DELETE = $CMSCore::parseRawHTTPRequest($PHPInputContent, $contentType); break;
     }
   } else {
     http_response_code(405);
