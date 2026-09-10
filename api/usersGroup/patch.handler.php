@@ -118,15 +118,20 @@ if ($CMSCore->client->isLogged(2)) {
             // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ (152-ФЗ)
             // ============================================================
             $usersGroup->initData(['name', 'texts']);
-            $groupTitle = $usersGroup->getTitle($CMSCore->locale->getName());
-            
+
+            $groupTitles = [];
+            $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+            foreach ($CMSLocalesNames as $localeName) {
+              $groupTitles[$localeName] = $usersGroup->getTitle($localeName);
+            }
+
             CMSReport::create(
               $CMSCore,
               CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_EDITED,
               [
                 'groupID' => $usersGroupID,
                 'groupName' => $usersGroup->getName(),
-                'groupTitle' => $groupTitle,
+                'groupTitles' => $groupTitles,
                 'updatedByID' => $clientUser->getID(),
                 'updatedByLogin' => $clientUser->getLogin(),
                 'changedFields' => $changedFields,

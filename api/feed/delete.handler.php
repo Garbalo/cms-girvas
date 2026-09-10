@@ -33,10 +33,15 @@ if ($CMSCore->client->isLogged(2)) {
         // Получаем данные фида перед удалением
         $feed->initData(['name', 'texts']);
         $feedName = $feed->getName();
-        $feedTitle = $feed->getTitle($CMSCore->locale->getName());
         $feedTypeID = $feed->getTypeID();
         $feedCategoryID = $feed->getEntriesCategoryID();
-        
+
+        $feedTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $feedTitles[$localeName] = $feed->getTitle($localeName);
+        }
+
         // ============================================================
         // ЛОГИРОВАНИЕ УДАЛЕНИЯ ВЕБ-КАНАЛА (152-ФЗ)
         // ============================================================
@@ -46,7 +51,7 @@ if ($CMSCore->client->isLogged(2)) {
           [
             'feedID' => $feedID,
             'feedName' => $feedName,
-            'feedTitle' => $feedTitle,
+            'feedTitles' => $feedTitles,
             'feedTypeID' => $feedTypeID,
             'feedCategoryID' => $feedCategoryID,
             'deletedByID' => $clientUser->getID(),

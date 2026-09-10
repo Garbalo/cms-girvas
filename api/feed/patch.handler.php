@@ -93,15 +93,19 @@ if ($CMSCore->client->isLogged(2)) {
         // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ВЕБ-КАНАЛА (152-ФЗ)
         // ============================================================
         $feed->initData(['name', 'texts']);
-        $feedTitle = $feed->getTitle($CMSCore->locale->getName());
-        
+
+        $feedTitles = [];
+        foreach ($CMSLocalesNames as $localeName) {
+          $feedTitles[$localeName] = $feed->getTitle($localeName);
+        }
+
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_FEED_EDITED,
           [
             'feedID' => $feedID,
             'feedName' => $feed->getName(),
-            'feedTitle' => $feedTitle,
+            'feedTitles' => $feedTitles,
             'feedTypeID' => $feed->getTypeID(),
             'feedCategoryID' => $feed->getEntriesCategoryID(),
             'updatedByID' => $clientUser->getID(),

@@ -36,8 +36,13 @@ if ($CMSCore->client->isLogged(2)) {
             // Получаем данные группы перед удалением
             $userGroup->initData(['name', 'texts']);
             $groupName = $userGroup->getName();
-            $groupTitle = $userGroup->getTitle($CMSCore->locale->getName());
-            
+
+            $groupTitles = [];
+            $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+            foreach ($CMSLocalesNames as $localeName) {
+              $groupTitles[$localeName] = $userGroup->getTitle($localeName);
+            }
+
             // ============================================================
             // ЛОГИРОВАНИЕ УДАЛЕНИЯ ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ (152-ФЗ)
             // ============================================================
@@ -47,7 +52,7 @@ if ($CMSCore->client->isLogged(2)) {
               [
                 'groupID' => $userGroupID,
                 'groupName' => $groupName,
-                'groupTitle' => $groupTitle,
+                'groupTitles' => $groupTitles,
                 'deletedByID' => $clientUser->getID(),
                 'deletedByLogin' => $clientUser->getLogin(),
                 'ip' => $CMSCore->client->getIPAddress()
