@@ -294,6 +294,10 @@ class ReportsSecurity implements ReportsPageInterface
       '{DELETER_LOGIN}' => $variables['deletedByLogin'] ?? $this->getUserLogin($variables['deletedByID'] ?? 0),
       '{TARGET_USER_LOGIN}' => $variables['targetUserLogin'] ?? $this->getUserLogin($variables['targetUserID'] ?? 0),
       '{VIEWER_LOGIN}' => $variables['viewedByLogin'] ?? $this->getUserLogin($variables['viewedByID'] ?? 0),
+      '{CHANGED_VALUES}' => $this->formatSettingsChanges(
+        is_array($variables['changedValues'] ?? null) ? $variables['changedValues'] : [],
+        is_array($variables['sensitiveChanged'] ?? null) ? $variables['sensitiveChanged'] : []
+      ),
       '{COUNT}' => $variables['count'] ?? 0,
     ];
 
@@ -384,6 +388,57 @@ class ReportsSecurity implements ReportsPageInterface
     } catch (\Exception $e) {
       return 'unknown';
     }
+  }
+
+  /**
+   * Форматировать изменения настроек CMS для отображения в ленте
+   *
+   * @param array $changedValues Изменения безопасных полей: ['setting_x' => ['old' => ..., 'new' => ...]]
+   * @param array $sensitiveChanged Имена чувствительных полей: ['setting_y', ...]
+   * @return string
+   */
+  private function formatSettingsChanges(array $changedValues, array $sensitiveChanged): string
+  {
+    $parts = [];
+
+    // Безопасные поля: показываем «было → стало»
+    if (!empty($changedValues)) {
+      foreach ($changedValues as $settingKey => $values) {
+        $label = $this->localeData['SETTING_NAME_' . strtoupper($settingKey)] ?? $settingKey;
+        $old = $this->truncateValue($values['old'] ?? '');
+        $new = $this->truncateValue($values['new'] ?? '');
+        $parts[] = sprintf('%s («%s» → «%s»)', $label, $old, $new);
+      }
+    }
+
+    // Чувствительные поля: только имена
+    if (!empty($sensitiveChanged)) {
+      $sensitiveParts = [];
+      foreach ($sensitiveChanged as $settingKey) {
+        $label = $this->localeData['SETTING_NAME_' . strtoupper($settingKey)] ?? $settingKey;
+        $sensitiveParts[] = $label;
+      }
+      $sensitiveLabel = $this->localeData['PAGE_REPORTS_SETTINGS_SENSITIVE_CHANGED'] ?? 'Чувствительные';
+      $parts[] = sprintf('%s: %s', $sensitiveLabel, implode(', ', $sensitiveParts));
+    }
+
+    return implode('; ', $parts);
+  }
+
+  /**
+   * Обрезать значение для отображения в логе
+   *
+   * @param string $value
+   * @param int $length
+   * @return string
+   */
+  private function truncateValue(string $value, int $length = 80): string
+  {
+    $value = trim($value);
+    if (mb_strlen($value) <= $length) {
+      return $value;
+    }
+    return mb_substr($value, 0, $length) . '…';
   }
 
   /**

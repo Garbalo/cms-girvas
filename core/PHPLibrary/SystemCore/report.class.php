@@ -83,6 +83,9 @@ final class Report
   public const REPORT_TYPE_ID_AP_FEED_EDITED = 11000030;
   public const REPORT_TYPE_ID_AP_FEED_DELETED = 11000031;
 
+  // НАСТРОЙКИ CMS
+  public const REPORT_TYPE_ID_AP_SETTINGS_EDITED = 11000033;  
+
   // АВТОРИЗАЦИЯ (АДМИНКА)
   public const REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL = 10000001;
   public const REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS = 10000002;
@@ -151,6 +154,9 @@ final class Report
     // ------------------------------------------------------------
     // БЕЗОПАСНОСТЬ
     // ------------------------------------------------------------
+    // Настройки CMS
+    self::REPORT_TYPE_ID_AP_SETTINGS_EDITED            => self::CATEGORY_SECURITY,
+
     // Авторизация
     self::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS      => self::CATEGORY_SECURITY,
     self::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL         => self::CATEGORY_SECURITY,

@@ -13,6 +13,8 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
+
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
   $clientUser->initData(['metadata']);
@@ -92,6 +94,17 @@ if ($CMSCore->client->isLogged(2)) {
       
       if (!$errorIsDetected) {
         $SMTPConfugration = [];
+
+        // ============================================================
+        // СОХРАНЕНИЕ СТАРЫХ ЗНАЧЕНИЙ ДЛЯ ЛОГА (152-ФЗ)
+        // ============================================================
+        $oldSettingsValues = [];
+        foreach ($_POST as $key => $value) {
+          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key)) continue;
+          $oldSettingsValues[$key] = $CMSCore->configurator->existsDatabaseEntryValue($key)
+            ? $CMSCore->configurator->getDatabaseEntryValue($key)
+            : null;
+        }
 
         foreach ($_POST as $settingName => $settingValue) {
           if (preg_match('/^setting_([a-z0-9_]+)$/', $settingName, $matches, PREG_OFFSET_CAPTURE)) {
@@ -401,6 +414,93 @@ if ($CMSCore->client->isLogged(2)) {
             }
           }
         }
+
+        // ============================================================
+        // ЛОГИРОВАНИЕ ИЗМЕНЕНИЯ НАСТРОЕК CMS (152-ФЗ)
+        // ============================================================
+        /** @var array Список безопасных настроек (значения логируются) */
+        $safeSettings = [
+          'base_title', 'base_timezone', 'base_charset', 'base_locale', 'base_admin_locale',
+          'base_engineering_work_status', 'base_engineering_work_reason',
+          'seo_site_description', 'seo_site_keywords', 'seo_robots_txt', 'seo_llms_txt',
+          'seo_code_yandex_webmaster', 'seo_permanent_redirect_www',
+          'users_upload_avatar_status', 'users_login_length_min', 'users_login_length_max',
+          'users_password_length_min', 'users_password_length_max',
+          'users_login_special_symbols', 'users_password_special_symbols',
+          'users_login_edit_status', 'users_login_register_accounting',
+          'security_registration_users_status',
+          'security_entry_comments_premoderation',
+          'security_entry_comments_negative_threshold',
+          'security_entry_comments_premoderation_filter_by_external_links',
+          'security_entry_comments_premoderation_filter_by_words_status',
+          'content_security_policy_value',
+          'files_upload_file_weight_max', 'files_upload_file_image_width_max',
+          'files_upload_file_image_height_max', 'files_upload_image_compression',
+          'files_auto_convert_file_image_status', 'files_auto_convert_file_image_extension',
+        ];
+
+        /** @var array Настройки, для которых логируются только имена (без значений) */
+        $sensitiveSettings = [
+          'security_premoderation_words_filter_list',
+          'users_additional_field_title', 'users_additional_field_description',
+          'users_additional_field_type', 'users_additional_field_name',
+          'entries_additional_field_title', 'entries_additional_field_description',
+          'entries_additional_field_type', 'entries_additional_field_name',
+          'entries_additional_field_category_id',
+          'static_pages_additional_field_title', 'static_pages_additional_field_description',
+          'static_pages_additional_field_type', 'static_pages_additional_field_name',
+          'email_smtp_host', 'email_smtp_port', 'email_smtp_username',
+          'email_smtp_password', 'email_smtp_domain',
+          'security_allowed_admin_ip', 'security_allowed_emails',
+          'security_notification_telegram_chats_ids',
+          'security_notification_max_chats_ids',
+          'users_logins_blacklist',
+        ];
+
+        /** @var array $changedValues Изменения значений безопасных полей */
+        $changedValues = [];
+        /** @var array $sensitiveChanged Имена изменившихся чувствительных полей */
+        $sensitiveChanged = [];
+        /** @var array $changedFields Все изменившиеся поля */
+        $changedFields = [];
+
+        foreach ($_POST as $key => $value) {
+          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key)) continue;
+
+          $settingKey = $key; // с префиксом setting_
+          $bareSettingKey = preg_replace('/^setting_/', '', $key);
+
+          $oldValue = $oldSettingsValues[$key] ?? null;
+          $newValue = is_array($value) ? json_encode($value) : (string)$value;
+
+          // Сравниваем «нормализованные» значения, чтобы не ловить ложные изменения
+          $oldNormalized = is_string($oldValue) ? $oldValue : json_encode($oldValue);
+          if ($oldNormalized === $newValue) continue;
+
+          $changedFields[] = $settingKey;
+
+          if (in_array($bareSettingKey, $sensitiveSettings, true)) {
+            $sensitiveChanged[] = $settingKey;
+          } elseif (in_array($bareSettingKey, $safeSettings, true)) {
+            $changedValues[$settingKey] = [
+              'old' => mb_substr((string)$oldValue, 0, 500),
+              'new' => mb_substr($newValue, 0, 500),
+            ];
+          }
+        }
+
+        CMSReport::create(
+          $CMSCore,
+          CMSReport::REPORT_TYPE_ID_AP_SETTINGS_EDITED,
+          [
+            'changedFields' => $changedFields,
+            'changedValues' => $changedValues,
+            'sensitiveChanged' => $sensitiveChanged,
+            'userID' => $clientUser->getID(),
+            'userLogin' => $clientUser->getLogin(),
+            'ip' => $CMSCore->client->getIPAddress()
+          ]
+        );
 
         $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
         $handlerStatusCode = $handlerStatusCode ?? 1;
