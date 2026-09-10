@@ -595,12 +595,12 @@ class ReportsBase implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ
     // ============================================================
 
-    $recentItems = [];
-    $recentReports = array_slice($reports, 0, 15);
-
     usort($recentReports, function($a, $b) {
       return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
     });
+
+    $recentItems = [];
+    $recentReports = array_slice($reports, 0, 15);
 
     foreach ($recentReports as $report) {
       $typeName = $this->getReportTypeName($report->getTypeID());

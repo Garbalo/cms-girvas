@@ -430,12 +430,12 @@ class ReportsContent implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ ПО КОНТЕНТУ
     // ============================================================
     
-    $recentItems = [];
-    $recentReports = array_slice($reports, 0, 20);
-
     usort($recentReports, function($a, $b) {
       return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
     });
+
+    $recentItems = [];
+    $recentReports = array_slice($reports, 0, 20);
 
     foreach ($recentReports as $report) {
       $typeLabel = $this->getReportTypeLabel($report->getTypeID());

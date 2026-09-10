@@ -41,9 +41,6 @@ if ($CMSCore->client->isLogged(2)) {
       // ============================================================
       // ЛОГИРОВАНИЕ УДАЛЕНИЯ ВЫБОРКИ (152-ФЗ)
       // ============================================================
-      error_log('DEBUG DELETE: sampleID=' . $sampleID);
-      error_log('DEBUG DELETE: exists=' . (EntriesSample::existsByID($CMSCore, $sampleID) ? 'yes' : 'no'));
-
       CMSReport::create(
         $CMSCore,
         CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED,
@@ -57,10 +54,6 @@ if ($CMSCore->client->isLogged(2)) {
         ]
       );
 
-      error_log('DEBUG DELETE: creating report...');
-      $report = CMSReport::create(...);
-      error_log('DEBUG DELETE: report=' . ($report === null ? 'null' : 'id=' . $report->getID()));
-      
       $isDeleted = $sample->delete();
 
       if ($isDeleted) {
