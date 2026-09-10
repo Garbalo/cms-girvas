@@ -102,6 +102,83 @@ final class Report
   // ПРОСМОТР ЛОГОВ
   public const REPORT_TYPE_ID_AP_VIEWING_LOGS = 11000032;
 
+  // ============================================================
+  // КАТЕГОРИИ ОТЧЁТОВ
+  // ============================================================
+
+  /** Общая сводка (fallback для всего, что не попало в другие категории) */
+  public const CATEGORY_GENERAL = 0;
+  /** Контент: записи, страницы, медиа, категории, выборки, формы, блоки, комментарии, фиды */
+  public const CATEGORY_CONTENT = 1;
+  /** Безопасность: авторизация, пользователи, группы, доступ к ПДн, просмотр логов */
+  public const CATEGORY_SECURITY = 2;
+
+  /**
+   * @var array<int,int> Карта: typeID => categoryID
+   * Единый источник истины для распределения отчётов по вкладкам.
+   */
+  private const TYPE_TO_CATEGORY = [
+    // ------------------------------------------------------------
+    // КОНТЕНТ
+    // ------------------------------------------------------------
+    self::REPORT_TYPE_ID_AP_ENTRY_CREATED              => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRY_EDITED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRY_DELETED              => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_PAGE_CREATED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_PAGE_EDITED                => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_PAGE_DELETED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_MEDIA_UPLOADED             => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_MEDIA_DELETED              => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED   => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED    => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED   => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED     => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED      => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED     => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FORM_CREATED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FORM_EDITED                => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FORM_DELETED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED      => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED       => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED      => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED    => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED     => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED    => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FEED_CREATED               => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FEED_EDITED                => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_FEED_DELETED               => self::CATEGORY_CONTENT,
+
+    // ------------------------------------------------------------
+    // БЕЗОПАСНОСТЬ
+    // ------------------------------------------------------------
+    // Авторизация
+    self::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS      => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL         => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS    => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL       => self::CATEGORY_SECURITY,
+
+    // Просмотр логов
+    self::REPORT_TYPE_ID_AP_VIEWING_LOGS               => self::CATEGORY_SECURITY,
+
+    // Пользователи (админка)
+    self::REPORT_TYPE_ID_AP_USER_CREATED               => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_AP_USER_EDITED                => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_AP_USER_DELETED               => self::CATEGORY_SECURITY,
+
+    // Группы пользователей
+    self::REPORT_TYPE_ID_AP_USERS_GROUP_CREATED        => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_AP_USERS_GROUP_EDITED         => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_AP_USERS_GROUP_DELETED        => self::CATEGORY_SECURITY,
+
+    // Пользователи (сайт)
+    self::REPORT_TYPE_ID_BASE_USER_CREATED             => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_USER_EDITED              => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_USER_DELETED             => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_USER_BANNED              => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_USER_UNBANNED            => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED => self::CATEGORY_SECURITY,
+  ];
+
   /** @var string Ключ шифрования для ПДн в логах */
   private static ?string $encryptionKey = null;
 
@@ -173,27 +250,29 @@ final class Report
     return 0;
   }
 
-  /**
-   * Получить идентификационный номер категории отчета
-   *
-   * @return int
-   */
-  public function getCategoryID() : int
-  {
-    if (property_exists($this, 'metadata')) {
-      $metadata = json_decode($this->metadata, true);
-      if (isset($metadata['typeID'])) {
-        if (in_array($metadata['typeID'], [
-          self::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL,
-          self::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS
-        ])) {
-          return 2;
-        }
-      }
+    /**
+     * Получить идентификатор категории отчёта
+     *
+     * @return int
+     */
+    public function getCategoryID() : int
+    {
+      return self::TYPE_TO_CATEGORY[$this->getTypeID()] ?? self::CATEGORY_GENERAL;
     }
 
-    return 0;
-  }
+    /**
+     * Получить список идентификаторов типов отчётов по категории
+     *
+     * @param int $categoryID
+     * @return int[]
+     */
+    public static function getTypeIDsByCategory(int $categoryID) : array
+    {
+      return array_keys(array_filter(
+        self::TYPE_TO_CATEGORY,
+        static fn(int $category) : bool => $category === $categoryID
+      ));
+    }
 
   /**
    * Получить метадату отчета

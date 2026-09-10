@@ -368,32 +368,7 @@ class ReportsContent implements ReportsPageInterface
     // ТИПЫ ОТЧЕТОВ ПО КОНТЕНТУ
     // ============================================================
     
-    $contentTypeIDs = [
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
-      CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
-    ];
-
+    $contentTypeIDs = CMSReport::getTypeIDsByCategory(CMSReport::CATEGORY_CONTENT);
     $reports = $this->getReportsByTypes($contentTypeIDs);
 
     // ============================================================

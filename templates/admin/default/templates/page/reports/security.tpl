@@ -39,6 +39,30 @@
       <span class="report-section__data-value">{UNIQUE_IPS_SUCCESS}</span>
     </li>
     <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_USERS_CREATED}</span>
+      <span class="report-section__data-value">{TOTAL_USERS_CREATED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_USERS_EDITED}</span>
+      <span class="report-section__data-value">{TOTAL_USERS_EDITED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_USERS_DELETED}</span>
+      <span class="report-section__data-value">{TOTAL_USERS_DELETED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_GROUPS_CREATED}</span>
+      <span class="report-section__data-value">{TOTAL_GROUPS_CREATED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_GROUPS_EDITED}</span>
+      <span class="report-section__data-value">{TOTAL_GROUPS_EDITED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_GROUPS_DELETED}</span>
+      <span class="report-section__data-value">{TOTAL_GROUPS_DELETED}</span>
+    </li>
+    <li>
       <span class="report-section__data-label">{LANG:PAGE_REPORTS_SECURITY_UNIQUE_IPS_FAIL}</span>
       <span class="report-section__data-value">{UNIQUE_IPS_FAIL}</span>
     </li>

@@ -386,17 +386,7 @@ class ReportsSecurity implements ReportsPageInterface
     // ТИПЫ ОТЧЕТОВ ПО БЕЗОПАСНОСТИ
     // ============================================================
     
-    $securityTypeIDs = [
-      CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS,
-      CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL,
-      CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS,
-      CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_BANNED,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_UNBANNED,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED,
-      CMSReport::REPORT_TYPE_ID_AP_VIEWING_LOGS,
-    ];
-
+    $securityTypeIDs = CMSReport::getTypeIDsByCategory(CMSReport::CATEGORY_SECURITY);
     $reports = $this->getReportsByTypes($securityTypeIDs);
 
     // ============================================================
@@ -404,14 +394,25 @@ class ReportsSecurity implements ReportsPageInterface
     // ============================================================
     
     $stats = [
-      'auth_success_admin' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS])),
-      'auth_fail_admin' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL])),
-      'auth_success_site' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS])),
-      'auth_fail_site' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL])),
-      'banned' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_USER_BANNED])),
-      'unbanned' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_USER_UNBANNED])),
+      // Авторизация
+      'auth_success_admin'  => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS])),
+      'auth_fail_admin'     => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL])),
+      'auth_success_site'   => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS])),
+      'auth_fail_site'      => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL])),
+      // Блокировки
+      'banned'              => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_USER_BANNED])),
+      'unbanned'            => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_USER_UNBANNED])),
+      // ПДн и логи
       'personal_data_views' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED])),
-      'logs_views' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_VIEWING_LOGS])),
+      'logs_views'          => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_VIEWING_LOGS])),
+      // НОВОЕ: пользователи
+      'users_created'       => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USER_CREATED])),
+      'users_edited'        => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USER_EDITED])),
+      'users_deleted'       => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USER_DELETED])),
+      // НОВОЕ: группы
+      'groups_created'      => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_CREATED])),
+      'groups_edited'       => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_EDITED])),
+      'groups_deleted'      => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_DELETED])),
     ];
 
     // Уникальные IP-адреса
@@ -470,12 +471,16 @@ class ReportsSecurity implements ReportsPageInterface
         CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS,
         CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS,
         CMSReport::REPORT_TYPE_ID_BASE_USER_UNBANNED,
+        CMSReport::REPORT_TYPE_ID_AP_USER_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_CREATED,
       ])) {
         $statusClass = 'success';
       } elseif (in_array($report->getTypeID(), [
         CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL,
         CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL,
         CMSReport::REPORT_TYPE_ID_BASE_USER_BANNED,
+        CMSReport::REPORT_TYPE_ID_AP_USER_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_DELETED,
       ])) {
         $statusClass = 'danger';
       }
@@ -510,6 +515,12 @@ class ReportsSecurity implements ReportsPageInterface
         'TOTAL_UNBANNED' => $stats['unbanned'],
         'TOTAL_PERSONAL_DATA_VIEWS' => $stats['personal_data_views'],
         'TOTAL_LOGS_VIEWS' => $stats['logs_views'],
+        'TOTAL_USERS_CREATED'  => $stats['users_created'],
+        'TOTAL_USERS_EDITED'   => $stats['users_edited'],
+        'TOTAL_USERS_DELETED'  => $stats['users_deleted'],
+        'TOTAL_GROUPS_CREATED' => $stats['groups_created'],
+        'TOTAL_GROUPS_EDITED'  => $stats['groups_edited'],
+        'TOTAL_GROUPS_DELETED' => $stats['groups_deleted'],
         'UNIQUE_IPS_SUCCESS' => !empty($uniqueIpsSuccess) ? implode(', ', $uniqueIpsSuccess) : '-',
         'UNIQUE_IPS_FAIL' => !empty($uniqueIpsFail) ? implode(', ', $uniqueIpsFail) : '-',
         'RECENT_EVENTS' => implode("\n", $recentItems)

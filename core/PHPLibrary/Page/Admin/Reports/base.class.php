@@ -472,57 +472,12 @@ class ReportsBase implements ReportsPageInterface
     // КАТЕГОРИИ СОБЫТИЙ
     // ============================================================
     
-    // Контент
-    $contentTypeIDs = [
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRY_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_PAGE_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_MEDIA_UPLOADED,
-      CMSReport::REPORT_TYPE_ID_AP_MEDIA_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_CATEGORY_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_SAMPLE_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
-    ];
-    
-    // Пользователи
-    $userTypeIDs = [
-      CMSReport::REPORT_TYPE_ID_BASE_USER_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_USER_CREATED,
-      CMSReport::REPORT_TYPE_ID_AP_USER_EDITED,
-      CMSReport::REPORT_TYPE_ID_AP_USER_DELETED,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_BANNED,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_UNBANNED,
-      CMSReport::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED,
-    ];
-    
-    // Безопасность
-    $securityTypeIDs = [
-      CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_SUCCESS,
-      CMSReport::REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL,
-      CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_SUCCESS,
-      CMSReport::REPORT_TYPE_ID_BASE_AUTHORIZATION_FAIL,
-      CMSReport::REPORT_TYPE_ID_AP_VIEWING_LOGS,
-    ];
+    $contentTypeIDs  = CMSReport::getTypeIDsByCategory(CMSReport::CATEGORY_CONTENT);
+    $securityTypeIDs = CMSReport::getTypeIDsByCategory(CMSReport::CATEGORY_SECURITY);
 
     // Все события
     $allReports = $reports;
     $contentReports = $this->filterReports($reports, $contentTypeIDs);
-    $userReports = $this->filterReports($reports, $userTypeIDs);
     $securityReports = $this->filterReports($reports, $securityTypeIDs);
 
     // ============================================================
@@ -636,7 +591,6 @@ class ReportsBase implements ReportsPageInterface
         // Общая статистика
         'TOTAL_ACTIONS' => count($reports),
         'TOTAL_CONTENT_ACTIONS' => count($contentReports),
-        'TOTAL_USER_ACTIONS' => count($userReports),
         'TOTAL_SECURITY_ACTIONS' => count($securityReports),
 
         // Статистика по контенту
