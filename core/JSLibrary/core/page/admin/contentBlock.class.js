@@ -27,7 +27,48 @@ export class PageContentBlock {
     this.buttons = {save: null, delete: null, publish: null, unpublish: null};
   }
 
+  initNadvoTE() {
+    this.createEditor();
+  }
+  
+  createEditor() {
+    const editorContent = document.querySelector('#E3473967486_CONTENT');
+    const editorLocale = window.CMSCore?.locales.nadvoTE;
+    if (!editorContent) return;
+
+    const nadvoTE = new NadvoTE(document.querySelector('#E3473967486'), {
+      'locale': editorLocale,
+      'handler': '/handler/utils/nadvoparse',
+      'toolbar': [
+        {'name': 'undo', 'type': 'button'},
+        {'name': 'redo', 'type': 'button'},
+        {'name': 'bold', 'type': 'button'},
+        {'name': 'italic', 'type': 'button'},
+        {'name': 'underline', 'type': 'button'},
+        {'name': 'headers', 'type': 'choices'},
+        {'name': 'link', 'type': 'button'},
+        {'name': 'image', 'type': 'button'},
+        {'name': 'gallery', 'type': 'button'},
+        {'name': 'quote', 'type': 'button'},
+        {'name': 'code', 'type': 'button'},
+        {'name': 'preview', 'type': 'button'},
+        {'name': 'source', 'type': 'button'},
+        {'name': 'emoji', 'type': 'button'},
+      ]
+    });
+    nadvoTE.init();
+    nadvoTE.textarea.element.classList.add('textarea');
+    nadvoTE.textarea.element.classList.add('form__textarea');
+    nadvoTE.textarea.element.value = editorContent.innerHTML;
+    nadvoTE.textarea.element.setAttribute('name', 'content_block_content_rus');
+    nadvoTE.textarea.element.setAttribute('data-element', 'input-content');
+
+    editorContent.remove();
+  }
+
   init() {
+    this.initNadvoTE();
+
     const searchParams = new URLParser();
     const elementForm = document.querySelector('[data-element="main-form"]');
 
