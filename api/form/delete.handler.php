@@ -25,6 +25,7 @@ if (!defined('IS_NOT_HACKED')) {
 
 use \core\PHPLibrary\Form as Form;
 use \core\PHPLibrary\SystemCore\Report as CMSReport;
+use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -93,18 +94,20 @@ if ($CMSCore->client->isLogged(2)) {
         $form->initData(['name', 'texts']);
         
         $formName = $form->getName();
-        $formTitle = $form->getTitle($CMSCore->locale->getName());
-        
-        // ============================================================
-        // ЛОГИРОВАНИЕ УДАЛЕНИЯ ФОРМЫ (152-ФЗ)
-        // ============================================================
+        // Получаем все языковые версии заголовка
+        $formTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $formTitles[$localeName] = $form->getTitle($localeName);
+        }
+
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED,
           [
             'formID' => $formID,
             'formName' => $formName,
-            'formTitle' => $formTitle,
+            'formTitles' => $formTitles,
             'deletedByID' => $clientUser->getID(),
             'deletedByLogin' => $clientUser->getLogin(),
             'ip' => $CMSCore->client->getIPAddress()

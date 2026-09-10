@@ -239,15 +239,21 @@ if ($CMSCore->client->isLogged(2)) {
         // ЛОГИРОВАНИЕ ОБНОВЛЕНИЯ ФОРМЫ (152-ФЗ)
         // ============================================================
         $form->initData(['name', 'texts']);
-        $formTitle = $form->getTitle($CMSCore->locale->getName());
-        
+
+        // Получаем все языковые версии заголовка
+        $formTitles = [];
+        $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+        foreach ($CMSLocalesNames as $localeName) {
+          $formTitles[$localeName] = $form->getTitle($localeName);
+        }
+
         CMSReport::create(
           $CMSCore,
           CMSReport::REPORT_TYPE_ID_AP_FORM_EDITED,
           [
             'formID' => $form->getID(),
             'formName' => $form->getName(),
-            'formTitle' => $formTitle,
+            'formTitles' => $formTitles,
             'updatedByID' => $clientUser->getID(),
             'updatedByLogin' => $clientUser->getLogin(),
             'changedFields' => $changedFields,

@@ -23,8 +23,9 @@ if (!defined('IS_NOT_HACKED')) {
   die('An attempted hacker attack has been detected.');
 }
 
-use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 use \core\PHPLibrary\Form as Form;
+use \core\PHPLibrary\SystemCore\Report as CMSReport;
+use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
@@ -190,6 +191,31 @@ if ($CMSCore->client->isLogged(2)) {
     $form = Form::create($CMSCore, $formName, $texts, $elements, $metadata);
 
     if (!is_null($form)) {
+      // ============================================================
+      // ЛОГИРОВАНИЕ СОЗДАНИЯ ФОРМЫ (152-ФЗ)
+      // ============================================================
+      $form->initData(['name', 'texts']);
+      
+      // Получаем все языковые версии заголовка
+      $formTitles = [];
+      $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+      foreach ($CMSLocalesNames as $localeName) {
+        $formTitles[$localeName] = $form->getTitle($localeName);
+      }
+      
+      CMSReport::create(
+        $CMSCore,
+        CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
+        [
+          'formID' => $form->getID(),
+          'formName' => $form->getName(),
+          'formTitles' => $formTitles,
+          'createdByID' => $clientUser->getID(),
+          'createdByLogin' => $clientUser->getLogin(),
+          'ip' => $CMSCore->client->getIPAddress()
+        ]
+      );
+
       $handlerOutputData['form'] = [];
       $handlerOutputData['form']['id'] = $form->getID();
 
