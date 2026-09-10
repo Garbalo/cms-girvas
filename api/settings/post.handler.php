@@ -17,7 +17,7 @@ use \core\PHPLibrary\SystemCore\Report as CMSReport;
 
 if ($CMSCore->client->isLogged(2)) {
   $clientUser = $CMSCore->client->getUser(2);
-  $clientUser->initData(['metadata']);
+  $clientUser->initData(['login','metadata']);
   $clientUserGroup = $clientUser->getGroup();
   $clientUserGroup->initData(['permissions']);
 
@@ -512,13 +512,17 @@ if ($CMSCore->client->isLogged(2)) {
 
           $changedFields[] = $key;
 
+          if (stripos($bareKey, 'additional_field') !== false) {
+            continue;
+          }
+
           // Определяем sensitive
           $isSensitive = false;
 
           // 1. Исключения — точные имена
           if (in_array($bareKey, $sensitiveExceptions, true)) {
             $isSensitive = false;
-          // 2. Флаги _status — не sensitive (кроме тех, что уже в исключениях)
+          // 2. Флаги _status — не sensitive
           } elseif (str_ends_with($bareKey, '_status')) {
             $isSensitive = false;
           // 3. Паттерны

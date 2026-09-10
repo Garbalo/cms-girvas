@@ -422,7 +422,9 @@ class ReportsSecurity implements ReportsPageInterface
       $parts[] = sprintf('%s: %s', $sensitiveLabel, implode(', ', $sensitiveParts));
     }
 
-    return implode('; ', $parts);
+    if (empty($parts)) return '';
+
+    return '<br>' . implode('<br>', $parts);
   }
 
   /**
