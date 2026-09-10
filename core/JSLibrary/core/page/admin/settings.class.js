@@ -242,7 +242,7 @@ export class PageSettings {
         });
         buttons.addField.assembly();
 
-        locales.forEach((locale, localeIndex) => {
+        this.page.core.locales.list.forEach((locale, localeIndex) => {
           let localeIconImageElement = document.createElement('img');
           let localeLabelElement = document.createElement('span');
           let localeTemplate = document.createElement('template');
@@ -324,7 +324,7 @@ export class PageSettings {
         });
         buttons.addField.assembly();
 
-        locales.forEach((locale, localeIndex) => {
+        this.page.core.locales.list.forEach((locale, localeIndex) => {
           let localeIconImageElement = document.createElement('img');
           let localeLabelElement = document.createElement('span');
           let localeTemplate = document.createElement('template');
@@ -408,7 +408,7 @@ export class PageSettings {
         });
         buttons.addField.assembly();
 
-        locales.forEach((locale, localeIndex) => {
+        this.page.core.locales.list.forEach((locale, localeIndex) => {
           let localeIconImageElement = document.createElement('img');
           let localeLabelElement = document.createElement('span');
           let localeTemplate = document.createElement('template');
