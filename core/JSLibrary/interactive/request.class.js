@@ -29,12 +29,21 @@ export class Request {
    */
   constructor(interactiveObject, method, url, data = undefined) {
     this.interactiveObject = interactiveObject;
-
     this.setMethod(method);
     this.setURL(url);
     
     this.element = data;
-    this.data = (data === undefined || data === null) ? undefined : new FormData(this.element);
+    
+    if (data instanceof FormData) {
+      this.data = data;
+    } else if (data instanceof HTMLFormElement) {
+      this.data = new FormData(data);
+    } else if (data !== undefined && data !== null) {
+      this.data = data;
+    } else {
+      this.data = undefined;
+    }
+    
     this.headers = {};
     this.showingNotification = true;
   }

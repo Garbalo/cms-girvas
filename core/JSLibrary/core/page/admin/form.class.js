@@ -307,8 +307,7 @@ export class PageForm {
       
       const request = new Interactive('request', {
         method: 'DELETE',
-        url: `/handler/form/${this.searchParams.getPathPart(3)}?localeMessage=${window.CMSCore.locales.admin.name}`,
-        data: formData
+        url: `/handler/form/${this.searchParams.getPathPart(3)}?localeMessage=${window.CMSCore.locales.admin.name}`
       });
 
       request.target.data = formData;
