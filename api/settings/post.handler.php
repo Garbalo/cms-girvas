@@ -100,9 +100,11 @@ if ($CMSCore->client->isLogged(2)) {
         // ============================================================
         $oldSettingsValues = [];
         foreach ($_POST as $key => $value) {
-          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key)) continue;
-          $oldSettingsValues[$key] = $CMSCore->configurator->existsDatabaseEntryValue($key)
-            ? $CMSCore->configurator->getDatabaseEntryValue($key)
+          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key, $matches)) continue;
+
+          $bareKey = $matches[1]; // без префикса setting_
+          $oldSettingsValues[$bareKey] = $CMSCore->configurator->existsDatabaseEntryValue($bareKey)
+            ? $CMSCore->configurator->getDatabaseEntryValue($bareKey)
             : null;
         }
 
@@ -465,23 +467,24 @@ if ($CMSCore->client->isLogged(2)) {
         $changedFields = [];
 
         foreach ($_POST as $key => $value) {
-          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key)) continue;
+          if (!preg_match('/^setting_([a-z0-9_]+)$/', $key, $matches)) continue;
 
-          $settingKey = $key; // с префиксом setting_
-          $bareSettingKey = preg_replace('/^setting_/', '', $key);
+          $bareKey = $matches[1];   // например, base_locale
+          $settingKey = $key;       // например, setting_base_locale
 
-          $oldValue = $oldSettingsValues[$key] ?? null;
+          $oldValue = $oldSettingsValues[$bareKey] ?? null;
           $newValue = is_array($value) ? json_encode($value) : (string)$value;
 
-          // Сравниваем «нормализованные» значения, чтобы не ловить ложные изменения
+          // Нормализация: в БД может лежать JSON-строка, а из формы придёт просто строка
           $oldNormalized = is_string($oldValue) ? $oldValue : json_encode($oldValue);
+
           if ($oldNormalized === $newValue) continue;
 
           $changedFields[] = $settingKey;
 
-          if (in_array($bareSettingKey, $sensitiveSettings, true)) {
+          if (in_array($bareKey, $sensitiveSettings, true)) {
             $sensitiveChanged[] = $settingKey;
-          } elseif (in_array($bareSettingKey, $safeSettings, true)) {
+          } elseif (in_array($bareKey, $safeSettings, true)) {
             $changedValues[$settingKey] = [
               'old' => mb_substr((string)$oldValue, 0, 500),
               'new' => mb_substr($newValue, 0, 500),
