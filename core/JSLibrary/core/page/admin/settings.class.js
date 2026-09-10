@@ -135,7 +135,7 @@ export class PageSettings {
           let engineeringWorksHiddenInput = document.getElementById('I1474308110');
           engineeringWorksHiddenInput.value = engineeringWorksStatus;
 
-          locales.forEach((locale, localeIndex) => {
+          this.page.core.locales.list.forEach((locale, localeIndex) => {
             let localeTitle = locale.title;
             let localeIconURL = locale.iconURL;
             let localeName = locale.name;
