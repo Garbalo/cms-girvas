@@ -155,7 +155,7 @@ export class PageSettings {
             interactiveChoicesSettingsBaseLocale.target.addItem(localeTemplate.innerHTML, localeName);
           });
 
-          locales.forEach((locale, localeIndex) => {
+          this.page.core.locales.list.forEach((locale, localeIndex) => {
             if (locale.name === window.CMSCore.locales.base.name) {
               interactiveChoicesSettingsBaseLocale.target.setItemSelectedIndex(localeIndex);
             }
@@ -164,7 +164,7 @@ export class PageSettings {
           interactiveChoicesSettingsBaseLocale.target.setName('setting_base_locale')
           interactiveChoicesSettingsBaseLocale.assembly();
 
-          locales.forEach((locale, localeIndex) => {
+          this.page.core.locales.list.forEach((locale, localeIndex) => {
             let localeTitle = locale.title;
             let localeIconURL = locale.iconURL;
             let localeName = locale.name;
@@ -184,7 +184,7 @@ export class PageSettings {
             interactiveChoicesSettingsAdminLocale.target.addItem(localeTemplate.innerHTML, localeName);
           });
 
-          locales.forEach((locale, localeIndex) => {
+          this.page.core.locales.list.forEach((locale, localeIndex) => {
             if (locale.name === window.CMSCore.locales.admin.name) {
               interactiveChoicesSettingsAdminLocale.target.setItemSelectedIndex(localeIndex);
             }
