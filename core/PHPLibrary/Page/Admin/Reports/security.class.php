@@ -448,7 +448,7 @@ class ReportsSecurity implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ БЕЗОПАСНОСТИ
     // ============================================================
 
-    usort($recentReports, function($a, $b) {
+    usort($reports, function($a, $b) {
       return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
     });
     

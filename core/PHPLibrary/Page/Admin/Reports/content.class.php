@@ -430,10 +430,10 @@ class ReportsContent implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ ПО КОНТЕНТУ
     // ============================================================
     
-    usort($recentReports, function($a, $b) {
+    usort($reports, function($a, $b) {
       return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
     });
-
+    
     $recentItems = [];
     $recentReports = array_slice($reports, 0, 20);
 

@@ -595,7 +595,7 @@ class ReportsBase implements ReportsPageInterface
     // ПОСЛЕДНИЕ СОБЫТИЯ
     // ============================================================
 
-    usort($recentReports, function($a, $b) {
+    usort($reports, function($a, $b) {
       return $b->getCreatedUnixTimestamp() <=> $a->getCreatedUnixTimestamp();
     });
 
