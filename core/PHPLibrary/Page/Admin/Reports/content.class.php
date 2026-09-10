@@ -273,6 +273,7 @@ class ReportsContent implements ReportsPageInterface
       '{CATEGORY_TITLE}' => $getLocalizedTitle('categoryTitles', 'categoryTitle', 'categoryID', fn($id) => $this->getCategoryTitle($id)),
       '{FORM_TITLE}' => $getLocalizedTitle('formTitles', 'formTitle', 'formID', fn($id) => $this->getFormTitle($id)),
       '{BLOCK_TITLE}' => $getLocalizedTitle('blockTitles', 'blockTitle', 'blockID', fn($id) => $this->getBlockTitle($id)),
+      '{FEED_TITLE}' => $getLocalizedTitle('feedTitles', 'feedTitle', 'feedID', fn($id) => $this->getFeedTitle($id)),
       '{SAMPLE_TITLE}' => $getLocalizedTitle('sampleTitles', 'sampleTitle', 'sampleID', fn($id) => $this->getSampleTitle($id)),
       '{FILE_NAME}' => $variables['fileName'] ?? $variables['name'] ?? '',
       '{CLIENT_IP}' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
@@ -332,6 +333,21 @@ class ReportsContent implements ReportsPageInterface
       $block = new \core\PHPLibrary\ContentBlock($this->CMSCore, $blockID);
       $block->initData(['texts']);
       return $block->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Получить название фида по ID
+   */
+  private function getFeedTitle(int $feedID): string
+  {
+    if ($feedID <= 0) return '';
+    try {
+      $feed = new \core\PHPLibrary\Feed($this->CMSCore, $feedID);
+      $feed->initData(['texts']);
+      return $feed->getTitle($this->CMSCore->locale->getName());
     } catch (\Exception $e) {
       return 'unknown';
     }
@@ -399,6 +415,9 @@ class ReportsContent implements ReportsPageInterface
       'blocks_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED])),
       'blocks_edited' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_EDITED])),
       'blocks_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED])),
+      'feeds_created' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FEED_CREATED])),
+      'feeds_edited'  => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FEED_EDITED])),
+      'feeds_deleted' => count($this->filterReports($reports, [CMSReport::REPORT_TYPE_ID_AP_FEED_DELETED])),
     ];
 
     // ============================================================
@@ -432,6 +451,7 @@ class ReportsContent implements ReportsPageInterface
         CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
         CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_CREATED,
         CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_CREATED,
+        CMSReport::REPORT_TYPE_ID_AP_FEED_CREATED,
       ])) {
         $statusClass = 'success';
       } elseif (in_array($report->getTypeID(), [
@@ -443,6 +463,7 @@ class ReportsContent implements ReportsPageInterface
         CMSReport::REPORT_TYPE_ID_AP_FORM_DELETED,
         CMSReport::REPORT_TYPE_ID_AP_ENTRIES_COMMENT_DELETED,
         CMSReport::REPORT_TYPE_ID_AP_CONTENT_BLOCK_DELETED,
+        CMSReport::REPORT_TYPE_ID_AP_FEED_DELETED,
       ])) {
         $statusClass = 'danger';
       }
@@ -492,6 +513,9 @@ class ReportsContent implements ReportsPageInterface
         'CONTENT_BLOCKS_CREATED' => $stats['blocks_created'],
         'CONTENT_BLOCKS_EDITED' => $stats['blocks_edited'],
         'CONTENT_BLOCKS_DELETED' => $stats['blocks_deleted'],
+        'CONTENT_FEEDS_CREATED' => $stats['feeds_created'],
+        'CONTENT_FEEDS_EDITED'  => $stats['feeds_edited'],
+        'CONTENT_FEEDS_DELETED' => $stats['feeds_deleted'],
         'TOTAL_CONTENT_ACTIONS' => count($reports),
         'RECENT_EVENTS' => implode("\n", $recentItems)
       ]

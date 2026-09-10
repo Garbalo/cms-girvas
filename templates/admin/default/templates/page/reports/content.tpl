@@ -102,6 +102,19 @@
       <span class="report-section__data-label">{LANG:PAGE_REPORTS_CONTENT_STATS_BLOCKS_DELETED}</span>
       <span class="report-section__data-value">{CONTENT_BLOCKS_DELETED}</span>
     </li>
+    <!-- Веб-каналы (фиды) -->
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_CONTENT_STATS_FEEDS_CREATED}</span>
+      <span class="report-section__data-value">{CONTENT_FEEDS_CREATED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_CONTENT_STATS_FEEDS_EDITED}</span>
+      <span class="report-section__data-value">{CONTENT_FEEDS_EDITED}</span>
+    </li>
+    <li>
+      <span class="report-section__data-label">{LANG:PAGE_REPORTS_CONTENT_STATS_FEEDS_DELETED}</span>
+      <span class="report-section__data-value">{CONTENT_FEEDS_DELETED}</span>
+    </li>
   </ul>
 </section>
 
