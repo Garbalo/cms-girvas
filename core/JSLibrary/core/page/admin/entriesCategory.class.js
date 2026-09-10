@@ -276,6 +276,8 @@ export class PageEntriesCategory {
             url: '/handler/entry/category/' + searchParams.getPathPart(3) + '?localeMessage=' + window.CMSCore.locales.admin.name
           });
 
+          request.target.data = formData;
+
           request.target.send().then((data) => {
             if (data.statusCode === 1) {
               window.location.href = '/admin/entriesCategories';
