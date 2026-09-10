@@ -285,6 +285,7 @@ class ReportsSecurity implements ReportsPageInterface
       '{FORM_TITLE}' => $getLocalizedTitle('formTitles', 'formTitle', 'formID', fn($id) => $this->getFormTitle($id)),
       '{BLOCK_TITLE}' => $getLocalizedTitle('blockTitles', 'blockTitle', 'blockID', fn($id) => $this->getBlockTitle($id)),
       '{SAMPLE_TITLE}' => $getLocalizedTitle('sampleTitles', 'sampleTitle', 'sampleID', fn($id) => $this->getSampleTitle($id)),
+      '{GROUP_TITLE}' => $getLocalizedTitle('groupTitles', 'groupTitle', 'groupID', fn($id) => $this->getGroupTitle($id)),
       '{FILE_NAME}' => $variables['fileName'] ?? $variables['name'] ?? '',
       '{CLIENT_IP}' => $variables['ip'] ?? $variables['clientIP'] ?? '0.0.0.0',
       '{USER_LOGIN}' => $variables['userLogin'] ?? $this->getUserLogin($variables['userID'] ?? 0),
@@ -365,6 +366,21 @@ class ReportsSecurity implements ReportsPageInterface
       $sample = new \core\PHPLibrary\EntriesSample($this->CMSCore, $sampleID);
       $sample->initData(['texts']);
       return $sample->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Получить название группы пользователей по ID
+   */
+  private function getGroupTitle(int $groupID): string
+  {
+    if ($groupID <= 0) return '';
+    try {
+      $group = new \core\PHPLibrary\UserGroup($this->CMSCore, $groupID);
+      $group->initData(['texts']);
+      return $group->getTitle($this->CMSCore->locale->getName());
     } catch (\Exception $e) {
       return 'unknown';
     }

@@ -89,15 +89,20 @@ if ($CMSCore->client->isLogged(2)) {
               // ЛОГИРОВАНИЕ СОЗДАНИЯ ГРУППЫ ПОЛЬЗОВАТЕЛЕЙ (152-ФЗ)
               // ============================================================
               $userGroup->initData(['name', 'texts']);
-              $groupTitle = $userGroup->getTitle($CMSCore->locale->getName());
-              
+
+              $groupTitles = [];
+              $CMSLocalesNames = $CMSCore->getArrayLocalesNames();
+              foreach ($CMSLocalesNames as $localeName) {
+                $groupTitles[$localeName] = $userGroup->getTitle($localeName);
+              }
+
               CMSReport::create(
                 $CMSCore,
                 CMSReport::REPORT_TYPE_ID_AP_USERS_GROUP_CREATED,
                 [
                   'groupID' => $userGroup->getID(),
                   'groupName' => $userGroup->getName(),
-                  'groupTitle' => $groupTitle,
+                  'groupTitles' => $groupTitles,
                   'createdByID' => $clientUser->getID(),
                   'createdByLogin' => $clientUser->getLogin(),
                   'ip' => $CMSCore->client->getIPAddress()
