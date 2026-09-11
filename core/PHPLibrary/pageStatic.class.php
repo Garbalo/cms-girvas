@@ -445,7 +445,7 @@ class PageStatic implements EntityTypeContent
     $queryBuilder->setStatementSelect();
     $queryBuilder->statement->addSelections(['id']);
     $queryBuilder->statement->setClauseFrom();
-    $queryBuilder->statement->clauseFrom->addTable('page_static_versions');
+    $queryBuilder->statement->clauseFrom->addTable('pages_static_versions');
     $queryBuilder->statement->clauseFrom->assembly();
     $queryBuilder->statement->setClauseWhere();
 

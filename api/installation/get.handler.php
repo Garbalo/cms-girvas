@@ -711,7 +711,7 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
       $queryBuilder->setStatementCreateTable();
       $queryBuilder->statement->setCheckExists(true);
-      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->setTableName('pages_static_versions');
       $queryBuilder->statement->addColumn('id', 'serial', 'NOT NULL PRIMARY KEY');
       $queryBuilder->statement->addColumn('pageStaticID', 'bigint', 'NOT NULL DEFAULT 0');
       $queryBuilder->statement->addColumn('version', 'text', 'NOT NULL');
@@ -1189,11 +1189,11 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
         $databaseQuery->execute();
       }
 
-      // Индексы для таблицы page_static_versions
+      // Индексы для таблицы pages_static_versions
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
       $queryBuilder->setStatementCreateIndex();
-      $queryBuilder->statement->setIndexName('idx_page_static_versions_unique');
-      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->setIndexName('idx_pages_static_versions_unique');
+      $queryBuilder->statement->setTableName('pages_static_versions');
       $queryBuilder->statement->addColumn('pageStaticID');
       $queryBuilder->statement->addColumn('version');
       $queryBuilder->statement->addColumn('locale');
@@ -1206,8 +1206,8 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
 
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
       $queryBuilder->setStatementCreateIndex();
-      $queryBuilder->statement->setIndexName('idx_page_static_versions_current');
-      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->setIndexName('idx_pages_static_versions_current');
+      $queryBuilder->statement->setTableName('pages_static_versions');
       $queryBuilder->statement->addColumn('pageStaticID');
       $queryBuilder->statement->addColumn('locale');
       $queryBuilder->statement->addColumn('isCurrent');

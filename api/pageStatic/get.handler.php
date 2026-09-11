@@ -14,6 +14,7 @@ if (!defined('IS_NOT_HACKED')) {
 }
 
 use \core\PHPLibrary\PageStatic as PageStatic;
+use \core\PHPLibrary\PageStatic\Version as PageStaticVersion;
 
 if ($CMSCore->client->isLogged(2)) {
   $pageStaticID = $CMSCore->urlp->getPath(2) ?? 0;
@@ -38,6 +39,13 @@ if ($CMSCore->client->isLogged(2)) {
     $handlerOutputData['pageStatic']['isPublished'] = $pageStatic->isPublished();
     $handlerOutputData['pageStatic']['createdUnixTimestamp'] = $pageStatic->getCreatedUnixTimestamp();
     $handlerOutputData['pageStatic']['updatedUnixTimestamp'] = $pageStatic->getUpdatedUnixTimestamp();
+    $handlerOutputData['pageStatic']['isLegalDocument'] = $pageStatic->isLegalDocument();
+    $handlerOutputData['pageStatic']['currentVersion'] = '';
+
+    if ($pageStatic->isLegalDocument()) {
+      $currentVersion = $pageStatic->getCurrentVersion($pageStaticLocale);
+      $handlerOutputData['pageStatic']['currentVersion'] = $currentVersion ? $currentVersion->getVersion() : '';
+    }
 
     $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_GET_DATA_SUCCESS');
     $handlerStatusCode = $handlerStatusCode ?? 1;

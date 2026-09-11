@@ -223,7 +223,7 @@ class Version
     $queryBuilder->setStatementSelect();
     $queryBuilder->statement->addSelections($columns);
     $queryBuilder->statement->setClauseFrom();
-    $queryBuilder->statement->clauseFrom->addTable('page_static_versions');
+    $queryBuilder->statement->clauseFrom->addTable('pages_static_versions');
     $queryBuilder->statement->clauseFrom->assembly();
     $queryBuilder->statement->setClauseWhere();
     $queryBuilder->statement->clauseWhere->addConditionAdaptive([
@@ -266,7 +266,7 @@ class Version
     $queryBuilder->setStatementSelect();
     $queryBuilder->statement->addSelections(['id']);
     $queryBuilder->statement->setClauseFrom();
-    $queryBuilder->statement->clauseFrom->addTable('page_static_versions');
+    $queryBuilder->statement->clauseFrom->addTable('pages_static_versions');
     $queryBuilder->statement->clauseFrom->assembly();
     $queryBuilder->statement->setClauseWhere();
 
@@ -304,6 +304,62 @@ class Version
 
     $result = $databaseQuery->fetch(\PDO::FETCH_ASSOC);
     return $result ? new Version($CMSCore, (int)$result['id']) : null;
+  }
+
+  /**
+   * Получить следующую доступную версию (если версия занята — инкрементирует последний компонент)
+   *
+   * @param CMSCore $CMSCore
+   * @param int $pageStaticID
+   * @param string $version
+   * @param string $locale
+   * @return string
+   */
+  public static function getNextVersion(CMSCore $CMSCore, int $pageStaticID, string $version, string $locale) : string
+  {
+    // Проверяем, свободна ли версия
+    if (self::getByVersion($CMSCore, $pageStaticID, $version, $locale) === null) {
+      return $version;
+    }
+
+    // Занята — инкрементим последний компонент
+    $parts = explode('.', $version);
+    $last = array_pop($parts);
+
+    if (!is_numeric($last)) {
+      // Не число — добавляем .1
+      return self::getNextVersion($CMSCore, $pageStaticID, $version . '.1', $locale);
+    }
+
+    $parts[] = ((int)$last) + 1;
+    $candidate = implode('.', $parts);
+
+    // Рекурсивно проверяем
+    return self::getNextVersion($CMSCore, $pageStaticID, $candidate, $locale);
+  }
+
+  /**
+   * Получить версию по умолчанию для новой публикации
+   *
+   * @param CMSCore $CMSCore
+   * @param int $pageStaticID
+   * @param string $locale
+   * @return string
+   */
+  public static function getDefaultVersion(CMSCore $CMSCore, int $pageStaticID, string $locale) : string
+  {
+    $current = self::getCurrent($CMSCore, $pageStaticID, $locale);
+
+    if ($current === null) {
+      return '1.0';
+    }
+
+    $currentVersion = $current->getVersion();
+    $parts = explode('.', $currentVersion);
+    $last = array_pop($parts);
+    $parts[] = (is_numeric($last) ? (int)$last : 0) + 1;
+
+    return implode('.', $parts);
   }
 
   /**
@@ -358,7 +414,7 @@ class Version
     $queryBuilder->setStatementSelect();
     $queryBuilder->statement->addSelections(['id']);
     $queryBuilder->statement->setClauseFrom();
-    $queryBuilder->statement->clauseFrom->addTable('page_static_versions');
+    $queryBuilder->statement->clauseFrom->addTable('pages_static_versions');
     $queryBuilder->statement->clauseFrom->assembly();
     $queryBuilder->statement->setClauseWhere();
 
@@ -432,7 +488,7 @@ class Version
     // 1. Снимаем isCurrent со всех версий этой страницы+локали
     $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
     $queryBuilder->setStatementUpdate();
-    $queryBuilder->statement->setTable('page_static_versions');
+    $queryBuilder->statement->setTable('pages_static_versions');
     $queryBuilder->statement->setClauseSet();
     $queryBuilder->statement->clauseSet->addColumnAdaptive('isCurrent', [
       'mysql' => 'FALSE',
@@ -463,7 +519,7 @@ class Version
     // 2. Создаём новую запись
     $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
     $queryBuilder->setStatementInsert();
-    $queryBuilder->statement->setTable('page_static_versions');
+    $queryBuilder->statement->setTable('pages_static_versions');
     $queryBuilder->statement->addColumn('pageStaticID');
     $queryBuilder->statement->addColumn('version');
     $queryBuilder->statement->addColumn('locale');

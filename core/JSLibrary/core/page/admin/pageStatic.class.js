@@ -350,6 +350,11 @@ export class PagePageStatic {
                 titleInputElement.value = data.outputData.pageStatic.title;
                 SEOTitleInputElement.value = data.outputData.pageStatic.SEOTitle;
                 keywordsInputElement.value = data.outputData.pageStatic.keywords.join(', ');
+
+                const versionInputElement = document.querySelector('[name="page_static_version"]');
+                if (versionInputElement !== null && data.outputData.pageStatic.hasOwnProperty('currentVersion')) {
+                  versionInputElement.value = data.outputData.pageStatic.currentVersion;
+                }
               }
             });
           }
@@ -430,6 +435,11 @@ export class PagePageStatic {
                   titleInputElement.value = data.outputData.pageStatic.title;
                   SEOTitleInputElement.value = data.outputData.pageStatic.SEOTitle;
                   keywordsInputElement.value = data.outputData.pageStatic.keywords.join(', ');
+
+                  const versionInputElement = document.querySelector('[name="page_static_version"]');
+                  if (versionInputElement !== null && data.outputData.pageStatic.hasOwnProperty('currentVersion')) {
+                    versionInputElement.value = data.outputData.pageStatic.currentVersion;
+                  }
                 }
               });
             }
@@ -500,6 +510,16 @@ export class PagePageStatic {
           let inputPersonalTemplatePath = document.querySelector('[name="page_static_template_path"]');
           if (inputPersonalTemplatePath !== null) {
             formData.append(inputPersonalTemplatePath.name, inputPersonalTemplatePath.value);
+          }
+
+          let inputIsLegalDocumentStatus = document.querySelector('[name="page_static_is_legal_document_status"][type="hidden"]');
+          if (inputIsLegalDocumentStatus !== null) {
+            formData.set('page_static_is_legal_document_status', inputIsLegalDocumentStatus.value);
+          }
+
+          let inputVersion = document.querySelector('[name="page_static_version"]');
+          if (inputVersion !== null && !inputVersion.disabled) {
+            formData.append('page_static_version', inputVersion.value);
           }
 
           const additionalDataContainerElement = document.querySelector('[data-element="additional-data"]');

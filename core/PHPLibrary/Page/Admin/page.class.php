@@ -23,6 +23,7 @@ namespace core\PHPLibrary\Page\Admin;
 use \core\PHPLibrary\InterfacePage as InterfacePage;
 use \core\PHPLibrary\SystemCore as SystemCore;
 use \core\PHPLibrary\PageStatic as PageStatic;
+use \core\PHPLibrary\PageStatic\Version as PageStaticVersion;
 use \core\PHPLibrary\Template\Collector as ThemeCollector;
 use \core\PHPLibrary\Page as Page;
 use \core\PHPLibrary\TraitPage as TraitPage;
@@ -327,7 +328,7 @@ class PagePage implements InterfacePage
         $pageStatic->getID(),
         $localeName
       );
-      
+
       $currentVersion = $version ? $version->getVersion() : '';
     }
 

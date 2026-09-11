@@ -14,6 +14,7 @@ if (!defined('IS_NOT_HACKED')) {
 }
 
 use \core\PHPLibrary\PageStatic as PageStatic;
+use \core\PHPLibrary\PageStatic\Version as PageStaticVersion;
 use \core\PHPLibrary\SystemCore\Report as CMSReport;
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 
@@ -164,6 +165,59 @@ if ($CMSCore->client->isLogged(2)) {
               'ip' => $CMSCore->client->getIPAddress()
             ]
           );
+
+          // ============================================================
+          // ПУБЛИКАЦИЯ ПЕРВОЙ ВЕРСИИ ДОКУМЕНТА (152-ФЗ)
+          // ============================================================
+          $pageStaticIsLegalDocument = ($_PUT['page_static_is_legal_document_status'] ?? 'off') === 'on';
+
+          if ($pageStaticIsLegalDocument) {
+            // Сохраняем флаг в metadata
+            $pageStatic->update(['metadata' => ['isLegalDocument' => true]]);
+
+            // Перезагружаем texts
+            unset($pageStatic->texts);
+            $pageStatic->initData(['texts']);
+
+            $publishedVersions = [];
+
+            foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
+              $localeVersionInput = trim($_PUT['page_static_version'] ?? '');
+
+              if (empty($localeVersionInput)) {
+                $localeVersionInput = '1.0';
+              } else {
+                $localeVersionInput = PageStaticVersion::getNextVersion($CMSCore, $pageStatic->getID(), $localeVersionInput, $localeName);
+              }
+
+              $version = $pageStatic->publishVersion($localeVersionInput, $localeName, $clientUser->getID());
+
+              if ($version !== null) {
+                $publishedVersions[$localeName] = $localeVersionInput;
+              }
+            }
+
+            if (!empty($publishedVersions)) {
+              $pageTitles = [];
+              foreach ($CMSCore->getArrayLocalesNames() as $locale) {
+                $pageTitles[$locale] = $pageStatic->getTitle($locale);
+              }
+
+              CMSReport::create(
+                $CMSCore,
+                CMSReport::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_PUBLISHED,
+                [
+                  'pageStaticID' => $pageStatic->getID(),
+                  'pageName' => $pageStatic->getName(),
+                  'pageTitles' => $pageTitles,
+                  'versions' => $publishedVersions,
+                  'userID' => $clientUser->getID(),
+                  'userLogin' => $clientUser->getLogin(),
+                  'ip' => $CMSCore->client->getIPAddress()
+                ]
+              );
+            }
+          }
 
           $handlerOutputData['pageStatic'] = [];
           $handlerOutputData['pageStatic']['id'] = $pageStatic->getID();
