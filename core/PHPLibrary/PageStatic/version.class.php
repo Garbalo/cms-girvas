@@ -354,7 +354,16 @@ class Version
       return '1.0';
     }
 
+    // ← ЗАГРУЖАЕМ ДАННЫЕ!
+    $current->initData(['version']);
+
     $currentVersion = $current->getVersion();
+    
+    // Защита: если пусто — начинаем с 1.0
+    if (empty($currentVersion)) {
+      return '1.0';
+    }
+    
     $parts = explode('.', $currentVersion);
     $last = array_pop($parts);
     $parts[] = (is_numeric($last) ? (int)$last : 0) + 1;
