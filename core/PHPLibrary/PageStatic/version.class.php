@@ -351,19 +351,35 @@ class Version
     $current = self::getCurrent($CMSCore, $pageStaticID, $locale);
 
     if ($current === null) {
-      return '1.0';
+      // Нет актуальной версии — ищем последнюю по id
+      $all = self::getAllByPage($CMSCore, $pageStaticID, $locale);
+      if (empty($all)) {
+        return '1.0';
+      }
+      
+      // Берём первую (самую новую по createdUnixTimestamp DESC)
+      $latest = $all[0];
+      $latest->initData(['version']);
+      $latestVersion = $latest->getVersion();
+      
+      if (empty($latestVersion)) {
+        return '1.0';
+      }
+      
+      $parts = explode('.', $latestVersion);
+      $last = array_pop($parts);
+      $parts[] = (is_numeric($last) ? (int)$last : 0) + 1;
+      
+      return implode('.', $parts);
     }
 
-    // ← ЗАГРУЖАЕМ ДАННЫЕ!
     $current->initData(['version']);
-
     $currentVersion = $current->getVersion();
     
-    // Защита: если пусто — начинаем с 1.0
     if (empty($currentVersion)) {
       return '1.0';
     }
-    
+
     $parts = explode('.', $currentVersion);
     $last = array_pop($parts);
     $parts[] = (is_numeric($last) ? (int)$last : 0) + 1;
@@ -494,57 +510,51 @@ class Version
 
     $databaseConnection = $CMSCore->databaseConnector->database->connection;
 
-    // 1. Снимаем isCurrent со всех версий этой страницы+локали
-    $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
-    $queryBuilder->setStatementUpdate();
-    $queryBuilder->statement->setTable('pages_static_versions');
-    $queryBuilder->statement->setClauseSet();
-    $queryBuilder->statement->clauseSet->addColumnAdaptive('isCurrent', [
-      'mysql' => 'FALSE',
-      'postgresql' => 'FALSE'
-    ]);
-    $queryBuilder->statement->clauseSet->assembly();
-    $queryBuilder->statement->setClauseWhere();
-    $queryBuilder->statement->clauseWhere->addConditionAdaptive([
-      'mysql' => '`pageStaticID` = :pageStaticID AND `locale` = :locale',
-      'postgresql' => '"pageStaticID" = :pageStaticID AND "locale" = :locale'
-    ]);
-    $queryBuilder->statement->clauseWhere->assembly();
-    $queryBuilder->statement->assembly();
-
     try {
+      $databaseConnection->beginTransaction();
+
+      // 1. Снимаем isCurrent со всех версий этой страницы+локали
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementUpdate();
+      $queryBuilder->statement->setTable('pages_static_versions');
+      $queryBuilder->statement->setClauseSet();
+      $queryBuilder->statement->clauseSet->addColumnAdaptive('isCurrent', [
+        'mysql' => 'FALSE',
+        'postgresql' => 'FALSE'
+      ]);
+      $queryBuilder->statement->clauseSet->assembly();
+      $queryBuilder->statement->setClauseWhere();
+      $queryBuilder->statement->clauseWhere->addConditionAdaptive([
+        'mysql' => '`pageStaticID` = :pageStaticID AND `locale` = :locale',
+        'postgresql' => '"pageStaticID" = :pageStaticID AND "locale" = :locale'
+      ]);
+      $queryBuilder->statement->clauseWhere->assembly();
+      $queryBuilder->statement->assembly();
+
       $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
       $databaseQuery->bindParam(':pageStaticID', $pageStaticID, \PDO::PARAM_INT);
       $databaseQuery->bindParam(':locale', $locale, \PDO::PARAM_STR);
       $databaseQuery->execute();
-    } catch (PDOException $exception) {
-      die(json_encode([
-        'message' => $exception->getMessage(),
-        'statusCode' => 0,
-        'outputData' => []
-      ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-    }
 
-    // 2. Создаём новую запись
-    $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
-    $queryBuilder->setStatementInsert();
-    $queryBuilder->statement->setTable('pages_static_versions');
-    $queryBuilder->statement->addColumn('pageStaticID');
-    $queryBuilder->statement->addColumn('version');
-    $queryBuilder->statement->addColumn('locale');
-    $queryBuilder->statement->addColumn('texts');
-    $queryBuilder->statement->addColumn('effectiveFrom');
-    $queryBuilder->statement->addColumn('createdUnixTimestamp');
-    $queryBuilder->statement->addColumn('createdByID');
-    $queryBuilder->statement->addColumn('isCurrent');
-    $queryBuilder->statement->setClauseReturning();
-    $queryBuilder->statement->clauseReturning->addColumn('id');
-    $queryBuilder->statement->assembly();
+      // 2. Создаём новую запись
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementInsert();
+      $queryBuilder->statement->setTable('pages_static_versions');
+      $queryBuilder->statement->addColumn('pageStaticID');
+      $queryBuilder->statement->addColumn('version');
+      $queryBuilder->statement->addColumn('locale');
+      $queryBuilder->statement->addColumn('texts');
+      $queryBuilder->statement->addColumn('effectiveFrom');
+      $queryBuilder->statement->addColumn('createdUnixTimestamp');
+      $queryBuilder->statement->addColumn('createdByID');
+      $queryBuilder->statement->addColumn('isCurrent');
+      $queryBuilder->statement->setClauseReturning();
+      $queryBuilder->statement->clauseReturning->addColumn('id');
+      $queryBuilder->statement->assembly();
 
-    $currentUnixTimestamp = time();
-    $textsJSON = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+      $currentUnixTimestamp = time();
+      $textsJSON = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-    try {
       $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
       $databaseQuery->bindParam(':pageStaticID', $pageStaticID, \PDO::PARAM_INT);
       $databaseQuery->bindParam(':version', $version, \PDO::PARAM_STR);
@@ -554,26 +564,25 @@ class Version
       $databaseQuery->bindParam(':createdUnixTimestamp', $currentUnixTimestamp, \PDO::PARAM_INT);
       $databaseQuery->bindParam(':createdByID', $createdByID, \PDO::PARAM_INT);
       $databaseQuery->bindValue(':isCurrent', true, \PDO::PARAM_BOOL);
-      $execute = $databaseQuery->execute();
+      $databaseQuery->execute();
+
+      $databaseConnection->commit();
+
+      if ($CMSConfigDatabase['dms'] === CMSDMS::MySQL) {
+        $lastID = $databaseConnection->lastInsertId();
+        return new Version($CMSCore, (int)$lastID);
+      }
+
+      $result = $databaseQuery->fetch(\PDO::FETCH_ASSOC);
+      return $result ? new Version($CMSCore, (int)$result['id']) : null;
+
     } catch (PDOException $exception) {
+      $databaseConnection->rollBack();
       die(json_encode([
         'message' => $exception->getMessage(),
         'statusCode' => 0,
         'outputData' => []
       ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
-
-    // MySQL fallback для получения ID
-    if ($CMSConfigDatabase['dms'] === CMSDMS::MySQL) {
-      $lastID = $databaseConnection->lastInsertId();
-      return new Version($CMSCore, (int)$lastID);
-    }
-
-    if ($execute) {
-      $result = $databaseQuery->fetch(\PDO::FETCH_ASSOC);
-      return $result ? new Version($CMSCore, (int)$result['id']) : null;
-    }
-
-    return null;
   }
 }
