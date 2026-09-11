@@ -233,10 +233,8 @@ if ($CMSCore->client->isLogged(2)) {
 
               $publishedVersions = [];
 
-              var_dump($_PATCH['page_static_version']);
-              var_dump(gettype($_PATCH['page_static_version']));
-              die();
-
+              error_log('page_static_version: ' . var_export($_PATCH['page_static_version'], true));
+              error_log('type: ' . gettype($_PATCH['page_static_version']));
 
               foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
                 // Для каждой локали — своя версия
