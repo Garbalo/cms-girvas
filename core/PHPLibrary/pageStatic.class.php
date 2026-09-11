@@ -23,6 +23,7 @@ namespace core\PHPLibrary;
 use \core\PHPLibrary\Database\QueryBuilder as DatabaseQueryBuilder;
 use \core\PHPLibrary\Database\DatabaseManagementSystem as CMSDMS;
 use \core\PHPLibrary\Entities\Types\Content as EntityTypeContent;
+use \core\PHPLibrary\PageStatic\Version as PageStaticVersion;
 use \core\PHPLibrary\SystemCore\Locale as CMSLocale;
 use \PDOException as PDOException;
 
@@ -404,6 +405,126 @@ class PageStatic implements EntityTypeContent
     }
 
     return '';
+  }
+
+  /**
+   * Получить актуальную версию документа
+   *
+   * @param string $localeName
+   * @return ?PageStaticVersion
+   */
+  public function getCurrentVersion(string $localeName) : ?PageStaticVersion
+  {
+    return PageStaticVersion::getCurrent($this->CMSCore, $this->getID(), $localeName);
+  }
+
+  /**
+   * Получить конкретную версию документа
+   *
+   * @param string $version
+   * @param string $localeName
+   * @return ?PageStaticVersion
+   */
+  public function getVersion(string $version, string $localeName) : ?PageStaticVersion
+  {
+    return PageStaticVersion::getByVersion($this->CMSCore, $this->getID(), $version, $localeName);
+  }
+
+  /**
+   * Получить все версии документа
+   *
+   * @param ?string $localeName
+   * @return PageStaticVersion[]
+   */
+  public function getAllVersions(?string $localeName = null) : array
+  {
+    $CMSConfigurator = $this->CMSCore->configurator;
+    $CMSConfigDatabase = $CMSConfigurator->get('database');
+
+    $queryBuilder = new DatabaseQueryBuilder($this->CMSCore, $CMSConfigDatabase['dms']);
+    $queryBuilder->setStatementSelect();
+    $queryBuilder->statement->addSelections(['id']);
+    $queryBuilder->statement->setClauseFrom();
+    $queryBuilder->statement->clauseFrom->addTable('page_static_versions');
+    $queryBuilder->statement->clauseFrom->assembly();
+    $queryBuilder->statement->setClauseWhere();
+
+    $condition = 'pageStaticID = :pageStaticID';
+    if ($localeName !== null) {
+      $condition .= ' AND locale = :locale';
+    }
+
+    $queryBuilder->statement->clauseWhere->addConditionAdaptive([
+      'mysql' => $condition,
+      'postgresql' => $condition
+    ]);
+    $queryBuilder->statement->clauseWhere->assembly();
+    $queryBuilder->statement->setClauseOrderBy();
+    $queryBuilder->statement->clauseOrderBy->setColumn('createdUnixTimestamp');
+    $queryBuilder->statement->clauseOrderBy->setSortType('DESC');
+    $queryBuilder->statement->assembly();
+
+    try {
+      $databaseConnection = $this->CMSCore->databaseConnector->database->connection;
+      $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
+      $databaseQuery->bindParam(':pageStaticID', $this->id, \PDO::PARAM_INT);
+      if ($localeName !== null) {
+        $databaseQuery->bindParam(':locale', $localeName, \PDO::PARAM_STR);
+      }
+      $databaseQuery->execute();
+    } catch (PDOException $exception) {
+      die(json_encode([
+        'message' => $exception->getMessage(),
+        'statusCode' => 0,
+        'outputData' => []
+      ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    $result = $databaseQuery->fetchAll(\PDO::FETCH_ASSOC);
+    $versions = [];
+    foreach ($result as $row) {
+      $versions[] = new PageStaticVersion($this->CMSCore, (int)$row['id']);
+    }
+
+    return $versions;
+  }
+
+  /**
+   * Опубликовать новую версию
+   *
+   * @param string $version
+   * @param string $localeName
+   * @param int $createdByID
+   * @return ?PageStaticVersion
+   */
+  public function publishVersion(string $version, string $localeName, int $createdByID = 0) : ?PageStaticVersion
+  {
+    return PageStaticVersion::publish(
+      $this->CMSCore,
+      $this->getID(),
+      $version,
+      $localeName,
+      $this->getTexts(),
+      $createdByID
+    );
+  }
+
+  /**
+   * Получить статус статической страницы в роли юридического документа
+   *
+   * @return bool
+   */
+  public function isLegalDocument() : bool
+  {
+    if (property_exists($this, 'metadata')) {
+      $metadata = json_decode($this->metadata, true);
+
+      if (isset($metadata['isLegalDocument'])) {
+        return $metadata['isLegalDocument'];
+      }
+    }
+
+    return false;
   }
 
   /**

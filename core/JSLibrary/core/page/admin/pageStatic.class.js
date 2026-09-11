@@ -256,6 +256,39 @@ export class PagePageStatic {
 
     const elementForm = document.querySelector('[data-element="main-form"]');
     const interactiveLocaleChoices = new Interactive('choices');
+
+    // ============================================================
+    // ОБРАБОТКА ЧЕКБОКСОВ С ЛОГИЧЕСКИМИ БЛОКАМИ
+    // ============================================================
+    const checkboxesInputsElements = document.querySelectorAll('[type="checkbox"]');
+    if (checkboxesInputsElements.length > 0) {
+      checkboxesInputsElements.forEach((element, elementIndex) => {
+        let logicBlockTargetElement;
+
+        if (element.hasAttribute('data-logic-block')) {
+          let logicBlock = element.getAttribute('data-logic-block');
+          logicBlockTargetElement = document.getElementById(logicBlock);
+
+          if (!element.checked) {
+            logicBlockTargetElement.setAttribute('disabled', 'disabled');
+          }
+        }
+
+        let statusBlock = element.getAttribute('data-status-block');
+        let statusBlockTargetElement = document.getElementById(statusBlock);
+        element.addEventListener('change', (event) => {
+          statusBlockTargetElement.value = (!element.checked) ? 'off' : 'on';
+
+          if (element.hasAttribute('data-logic-block')) {
+            if (logicBlockTargetElement.hasAttribute('disabled')) {
+              logicBlockTargetElement.removeAttribute('disabled');
+            } else {
+              logicBlockTargetElement.setAttribute('disabled', 'disabled');
+            }
+          }
+        });
+      });
+    }
     
     this.page.core.locales.admin.getData().then((localeData) => {
       this.analyzer = new SEOAnalyzer(localeData);

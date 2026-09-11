@@ -84,7 +84,16 @@ final class Report
   public const REPORT_TYPE_ID_AP_FEED_DELETED = 11000031;
 
   // НАСТРОЙКИ CMS
-  public const REPORT_TYPE_ID_AP_SETTINGS_EDITED = 11000033;  
+  public const REPORT_TYPE_ID_AP_SETTINGS_EDITED = 11000033;
+
+  // ВЕРСИОНИРОВАНИЕ ДОКУМЕНТОВ (152-ФЗ)
+  public const REPORT_TYPE_ID_AP_DOCUMENT_VERSION_CREATED   = 11000034;
+  public const REPORT_TYPE_ID_AP_DOCUMENT_VERSION_PUBLISHED = 11000035;
+  public const REPORT_TYPE_ID_AP_DOCUMENT_VERSION_ARCHIVED  = 11000036;
+
+  // СОГЛАСИЯ (152-ФЗ)
+  public const REPORT_TYPE_ID_BASE_CONSENT_GIVEN   = 11100007;
+  public const REPORT_TYPE_ID_BASE_CONSENT_REVOKED = 11100008;
 
   // АВТОРИЗАЦИЯ (АДМИНКА)
   public const REPORT_TYPE_ID_AP_AUTHORIZATION_FAIL = 10000001;
@@ -183,6 +192,15 @@ final class Report
     self::REPORT_TYPE_ID_BASE_USER_BANNED              => self::CATEGORY_SECURITY,
     self::REPORT_TYPE_ID_BASE_USER_UNBANNED            => self::CATEGORY_SECURITY,
     self::REPORT_TYPE_ID_BASE_USER_PERSONAL_DATA_VIEWED => self::CATEGORY_SECURITY,
+
+    // ------------------------------------------------------------
+    // ДОКУМЕНТЫ И СОГЛАСИЯ (152-ФЗ)
+    // ------------------------------------------------------------
+    self::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_CREATED   => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_PUBLISHED => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_ARCHIVED  => self::CATEGORY_CONTENT,
+    self::REPORT_TYPE_ID_BASE_CONSENT_GIVEN            => self::CATEGORY_SECURITY,
+    self::REPORT_TYPE_ID_BASE_CONSENT_REVOKED          => self::CATEGORY_SECURITY,
   ];
 
   /** @var string Ключ шифрования для ПДн в логах */

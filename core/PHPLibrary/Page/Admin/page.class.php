@@ -316,6 +316,25 @@ class PagePage implements InterfacePage
       );
     }
 
+    $isLegalDocument = $pageStatic !== null
+      ? $pageStatic->isLegalDocument()
+      : false;
+
+    $currentVersion = '';
+    if ($isLegalDocument) {
+      $version = PageStaticVersion::getCurrent(
+        $this->CMSCore,
+        $pageStatic->getID(),
+        $localeName
+      );
+      
+      $currentVersion = $version ? $version->getVersion() : '';
+    }
+
+    $templatesAssembled['PAGE_STATIC_IS_LEGAL_DOCUMENT_STATUS_VALUE'] = $isLegalDocument ? 'on' : 'off';
+    $templatesAssembled['PAGE_STATIC_IS_LEGAL_DOCUMENT_CHECKED_VALUE'] = $isLegalDocument ? 'checked' : '';
+    $templatesAssembled['PAGE_STATIC_VERSION'] = $currentVersion;
+
     $templatesAssembled['ADMIN_PANEL_PAGE_NAME'] = 'page-static';
     $templatesAssembled['PAGE_STATIC_EDITOR'] = ThemeCollector::assemblyFileContent(
       $this->CMSCore->theme,

@@ -705,6 +705,29 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
       $execute = $databaseQuery->execute();
 
       // =======================
+      // ТАБЛИЦА ВЕРСИЙ СТАТИЧЕСКИХ СТРАНИЦ
+      // =======================
+
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementCreateTable();
+      $queryBuilder->statement->setCheckExists(true);
+      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->addColumn('id', 'serial', 'NOT NULL PRIMARY KEY');
+      $queryBuilder->statement->addColumn('pageStaticID', 'bigint', 'NOT NULL DEFAULT 0');
+      $queryBuilder->statement->addColumn('version', 'text', 'NOT NULL');
+      $queryBuilder->statement->addColumn('locale', 'text', 'NOT NULL');
+      $queryBuilder->statement->addColumn('texts', $JSONDataTypeDMS, 'NOT NULL');
+      $queryBuilder->statement->addColumn('effectiveFrom', 'integer', 'NOT NULL DEFAULT 0');
+      $queryBuilder->statement->addColumn('createdUnixTimestamp', 'integer', 'NOT NULL DEFAULT 0');
+      $queryBuilder->statement->addColumn('createdByID', 'bigint', 'NOT NULL DEFAULT 0');
+      $queryBuilder->statement->addColumn('isCurrent', 'boolean', 'NOT NULL DEFAULT false');
+      $queryBuilder->statement->assembly();
+
+      $databaseConnection = $CMSDatabaseConnector->database->connection;
+      $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
+      $execute = $databaseQuery->execute();
+
+      // =======================
       // ТАБЛИЦА ОТЧЕТОВ
       // =======================
 
@@ -1165,6 +1188,34 @@ if (!file_exists(CMS_ROOT_DIRECTORY . '/INSTALLED')) {
         $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
         $databaseQuery->execute();
       }
+
+      // Индексы для таблицы page_static_versions
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementCreateIndex();
+      $queryBuilder->statement->setIndexName('idx_page_static_versions_unique');
+      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->addColumn('pageStaticID');
+      $queryBuilder->statement->addColumn('version');
+      $queryBuilder->statement->addColumn('locale');
+      $queryBuilder->statement->setUnique(true);
+      $queryBuilder->statement->setIfNotExists(true);
+      $queryBuilder->statement->assembly();
+
+      $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
+      $databaseQuery->execute();
+
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementCreateIndex();
+      $queryBuilder->statement->setIndexName('idx_page_static_versions_current');
+      $queryBuilder->statement->setTableName('page_static_versions');
+      $queryBuilder->statement->addColumn('pageStaticID');
+      $queryBuilder->statement->addColumn('locale');
+      $queryBuilder->statement->addColumn('isCurrent');
+      $queryBuilder->statement->setIfNotExists(true);
+      $queryBuilder->statement->assembly();
+
+      $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
+      $databaseQuery->execute();
       
       // Индексы для таблицы users
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
