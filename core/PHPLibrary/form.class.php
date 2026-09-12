@@ -546,17 +546,17 @@ class Form implements EntityTypeContent
         $documentLabel = $DOMElementTitle;
 
         if (!empty($documentKey)) {
-          $document = \core\PHPLibrary\PageStatic::getByName($this->CMSCore, $documentKey);
+          $pageStaticDocument = \core\PHPLibrary\PageStatic::getByName($this->CMSCore, $documentKey);
 
-          if ($document !== null) {
-            $document->initData(['id', 'name', 'texts', 'metadata']);
+          if ($pageStaticDocument !== null) {
+            $pageStaticDocument->initData(['id', 'name', 'texts', 'metadata']);
 
-            if ($document->isLegalDocument()) {
-              $documentTitle = $document->getTitle($CMSLocaleName);
-              $currentVersion = $document->getCurrentVersion($CMSLocaleName);
+            if ($pageStaticDocument->isLegalDocument()) {
+              $documentTitle = $pageStaticDocument->getTitle($CMSLocaleName);
+              $currentVersion = $pageStaticDocument->getCurrentVersion($CMSLocaleName);
               $versionString = $currentVersion !== null ? $currentVersion->getVersion() : '';
 
-              $documentURL = '/page/' . $document->getName()
+              $documentURL = '/page/' . $pageStaticDocument->getName()
                 . ($versionString !== '' ? '?version=' . urlencode($versionString) : '');
 
               if (!empty($documentTitle)) {
