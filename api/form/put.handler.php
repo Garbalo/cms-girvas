@@ -100,6 +100,16 @@ if ($CMSCore->client->isLogged(2)) {
           $elements[$elementIndex]['options'] = [];
         }
 
+        // Для типа consent — сохраняем documentKey
+        if ($elementTypeName === 'consent') {
+          $documentKey = $_PUT['form_element_document_key'][$elementIndex] ?? '';
+          $documentKey = trim((string)$documentKey);
+
+          if (!empty($documentKey) && preg_match('/^[a-z0-9_\-]+$/', $documentKey)) {
+            $elements[$elementIndex]['documentKey'] = $documentKey;
+          }
+        }
+
         if ($elementName !== null) {
           $elements[$elementIndex]['name'] = trim($elementName);
         }

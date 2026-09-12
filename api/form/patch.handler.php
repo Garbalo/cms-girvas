@@ -139,6 +139,15 @@ if ($CMSCore->client->isLogged(2)) {
                   $formElements[$i]['options'] = [];
                 }
               }
+
+              if ($formElements[$i]['type'] === 'consent') {
+                $documentKey = $_PATCH['form_element_document_key'][$i] ?? '';
+                $documentKey = trim((string)$documentKey);
+
+                if (!empty($documentKey) && preg_match('/^[a-z0-9_\-]+$/', $documentKey)) {
+                  $formElements[$i]['documentKey'] = $documentKey;
+                }
+              }
               
               if ($CMSLocaleName === $commonLocale) {
                 $formElementTitlesTrimmed = trim($formElementTitles[$i]);
