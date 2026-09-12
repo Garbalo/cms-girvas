@@ -26,6 +26,7 @@ if (!defined('IS_NOT_HACKED')) {
 use \core\PHPLibrary\Form as Form;
 use \core\PHPLibrary\SystemCore\Notifier as CMSNotifier;
 use \core\PHPLibrary\SystemCore\Report as CMSReport;
+use \core\PHPLibrary\User\Consent as UserConsent;
 
 $formName = $CMSCore->urlp->getPath(2);
 
