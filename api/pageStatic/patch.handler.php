@@ -227,9 +227,8 @@ if ($CMSCore->client->isLogged(2)) {
             // ПУБЛИКАЦИЯ ВЕРСИИ ДОКУМЕНТА (152-ФЗ)
             // ============================================================
             if ($pageStaticIsLegalDocument) {
-              // Перезагружаем texts — чтобы снимок был актуальным
-              unset($pageStatic->texts);
-              $pageStatic->initData(['texts']);
+              $pageStatic = new PageStatic($CMSCore, $pageStaticID);
+              $pageStatic->initData(['texts', 'metadata', 'name']);
 
               $publishedVersions = [];
 
