@@ -358,7 +358,8 @@ export class PageForm {
         placeholder: elementTexts.placeholder,
         name: element.name,
         sequenceNumber: element.sequenceNumber,
-        options: optionsWithTexts
+        options: optionsWithTexts,
+        documentKey: element.documentKey
       });
     });
   }
@@ -702,7 +703,8 @@ export class PageForm {
       inputName: this.createInputField('text', 'form_element_name[]', 'my_field', true, ['form__input', 'form__input_text'], '[a-zA-Z0-9_]+'),
       inputDescription: this.createTextareaField('form_element_description[]', localeData.PAGE_FORM_ELEMENT_DESCRIPTION_PLACEHOLDER, ['form__textarea']),
       inputPlaceholder: this.createInputField('text', 'form_element_placeholder[]', localeData.PAGE_FORM_ELEMENT_PLACEHOLDER_PLACEHOLDER, false, ['form__input', 'form__input_text']),
-      inputSequenceNumber: this.createInputField('number', 'form_element_sequence_number[]', 4, true, ['form__input', 'form__input_number'])
+      inputSequenceNumber: this.createInputField('number', 'form_element_sequence_number[]', 4, true, ['form__input', 'form__input_number']),
+      inputDocumentKey: this.createInputField('text', 'form_element_document_key[]', 'document--privacy-policy', false, ['form__input', 'form__input_text'], '[a-z0-9_\\-]+')
     };
   }
 
@@ -976,9 +978,15 @@ export class PageForm {
   setupTypeChangeListener(typeSelect, rowsElement, inputName, addOptionButton, localeData) {
     typeSelect.target.elementSelect.addEventListener('change', (event) => {
       const isSelectType = typeSelect.target.itemSelectedIndex === 7;
-      
+      const isConsentType = typeSelect.target.itemSelectedIndex === 10;
+
+      // Строка выбора документа — только для consent
+      const documentKeyRow = rowsElement.querySelector('[data-element="document-key-row"]');
+      if (documentKeyRow !== null) {
+        documentKeyRow.style.display = isConsentType ? 'flex' : 'none';
+      }
+
       if (isSelectType) {
-        // Проверяем option'ы только внутри текущего rowsElement
         const existingOptions = rowsElement.querySelectorAll('[data-element="select-option-label"]');
         if (existingOptions.length === 0) {
           const rowOption = this.createRowSelectOption(localeData, inputName, 0);
@@ -986,7 +994,6 @@ export class PageForm {
         }
         addOptionButton.target.element.style.display = 'flex';
       } else {
-        // Удаляем option'ы только из текущего rowsElement
         const rowOptions = rowsElement.querySelectorAll('[data-element="select-option-label"]');
         if (rowOptions.length > 0) {
           rowOptions.forEach(rowOption => {
@@ -1008,6 +1015,7 @@ export class PageForm {
     formElements.inputPlaceholder.value = data.placeholder !== undefined ? data.placeholder : '';
     formElements.inputDescription.value = data.description !== undefined ? data.description : '';
     formElements.inputSequenceNumber.value = data.sequenceNumber !== undefined ? data.sequenceNumber : 0;
+    formElements.inputDocumentKey.value = data.documentKey !== undefined ? data.documentKey : '';
   }
 
   // Добавление всех строк в контейнер
@@ -1020,13 +1028,21 @@ export class PageForm {
     const placeholderRow = this.createRowElement(localeData.PAGE_FORM_ELEMENT_PLACEHOLDER_TITLE, formElements.inputPlaceholder);
     const sequenceRow = this.createRowElement(localeData.PAGE_FORM_ELEMENT_SEQUENCE_NUMBER_TITLE, formElements.inputSequenceNumber);
     const requiredRow = this.createRowElement(localeData.PAGE_FORM_ELEMENT_REQUIRED_TITLE, requiredCheckbox);
-    
+
+    // Строка для выбора документа — только для типа consent
+    const documentKeyRow = this.createRowElement(
+      localeData.PAGE_FORM_ELEMENT_DOCUMENT_KEY_TITLE,
+      formElements.inputDocumentKey
+    );
+    documentKeyRow.setAttribute('data-element', 'document-key-row');
+    documentKeyRow.style.display = (data.type === 'consent') ? 'flex' : 'none';
+
     const buttonsRow = this.createRowElement(null, removeButton.target.element);
     buttonsRow.classList.add('grid-table__cell_panel');
-    
+
     rowsElement.append(
-      header, typeRow, titleRow, nameRow, descriptionRow, 
-      placeholderRow, sequenceRow, requiredRow, buttonsRow
+      header, typeRow, titleRow, nameRow, descriptionRow,
+      placeholderRow, sequenceRow, requiredRow, documentKeyRow, buttonsRow
     );
   }
 
