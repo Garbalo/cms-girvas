@@ -323,13 +323,12 @@ class PagePage implements InterfacePage
 
     $currentVersion = '';
     if ($isLegalDocument) {
-      $version = PageStaticVersion::getCurrent(
-        $this->CMSCore,
-        $pageStatic->getID(),
-        $localeName
-      );
-
-      $currentVersion = $version ? $version->getVersion() : '';
+      $version = $pageStatic->getCurrentVersion($localeName);
+      
+      if ($version !== null) {
+        $version->initData(['version']);
+        $currentVersion = $version->getVersion();
+      }
     }
 
     $templatesAssembled['PAGE_STATIC_IS_LEGAL_DOCUMENT_STATUS_VALUE'] = $isLegalDocument ? 'on' : 'off';
