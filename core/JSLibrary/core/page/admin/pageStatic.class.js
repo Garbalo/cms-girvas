@@ -460,7 +460,7 @@ export class PagePageStatic {
       this.buttons.publish.target.setLabel(localeData.BUTTON_PUBLISH_LABEL);
       this.buttons.unpublish.target.setLabel(localeData.BUTTON_UNPUBLISH_LABEL);
       this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
-      this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
+      this.buttons.publishVersion.target.setLabel(localeData.PAGE_STATIC_PAGE_BUTTON_PUBLISH_VERSION_LABEL);
       this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
 
       this.buttons.viewOnSite.target.setStyle('default');
