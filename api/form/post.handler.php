@@ -24,6 +24,7 @@ if (!defined('IS_NOT_HACKED')) {
 }
 
 use \core\PHPLibrary\Form as Form;
+use \core\PHPLibrary\PageStatic as PageStatic;
 use \core\PHPLibrary\SystemCore\Notifier as CMSNotifier;
 use \core\PHPLibrary\SystemCore\Report as CMSReport;
 use \core\PHPLibrary\User\Consent as UserConsent;
@@ -56,65 +57,23 @@ if (Form::existsByName($CMSCore, $formName)) {
 
   $result = $form->saveData($formData);
 
-  // Найти в elements поля типа consent
-  $consentElements = [];
-  foreach ($form->getElements() as $element) {
-    if (($element['type'] ?? '') === 'consent') {
-      $consentElements[] = $element;
-    }
-  }
-
-  // Для каждого consent-элемента
-  foreach ($consentElements as $element) {
-    $fieldName = $element['name'];
-    
-    // Если чекбокс отмечен
-    if (!empty($formData[$fieldName])) {
-      $documentKey = $element['documentKey'] ?? '';
-      if (empty($documentKey)) continue;
-      
-      // Найти документ
-      $document = PageStatic::getByName($CMSCore, $documentKey);
-      if ($document === null) continue;
-      
-      $document->initData(['id', 'name', 'texts', 'metadata']);
-      if (!$document->isLegalDocument()) continue;
-      
-      // Текущая версия для локали
-      $currentVersion = $document->getCurrentVersion($formLocale);
-      if ($currentVersion === null) continue;
-      
-      UserConsent::give(
-        $CMSCore,
-        null,
-        $form->getID(),
-        $formReportID ?? null,
-        $document->getID(),
-        $currentVersion->getVersion(),
-        $formLocale,
-        $formSendedAuthorIP,
-        $_SERVER['HTTP_USER_AGENT'] ?? '',
-        'form'
-      );
-    }
-  }
-
   if ($result) {
-    
+
     // ============================================================
     // ЛОГИРОВАНИЕ ОТПРАВКИ ФОРМЫ (152-ФЗ)
-    // Фиксируем факт получения ПДн через форму
+    // Фиксируем факт получения ПДн через форму.
+    // ВАЖНО: создаём ДО согласий, чтобы получить $formReportID.
     // ============================================================
     $formTitle = $form->getTitle($formLocale);
     $formID = $form->getID();
-    
+
     // Собираем названия полей (без значений ПДн!)
     $fieldNames = [];
     foreach ($formData as $fieldName => $value) {
       $fieldNames[] = $fieldName;
     }
-    
-    CMSReport::create(
+
+    $formReport = CMSReport::create(
       $CMSCore,
       CMSReport::REPORT_TYPE_ID_AP_FORM_CREATED,
       [
@@ -126,6 +85,80 @@ if (Form::existsByName($CMSCore, $formName)) {
       ]
     );
 
+    $formReportID = $formReport !== null ? $formReport->getID() : 0;
+
+    // ============================================================
+    // СОГЛАСИЯ (152-ФЗ)
+    // Фиксируем факты согласия по каждому consent-элементу.
+    // ============================================================
+    $consentElements = [];
+    foreach ($form->getElements() as $element) {
+      if (($element['type'] ?? '') === 'consent') {
+        $consentElements[] = $element;
+      }
+    }
+
+    foreach ($consentElements as $element) {
+      // Имя поля в $formData — camelCase (как формируется выше в парсере $_POST)
+      $fieldName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $element['name']))));
+
+      // Согласие фиксируем только если чекбокс отмечен
+      if (empty($formData[$fieldName])) {
+        continue;
+      }
+
+      $documentKey = $element['documentKey'] ?? '';
+      if (empty($documentKey)) {
+        continue;
+      }
+
+      $document = PageStatic::getByName($CMSCore, $documentKey);
+      if ($document === null) {
+        continue;
+      }
+
+      $document->initData(['id', 'name', 'texts', 'metadata']);
+      if (!$document->isLegalDocument()) {
+        continue;
+      }
+
+      $currentVersion = $document->getCurrentVersion($formLocale);
+      if ($currentVersion === null) {
+        continue;
+      }
+
+      UserConsent::give(
+        $CMSCore,
+        0,                              // userID = 0 для неавторизованных
+        $form->getID(),                 // formID
+        $formReportID,                  // formReportID (связь с событием отправки)
+        $document->getID(),             // pageStaticID
+        $currentVersion->getVersion(),  // documentVersion
+        $formLocale,                    // locale
+        $formSendedAuthorIP,            // ip
+        $_SERVER['HTTP_USER_AGENT'] ?? '', // userAgent
+        'form'                          // source
+      );
+
+      // Логируем факт согласия в отчёты (152-ФЗ)
+      CMSReport::create(
+        $CMSCore,
+        CMSReport::REPORT_TYPE_ID_BASE_CONSENT_GIVEN,
+        [
+          'formID' => $form->getID(),
+          'formReportID' => $formReportID,
+          'pageStaticID' => $document->getID(),
+          'documentKey' => $documentKey,
+          'documentVersion' => $currentVersion->getVersion(),
+          'locale' => $formLocale,
+          'ip' => $formSendedAuthorIP
+        ]
+      );
+    }
+
+    // ============================================================
+    // УВЕДОМЛЕНИЯ (Telegram, Max)
+    // ============================================================
     $notifierTelegramChatsIDs = $form->getTelegramChatsIDs();
     $notifierTelegramThreatsIDs = $form->getTelegramThreatsIDs();
     $notifierTelegramChannelsIDs = $form->getTelegramChannelsIDs();
@@ -150,7 +183,7 @@ if (Form::existsByName($CMSCore, $formName)) {
         
         $formDataFormated = [];
         $formElements = $form->getElements();
-        $formData = $form->getData();
+        $formDataFromDb = $form->getData();
         $formTitle = $form->getTitle($formLocale);
 
         foreach($_POST as $POSTDataKey => $POSTData) {
@@ -210,7 +243,7 @@ if (Form::existsByName($CMSCore, $formName)) {
         
         $formDataFormated = [];
         $formElements = $form->getElements();
-        $formData = $form->getData();
+        $formDataFromDb = $form->getData();
         $formTitle = $form->getTitle($formLocale);
 
         foreach($_POST as $POSTDataKey => $POSTData) {
