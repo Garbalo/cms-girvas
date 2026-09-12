@@ -272,8 +272,8 @@ class PagePage implements InterfacePage
 
           $pageStaticKeywordsRaw = $this->getTextValue($versionObject, $pageStatic, 'getKeywords', $localeName);
           $pageStaticKeywords = is_array($pageStaticKeywordsRaw)
-            ? implode(', ', array_map(fn($k) => str_replace('"', '&quot;', $k), $pageStaticKeywordsRaw))
-            : str_replace('"', '&quot;', (string)$pageStaticKeywordsRaw);
+            ? array_map(fn($k) => str_replace('"', '&quot;', (string)$k), $pageStaticKeywordsRaw)
+            : [str_replace('"', '&quot;', (string)$pageStaticKeywordsRaw)];
 
           $this->page->breadcrumbs->add($localeData['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
           $this->page->breadcrumbs->add($pageStaticTitle, $pageStatic->getName());
