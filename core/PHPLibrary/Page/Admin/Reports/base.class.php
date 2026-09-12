@@ -288,22 +288,18 @@ class ReportsBase implements ReportsPageInterface
       '{DELETER_LOGIN}' => $variables['deletedByLogin'] ?? $this->getUserLogin($variables['deletedByID'] ?? 0),
       '{TARGET_USER_LOGIN}' => $variables['targetUserLogin'] ?? $this->getUserLogin($variables['targetUserID'] ?? 0),
       '{VIEWER_LOGIN}' => $variables['viewedByLogin'] ?? $this->getUserLogin($variables['viewedByID'] ?? 0),
-      '{DOCUMENT_TITLE}' => (function() use ($variables, $currentLocale) {
-        if (isset($variables['documentTitles']) && is_array($variables['documentTitles'])) {
-          if (!empty($variables['documentTitles'][$currentLocale])) {
-            return $variables['documentTitles'][$currentLocale];
-          }
-          foreach ($variables['documentTitles'] as $title) {
-            if (!empty($title)) return $title;
-          }
-        }
-        if (!empty($variables['documentTitle'])) {
-          return $variables['documentTitle'];
-        }
-        $dbTitle = $this->getPageStaticTitle($variables['pageStaticID'] ?? 0);
-        if (!empty($dbTitle)) return $dbTitle;
-        return $variables['documentKey'] ?? '';
-      })(),
+      // ============================================================
+      // СОГЛАСИЯ (152-ФЗ)
+      // ============================================================
+      '{DOCUMENT_TITLE}' => $variables['documentTitle']
+        ?? $this->getPageStaticTitle($variables['pageStaticID'] ?? 0)
+        ?: ($variables['documentKey'] ?? ''),
+      '{DOCUMENT_KEY}' => $variables['documentKey'] ?? '',
+      '{DOCUMENT_VERSION}' => $variables['documentVersion'] ?? '',
+      '{LOCALE}' => $variables['locale'] ?? '',
+      '{FORM_ID}' => $variables['formID'] ?? 0,
+      '{FORM_REPORT_ID}' => $variables['formReportID'] ?? 0,
+      '{PAGE_STATIC_ID}' => $variables['pageStaticID'] ?? 0,
       '{COUNT}' => $variables['count'] ?? 0,
     ];
 
@@ -662,9 +658,18 @@ class ReportsBase implements ReportsPageInterface
     );
   }
 
+  /**
+   * Получить заголовок статической страницы (юридического документа) по ID
+   *
+   * @param int $pageStaticID
+   * @return string
+   */
   private function getPageStaticTitle(int $pageStaticID): string
   {
-    if ($pageStaticID <= 0) return '';
+    if ($pageStaticID <= 0) {
+      return '';
+    }
+
     try {
       $pageStatic = new \core\PHPLibrary\PageStatic($this->CMSCore, $pageStaticID);
       $pageStatic->initData(['texts']);
