@@ -54,12 +54,11 @@ if ($CMSCore->client->isLogged(2)) {
             $pageStatic = new PageStatic($CMSCore, $pageStaticID);
             $pageStatic->initData(['id', 'name', 'texts', 'metadata']);
 
+            $versions = $pageStatic->publishVersionBatch($versionInput, $clientUser->getID());
+
             $publishedVersions = [];
-            foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
-              $version = $pageStatic->publishVersion($versionInput, $localeName, $clientUser->getID());
-              if ($version !== null) {
-                $publishedVersions[$localeName] = $versionInput;
-              }
+            foreach ($versions as $locale => $version) {
+              $publishedVersions[$locale] = $versionInput;
             }
 
             if (!empty($publishedVersions)) {

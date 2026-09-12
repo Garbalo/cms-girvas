@@ -588,7 +588,6 @@ class Version
     try {
       $databaseConnection->beginTransaction();
 
-      // 1. Снимаем isCurrent со всех версий этой страницы+локали
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
       $queryBuilder->setStatementUpdate();
       $queryBuilder->statement->setTable('pages_static_versions');
@@ -611,18 +610,10 @@ class Version
       $databaseQuery->bindParam(':locale', $locale, \PDO::PARAM_STR);
       $databaseQuery->execute();
 
-      // 2. Создаём новую запись
       $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
       $queryBuilder->setStatementInsert();
       $queryBuilder->statement->setTable('pages_static_versions');
-      $queryBuilder->statement->addColumn('pageStaticID');
-      $queryBuilder->statement->addColumn('version');
-      $queryBuilder->statement->addColumn('locale');
-      $queryBuilder->statement->addColumn('texts');
-      $queryBuilder->statement->addColumn('effectiveFrom');
-      $queryBuilder->statement->addColumn('createdUnixTimestamp');
-      $queryBuilder->statement->addColumn('createdByID');
-      $queryBuilder->statement->addColumn('isCurrent');
+
       $queryBuilder->statement->setClauseReturning();
       $queryBuilder->statement->clauseReturning->addColumn('id');
       $queryBuilder->statement->assembly();
@@ -650,6 +641,172 @@ class Version
 
       $result = $databaseQuery->fetch(\PDO::FETCH_ASSOC);
       return $result ? new Version($CMSCore, (int)$result['id']) : null;
+
+    } catch (PDOException $exception) {
+      $databaseConnection->rollBack();
+      die(json_encode([
+        'message' => $exception->getMessage(),
+        'statusCode' => 0,
+        'outputData' => []
+      ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+  }
+
+  /**
+   * Опубликовать новые версии для всех локалей одним batch-запросом
+   *
+   * @param CMSCore $CMSCore
+   * @param int $pageStaticID
+   * @param string $version
+   * @param array $locales Список локалей (например, ['ru_RU', 'en_US'])
+   * @param array $texts Снимок texts (общий для всех локалей)
+   * @param int $createdByID
+   * @return array Массив ['ru_RU' => Version, 'en_US' => Version, ...]
+   */
+  public static function publishBatch(
+    CMSCore $CMSCore,
+    int $pageStaticID,
+    string $version,
+    array $locales,
+    array $texts,
+    int $createdByID = 0
+  ) : array {
+    if (empty($locales)) {
+      return [];
+    }
+
+    $CMSConfigurator = $CMSCore->configurator;
+    $CMSConfigDatabase = $CMSConfigurator->get('database');
+    $databaseConnection = $CMSCore->databaseConnector->database->connection;
+
+    $currentUnixTimestamp = time();
+    $textsJSON = json_encode($texts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+    try {
+      $databaseConnection->beginTransaction();
+
+      // ============================================================
+      // 1. Снимаем isCurrent со всех версий этой страницы (для всех локалей сразу)
+      // ============================================================
+      $queryBuilder = new DatabaseQueryBuilder($CMSCore, $CMSConfigDatabase['dms']);
+      $queryBuilder->setStatementUpdate();
+      $queryBuilder->statement->setTable('pages_static_versions');
+      $queryBuilder->statement->setClauseSet();
+      $queryBuilder->statement->clauseSet->addColumnAdaptive('isCurrent', [
+        'mysql' => 'FALSE',
+        'postgresql' => 'FALSE'
+      ]);
+      $queryBuilder->statement->clauseSet->assembly();
+      $queryBuilder->statement->setClauseWhere();
+      $queryBuilder->statement->clauseWhere->addConditionAdaptive([
+        'mysql' => '`pageStaticID` = :pageStaticID',
+        'postgresql' => '"pageStaticID" = :pageStaticID'
+      ]);
+      $queryBuilder->statement->clauseWhere->assembly();
+      $queryBuilder->statement->assembly();
+
+      $databaseQuery = $databaseConnection->prepare($queryBuilder->statement->assembled);
+      $databaseQuery->bindParam(':pageStaticID', $pageStaticID, \PDO::PARAM_INT);
+      $databaseQuery->execute();
+
+      // ============================================================
+      // 2. Формируем batch INSERT
+      // ============================================================
+      $columns = [
+        'pageStaticID',
+        'version',
+        'locale',
+        'texts',
+        'effectiveFrom',
+        'createdUnixTimestamp',
+        'createdByID',
+        'isCurrent'
+      ];
+
+      $quotedColumns = [];
+      foreach ($columns as $col) {
+        $quotedColumns[] = match ($CMSConfigDatabase['dms']) {
+          CMSDMS::MySQL => '`' . $col . '`',
+          CMSDMS::PostgreSQL => '"' . $col . '"'
+        };
+      }
+
+      $valuePlaceholders = [];
+      $bindings = [];
+
+      foreach (array_values($locales) as $index => $locale) {
+        $rowPlaceholders = [];
+        $rowPlaceholders[] = ':pageStaticID_' . $index;
+        $rowPlaceholders[] = ':version_' . $index;
+        $rowPlaceholders[] = ':locale_' . $index;
+        $rowPlaceholders[] = ':texts_' . $index;
+        $rowPlaceholders[] = ':effectiveFrom_' . $index;
+        $rowPlaceholders[] = ':createdUnixTimestamp_' . $index;
+        $rowPlaceholders[] = ':createdByID_' . $index;
+        $rowPlaceholders[] = ':isCurrent_' . $index;
+
+        $valuePlaceholders[] = '(' . implode(', ', $rowPlaceholders) . ')';
+
+        $bindings[':pageStaticID_' . $index] = [$pageStaticID, \PDO::PARAM_INT];
+        $bindings[':version_' . $index] = [$version, \PDO::PARAM_STR];
+        $bindings[':locale_' . $index] = [$locale, \PDO::PARAM_STR];
+        $bindings[':texts_' . $index] = [$textsJSON, \PDO::PARAM_STR];
+        $bindings[':effectiveFrom_' . $index] = [$currentUnixTimestamp, \PDO::PARAM_INT];
+        $bindings[':createdUnixTimestamp_' . $index] = [$currentUnixTimestamp, \PDO::PARAM_INT];
+        $bindings[':createdByID_' . $index] = [$createdByID, \PDO::PARAM_INT];
+        $bindings[':isCurrent_' . $index] = [true, \PDO::PARAM_BOOL];
+      }
+
+      $tableName = match ($CMSConfigDatabase['dms']) {
+        CMSDMS::MySQL => '`pages_static_versions`',
+        CMSDMS::PostgreSQL => '"pages_static_versions"'
+      };
+
+      // PostgreSQL — добавляем RETURNING
+      $returning = ($CMSConfigDatabase['dms'] === CMSDMS::PostgreSQL) ? ' RETURNING "id", "locale"' : '';
+
+      $sql = sprintf(
+        'INSERT INTO %s (%s) VALUES %s%s',
+        $tableName,
+        implode(', ', $quotedColumns),
+        implode(', ', $valuePlaceholders),
+        $returning
+      );
+
+      $databaseQuery = $databaseConnection->prepare($sql);
+
+      foreach ($bindings as $placeholder => [$value, $type]) {
+        $databaseQuery->bindValue($placeholder, $value, $type);
+      }
+
+      $databaseQuery->execute();
+
+      // ============================================================
+      // 3. Получаем ID созданных версий
+      // ============================================================
+      $versions = [];
+
+      if ($CMSConfigDatabase['dms'] === CMSDMS::PostgreSQL) {
+        // PostgreSQL — RETURNING вернёт все строки
+        $rows = $databaseQuery->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+          $versions[$row['locale']] = new Version($CMSCore, (int)$row['id']);
+        }
+      } else {
+        // MySQL — lastInsertId вернёт первый ID
+        $firstID = (int)$databaseConnection->lastInsertId();
+        $index = 0;
+
+        foreach ($locales as $locale) {
+          $versions[$locale] = new Version($CMSCore, $firstID + $index);
+          $index++;
+        }
+      }
+
+      $databaseConnection->commit();
+
+      return $versions;
 
     } catch (PDOException $exception) {
       $databaseConnection->rollBack();

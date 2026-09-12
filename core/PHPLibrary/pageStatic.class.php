@@ -510,6 +510,25 @@ class PageStatic implements EntityTypeContent
   }
 
   /**
+   * Опубликовать версию для всех локалей (batch)
+   *
+   * @param string $version
+   * @param int $createdByID
+   * @return array Массив ['ru_RU' => Version, 'en_US' => Version, ...]
+   */
+  public function publishVersionBatch(string $version, int $createdByID = 0) : array
+  {
+    return PageStaticVersion::publishBatch(
+      $this->CMSCore,
+      $this->getID(),
+      $version,
+      $this->CMSCore->getArrayLocalesNames(),
+      $this->getTexts(),
+      $createdByID
+    );
+  }
+
+  /**
    * Получить статус статической страницы в роли юридического документа
    *
    * @return bool

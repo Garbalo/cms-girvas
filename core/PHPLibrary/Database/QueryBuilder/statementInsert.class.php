@@ -33,6 +33,7 @@ final class StatementInsert implements InterfaceStatement
   public string $tablePrefix = '';
   public ?ClauseReturning $clauseReturning = null;
   public string $assembled = '';
+  private array $batchRows = [];
 
   /**
    * __construct
@@ -112,19 +113,40 @@ final class StatementInsert implements InterfaceStatement
     $CMSConfigDatabase = $this->queryBuilder->CMSCore->configurator->get('database');
     $queryArray = [];
 
-    $columnsValues = [];
-    foreach ($this->columns as $index => $columnName) {
-      if (!preg_match('/\"[a-z0-9_]+\"/i', $columnName)) {
-        $this->columns[$index] = match ($CMSConfigDatabase['dms']) {
+    if (!empty($this->batchRows)) {
+      $columns = array_keys($this->batchRows[0]);
+      
+      $quotedColumns = [];
+      foreach ($columns as $columnName) {
+        $quotedColumns[] = match ($CMSConfigDatabase['dms']) {
           CMSDMS::MySQL => '`' . $columnName . '`',
           CMSDMS::PostgreSQL => '"' . $columnName . '"',
         };
       }
 
-      $columnsValues[] = ':' . $columnName;
-    }
+      $valuePlaceholders = [];
+      foreach ($this->batchRows as $rowIndex => $row) {
+        $rowPlaceholders = [];
+        foreach ($columns as $columnName) {
+          $rowPlaceholders[] = ':' . $columnName . '_' . $rowIndex;
+        }
+        $valuePlaceholders[] = '(' . implode(', ', $rowPlaceholders) . ')';
+      }
 
-    $queryArray[] = sprintf('(%s) VALUES (%s)', implode(', ', $this->columns), implode(', ', $columnsValues));
+      $queryArray[] = sprintf('(%s) VALUES %s', implode(', ', $quotedColumns), implode(', ', $valuePlaceholders));
+    } else {
+      $columnsValues = [];
+      foreach ($this->columns as $index => $columnName) {
+        if (!preg_match('/\"[a-z0-9_]+\"/i', $columnName)) {
+          $this->columns[$index] = match ($CMSConfigDatabase['dms']) {
+            CMSDMS::MySQL => '`' . $columnName . '`',
+            CMSDMS::PostgreSQL => '"' . $columnName . '"',
+          };
+        }
+        $columnsValues[] = ':' . $columnName;
+      }
+      $queryArray[] = sprintf('(%s) VALUES (%s)', implode(', ', $this->columns), implode(', ', $columnsValues));
+    }
 
     $clausesToPrecess = $this->getClausesToProcess();
     foreach ($clausesToPrecess as $clause) {
