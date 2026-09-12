@@ -99,33 +99,48 @@ if (Form::existsByName($CMSCore, $formName)) {
     }
 
     foreach ($consentElements as $element) {
-      // Имя поля в $formData — camelCase (как формируется выше в парсере $_POST)
       $fieldName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $element['name']))));
 
-      // Согласие фиксируем только если чекбокс отмечен
+      error_log('CONSENT_DEBUG step1: element name=' . $element['name'] . ' fieldName=' . $fieldName . ' value=' . ($formData[$fieldName] ?? 'NULL'));
+
       if (empty($formData[$fieldName])) {
+        error_log('CONSENT_DEBUG step2: SKIP — checkbox not checked');
         continue;
       }
 
       $documentKey = $element['documentKey'] ?? '';
+      error_log('CONSENT_DEBUG step3: documentKey=' . $documentKey);
       if (empty($documentKey)) {
+        error_log('CONSENT_DEBUG step3: SKIP — no documentKey');
         continue;
       }
 
       $document = PageStatic::getByName($CMSCore, $documentKey);
+      error_log('CONSENT_DEBUG step4: document=' . ($document === null ? 'NULL' : 'ID=' . $document->getID()));
       if ($document === null) {
+        error_log('CONSENT_DEBUG step4: SKIP — document not found');
         continue;
       }
 
       $document->initData(['id', 'name', 'texts', 'metadata']);
+      error_log('CONSENT_DEBUG step5: isLegalDocument=' . ($document->isLegalDocument() ? '1' : '0'));
       if (!$document->isLegalDocument()) {
+        error_log('CONSENT_DEBUG step5: SKIP — not legal document');
         continue;
       }
 
       $currentVersion = $document->getCurrentVersion($formLocale);
+      error_log('CONSENT_DEBUG step6: version=' . ($currentVersion === null ? 'NULL' : $currentVersion->getVersion()) . ' locale=' . $formLocale);
       if ($currentVersion === null) {
+        error_log('CONSENT_DEBUG step6: SKIP — no current version');
         continue;
       }
+
+      error_log('CONSENT_DEBUG step7: CALLING UserConsent::give()');
+
+      UserConsent::give(...);
+
+      error_log('CONSENT_DEBUG step8: UserConsent::give() returned');
 
       UserConsent::give(
         $CMSCore,
