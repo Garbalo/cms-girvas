@@ -681,11 +681,6 @@ export class PagePageStatic {
       this.buttons.SEOAnalyze.assembly();
       this.buttons.publishVersion.assembly();
 
-      const versionPanel = document.querySelector('[data-element="version-panel"]');
-      if (versionPanel !== null) {
-        versionPanel.appendChild(this.buttons.publishVersion.target.element);
-      }
-
       if (searchParams.getPathPart(3) === null) {
         this.buttons.viewOnSite.target.element.style.display = 'none';
         this.buttons.unpublish.target.element.style.display = 'none';
@@ -791,7 +786,7 @@ export class PagePageStatic {
             previewBlockContentContainerElement.appendChild(previewImageContainerElement);
             previewBlockPanelContainerElement.appendChild(previewFormElement);
 
-                        this.buttons.viewOnSite.target.element.style.display = 'flex';
+            this.buttons.viewOnSite.target.element.style.display = 'flex';
             this.buttons.unpublish.target.element.style.display = (pageData.isPublished) ? 'flex' : 'none';
             this.buttons.publish.target.element.style.display = (pageData.isPublished) ? 'none' : 'flex';
             this.buttons.delete.target.element.style.display = 'flex';
@@ -800,9 +795,6 @@ export class PagePageStatic {
 
             interactiveContainerElement.append(this.buttons.viewOnSite.target.element);
             
-            console.log('pageData:', pageData);
-            console.log('isLegalDocument:', pageData.isLegalDocument);
-
             if (pageData.isLegalDocument) {
               const versionPanel = document.querySelector('[data-element="version-panel"]');
               if (versionPanel !== null) {
