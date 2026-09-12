@@ -159,11 +159,7 @@
         <input id="I1474309110" class="block__input input input_text" type="text" name="page_static_version" placeholder="1.0" value="{PAGE_STATIC_VERSION}" pattern="^[0-9]+(\.[0-9]+)*$" data-element="input-version">
       </div>
     </div>
-    <div class="page-aside__block-panel block-panel">
-      <button type="button" class="button button_green" data-element="button-publish-version">
-        {LANG:PAGE_STATIC_PAGE_BUTTON_PUBLISH_VERSION_LABEL}
-      </button>
-    </div>
+    <div class="page-aside__block-panel block-panel" data-element="version-panel"></div>
   </div>
   <div class="page-aside__block block">
     <h2 class="page-aside__block-title">

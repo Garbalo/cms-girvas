@@ -461,7 +461,7 @@ export class PagePageStatic {
       this.buttons.unpublish.target.setLabel(localeData.BUTTON_UNPUBLISH_LABEL);
       this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
-        this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
+      this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
 
       this.buttons.viewOnSite.target.setStyle('default');
       this.buttons.unpublish.target.setStyle('red');
@@ -680,6 +680,11 @@ export class PagePageStatic {
       this.buttons.unpublish.assembly();
       this.buttons.SEOAnalyze.assembly();
       this.buttons.publishVersion.assembly();
+
+      const versionPanel = document.querySelector('[data-element="version-panel"]');
+      if (versionPanel !== null) {
+        versionPanel.appendChild(this.buttons.publishVersion.target.element);
+      }
 
       if (searchParams.getPathPart(3) === null) {
         this.buttons.viewOnSite.target.element.style.display = 'none';
