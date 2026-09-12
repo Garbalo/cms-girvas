@@ -19,7 +19,9 @@ use \core\PHPLibrary\NadvoParse as NadvoParse;
 use \core\PHPLibrary\Template as Theme;
 use \core\PHPLibrary\Template\Collector as ThemeCollector;
 use \core\PHPLibrary\Mail\SMTPClient as SMTPClient;
+use \core\PHPLibrary\PageStatic as PageStatic;
 use \core\PHPLibrary\User as User;
+use \core\PHPLibrary\User\Consent as UserConsent;
 use \core\PHPLibrary\SystemCore\Notifier as CMSNotifier;
 use \core\PHPLibrary\SystemCore\Report as CMSReport;
 use \core\PHPLibrary\SystemCore\Reports as CMSReports;
@@ -199,7 +201,7 @@ if ($CMSCore->urlp->getPath(2) === 'registration') {
                         $theme = new Theme($CMSCore, $themeBaseName);
                         $registrationSubmit = $user->createRegistrationSubmit();
 
-                        CMSReport::create(
+                        $userCreatedReport = CMSReport::create(
                           $CMSCore,
                           CMSReport::REPORT_TYPE_ID_BASE_USER_CREATED,
                           [
@@ -207,6 +209,96 @@ if ($CMSCore->urlp->getPath(2) === 'registration') {
                             'ip' => $CMSCore->client->getRealIPAddress()
                           ]
                         );
+                        $userReportID = $userCreatedReport !== null ? $userCreatedReport->getID() : 0;
+
+                        // ============================================================
+                        // СОГЛАСИЯ (152-ФЗ) — при регистрации
+                        // Фиксируем согласие на все документы из security_legal_documents
+                        // ============================================================
+                        $registrationLocale = $CMSCore->locale->getName();
+                        $registrationIP = $CMSCore->client->getRealIPAddress();
+                        $registrationUserAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+                        // Читаем список документов из настроек
+                        $legalDocuments = [];
+                        if ($CMSCore->configurator->existsDatabaseEntryValue('security_legal_documents')) {
+                          $legalDocumentsRaw = $CMSCore->configurator->getDatabaseEntryValue('security_legal_documents');
+                          $legalDocuments = json_decode($legalDocumentsRaw, true) ?? [];
+                        }
+
+                        // Собираем данные по документам для batch-сохранения
+                        $consentsToGive = [];
+
+                        foreach ($legalDocuments as $documentKey) {
+                          $documentKey = trim((string)$documentKey);
+                          if (empty($documentKey)) {
+                            continue;
+                          }
+
+                          $document = PageStatic::getByName($CMSCore, $documentKey);
+                          if ($document === null) {
+                            continue;
+                          }
+
+                          $document->initData(['id', 'name', 'texts', 'metadata']);
+                          if (!$document->isLegalDocument()) {
+                            continue;
+                          }
+
+                          $currentVersion = $document->getCurrentVersion($registrationLocale);
+                          if ($currentVersion === null) {
+                            continue;
+                          }
+
+                          $consentsToGive[] = [
+                            'pageStaticID' => $document->getID(),
+                            'documentVersion' => $currentVersion->getVersion(),
+                            'documentKey' => $documentKey,
+                            'documentTitles' => (function() use ($document, $CMSCore) {
+                              $titles = [];
+                              foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
+                                $titles[$localeName] = $document->getTitle($localeName);
+                              }
+                              return $titles;
+                            })()
+                          ];
+                        }
+
+                        if (!empty($consentsToGive)) {
+                          $givenConsents = UserConsent::giveBatch(
+                            $CMSCore,
+                            array_map(fn($c) => [
+                              'pageStaticID' => $c['pageStaticID'],
+                              'documentVersion' => $c['documentVersion']
+                            ], $consentsToGive),
+                            $user->getID(),
+                            0,
+                            $userReportID,
+                            $registrationLocale,
+                            $registrationIP,
+                            $registrationUserAgent,
+                            'registration'
+                          );
+
+                          // Логируем факты согласия
+                          foreach ($consentsToGive as $consentData) {
+                            CMSReport::create(
+                              $CMSCore,
+                              CMSReport::REPORT_TYPE_ID_BASE_CONSENT_GIVEN,
+                              [
+                                'userID' => $user->getID(),
+                                'userReportID' => $userReportID,
+                                'pageStaticID' => $consentData['pageStaticID'],
+                                'documentKey' => $consentData['documentKey'],
+                                'documentTitles' => $consentData['documentTitles'],
+                                'documentVersion' => $consentData['documentVersion'],
+                                'locale' => $registrationLocale,
+                                'ip' => $registrationIP,
+                                'source' => 'registration'
+                              ]
+                            );
+                          }
+                        }
 
                         if (is_array($registrationSubmit)) {
                           $siteTitle = empty($CMSCore->configurator->getMetaTitle())
