@@ -298,6 +298,31 @@ class ReportsSecurity implements ReportsPageInterface
         is_array($variables['changedValues'] ?? null) ? $variables['changedValues'] : [],
         is_array($variables['sensitiveChanged'] ?? null) ? $variables['sensitiveChanged'] : []
       ),
+      // ============================================================
+      // СОГЛАСИЯ (152-ФЗ) — документ + версия + локаль
+      // ============================================================
+      '{DOCUMENT_TITLE}' => (function() use ($variables, $currentLocale) {
+        if (isset($variables['documentTitles']) && is_array($variables['documentTitles'])) {
+          if (!empty($variables['documentTitles'][$currentLocale])) {
+            return $variables['documentTitles'][$currentLocale];
+          }
+          foreach ($variables['documentTitles'] as $title) {
+            if (!empty($title)) return $title;
+          }
+        }
+        if (!empty($variables['documentTitle'])) {
+          return $variables['documentTitle'];
+        }
+        $dbTitle = $this->getPageStaticTitle($variables['pageStaticID'] ?? 0);
+        if (!empty($dbTitle)) return $dbTitle;
+        return $variables['documentKey'] ?? '';
+      })(),
+      '{DOCUMENT_KEY}' => $variables['documentKey'] ?? '',
+      '{DOCUMENT_VERSION}' => $variables['documentVersion'] ?? '',
+      '{LOCALE}' => $variables['locale'] ?? '',
+      '{FORM_ID}' => $variables['formID'] ?? 0,
+      '{FORM_REPORT_ID}' => $variables['formReportID'] ?? 0,
+      '{PAGE_STATIC_ID}' => $variables['pageStaticID'] ?? 0,
       '{COUNT}' => $variables['count'] ?? 0,
     ];
 
@@ -313,6 +338,18 @@ class ReportsSecurity implements ReportsPageInterface
       array_values($replacements),
       $template
     );
+  }
+
+  private function getPageStaticTitle(int $pageStaticID): string
+  {
+    if ($pageStaticID <= 0) return '';
+    try {
+      $pageStatic = new \core\PHPLibrary\PageStatic($this->CMSCore, $pageStaticID);
+      $pageStatic->initData(['texts']);
+      return $pageStatic->getTitle($this->CMSCore->locale->getName());
+    } catch (\Exception $e) {
+      return '';
+    }
   }
 
   /**

@@ -155,7 +155,11 @@ if (Form::existsByName($CMSCore, $formName)) {
         'form'                          // source
       );
 
-      // Логируем факт согласия в отчёты (152-ФЗ)
+      $documentTitles = [];
+      foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
+        $documentTitles[$localeName] = $document->getTitle($localeName);
+      }
+
       CMSReport::create(
         $CMSCore,
         CMSReport::REPORT_TYPE_ID_BASE_CONSENT_GIVEN,
@@ -164,12 +168,12 @@ if (Form::existsByName($CMSCore, $formName)) {
           'formReportID' => $formReportID,
           'pageStaticID' => $document->getID(),
           'documentKey' => $documentKey,
+          'documentTitles' => $documentTitles,
           'documentVersion' => $currentVersion->getVersion(),
           'locale' => $formLocale,
           'ip' => $formSendedAuthorIP
         ]
       );
-    }
 
     // ============================================================
     // УВЕДОМЛЕНИЯ (Telegram, Max)
