@@ -274,6 +274,8 @@ class PagePage implements InterfacePage
           $pageStaticKeywords = is_array($pageStaticKeywordsRaw)
             ? array_map(fn($k) => str_replace('"', '&quot;', (string)$k), $pageStaticKeywordsRaw)
             : [str_replace('"', '&quot;', (string)$pageStaticKeywordsRaw)];
+          
+          $pageStaticContent = $this->getTextValue($versionObject, $pageStatic, 'getContent', $localeName);
 
           $this->page->breadcrumbs->add($localeData['PAGE_STATIC_PAGE_BREADCRUMPS_INDEX_LABEL'], '/');
           $this->page->breadcrumbs->add($pageStaticTitle, $pageStatic->getName());
@@ -284,8 +286,6 @@ class PagePage implements InterfacePage
           $this->CMSCore->configurator->setMetaKeywords($pageStaticKeywords);
 
           $nadvoParse = new NadvoParse();
-
-          $pageStaticContent = $this->getTextValue($versionObject, $pageStatic, 'getContent', $localeName);
 
           $siteTimezone = $this->CMSCore->configurator->getSiteTimezone();
 

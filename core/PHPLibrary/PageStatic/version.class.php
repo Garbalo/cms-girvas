@@ -169,6 +169,74 @@ class Version
   }
 
   /**
+   * Получить SEO-заголовок версии
+   *
+   * @param string $localeName
+   * @return string
+   */
+  public function getSEOTitle(string $localeName = 'en_US') : string
+  {
+    $texts = $this->getTexts();
+
+    if (isset($texts[$localeName]['SEOTitle'])) {
+      return $texts[$localeName]['SEOTitle'];
+    }
+
+    return '';
+  }
+
+  /**
+   * Получить описание версии
+   *
+   * @param string $localeName
+   * @return string
+   */
+  public function getDescription(string $localeName = 'en_US') : string
+  {
+    $texts = $this->getTexts();
+
+    if (isset($texts[$localeName]['description'])) {
+      return $texts[$localeName]['description'];
+    }
+
+    return '';
+  }
+
+  /**
+   * Получить SEO-описание версии
+   *
+   * @param string $localeName
+   * @return string
+   */
+  public function getSEODescription(string $localeName = 'en_US') : string
+  {
+    $texts = $this->getTexts();
+
+    if (isset($texts[$localeName]['SEODescription'])) {
+      return $texts[$localeName]['SEODescription'];
+    }
+
+    return '';
+  }
+
+  /**
+   * Получить ключевые слова версии
+   *
+   * @param string $localeName
+   * @return array
+   */
+  public function getKeywords(string $localeName = 'en_US') : array
+  {
+    $texts = $this->getTexts();
+
+    if (isset($texts[$localeName]['keywords']) && is_array($texts[$localeName]['keywords'])) {
+      return $texts[$localeName]['keywords'];
+    }
+
+    return [];
+  }
+
+  /**
    * Получить дату вступления в силу
    *
    * @return int
