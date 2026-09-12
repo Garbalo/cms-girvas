@@ -444,6 +444,7 @@ class Form implements EntityTypeContent
       $DOMElement = match ($DOMElementType) {
         'textarea' => $document->createElement('textarea'),
         'select' => $document->createElement('select'),
+        'consent' => $document->createElement('input'),
         default => $document->createElement('input')
       };
 
@@ -452,6 +453,10 @@ class Form implements EntityTypeContent
         $DOMElement->setAttribute('placeholder', $DOMElementPlaceholder);
       } else if ($DOMElementType === 'select') {
         $DOMElement->setAttribute('class', 'form__select');
+      } else if ($DOMElementType === 'consent') {
+        $DOMElement->setAttribute('type', 'checkbox');
+        $DOMElement->setAttribute('class', 'form__input form__input_checkbox');
+        $DOMElement->setAttribute('value', '1');
       } else {
         $DOMElement->setAttribute('type', $DOMElementType);
         $DOMElement->setAttribute('class', 'form__input form__input_' . $DOMElementType);
@@ -487,7 +492,7 @@ class Form implements EntityTypeContent
       $DOMElementContainerElement->setAttribute('class', 'form__input-container input-container');
       $DOMElementContainerElement->appendChild($DOMElement);
 
-      if (!in_array($DOMElementType, ['submit', 'reset', 'checkbox'])) {
+      if (!in_array($DOMElementType, ['submit', 'reset', 'checkbox', 'consent'])) {
         $labelElement = $document->createElement('label', $DOMElementTitle);
         $labelElement->setAttribute('class', 'form__label');
 
@@ -511,7 +516,7 @@ class Form implements EntityTypeContent
         }
       }
 
-      if ($DOMElementType === 'checkbox') {
+            if ($DOMElementType === 'checkbox') {
         $DOMElementDescription = mb_convert_encoding($DOMElementDescription, 'HTML-ENTITIES', 'UTF-8');
 
         if (!empty(trim($DOMElementDescription))) {
@@ -528,6 +533,60 @@ class Form implements EntityTypeContent
         } else {
           $DOMElementContainerElement->setAttribute('class', 'form__input-container input-container input-container_flex-checkbox');
         }
+      }
+
+      if ($DOMElementType === 'consent') {
+        // ============================================================
+        // СОГЛАСИЕ (152-ФЗ)
+        // ============================================================
+        $DOMElementContainerElement->setAttribute('class', 'form__input-container input-container input-container_flex-checkbox');
+
+        $documentKey = $element['documentKey'] ?? '';
+        $documentLink = '';
+        $documentLabel = $DOMElementTitle;
+
+        if (!empty($documentKey)) {
+          $document = \core\PHPLibrary\PageStatic::getByName($this->CMSCore, $documentKey);
+
+          if ($document !== null) {
+            $document->initData(['id', 'name', 'texts', 'metadata']);
+
+            if ($document->isLegalDocument()) {
+              $documentTitle = $document->getTitle($CMSLocaleName);
+              $currentVersion = $document->getCurrentVersion($CMSLocaleName);
+              $versionString = $currentVersion !== null ? $currentVersion->getVersion() : '';
+
+              $documentURL = '/page/' . $document->getName()
+                . ($versionString !== '' ? '?version=' . urlencode($versionString) : '');
+
+              if (!empty($documentTitle)) {
+                $documentLabel = $documentTitle;
+              }
+
+              $documentLink = sprintf(
+                '<a href="%s" target="_blank">%s%s</a>',
+                htmlspecialchars($documentURL, ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($documentLabel, ENT_QUOTES, 'UTF-8'),
+                $versionString !== '' ? ' (' . htmlspecialchars($versionString, ENT_QUOTES, 'UTF-8') . ')' : ''
+              );
+            }
+          }
+        }
+
+        // Fallback: если ссылка не сформирована, показываем title
+        if (empty($documentLink)) {
+          $documentLink = htmlspecialchars($documentLabel, ENT_QUOTES, 'UTF-8');
+        }
+
+        $DOMElementContainerLabelElement = $document->createElement('div');
+        $DOMElementContainerLabelElement->setAttribute('class', 'input-container__label label');
+
+        // Вставляем HTML-ссылку через fragment
+        $fragment = $document->createDocumentFragment();
+        $fragment->appendXML($documentLink);
+        $DOMElementContainerLabelElement->appendChild($fragment);
+
+        $DOMElementContainerElement->appendChild($DOMElementContainerLabelElement);
       }
 
       $formElement->appendChild($DOMElementContainerElement);

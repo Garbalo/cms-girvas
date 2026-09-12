@@ -779,7 +779,8 @@ export class PageForm {
       'Checkbox': 'checkbox',
       'Select': 'select',
       'Button Submit': 'submit',
-      'Button Reset': 'reset'
+      'Button Reset': 'reset',
+      'Consent': 'consent'
     };
   }
 

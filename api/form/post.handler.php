@@ -55,6 +55,49 @@ if (Form::existsByName($CMSCore, $formName)) {
 
   $result = $form->saveData($formData);
 
+  // Найти в elements поля типа consent
+  $consentElements = [];
+  foreach ($form->getElements() as $element) {
+    if (($element['type'] ?? '') === 'consent') {
+      $consentElements[] = $element;
+    }
+  }
+
+  // Для каждого consent-элемента
+  foreach ($consentElements as $element) {
+    $fieldName = $element['name'];
+    
+    // Если чекбокс отмечен
+    if (!empty($formData[$fieldName])) {
+      $documentKey = $element['documentKey'] ?? '';
+      if (empty($documentKey)) continue;
+      
+      // Найти документ
+      $document = PageStatic::getByName($CMSCore, $documentKey);
+      if ($document === null) continue;
+      
+      $document->initData(['id', 'name', 'texts', 'metadata']);
+      if (!$document->isLegalDocument()) continue;
+      
+      // Текущая версия для локали
+      $currentVersion = $document->getCurrentVersion($formLocale);
+      if ($currentVersion === null) continue;
+      
+      UserConsent::give(
+        $CMSCore,
+        null,
+        $form->getID(),
+        $formReportID ?? null,
+        $document->getID(),
+        $currentVersion->getVersion(),
+        $formLocale,
+        $formSendedAuthorIP,
+        $_SERVER['HTTP_USER_AGENT'] ?? '',
+        'form'
+      );
+    }
+  }
+
   if ($result) {
     
     // ============================================================
