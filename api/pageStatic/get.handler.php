@@ -44,7 +44,6 @@ if ($CMSCore->client->isLogged(2)) {
 
     if ($pageStatic->isLegalDocument()) {
       $currentVersion = $pageStatic->getCurrentVersion($pageStaticLocale);
-
       if ($currentVersion !== null) {
         $currentVersion->initData(['version']);
         $handlerOutputData['pageStatic']['currentVersion'] = $currentVersion->getVersion();

@@ -799,12 +799,14 @@ export class PagePageStatic {
             this.buttons.SEOAnalyze.target.element.style.display = 'flex';
 
             interactiveContainerElement.append(this.buttons.viewOnSite.target.element);
+            
+            console.log('pageData:', pageData);
+            console.log('isLegalDocument:', pageData.isLegalDocument);
 
-            // Кнопка «Выпустить версию» — только для юридических документов
             if (pageData.isLegalDocument) {
-              const publishVersionPanel = document.querySelector('#I1474309110 .page-aside__block-panel');
-              if (publishVersionPanel !== null) {
-                publishVersionPanel.appendChild(this.buttons.publishVersion.target.element);
+              const versionPanel = document.querySelector('[data-element="version-panel"]');
+              if (versionPanel !== null) {
+                versionPanel.appendChild(this.buttons.publishVersion.target.element);
               }
             }
           } else {
