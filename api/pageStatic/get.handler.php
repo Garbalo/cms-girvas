@@ -44,7 +44,11 @@ if ($CMSCore->client->isLogged(2)) {
 
     if ($pageStatic->isLegalDocument()) {
       $currentVersion = $pageStatic->getCurrentVersion($pageStaticLocale);
-      $handlerOutputData['pageStatic']['currentVersion'] = $currentVersion ? $currentVersion->getVersion() : '';
+
+      if ($currentVersion !== null) {
+        $currentVersion->initData(['version']);
+        $handlerOutputData['pageStatic']['currentVersion'] = $currentVersion->getVersion();
+      }
     }
 
     $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_GET_DATA_SUCCESS');

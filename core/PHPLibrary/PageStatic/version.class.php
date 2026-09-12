@@ -371,7 +371,14 @@ class Version
     }
 
     $result = $databaseQuery->fetch(\PDO::FETCH_ASSOC);
-    return $result ? new Version($CMSCore, (int)$result['id']) : null;
+
+    if ($result) {
+      $version = new Version($CMSCore, (int)$result['id']);
+      $version->initData();
+      return $version;
+    }
+
+    return null;
   }
 
   /**
