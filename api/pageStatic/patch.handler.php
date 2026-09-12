@@ -33,6 +33,71 @@ if ($CMSCore->client->isLogged(2)) {
       $pageStaticID = is_numeric($pageStaticID) ? (int) $pageStaticID : 0;
 
       if (PageStatic::existsByID($CMSCore, $pageStaticID)) {
+                // ============================================================
+        // СОБЫТИЕ: ВЫПУСК ВЕРСИИ ДОКУМЕНТА (152-ФЗ)
+        // ============================================================
+        if (($_PATCH['page_static_event'] ?? '') === 'publishVersion') {
+          $pageStatic = new PageStatic($CMSCore, $pageStaticID);
+          $pageStatic->initData(['id', 'name', 'texts', 'metadata']);
+
+          if ($pageStatic->isLegalDocument()) {
+            $CMSBaseLocaleName = $CMSCore->getCMSLocale()->getName();
+            $versionInput = trim((string)($_PATCH['page_static_version'] ?? ''));
+
+            if (empty($versionInput)) {
+              $versionInput = PageStaticVersion::getDefaultVersion($CMSCore, $pageStaticID, $CMSBaseLocaleName);
+            } else {
+              $versionInput = PageStaticVersion::getNextVersion($CMSCore, $pageStaticID, $versionInput, $CMSBaseLocaleName);
+            }
+
+            // Пересоздаём объект — чтобы texts были актуальны
+            $pageStatic = new PageStatic($CMSCore, $pageStaticID);
+            $pageStatic->initData(['id', 'name', 'texts', 'metadata']);
+
+            $publishedVersions = [];
+            foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
+              $version = $pageStatic->publishVersion($versionInput, $localeName, $clientUser->getID());
+              if ($version !== null) {
+                $publishedVersions[$localeName] = $versionInput;
+              }
+            }
+
+            if (!empty($publishedVersions)) {
+              $pageTitles = [];
+              foreach ($CMSCore->getArrayLocalesNames() as $locale) {
+                $pageTitles[$locale] = $pageStatic->getTitle($locale);
+              }
+
+              CMSReport::create(
+                $CMSCore,
+                CMSReport::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_PUBLISHED,
+                [
+                  'pageStaticID' => $pageStaticID,
+                  'pageName' => $pageStatic->getName(),
+                  'pageTitles' => $pageTitles,
+                  'versions' => $publishedVersions,
+                  'userID' => $clientUser->getID(),
+                  'userLogin' => $clientUser->getLogin(),
+                  'ip' => $CMSCore->client->getIPAddress()
+                ]
+              );
+
+              $handlerOutputData['version'] = $versionInput;
+              $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
+              $handlerStatusCode = $handlerStatusCode ?? 1;
+            } else {
+              $handlerMessage = $handlerMessage ?? 'API ERROR: ' . $CMSCore->locale->getSingleValueByKey('API_ERROR_UNKNOWN');
+              $handlerStatusCode = $handlerStatusCode ?? 0;
+            }
+          } else {
+            $handlerMessage = $handlerMessage ?? 'API ERROR: Страница не является юридическим документом.';
+            $handlerStatusCode = $handlerStatusCode ?? 0;
+          }
+
+          // Прерываем дальнейшую обработку
+          return;
+        }
+
         $pageStatic = new PageStatic($CMSCore, $pageStaticID);
         $pageStatic->initData(['name', 'texts', 'metadata']);
         
@@ -171,9 +236,7 @@ if ($CMSCore->client->isLogged(2)) {
           // ФЛАГ ЮРИДИЧЕСКОГО ДОКУМЕНТА (152-ФЗ)
           // ============================================================
           $pageStaticIsLegalDocument = ($_PATCH['page_static_is_legal_document_status'] ?? 'off') === 'on';
-          $pageStaticVersionInput = trim($_PATCH['page_static_version'] ?? '');
-          $pageStaticWasLegalDocument = $pageStatic->isLegalDocument();
-
+          
           if (!array_key_exists('metadata', $pageStaticData)) $pageStaticData['metadata'] = [];
           $pageStaticData['metadata']['isLegalDocument'] = $pageStaticIsLegalDocument;
 
@@ -222,57 +285,6 @@ if ($CMSCore->client->isLogged(2)) {
                 'ip' => $CMSCore->client->getIPAddress()
               ]
             );
-
-            // ============================================================
-            // ПУБЛИКАЦИЯ ВЕРСИИ ДОКУМЕНТА (152-ФЗ)
-            // ============================================================
-            if ($pageStaticIsLegalDocument) {
-              $pageStatic = new PageStatic($CMSCore, $pageStaticID);
-              $pageStatic->initData(['texts', 'metadata', 'name']);
-
-              $publishedVersions = [];
-
-              error_log('page_static_version: ' . var_export($_PATCH['page_static_version'], true));
-              error_log('type: ' . gettype($_PATCH['page_static_version']));
-
-              foreach ($CMSCore->getArrayLocalesNames() as $localeName) {
-                // Для каждой локали — своя версия
-                $localeVersionInput = $pageStaticVersionInput;
-
-                if (empty($localeVersionInput)) {
-                  $localeVersionInput = PageStaticVersion::getDefaultVersion($CMSCore, $pageStaticID, $localeName);
-                } else {
-                  $localeVersionInput = PageStaticVersion::getNextVersion($CMSCore, $pageStaticID, $localeVersionInput, $localeName);
-                }
-
-                $version = $pageStatic->publishVersion($localeVersionInput, $localeName, $clientUser->getID());
-
-                if ($version !== null) {
-                  $publishedVersions[$localeName] = $localeVersionInput;
-                }
-              }
-
-              if (!empty($publishedVersions)) {
-                $pageTitles = [];
-                foreach ($CMSCore->getArrayLocalesNames() as $locale) {
-                  $pageTitles[$locale] = $pageStatic->getTitle($locale);
-                }
-
-                CMSReport::create(
-                  $CMSCore,
-                  CMSReport::REPORT_TYPE_ID_AP_DOCUMENT_VERSION_PUBLISHED,
-                  [
-                    'pageStaticID' => $pageStaticID,
-                    'pageName' => $pageStatic->getName(),
-                    'pageTitles' => $pageTitles,
-                    'versions' => $publishedVersions,  // ← массив: локаль → версия
-                    'userID' => $clientUser->getID(),
-                    'userLogin' => $clientUser->getLogin(),
-                    'ip' => $CMSCore->client->getIPAddress()
-                  ]
-                );
-              }
-            }
 
             $handlerMessage = $handlerMessage ?? $CMSCore->locale->getSingleValueByKey('API_PATCH_DATA_SUCCESS');
             $handlerStatusCode = $handlerStatusCode ?? 1;

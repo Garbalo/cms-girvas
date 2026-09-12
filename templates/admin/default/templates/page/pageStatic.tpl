@@ -156,8 +156,13 @@
     <div class="page-aside__block-content block-content">
       <div class="block__input-container input-container">
         {LANG:MD:PAGE_PAGE_STATIC_SIDEBAR_BLOCK_DOCUMENT_VERSION_TIP}
-        <input id="I1474309110" class="block__input input input_text" type="text" name="page_static_version" placeholder="1.0" value="{PAGE_STATIC_VERSION}" pattern="^[0-9]+\.[0-9]+$" data-element="input-version">
+        <input id="I1474309110" class="block__input input input_text" type="text" name="page_static_version" placeholder="1.0" value="{PAGE_STATIC_VERSION}" pattern="^[0-9]+(\.[0-9]+)*$" data-element="input-version">
       </div>
+    </div>
+    <div class="page-aside__block-panel block-panel">
+      <button type="button" class="button button_green" data-element="button-publish-version">
+        {LANG:PAGE_STATIC_PAGE_BUTTON_PUBLISH_VERSION_LABEL}
+      </button>
     </div>
   </div>
   <div class="page-aside__block block">

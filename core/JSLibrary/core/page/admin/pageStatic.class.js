@@ -453,6 +453,7 @@ export class PagePageStatic {
       this.buttons.publish = new Interactive('button');
       this.buttons.unpublish = new Interactive('button');
       this.buttons.SEOAnalyze = new Interactive('button');
+      this.buttons.publishVersion = new Interactive('button');
 
       this.buttons.viewOnSite.target.setLabel(localeData.BUTTON_VIEW_ON_SITE_LABEL);
       this.buttons.delete.target.setLabel(localeData.BUTTON_DELETE_LABEL);
@@ -460,6 +461,7 @@ export class PagePageStatic {
       this.buttons.unpublish.target.setLabel(localeData.BUTTON_UNPUBLISH_LABEL);
       this.buttons.save.target.setLabel(localeData.BUTTON_SAVE_LABEL);
       this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
+        this.buttons.SEOAnalyze.target.setLabel(localeData.BUTTON_SEO_ANALYZE_LABEL);
 
       this.buttons.viewOnSite.target.setStyle('default');
       this.buttons.unpublish.target.setStyle('red');
@@ -467,6 +469,7 @@ export class PagePageStatic {
       this.buttons.delete.target.setStyle('red');
       this.buttons.save.target.setStyle('green');
       this.buttons.SEOAnalyze.target.setStyle('default');
+      this.buttons.publishVersion.target.setStyle('green');
 
       this.buttons.viewOnSite.target.setCallback((event) => {
         event.preventDefault();
@@ -491,6 +494,47 @@ export class PagePageStatic {
         });
 
         this.renderSEOResults(SEOAnalyze);
+      });
+
+      this.buttons.publishVersion.target.setCallback((event) => {
+        event.preventDefault();
+
+        const versionInputElement = document.querySelector('[name="page_static_version"]');
+        const versionValue = versionInputElement !== null ? versionInputElement.value : '';
+
+        let interactiveModal = new Interactive('modal', {
+          title: localeData.PAGE_STATIC_PAGE_MODAL_PUBLISH_VERSION_TITLE,
+          content: localeData.PAGE_STATIC_PAGE_MODAL_PUBLISH_VERSION_DESCRIPTION
+            .replace('%version%', versionValue || '1.0')
+        });
+
+        interactiveModal.target.addButton(localeData.BUTTON_PUBLISH_LABEL, () => {
+          let formData = new FormData();
+          formData.append('page_static_id', searchParams.getPathPart(3));
+          formData.append('page_static_event', 'publishVersion');
+          formData.append('page_static_version', versionValue);
+
+          let request = new Interactive('request', {
+            method: 'PATCH',
+            url: '/handler/pageStatic?localeMessage=' + window.CMSCore.locales.admin.name
+          });
+
+          request.target.data = formData;
+          request.target.send().then((data) => {
+            if (data.statusCode === 1) {
+              interactiveModal.target.close();
+              window.location.reload();
+            }
+          });
+        });
+
+        interactiveModal.target.addButton(localeData.BUTTON_CANCEL_LABEL, () => {
+          interactiveModal.target.close();
+        });
+
+        interactiveModal.assembly();
+        document.body.appendChild(interactiveModal.target.element);
+        interactiveModal.target.show();
       });
 
       this.buttons.save.target.setCallback((event) => {
@@ -635,6 +679,7 @@ export class PagePageStatic {
       this.buttons.publish.assembly();
       this.buttons.unpublish.assembly();
       this.buttons.SEOAnalyze.assembly();
+      this.buttons.publishVersion.assembly();
 
       if (searchParams.getPathPart(3) === null) {
         this.buttons.viewOnSite.target.element.style.display = 'none';
@@ -741,7 +786,7 @@ export class PagePageStatic {
             previewBlockContentContainerElement.appendChild(previewImageContainerElement);
             previewBlockPanelContainerElement.appendChild(previewFormElement);
 
-            this.buttons.viewOnSite.target.element.style.display = 'flex';
+                        this.buttons.viewOnSite.target.element.style.display = 'flex';
             this.buttons.unpublish.target.element.style.display = (pageData.isPublished) ? 'flex' : 'none';
             this.buttons.publish.target.element.style.display = (pageData.isPublished) ? 'none' : 'flex';
             this.buttons.delete.target.element.style.display = 'flex';
@@ -749,6 +794,14 @@ export class PagePageStatic {
             this.buttons.SEOAnalyze.target.element.style.display = 'flex';
 
             interactiveContainerElement.append(this.buttons.viewOnSite.target.element);
+
+            // Кнопка «Выпустить версию» — только для юридических документов
+            if (pageData.isLegalDocument) {
+              const publishVersionPanel = document.querySelector('#I1474309110 .page-aside__block-panel');
+              if (publishVersionPanel !== null) {
+                publishVersionPanel.appendChild(this.buttons.publishVersion.target.element);
+              }
+            }
           } else {
             this.buttons.viewOnSite.target.element.style.display = 'none';
             this.buttons.unpublish.target.element.style.display = 'none';
