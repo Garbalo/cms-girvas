@@ -515,8 +515,8 @@ class Form implements EntityTypeContent
           $formElement->appendChild($descriptionElement);
         }
       }
-
-            if ($DOMElementType === 'checkbox') {
+      
+      if ($DOMElementType === 'checkbox') {
         $DOMElementDescription = mb_convert_encoding($DOMElementDescription, 'HTML-ENTITIES', 'UTF-8');
 
         if (!empty(trim($DOMElementDescription))) {
